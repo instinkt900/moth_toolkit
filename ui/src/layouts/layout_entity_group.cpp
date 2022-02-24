@@ -1,9 +1,10 @@
 #include "common.h"
-#include "uilib/layout/layout_entity_group.h"
-#include "uilib/group.h"
-#include "uilib/utils/serialize_utils.h"
-#include "uilib/layout/layout.h"
-#include "uilib/animation_clip.h"
+#include "moth_ui/layout/layout_entity_group.h"
+#include "moth_ui/group.h"
+#include "moth_ui/utils/serialize_utils.h"
+#include "moth_ui/layout/layout.h"
+#include "moth_ui/animation_clip.h"
+#include "moth_ui/utils/imgui_ext_inspect.h"
 
 namespace ui {
     LayoutEntityGroup::LayoutEntityGroup(LayoutRect const& initialBounds)

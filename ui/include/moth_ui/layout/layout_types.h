@@ -1,5 +1,7 @@
 #pragma once
 
+#include "moth_ui/utils/rect.h"
+
 namespace ui {
     enum class LayoutEntityType {
         Entity,

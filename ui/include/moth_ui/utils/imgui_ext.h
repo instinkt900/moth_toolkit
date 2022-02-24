@@ -1,5 +1,8 @@
 #pragma once
 
+#include "moth_ui/ui_fwd.h"
+#include "moth_ui/utils/vec2.h"
+
 namespace imgui_ext {
     bool InputString(char const* label, std::string* str);
     bool InputKeyframeValue(char const* label, ui::KeyframeValue* value);

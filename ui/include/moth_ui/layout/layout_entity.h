@@ -1,8 +1,8 @@
 #pragma once
 
-#include "uilib/animation_track.h"
-#include "uilib/ui_fwd.h"
-#include "uilib/layout/layout_types.h"
+#include "moth_ui/ui_fwd.h"
+#include "moth_ui/animation_track.h"
+#include "moth_ui/layout/layout_types.h"
 
 namespace ui {
     class LayoutEntity : public std::enable_shared_from_this<LayoutEntity> {

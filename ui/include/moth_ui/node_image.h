@@ -1,7 +1,7 @@
 #pragma once
 
 #include "node.h"
-#include "uilib/utils/smart_sdl.h"
+#include "moth_ui/utils/smart_sdl.h"
 
 namespace ui {
     class NodeImage : public Node {

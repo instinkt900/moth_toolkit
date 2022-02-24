@@ -1,10 +1,10 @@
 #include "common.h"
-#include "uilib/events/event.h"
-#include "uilib/events/event_window_size.h"
-#include "uilib/events/event_quit.h"
-#include "uilib/events/event_key.h"
-#include "uilib/events/event_device.h"
-#include "uilib/events/event_mouse.h"
+#include "moth_ui/events/event.h"
+#include "moth_ui/events/event_window_size.h"
+#include "moth_ui/events/event_quit.h"
+#include "moth_ui/events/event_key.h"
+#include "moth_ui/events/event_device.h"
+#include "moth_ui/events/event_mouse.h"
 
 std::unique_ptr<Event> Event::FromSDL(SDL_Event const& event) {
     switch (event.type) {

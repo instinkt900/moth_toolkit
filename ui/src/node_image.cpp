@@ -1,7 +1,8 @@
 #include "common.h"
-#include "uilib/node_image.h"
-#include "uilib/layout/layout_entity.h"
-#include "uilib/layout/layout_entity_image.h"
+#include "moth_ui/node_image.h"
+#include "moth_ui/layout/layout_entity.h"
+#include "moth_ui/layout/layout_entity_image.h"
+#include "moth_ui/utils/imgui_ext_inspect.h"
 
 #include "imgui-filebrowser/imfilebrowser.h"
 

@@ -1,6 +1,6 @@
 #include "common.h"
-#include "uilib/layout/layout_entity_image.h"
-#include "uilib/node_image.h"
+#include "moth_ui/layout/layout_entity_image.h"
+#include "moth_ui/node_image.h"
 
 namespace ui {
     LayoutEntityImage::LayoutEntityImage(LayoutRect const& initialBounds)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "event.h"
+#include "moth_ui/utils/vec2.h"
 
 enum class MouseButton {
     Unknown,

@@ -1,7 +1,8 @@
 #include "common.h"
-#include "uilib/layout/layout_entity.h"
-#include "uilib/layout/layout_entity_group.h"
-#include "uilib/node.h"
+#include "moth_ui/layout/layout_entity.h"
+#include "moth_ui/layout/layout_entity_group.h"
+#include "moth_ui/node.h"
+#include "moth_ui/utils/imgui_ext_inspect.h"
 
 namespace ui {
     LayoutEntity::LayoutEntity(LayoutRect const& initialBounds) {

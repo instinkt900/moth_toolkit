@@ -1,8 +1,8 @@
 #include "common.h"
-#include "uilib/group.h"
-#include "uilib/layout/layout_entity_group.h"
-#include "uilib/animation_clip.h"
-#include "uilib/event_dispatch.h"
+#include "moth_ui/group.h"
+#include "moth_ui/layout/layout_entity_group.h"
+#include "moth_ui/animation_clip.h"
+#include "moth_ui/event_dispatch.h"
 
 namespace ui {
     Group::Group() {

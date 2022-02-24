@@ -1,6 +1,7 @@
 #include "common.h"
-#include "uilib/animation_track.h"
-#include "uilib/animation_clip.h"
+#include "moth_ui/animation_track.h"
+#include "moth_ui/animation_clip.h"
+#include "moth_ui/utils/math_utils.h"
 
 namespace ui {
     AnimationTrack::AnimationTrack(Target target, float initialValue)

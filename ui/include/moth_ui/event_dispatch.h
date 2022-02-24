@@ -1,7 +1,7 @@
 #pragma once
 
-#include "uilib/events/event.h"
-#include "uilib/event_listener.h"
+#include "moth_ui/events/event.h"
+#include "moth_ui/event_listener.h"
 
 class EventDispatch {
 public:

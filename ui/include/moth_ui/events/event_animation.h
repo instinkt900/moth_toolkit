@@ -1,7 +1,7 @@
 #pragma once
 
 #include "event.h"
-#include "uilib/animation_track.h"
+#include "moth_ui/animation_track.h"
 
 class EventAnimation : public Event {
 public:

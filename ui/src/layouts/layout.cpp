@@ -1,9 +1,9 @@
 #include "common.h"
-#include "uilib/layout/layout.h"
-#include "uilib/layout/layout_entity_image.h"
-#include "uilib/layout/layout_entity_group.h"
-#include "uilib/animation_clip.h"
-#include "uilib/utils/serialize_utils.h"
+#include "moth_ui/layout/layout.h"
+#include "moth_ui/layout/layout_entity_image.h"
+#include "moth_ui/layout/layout_entity_group.h"
+#include "moth_ui/animation_clip.h"
+#include "moth_ui/utils/serialize_utils.h"
 
 namespace ui {
     std::unique_ptr<LayoutEntity> LoadEntity(nlohmann::json const& json, LayoutEntityGroup* parent) {

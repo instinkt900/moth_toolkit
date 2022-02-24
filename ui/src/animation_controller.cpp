@@ -1,8 +1,8 @@
 #include "common.h"
-#include "uilib/animation_controller.h"
-#include "uilib/node.h"
-#include "uilib/animation_clip.h"
-#include "uilib/events/event_animation.h"
+#include "moth_ui/animation_controller.h"
+#include "moth_ui/node.h"
+#include "moth_ui/animation_clip.h"
+#include "moth_ui/events/event_animation.h"
 
 namespace {
     using namespace ui;

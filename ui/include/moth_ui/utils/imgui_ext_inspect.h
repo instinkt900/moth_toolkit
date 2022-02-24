@@ -1,5 +1,7 @@
 #pragma once
 
+#include "moth_ui/utils/smart_sdl.h"
+
 namespace imgui_ext {
     inline void Inspect(char const* name, bool& value) {
         ImGui::Checkbox(name, &value);

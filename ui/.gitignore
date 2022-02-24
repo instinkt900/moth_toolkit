@@ -1,2 +1,4 @@
 /build
 /editor/build
+/.vs
+/out

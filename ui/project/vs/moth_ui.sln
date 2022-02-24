@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32002.261
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "moth_ui", "moth_ui.vcxproj", "{56A8DBD3-13C7-4EBF-A3BD-28F9F530FA86}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "editor", "editor.vcxproj", "{D0569F1A-3C7C-45C8-937F-50CE6D01F9B1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{56A8DBD3-13C7-4EBF-A3BD-28F9F530FA86}.Debug|x64.ActiveCfg = Debug|x64
+		{56A8DBD3-13C7-4EBF-A3BD-28F9F530FA86}.Debug|x64.Build.0 = Debug|x64
+		{56A8DBD3-13C7-4EBF-A3BD-28F9F530FA86}.Release|x64.ActiveCfg = Release|x64
+		{56A8DBD3-13C7-4EBF-A3BD-28F9F530FA86}.Release|x64.Build.0 = Release|x64
+		{D0569F1A-3C7C-45C8-937F-50CE6D01F9B1}.Debug|x64.ActiveCfg = Debug|x64
+		{D0569F1A-3C7C-45C8-937F-50CE6D01F9B1}.Debug|x64.Build.0 = Debug|x64
+		{D0569F1A-3C7C-45C8-937F-50CE6D01F9B1}.Release|x64.ActiveCfg = Release|x64
+		{D0569F1A-3C7C-45C8-937F-50CE6D01F9B1}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D650CB4C-6390-431B-AAFC-3E5F613C89F8}
+	EndGlobalSection
+EndGlobal

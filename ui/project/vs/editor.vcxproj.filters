@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{e9a002d1-852c-4fb0-8967-7b622bc7cd0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\editor">
+      <UniqueIdentifier>{d4710118-df43-40ee-a99e-709456ca6d80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\layers">
+      <UniqueIdentifier>{edec31c8-91ae-42b6-b496-3f6210707816}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\editor\actions">
+      <UniqueIdentifier>{5a9440d9-e20a-4147-946e-547490ba926b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{ce364b27-30ab-4d54-9219-a4db145e9689}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\editor\src\common.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\game.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\anchor_bounds_handle.h">
+      <Filter>src\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\animation_widget.h">
+      <Filter>src\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\bounds_handle.h">
+      <Filter>src\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\bounds_widget.h">
+      <Filter>src\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\editor_layer.h">
+      <Filter>src\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\keyframe_context.h">
+      <Filter>src\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\keyframe_widget.h">
+      <Filter>src\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\offset_bounds_handle.h">
+      <Filter>src\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\properties_editor.h">
+      <Filter>src\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\utils.h">
+      <Filter>src\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\add_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\add_keyframe_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\composite_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\delete_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\delete_keyframe_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\editor_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\modify_clip_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\modify_keyframe_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\move_keyframe_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\layers\layer.h">
+      <Filter>src\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\layers\layer_stack.h">
+      <Filter>src\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\imgui\imconfig.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\imgui\imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\imgui\imgui_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\imgui\imstb_rectpack.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\imgui\imstb_textedit.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\imgui\imstb_truetype.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\imgui\backends\imgui_impl_sdl.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\imgui\backends\imgui_impl_sdlrenderer.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\editor\src\game.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\anchor_bounds_handle.cpp">
+      <Filter>src\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\animation_widget.cpp">
+      <Filter>src\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\bounds_handle.cpp">
+      <Filter>src\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\bounds_widget.cpp">
+      <Filter>src\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\editor_layer.cpp">
+      <Filter>src\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\keyframe_widget.cpp">
+      <Filter>src\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\offset_bounds_handle.cpp">
+      <Filter>src\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\properties_editor.cpp">
+      <Filter>src\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\add_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\add_keyframe_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\composite_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\delete_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\delete_keyframe_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\modify_clip_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\modify_keyframe_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\move_keyframe_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\layers\layer.cpp">
+      <Filter>src\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\layers\layer_stack.cpp">
+      <Filter>src\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\imgui\imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\imgui\imgui_demo.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\imgui\imgui_tables.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\imgui\imgui_widgets.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\imgui\backends\imgui_impl_sdl.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\imgui\backends\imgui_impl_sdlrenderer.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

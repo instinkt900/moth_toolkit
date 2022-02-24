@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <SDL_DIR>D:\Development\SDL2-2.0.18</SDL_DIR>
+    <SDLIMAGE_DIR>D:\Development\SDL2_image-2.0.5</SDLIMAGE_DIR>
+    <SDLTTF_DIR>D:\Development\SDL2_ttf-2.0.15</SDLTTF_DIR>
+    <NLOHMANN_DIR>D:\Development\ChristmasProject2021\external\json</NLOHMANN_DIR>
+    <MAGICENUM_DIR>D:\Development\ChristmasProject2021\external\magic_enum</MAGICENUM_DIR>
+    <RANGEV3_DIR>D:\Development\ChristmasProject2021\external\range-v3</RANGEV3_DIR>
+    <FMT_DIR>D:\Development\fmt</FMT_DIR>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemDefinitionGroup />
+  <ItemGroup>
+    <BuildMacro Include="SDL_DIR">
+      <Value>$(SDL_DIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="SDLIMAGE_DIR">
+      <Value>$(SDLIMAGE_DIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="SDLTTF_DIR">
+      <Value>$(SDLTTF_DIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="NLOHMANN_DIR">
+      <Value>$(NLOHMANN_DIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="MAGICENUM_DIR">
+      <Value>$(MAGICENUM_DIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="RANGEV3_DIR">
+      <Value>$(RANGEV3_DIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="FMT_DIR">
+      <Value>$(FMT_DIR)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>

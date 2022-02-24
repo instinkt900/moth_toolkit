@@ -1,4 +1,10 @@
 /build
 /editor/build
-/.vs
+.vs
 /out
+/project/vs/editor/Debug
+/project/vs/editor/Intermediate
+/project/vs/moth_ui/Debug
+/project/vs/moth_ui/Intermediate
+*.vcxproj.user
+imgui.ini

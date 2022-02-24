@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{a8672974-dc46-42ee-9a00-0b88b1fc71d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{d1a51e3b-cdf8-421f-8dc6-7e41bc7ac44e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\moth_ui">
+      <UniqueIdentifier>{ce06fa2f-9884-4206-bd7f-a561d2b0ee4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\events">
+      <UniqueIdentifier>{eb8e61c3-b84f-41de-ba7d-ad8e90e21525}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\imgui_ext">
+      <UniqueIdentifier>{7f389c27-e1a4-44d6-85df-065b0d8d5bd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\layouts">
+      <UniqueIdentifier>{0f89ec7f-e098-4253-afdc-e340a7c1aea7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\moth_ui\events">
+      <UniqueIdentifier>{142c8ec1-8ae7-4c4f-8b39-562ca88d3d8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\moth_ui\layout">
+      <UniqueIdentifier>{e9101695-7e1d-43f0-bee9-102f3f23ba8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\moth_ui\utils">
+      <UniqueIdentifier>{d2d37a74-4cfb-4a99-b706-bb26d065cfef}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\animation_controller.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\group.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\node.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\node_image.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\SDL_FontCache.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\events\event.cpp">
+      <Filter>src\events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\events\event_key.cpp">
+      <Filter>src\events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\imgui_ext\imgui_ext.cpp">
+      <Filter>src\imgui_ext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\imgui_ext\imgui_ext_focus.cpp">
+      <Filter>src\imgui_ext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\layouts\animation_track.cpp">
+      <Filter>src\layouts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\layouts\layout.cpp">
+      <Filter>src\layouts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\layouts\layout_entity.cpp">
+      <Filter>src\layouts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\layouts\layout_entity_group.cpp">
+      <Filter>src\layouts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\layouts\layout_entity_image.cpp">
+      <Filter>src\layouts</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\common.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\animation_clip.h">
+      <Filter>include\moth_ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\animation_controller.h">
+      <Filter>include\moth_ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\animation_track.h">
+      <Filter>include\moth_ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\event_dispatch.h">
+      <Filter>include\moth_ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\event_listener.h">
+      <Filter>include\moth_ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\group.h">
+      <Filter>include\moth_ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\node.h">
+      <Filter>include\moth_ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\node_image.h">
+      <Filter>include\moth_ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\ui_fwd.h">
+      <Filter>include\moth_ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\events\event.h">
+      <Filter>include\moth_ui\events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\events\event_animation.h">
+      <Filter>include\moth_ui\events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\events\event_device.h">
+      <Filter>include\moth_ui\events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\events\event_key.h">
+      <Filter>include\moth_ui\events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\events\event_mouse.h">
+      <Filter>include\moth_ui\events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\events\event_quit.h">
+      <Filter>include\moth_ui\events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\events\event_window_size.h">
+      <Filter>include\moth_ui\events</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\layout\layout.h">
+      <Filter>include\moth_ui\layout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\layout\layout_entity.h">
+      <Filter>include\moth_ui\layout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_group.h">
+      <Filter>include\moth_ui\layout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_image.h">
+      <Filter>include\moth_ui\layout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\layout\layout_types.h">
+      <Filter>include\moth_ui\layout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\utils\imgui_ext.h">
+      <Filter>include\moth_ui\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\utils\imgui_ext_focus.h">
+      <Filter>include\moth_ui\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\utils\imgui_ext_inspect.h">
+      <Filter>include\moth_ui\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\utils\math_utils.h">
+      <Filter>include\moth_ui\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\utils\rect.h">
+      <Filter>include\moth_ui\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\utils\SDL_FontCache.h">
+      <Filter>include\moth_ui\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\utils\serialize_utils.h">
+      <Filter>include\moth_ui\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\utils\smart_sdl.h">
+      <Filter>include\moth_ui\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\utils\vec2.h">
+      <Filter>include\moth_ui\utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -21,7 +21,7 @@
     <ClInclude Include="..\..\editor\src\common.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\editor\src\game.h">
+    <ClInclude Include="..\..\editor\src\app.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\anchor_bounds_handle.h">
@@ -134,7 +134,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\editor\src\game.cpp">
+    <ClCompile Include="..\..\editor\src\app.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\editor\src\main.cpp">

@@ -10,9 +10,6 @@
     <Filter Include="include\moth_ui">
       <UniqueIdentifier>{ce06fa2f-9884-4206-bd7f-a561d2b0ee4f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\events">
-      <UniqueIdentifier>{eb8e61c3-b84f-41de-ba7d-ad8e90e21525}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\imgui_ext">
       <UniqueIdentifier>{7f389c27-e1a4-44d6-85df-065b0d8d5bd6}</UniqueIdentifier>
     </Filter>
@@ -42,15 +39,6 @@
     <ClCompile Include="..\..\src\node_image.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\SDL_FontCache.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\events\event.cpp">
-      <Filter>src\events</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\events\event_key.cpp">
-      <Filter>src\events</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\imgui_ext\imgui_ext.cpp">
       <Filter>src\imgui_ext</Filter>
     </ClCompile>
@@ -71,6 +59,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\layouts\layout_entity_image.cpp">
       <Filter>src\layouts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\context.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -155,17 +146,23 @@
     <ClInclude Include="..\..\include\moth_ui\utils\rect.h">
       <Filter>include\moth_ui\utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\moth_ui\utils\SDL_FontCache.h">
-      <Filter>include\moth_ui\utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\moth_ui\utils\serialize_utils.h">
-      <Filter>include\moth_ui\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\moth_ui\utils\smart_sdl.h">
       <Filter>include\moth_ui\utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\moth_ui\utils\vec2.h">
       <Filter>include\moth_ui\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\iimage_factory.h">
+      <Filter>include\moth_ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\iimage.h">
+      <Filter>include\moth_ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\context.h">
+      <Filter>include\moth_ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\irenderer.h">
+      <Filter>include\moth_ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

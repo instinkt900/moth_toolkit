@@ -13,7 +13,7 @@ namespace ui {
 
         virtual bool OnEvent(Event const& event) override;
         virtual void Update(uint32_t ticks);
-        virtual void Draw(SDL_Renderer& renderer);
+        virtual void Draw();
 
         virtual void SendEvent(Event const& event);
 

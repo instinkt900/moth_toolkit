@@ -1,6 +1,8 @@
 #pragma once
 
 namespace ui {
+    class IImage;
+
     class Node;
     class Group;
     class NodeImage;

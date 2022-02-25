@@ -131,7 +131,8 @@ namespace ui {
     }
 
     void LayoutEntity::Deserialize(nlohmann::json const& json) {
-        assert(json["type"] == GetType());
+        auto const type = GetType();
+        assert(json["type"] == type);
         json["m_id"].get_to(m_id);
         if (json.contains("m_tracks")) {
             m_tracks.clear();

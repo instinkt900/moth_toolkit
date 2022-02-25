@@ -36,10 +36,10 @@ namespace ui {
         }
     }
 
-    void Group::Draw(SDL_Renderer& renderer) {
-        Node::Draw(renderer);
+    void Group::Draw() {
+        Node::Draw();
         for (auto&& child : m_children) {
-            child->Draw(renderer);
+            child->Draw();
         }
     }
 

@@ -10,19 +10,6 @@ enum class MouseButton {
     Right,
 };
 
-inline MouseButton FromSDLMouse(uint8_t button) {
-    switch (button) {
-    case 1:
-        return MouseButton::Left;
-    case 2:
-        return MouseButton::Middle;
-    case 3:
-        return MouseButton::Right;
-    default:
-        return MouseButton::Unknown;
-    }
-}
-
 class EventMouseDown : public Event {
 public:
     EventMouseDown(MouseButton button, IntVec2 const& position)

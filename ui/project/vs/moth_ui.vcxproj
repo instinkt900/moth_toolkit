@@ -48,6 +48,8 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectName)\Intermediate\$(Configuration)\</IntDir>
+    <IncludePath>
+    </IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -59,7 +61,7 @@
       <PreprocessorDefinitions>_CONSOLE;_CRT_SECURE_NO_WARNINGS;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\external\imgui;$(SDL_DIR)\include;$(SDLIMAGE_DIR)\include;$(SDLTTF_DIR)\include;$(MAGICENUM_DIR)\include;$(NLOHMANN_DIR)\include;$(FMT_DIR)\include;$(RANGEV3_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\external\imgui;$(MAGICENUM_DIR)\include;$(NLOHMANN_DIR)\include;$(FMT_DIR)\include;$(RANGEV3_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -87,8 +89,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\animation_controller.cpp" />
-    <ClCompile Include="..\..\src\events\event.cpp" />
-    <ClCompile Include="..\..\src\events\event_key.cpp" />
+    <ClCompile Include="..\..\src\context.cpp" />
     <ClCompile Include="..\..\src\group.cpp" />
     <ClCompile Include="..\..\src\imgui_ext\imgui_ext.cpp" />
     <ClCompile Include="..\..\src\imgui_ext\imgui_ext_focus.cpp" />
@@ -99,14 +100,12 @@
     <ClCompile Include="..\..\src\layouts\layout_entity_image.cpp" />
     <ClCompile Include="..\..\src\node.cpp" />
     <ClCompile Include="..\..\src\node_image.cpp" />
-    <ClCompile Include="..\..\src\SDL_FontCache.c">
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\moth_ui\animation_clip.h" />
     <ClInclude Include="..\..\include\moth_ui\animation_controller.h" />
     <ClInclude Include="..\..\include\moth_ui\animation_track.h" />
+    <ClInclude Include="..\..\include\moth_ui\context.h" />
     <ClInclude Include="..\..\include\moth_ui\events\event.h" />
     <ClInclude Include="..\..\include\moth_ui\events\event_animation.h" />
     <ClInclude Include="..\..\include\moth_ui\events\event_device.h" />
@@ -117,6 +116,9 @@
     <ClInclude Include="..\..\include\moth_ui\event_dispatch.h" />
     <ClInclude Include="..\..\include\moth_ui\event_listener.h" />
     <ClInclude Include="..\..\include\moth_ui\group.h" />
+    <ClInclude Include="..\..\include\moth_ui\iimage.h" />
+    <ClInclude Include="..\..\include\moth_ui\iimage_factory.h" />
+    <ClInclude Include="..\..\include\moth_ui\irenderer.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout_entity.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_group.h" />
@@ -130,9 +132,7 @@
     <ClInclude Include="..\..\include\moth_ui\utils\imgui_ext_inspect.h" />
     <ClInclude Include="..\..\include\moth_ui\utils\math_utils.h" />
     <ClInclude Include="..\..\include\moth_ui\utils\rect.h" />
-    <ClInclude Include="..\..\include\moth_ui\utils\SDL_FontCache.h" />
     <ClInclude Include="..\..\include\moth_ui\utils\serialize_utils.h" />
-    <ClInclude Include="..\..\include\moth_ui\utils\smart_sdl.h" />
     <ClInclude Include="..\..\include\moth_ui\utils\vec2.h" />
     <ClInclude Include="..\..\src\common.h" />
   </ItemGroup>

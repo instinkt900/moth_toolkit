@@ -19,8 +19,7 @@ set(SOURCES ${SOURCES}
 	external/imgui/backends/imgui_impl_sdlrenderer.cpp
 	external/imgui/backends/imgui_impl_sdl.cpp
 	src/animation_controller.cpp
-	src/events/event.cpp
-	src/events/event_key.cpp
+	src/context.cpp
 	src/group.cpp
 	src/imgui_ext/imgui_ext.cpp
 	src/imgui_ext/imgui_ext_focus.cpp
@@ -31,7 +30,6 @@ set(SOURCES ${SOURCES}
 	src/layouts/layout_entity_image.cpp
 	src/node.cpp
 	src/node_image.cpp
-	src/SDL_FontCache.c
 )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
@@ -39,4 +37,4 @@ target_include_directories(${PROJECT_NAME} PUBLIC include)
 target_include_directories(${PROJECT_NAME} PRIVATE src)
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/W3")
-set_source_files_properties(src/SDL_FontCache.c PROPERTIES COMPILE_FLAGS "/W0")
+

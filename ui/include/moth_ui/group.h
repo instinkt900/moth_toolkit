@@ -11,7 +11,7 @@ namespace ui {
 
         bool OnEvent(Event const& event) override;
         void Update(uint32_t ticks) override;
-        void Draw(SDL_Renderer& renderer) override;
+        void Draw() override;
 
         void UpdateChildBounds() override;
 

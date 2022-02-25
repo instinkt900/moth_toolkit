@@ -136,8 +136,6 @@ enum class Key {
     Ralt,
 };
 
-Key FromSDLKey(SDL_Keycode const& code);
-
 class EventKey : public Event {
 public:
     EventKey(KeyAction action, Key key)

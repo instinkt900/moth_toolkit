@@ -22,8 +22,6 @@ public:
     int GetType() const { return m_type; }
     virtual std::unique_ptr<Event> Clone() const = 0;
 
-    static std::unique_ptr<Event> FromSDL(SDL_Event const& event);
-
 protected:
     int m_type;
 };

@@ -6,16 +6,6 @@ template <typename T>
 struct Rect {
     Vec2<T> topLeft;
     Vec2<T> bottomRight;
-
-    template <typename U = T, std::enable_if_t<std::is_same_v<U, int>, bool> = true>
-    explicit operator SDL_Rect() const {
-        return SDL_Rect{ topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y };
-    }
-
-    template <typename U = T, std::enable_if_t<std::is_same_v<U, float>, bool> = true>
-    explicit operator SDL_FRect() const {
-        return SDL_FRect{ topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y };
-    }
 };
 
 using IntRect = Rect<int>;

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "moth_ui/utils/smart_sdl.h"
-
 namespace imgui_ext {
     inline void Inspect(char const* name, bool& value) {
         ImGui::Checkbox(name, &value);
@@ -25,19 +23,6 @@ namespace imgui_ext {
 
     inline void Inspect(char const* name, std::string const& value) {
         ImGui::LabelText(name, "%s", value.c_str());
-    }
-
-    inline void Inspect(char const* name, SDL_Rect& value) {
-        if (ImGui::CollapsingHeader(name)) {
-            Inspect("x", value.x);
-            Inspect("y", value.y);
-            Inspect("w", value.w);
-            Inspect("h", value.h);
-        }
-    }
-
-    inline void Inspect(char const* name, TextureRef& value) {
-        ImGui::Image(value.get(), ImVec2(100, 100));
     }
 
     template <typename T>

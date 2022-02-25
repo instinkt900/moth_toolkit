@@ -111,6 +111,27 @@
     <ClInclude Include="..\..\external\imgui\backends\imgui_impl_sdlrenderer.h">
       <Filter>imgui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\editor\src\image.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\image_factory.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\SDL_FontCache.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\smart_sdl.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\ui_renderer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\utils.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\event_factory.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\editor\src\game.cpp">
@@ -193,6 +214,21 @@
     </ClCompile>
     <ClCompile Include="..\..\external\imgui\backends\imgui_impl_sdlrenderer.cpp">
       <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\image.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\SDL_FontCache.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\image_factory.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\ui_renderer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\event_factory.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

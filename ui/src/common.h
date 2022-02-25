@@ -5,9 +5,6 @@
 #include <string>
 #include <fstream>
 
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
 #include <nlohmann/json.hpp>
 #include <fmt/format.h>
 #include <imgui.h>
@@ -17,3 +14,4 @@
 #include <range/v3/algorithm/find_if.hpp>
 #include <range/v3/algorithm/sort.hpp>
 
+#include "moth_ui/utils/serialize_utils.h"

@@ -6,7 +6,7 @@
 #include "moth_ui/animation_clip.h"
 #include "moth_ui/utils/imgui_ext_inspect.h"
 
-namespace ui {
+namespace moth_ui {
     LayoutEntityGroup::LayoutEntityGroup(LayoutRect const& initialBounds)
         : LayoutEntity(initialBounds) {
     }

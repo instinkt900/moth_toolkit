@@ -4,7 +4,7 @@
 #include "moth_ui/animation_clip.h"
 #include "moth_ui/event_dispatch.h"
 
-namespace ui {
+namespace moth_ui {
     Group::Group() {
     }
 

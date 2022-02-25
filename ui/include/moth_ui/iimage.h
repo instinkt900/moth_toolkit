@@ -2,7 +2,7 @@
 
 #include "moth_ui/utils/vec2.h"
 
-namespace ui {
+namespace moth_ui {
     class IImage {
     public:
         virtual ~IImage() = default;

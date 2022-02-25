@@ -1,8 +1,10 @@
 #pragma once
 
-class Event;
+#include "ui_fwd.h"
 
-class EventListener {
-public:
-    virtual bool OnEvent(Event const& event) = 0;
-};
+namespace moth_ui {
+    class EventListener {
+    public:
+        virtual bool OnEvent(Event const& event) = 0;
+    };
+}

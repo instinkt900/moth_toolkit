@@ -1,8 +1,10 @@
 #pragma once
 
-namespace ui {
+namespace moth_ui {
     class IImage;
 
+    class Event;
+    
     class Node;
     class Group;
     class NodeImage;

@@ -2,7 +2,7 @@
 
 #include "moth_ui/utils/rect.h"
 
-namespace ui {
+namespace moth_ui {
     enum class LayoutEntityType {
         Entity,
         Group,

@@ -3,7 +3,7 @@
 #include "moth_ui/utils/rect.h"
 #include "moth_ui/iimage.h"
 
-namespace ui {
+namespace moth_ui {
     class IRenderer {
     public:
         virtual ~IRenderer() = default;

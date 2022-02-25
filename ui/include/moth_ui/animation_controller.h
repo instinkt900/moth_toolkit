@@ -3,7 +3,7 @@
 #include "moth_ui/animation_track.h"
 #include "moth_ui/ui_fwd.h"
 
-namespace ui {
+namespace moth_ui {
     class AnimationTrackController {
     public:
         AnimationTrackController(float& target, AnimationTrack& track);

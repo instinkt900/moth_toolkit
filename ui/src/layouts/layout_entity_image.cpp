@@ -2,7 +2,7 @@
 #include "moth_ui/layout/layout_entity_image.h"
 #include "moth_ui/node_image.h"
 
-namespace ui {
+namespace moth_ui {
     LayoutEntityImage::LayoutEntityImage(LayoutRect const& initialBounds)
         : LayoutEntity(initialBounds) {
     }

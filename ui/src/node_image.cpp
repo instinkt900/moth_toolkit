@@ -9,10 +9,10 @@
 
 namespace {
     ImGui::FileBrowser s_fileBrowser;
-    ui::NodeImage* s_loadingNodeImage = nullptr;
+    moth_ui::NodeImage* s_loadingNodeImage = nullptr;
 }
 
-namespace ui {
+namespace moth_ui {
     NodeImage::NodeImage() {
     }
 

@@ -16,8 +16,6 @@ set(SOURCES ${SOURCES}
 	external/imgui/imgui_draw.cpp
 	external/imgui/imgui_tables.cpp
 	external/imgui/imgui_widgets.cpp
-	external/imgui/backends/imgui_impl_sdlrenderer.cpp
-	external/imgui/backends/imgui_impl_sdl.cpp
 	src/animation_controller.cpp
 	src/context.cpp
 	src/group.cpp

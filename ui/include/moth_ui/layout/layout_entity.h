@@ -4,7 +4,7 @@
 #include "moth_ui/animation_track.h"
 #include "moth_ui/layout/layout_types.h"
 
-namespace ui {
+namespace moth_ui {
     class LayoutEntity : public std::enable_shared_from_this<LayoutEntity> {
     public:
         explicit LayoutEntity(LayoutRect const& initialBounds);

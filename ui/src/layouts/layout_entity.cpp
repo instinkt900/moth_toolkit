@@ -4,7 +4,7 @@
 #include "moth_ui/node.h"
 #include "moth_ui/utils/imgui_ext_inspect.h"
 
-namespace ui {
+namespace moth_ui {
     LayoutEntity::LayoutEntity(LayoutRect const& initialBounds) {
         InitTracks(initialBounds);
     }

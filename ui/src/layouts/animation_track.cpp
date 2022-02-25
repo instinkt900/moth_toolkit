@@ -3,7 +3,7 @@
 #include "moth_ui/animation_clip.h"
 #include "moth_ui/utils/math_utils.h"
 
-namespace ui {
+namespace moth_ui {
     AnimationTrack::AnimationTrack(Target target, float initialValue)
         : m_target(target) {
         m_keyframes.push_back({ 0, initialValue });

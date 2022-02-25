@@ -2,7 +2,7 @@
 
 #include "layout_entity.h"
 
-namespace ui {
+namespace moth_ui {
     class LayoutEntityGroup : public LayoutEntity {
     public:
         LayoutEntityGroup(LayoutRect const& initialBounds);

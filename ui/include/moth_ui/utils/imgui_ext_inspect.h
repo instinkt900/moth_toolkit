@@ -49,7 +49,7 @@ namespace imgui_ext {
         }
     }
 
-    inline bool Inspect(char const* label, ui::LayoutRect& widgetBounds) {
+    inline bool Inspect(char const* label, moth_ui::LayoutRect& widgetBounds) {
         bool changed = false;
         ImGui::PushID(label);
         if (ImGui::CollapsingHeader(label)) {
@@ -76,7 +76,7 @@ namespace imgui_ext {
         return changed;
     }
 
-    inline bool Inspect(char const* label, IntRect& widgetRect) {
+    inline bool Inspect(char const* label, moth_ui::IntRect& widgetRect) {
         bool changed = false;
         ImGui::PushID(label);
         if (ImGui::CollapsingHeader(label)) {

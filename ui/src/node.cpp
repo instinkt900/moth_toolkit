@@ -6,7 +6,7 @@
 #include "moth_ui/utils/imgui_ext_inspect.h"
 #include "moth_ui/context.h"
 
-namespace ui {
+namespace moth_ui {
     Node::Node() {
     }
 

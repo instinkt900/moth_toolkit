@@ -2,7 +2,7 @@
 
 #include "iimage.h"
 
-namespace ui {
+namespace moth_ui {
     class IImageFactory {
     public:
         virtual ~IImageFactory() = default;

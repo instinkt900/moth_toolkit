@@ -2,7 +2,7 @@
 
 #include "node.h"
 
-namespace ui {
+namespace moth_ui {
     class Group : public Node {
     public:
         Group();

@@ -5,7 +5,7 @@
 #include "moth_ui/animation_clip.h"
 #include "moth_ui/utils/serialize_utils.h"
 
-namespace ui {
+namespace moth_ui {
     std::unique_ptr<LayoutEntity> LoadEntity(nlohmann::json const& json, LayoutEntityGroup* parent) {
         std::unique_ptr<LayoutEntity> entity;
 

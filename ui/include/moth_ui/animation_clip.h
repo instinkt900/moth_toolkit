@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ui {
+namespace moth_ui {
     struct AnimationClip {
         AnimationClip() = default;
 

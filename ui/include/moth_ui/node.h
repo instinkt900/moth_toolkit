@@ -4,7 +4,7 @@
 #include "layout/layout_types.h"
 #include "ui_fwd.h"
 
-namespace ui {
+namespace moth_ui {
     class Node : public EventListener {
     public:
         Node();

@@ -4,7 +4,7 @@
 #include "moth_ui/utils/vec2.h"
 
 namespace imgui_ext {
-    using namespace ui;
+    using namespace moth_ui;
 
     bool InputString(char const* label, std::string* str) {
         static char buffer[1024];
@@ -16,7 +16,7 @@ namespace imgui_ext {
         return false;
     }
 
-    bool InputKeyframeValue(char const* label, ui::KeyframeValue* value) {
+    bool InputKeyframeValue(char const* label, KeyframeValue* value) {
         if (value->index() == 0) {
             return ImGui::InputFloat(label, &std::get<float>(*value));
         } else {

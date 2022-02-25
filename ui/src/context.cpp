@@ -1,7 +1,7 @@
 #include "common.h"
 #include "moth_ui/context.h"
 
-namespace ui {
+namespace moth_ui {
     std::unique_ptr<Context> Context::s_currentContext;
 
     void Context::Init(std::unique_ptr<IImageFactory> imageFactory, std::unique_ptr<IRenderer> renderer) {

@@ -3,7 +3,7 @@
 #include "iimage_factory.h"
 #include "irenderer.h"
 
-namespace ui {
+namespace moth_ui {
     class Context {
     public:
         static void Init(std::unique_ptr<IImageFactory> imageFactory, std::unique_ptr<IRenderer> renderer);

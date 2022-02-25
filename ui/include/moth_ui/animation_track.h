@@ -24,7 +24,7 @@ namespace nlohmann {
     };
 }
 
-namespace ui {
+namespace moth_ui {
     struct AnimationClip;
 
     using KeyframeValue = std::variant<float, std::string>;

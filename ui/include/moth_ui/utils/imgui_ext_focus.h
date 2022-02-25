@@ -11,6 +11,6 @@ namespace imgui_ext {
     void FocusGroupInputText(char const* label, std::string const& target, std::function<void(std::string const&)> const& onChanged, std::function<void()> const& onLostFocus);
     void FocusGroupInputInt(char const* label, int value, std::function<void(int)> const& onChanged, std::function<void()> const& onLostFocus);
     void FocusGroupInputFloat(char const* label, float value, std::function<void(float)> const& onChanged, std::function<void()> const& onLostFocus);
-    void FocusGroupInputLayoutRect(char const* label, ui::LayoutRect value, std::function<void(ui::LayoutRect const&)> const& onChanged, std::function<void()> const& onLostFocus);
+    void FocusGroupInputLayoutRect(char const* label, moth_ui::LayoutRect value, std::function<void(moth_ui::LayoutRect const&)> const& onChanged, std::function<void()> const& onLostFocus);
     void FocusGroupEnd();
 }

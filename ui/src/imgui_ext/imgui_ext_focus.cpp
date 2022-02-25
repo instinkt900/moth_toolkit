@@ -12,7 +12,7 @@ namespace {
 }
 
 namespace imgui_ext {
-    using namespace ui;
+    using namespace moth_ui;
 
     void FocusGroupBegin(FocusGroupContext* context) {
         g_focusContext.ExistingContext = context;

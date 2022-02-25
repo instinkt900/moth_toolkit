@@ -5,7 +5,7 @@
 #include "moth_ui/events/event_animation.h"
 
 namespace {
-    using namespace ui;
+    using namespace moth_ui;
 
     float& GetTargetReference(Node* node, AnimationTrack::Target target) {
         auto& layoutRect = node->GetLayoutRect();
@@ -34,7 +34,7 @@ namespace {
     }
 }
 
-namespace ui {
+namespace moth_ui {
     AnimationTrackController::AnimationTrackController(float& target, AnimationTrack& track)
         : m_target(target)
         , m_track(track) {

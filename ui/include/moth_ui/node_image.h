@@ -12,9 +12,15 @@ namespace moth_ui {
         void Load(char const* path);
         void Draw() override;
 
+        void ReloadEntity() override;
+        IImage* GetImage() const {
+            return m_image.get();
+        }
+
         void DebugDraw();
 
     protected:
         std::unique_ptr<IImage> m_image;
+        IntRect m_sourceRect;
     };
 }

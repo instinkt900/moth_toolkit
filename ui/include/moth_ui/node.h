@@ -36,6 +36,8 @@ namespace moth_ui {
 
         void RefreshBounds(int frameNo);
         void RecalculateBounds();
+        virtual void ReloadEntity();
+
         bool IsInBounds(IntVec2 const& point) const;
         IntVec2 TranslatePosition(IntVec2 const& point) const;
 

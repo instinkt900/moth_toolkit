@@ -58,6 +58,34 @@ namespace imgui_ext {
         }
     }
 
+    void FocusGroupInputRect(char const* label, IntRect value, std::function<void(IntRect const&)> const& onChanged, std::function<void()> const& onLostFocus) {
+        g_focusContext.LostFocusCallbacks[label] = onLostFocus;
+
+        bool changed = false;
+        if (ImGui::CollapsingHeader(label)) {
+            changed |= ImGui::InputInt("Top", &value.topLeft.y);
+            if (ImGui::IsItemFocused()) {
+                g_focusContext.NewFocusLabel = label;
+            }
+            changed |= ImGui::InputInt("Left", &value.topLeft.x);
+            if (ImGui::IsItemFocused()) {
+                g_focusContext.NewFocusLabel = label;
+            }
+            changed |= ImGui::InputInt("Bottom", &value.bottomRight.y);
+            if (ImGui::IsItemFocused()) {
+                g_focusContext.NewFocusLabel = label;
+            }
+            changed |= ImGui::InputInt("Right", &value.bottomRight.x);
+            if (ImGui::IsItemFocused()) {
+                g_focusContext.NewFocusLabel = label;
+            }
+        }
+
+        if (changed) {
+            onChanged(value);
+        }
+    }
+
     void FocusGroupInputLayoutRect(char const* label, LayoutRect value, std::function<void(LayoutRect const&)> const& onChanged, std::function<void()> const& onLostFocus) {
         g_focusContext.LostFocusCallbacks[label] = onLostFocus;
 

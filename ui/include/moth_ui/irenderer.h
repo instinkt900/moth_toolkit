@@ -11,6 +11,6 @@ namespace moth_ui {
         virtual void SetRenderColor(uint32_t argb) = 0;
         virtual void RenderRect(IntRect const& rect) = 0;
         virtual void RenderFilledRect(IntRect const& rect) = 0;
-        virtual void RenderImage(IImage& image, IntRect const& destRect) = 0;
+        virtual void RenderImage(IImage& image, IntRect const& sourceRect, IntRect const& destRect) = 0;
     };
 }

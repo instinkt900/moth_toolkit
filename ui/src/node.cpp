@@ -73,6 +73,12 @@ namespace moth_ui {
         UpdateChildBounds();
     }
 
+    void Node::ReloadEntity() {
+        m_id = m_layout->GetId();
+        m_layoutRect = m_layout->GetBoundsAtFrame(0);
+        m_animationController = std::make_unique<AnimationController>(this, m_layout->GetAnimationTracks());
+    }
+
     bool Node::IsInBounds(IntVec2 const& point) const {
         return IsInRect(point, m_screenRect);
     }

@@ -63,6 +63,9 @@
     <ClCompile Include="..\..\src\context.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\include\moth_ui\color.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\common.h">
@@ -162,6 +165,9 @@
       <Filter>include\moth_ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\moth_ui\irenderer.h">
+      <Filter>include\moth_ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\color.h">
       <Filter>include\moth_ui</Filter>
     </ClInclude>
   </ItemGroup>

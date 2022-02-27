@@ -5,40 +5,50 @@
 namespace moth_ui {
     class Color {
     public:
+        static Color FromARGB(uint32_t argb);
+        static Color FromRGBA(uint32_t rgba);
+
         Color();
-        Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+        Color(float r, float g, float b, float a);
 
-        void SetR(uint8_t r);
-        void SetG(uint8_t g);
-        void SetB(uint8_t b);
-        void SetA(uint8_t a);
+        void SetR(float r);
+        void SetG(float g);
+        void SetB(float b);
+        void SetA(float a);
 
-        void SetRf(float r);
-        void SetGf(float g);
-        void SetBf(float b);
-        void SetAf(float a);
-
-        uint8_t GetR() const;
-        uint8_t GetG() const;
-        uint8_t GetB() const;
-        uint8_t GetA() const;
-
-        float GetRf() const;
-        float GetGf() const;
-        float GetBf() const;
-        float GetAf() const;
+        float GetR() const;
+        float GetG() const;
+        float GetB() const;
+        float GetA() const;
 
         uint32_t GetRGBA() const;
         uint32_t GetARGB() const;
 
-        static Color FromARGB(uint32_t argb);
-        static Color FromRGBA(uint32_t rgba);
-        static Color FromRGBA(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-        static Color FromRGBAf(float r, float g, float b, float a);
+        Color& operator+=(Color const& other);
+        Color& operator-=(Color const& other);
+        Color& operator*=(Color const& other);
+        Color& operator/=(Color const& other);
 
-        // todo maths expressions etc
+        Color& operator*=(float mult);
+        Color& operator/=(float divide);
+
+        Color operator+(Color const& other) const;
+        Color operator-(Color const& other) const;
+        Color operator*(Color const& other) const;
+        Color operator/(Color const& other) const;
+
+        Color operator*(float mult) const;
+        Color operator/(float divide) const;
+
+        bool operator==(Color const& other) const;
+        bool operator!=(Color const& other) const;
 
     private:
-        uint32_t m_rgba = 0;
+        float m_red = 0;
+        float m_green = 0;
+        float m_blue = 0;
+        float m_alpha = 0;
+
+        void Sanitize();
     };
 }

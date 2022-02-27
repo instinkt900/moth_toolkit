@@ -4,4 +4,7 @@
     <ClCompile Include="..\..\tests\src\test_main.cpp" />
     <ClCompile Include="..\..\tests\src\test_color.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\tests\src\string_helpers.h" />
+  </ItemGroup>
 </Project>

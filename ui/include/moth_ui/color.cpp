@@ -2,95 +2,12 @@
 #include "color.h"
 
 namespace moth_ui {
-    Color::Color() {
-    }
-
-    Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-        : m_rgba(static_cast<uint32_t>(r) << 24 | static_cast<uint32_t>(g) << 16 | static_cast<uint32_t>(b) << 8 | static_cast<uint32_t>(a)) {
-    }
-
-    void Color::SetR(uint8_t r) {
-        m_rgba = (m_rgba & 0x00FFFFFF) | (static_cast<uint32_t>(r) << 24);
-    }
-
-    void Color::SetG(uint8_t g) {
-        m_rgba = (m_rgba & 0xFF00FFFF) | (static_cast<uint32_t>(g) << 16);
-    }
-
-    void Color::SetB(uint8_t b) {
-        m_rgba = (m_rgba & 0xFFFF00FF) | (static_cast<uint32_t>(b) << 8);
-    }
-
-    void Color::SetA(uint8_t a) {
-        m_rgba = (m_rgba & 0xFFFFFF00) | static_cast<uint32_t>(a);
-    }
-
-    void Color::SetRf(float r) {
-        SetR(static_cast<uint8_t>(std::round(std::clamp(r, 0.0f, 1.0f) * 255)));
-    }
-
-    void Color::SetGf(float g) {
-        SetG(static_cast<uint8_t>(std::round(std::clamp(g, 0.0f, 1.0f) * 255)));
-    }
-
-    void Color::SetBf(float b) {
-        SetB(static_cast<uint8_t>(std::round(std::clamp(b, 0.0f, 1.0f) * 255)));
-    }
-
-    void Color::SetAf(float a) {
-        SetA(static_cast<uint8_t>(std::round(std::clamp(a, 0.0f, 1.0f) * 255)));
-    }
-
-    uint8_t Color::GetR() const {
-        return static_cast<uint8_t>((m_rgba & 0xFF000000) >> 24);
-    }
-
-    uint8_t Color::GetG() const {
-        return static_cast<uint8_t>((m_rgba & 0x00FF0000) >> 16);
-    }
-
-    uint8_t Color::GetB() const {
-        return static_cast<uint8_t>((m_rgba & 0x0000FF00) >> 8);
-    }
-
-    uint8_t Color::GetA() const {
-        return static_cast<uint8_t>(m_rgba & 0x000000FF);
-    }
-
-    float Color::GetRf() const {
-        return GetR() / 255.0f;
-    }
-
-    float Color::GetGf() const {
-        return GetG() / 255.0f;
-    }
-
-    float Color::GetBf() const {
-        return GetB() / 255.0f;
-    }
-
-    float Color::GetAf() const {
-        return GetA() / 255.0f;
-    }
-
-    uint32_t Color::GetRGBA() const {
-        return m_rgba;
-    }
-
-    uint32_t Color::GetARGB() const {
-        uint8_t const r = (m_rgba & 0xFF000000) >> 24;
-        uint8_t const g = (m_rgba & 0x00FF0000) >> 16;
-        uint8_t const b = (m_rgba & 0x0000FF00) >> 8;
-        uint8_t const a = (m_rgba & 0x000000FF);
-        return static_cast<uint32_t>(a << 24) | static_cast<uint32_t>(r << 16) | static_cast<uint32_t>(g << 8) | static_cast<uint32_t>(b);
-    }
-
     Color Color::FromARGB(uint32_t argb) {
         uint8_t const a = (argb & 0xFF000000) >> 24;
         uint8_t const r = (argb & 0x00FF0000) >> 16;
         uint8_t const g = (argb & 0x0000FF00) >> 8;
         uint8_t const b = (argb & 0x000000FF);
-        return Color(r, g, b, a);
+        return Color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
     }
 
     Color Color::FromRGBA(uint32_t rgba) {
@@ -98,18 +15,170 @@ namespace moth_ui {
         uint8_t const g = (rgba & 0x00FF0000) >> 16;
         uint8_t const b = (rgba & 0x0000FF00) >> 8;
         uint8_t const a = (rgba & 0x000000FF);
-        return Color(r, g, b, a);
+        return Color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
     }
 
-    Color Color::FromRGBA(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-        return Color(r, g, b, a);
+    Color::Color() {
     }
 
-    Color Color::FromRGBAf(float r, float g, float b, float a) {
-        uint8_t const rr = static_cast<uint8_t>(std::round(std::clamp(r, 0.0f, 1.0f) * 255.0f));
-        uint8_t const gg = static_cast<uint8_t>(std::round(std::clamp(g, 0.0f, 1.0f) * 255.0f));
-        uint8_t const bb = static_cast<uint8_t>(std::round(std::clamp(b, 0.0f, 1.0f) * 255.0f));
-        uint8_t const aa = static_cast<uint8_t>(std::round(std::clamp(a, 0.0f, 1.0f) * 255.0f));
-        return Color(rr, gg, bb, aa);
+    Color::Color(float r, float g, float b, float a)
+        : m_red(r)
+        , m_green(g)
+        , m_blue(b)
+        , m_alpha(a) {
+        Sanitize();
+    }
+
+    void Color::SetR(float r) {
+        m_red = std::clamp(r, 0.0f, 1.0f);
+    }
+
+    void Color::SetG(float g) {
+        m_green = std::clamp(g, 0.0f, 1.0f);
+    }
+
+    void Color::SetB(float b) {
+        m_blue = std::clamp(b, 0.0f, 1.0f);
+    }
+
+    void Color::SetA(float a) {
+        m_alpha = std::clamp(a, 0.0f, 1.0f);
+    }
+
+    float Color::GetR() const {
+        return m_red;
+    }
+
+    float Color::GetG() const {
+        return m_green;
+    }
+
+    float Color::GetB() const {
+        return m_blue;
+    }
+
+    float Color::GetA() const {
+        return m_alpha;
+    }
+
+    uint32_t Color::GetRGBA() const {
+        uint32_t const r = static_cast<uint32_t>(std::round(m_red * 255));
+        uint32_t const g = static_cast<uint32_t>(std::round(m_green * 255));
+        uint32_t const b = static_cast<uint32_t>(std::round(m_blue * 255));
+        uint32_t const a = static_cast<uint32_t>(std::round(m_alpha * 255));
+        return (r << 24) | (g << 16) | (b << 8) | a;
+    }
+
+    uint32_t Color::GetARGB() const {
+        uint32_t const r = static_cast<uint32_t>(std::round(m_red * 255));
+        uint32_t const g = static_cast<uint32_t>(std::round(m_green * 255));
+        uint32_t const b = static_cast<uint32_t>(std::round(m_blue * 255));
+        uint32_t const a = static_cast<uint32_t>(std::round(m_alpha * 255));
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    }
+
+    Color& Color::operator+=(Color const& other) {
+        m_red += other.m_red;
+        m_green += other.m_green;
+        m_blue += other.m_blue;
+        m_alpha += other.m_alpha;
+        Sanitize();
+        return *this;
+    }
+
+    Color& Color::operator-=(Color const& other) {
+        m_red -= other.m_red;
+        m_green -= other.m_green;
+        m_blue -= other.m_blue;
+        m_alpha -= other.m_alpha;
+        Sanitize();
+        return *this;
+    }
+
+    Color& Color::operator*=(Color const& other) {
+        m_red *= other.m_red;
+        m_green *= other.m_green;
+        m_blue *= other.m_blue;
+        m_alpha *= other.m_alpha;
+        Sanitize();
+        return *this;
+    }
+
+    Color& Color::operator/=(Color const& other) {
+        m_red /= other.m_red;
+        m_green /= other.m_green;
+        m_blue /= other.m_blue;
+        m_alpha /= other.m_alpha;
+        Sanitize();
+        return *this;
+    }
+
+    Color& Color::operator*=(float mult) {
+        m_red *= mult;
+        m_green *= mult;
+        m_blue *= mult;
+        m_alpha *= mult;
+        Sanitize();
+        return *this;
+    }
+
+    Color& Color::operator/=(float divide) {
+        m_red /= divide;
+        m_green /= divide;
+        m_blue /= divide;
+        m_alpha /= divide;
+        Sanitize();
+        return *this;
+    }
+
+    Color Color::operator+(Color const& other) const {
+        Color result = *this;
+        result += other;
+        return result;
+    }
+
+    Color Color::operator-(Color const& other) const {
+        Color result = *this;
+        result -= other;
+        return result;
+    }
+
+    Color Color::operator*(Color const& other) const {
+        Color result = *this;
+        result *= other;
+        return result;
+    }
+
+    Color Color::operator/(Color const& other) const {
+        Color result = *this;
+        result /= other;
+        return result;
+    }
+
+    Color Color::operator*(float mult) const {
+        Color result = *this;
+        result *= mult;
+        return result;
+    }
+
+    Color Color::operator/(float divide) const {
+        Color result = *this;
+        result /= divide;
+        return result;
+    }
+
+    bool Color::operator==(Color const& other) const {
+        return m_red == other.m_red && m_green == other.m_green && m_blue == other.m_blue && m_alpha == other.m_alpha;
+    }
+
+    bool Color::operator!=(Color const& other) const {
+        return !(*this == other);
+    }
+
+    void Color::Sanitize() {
+        m_red = std::clamp(m_red, 0.0f, 1.0f);
+        m_green = std::clamp(m_green, 0.0f, 1.0f);
+        m_blue = std::clamp(m_blue, 0.0f, 1.0f);
+        m_alpha = std::clamp(m_alpha, 0.0f, 1.0f);
     }
 }

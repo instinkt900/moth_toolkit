@@ -4,3 +4,7 @@ Moth UI TODO
 Color track on nodes that can animate etc.
 Interpolation types on keyframes. in/out etc.
 Change Color to be just a Vec4. perhaps extend it with Clamp() or something to clamp to 0-1
+Readme.md
+Adding more documentation
+Update tests for better coverage. hook in to cppcoverage.
+Update cmake to auto build and run tests.

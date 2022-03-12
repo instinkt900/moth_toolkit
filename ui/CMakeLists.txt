@@ -17,6 +17,7 @@ set(SOURCES ${SOURCES}
 	external/imgui/imgui_tables.cpp
 	external/imgui/imgui_widgets.cpp
 	src/animation_controller.cpp
+	src/color.cpp
 	src/context.cpp
 	src/group.cpp
 	src/imgui_ext/imgui_ext.cpp

@@ -63,7 +63,7 @@
     <ClCompile Include="..\..\src\context.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\include\moth_ui\color.cpp">
+    <ClCompile Include="..\..\src\color.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

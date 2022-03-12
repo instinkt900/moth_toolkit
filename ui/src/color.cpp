@@ -1,5 +1,5 @@
 #include "common.h"
-#include "color.h"
+#include "moth_ui/color.h"
 
 namespace moth_ui {
 

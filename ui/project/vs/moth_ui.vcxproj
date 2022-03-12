@@ -88,8 +88,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\include\moth_ui\color.cpp" />
     <ClCompile Include="..\..\src\animation_controller.cpp" />
+    <ClCompile Include="..\..\src\color.cpp" />
     <ClCompile Include="..\..\src\context.cpp" />
     <ClCompile Include="..\..\src\group.cpp" />
     <ClCompile Include="..\..\src\imgui_ext\imgui_ext.cpp" />

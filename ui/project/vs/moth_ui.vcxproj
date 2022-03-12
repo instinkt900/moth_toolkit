@@ -133,6 +133,7 @@
     <ClInclude Include="..\..\include\moth_ui\utils\imgui_ext.h" />
     <ClInclude Include="..\..\include\moth_ui\utils\imgui_ext_focus.h" />
     <ClInclude Include="..\..\include\moth_ui\utils\imgui_ext_inspect.h" />
+    <ClInclude Include="..\..\include\moth_ui\utils\interp.h" />
     <ClInclude Include="..\..\include\moth_ui\utils\math_utils.h" />
     <ClInclude Include="..\..\include\moth_ui\utils\rect.h" />
     <ClInclude Include="..\..\include\moth_ui\utils\serialize_utils.h" />

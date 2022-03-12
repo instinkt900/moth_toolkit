@@ -1,6 +1,7 @@
 #pragma once
 
 #include <variant>
+#include "moth_ui/utils/interp.h"
 
 namespace nlohmann {
     template <>
@@ -32,7 +33,8 @@ namespace moth_ui {
     class Keyframe {
     public:
         int m_frame;
-        std::variant<float, std::string> m_value;
+        KeyframeValue m_value;
+        InterpType m_interpType = InterpType::Linear;
 
         float m_time; // calculated based on clips
 

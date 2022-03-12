@@ -1,5 +1,7 @@
 #include "common.h"
 #include "moth_ui/utils/imgui_ext_focus.h"
+#include "moth_ui/utils/imgui_ext.h"
+#include "moth_ui/utils/imgui_ext_inspect.h"
 
 namespace {
     struct FocusContextDetails {
@@ -154,6 +156,38 @@ namespace imgui_ext {
                 rgba[0], rgba[1], rgba[2], rgba[3]
             };
             onChanged(newColor);
+        }
+
+        if (ImGui::IsItemFocused()) {
+            g_focusContext.NewFocusLabel = label;
+        }
+    }
+
+    void FocusGroupInputKeyframeValue(char const* label, moth_ui::KeyframeValue value, std::function<void(moth_ui::KeyframeValue const&)> const& onChanged, std::function<void()> const& onLostFocus) {
+        g_focusContext.LostFocusCallbacks[label] = onLostFocus;
+
+        bool changed = false;
+        if (value.index() == 0) {
+            changed = ImGui::InputFloat(label, &std::get<float>(value));
+        } else {
+            changed = InputString(label, &std::get<std::string>(value));
+        }
+
+        if (changed) {
+            onChanged(value);
+        }
+
+        if (ImGui::IsItemFocused()) {
+            g_focusContext.NewFocusLabel = label;
+        }
+    }
+
+    void FocusGroupInputInterpType(char const* label, moth_ui::InterpType value, std::function<void(moth_ui::InterpType const&)> const& onChanged, std::function<void()> const& onLostFocus) {
+        g_focusContext.LostFocusCallbacks[label] = onLostFocus;
+
+
+        if (Inspect(label, value)) {
+            onChanged(value);
         }
 
         if (ImGui::IsItemFocused()) {

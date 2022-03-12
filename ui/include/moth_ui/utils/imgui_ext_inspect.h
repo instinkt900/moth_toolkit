@@ -1,5 +1,7 @@
 #pragma once
 
+#include "imgui_ext.h"
+
 namespace imgui_ext {
     inline void Inspect(char const* name, bool& value) {
         ImGui::Checkbox(name, &value);
@@ -49,6 +51,25 @@ namespace imgui_ext {
         }
     }
 
+    template <typename T, std::enable_if_t<std::is_enum_v<T>, bool> = true>
+    inline bool Inspect(char const* label, T& value) {
+        bool changed = false;
+        std::string const enumValueStr(magic_enum::enum_name(value));
+        if (ImGui::BeginCombo(label, enumValueStr.c_str())) {
+            for (size_t i = 0; i < magic_enum::enum_count<T>(); ++i) {
+                auto const currentEnumValue = magic_enum::enum_value<T>(i);
+                bool selected = currentEnumValue == value;
+                std::string const currentValueStr(magic_enum::enum_name(currentEnumValue));
+                if (ImGui::Selectable(currentValueStr.c_str(), selected)) {
+                    value = currentEnumValue;
+                    changed = true;
+                }
+            }
+            ImGui::EndCombo();
+        }
+        return changed;
+    }
+
     inline bool Inspect(char const* label, moth_ui::LayoutRect& widgetBounds) {
         bool changed = false;
         ImGui::PushID(label);
@@ -95,4 +116,21 @@ namespace imgui_ext {
         ImGui::ColorEdit4(label, reinterpret_cast<float*>(&color));
     }
 
+    inline bool Inspect(char const* label, moth_ui::KeyframeValue& value) {
+        if (value.index() == 0) {
+            return ImGui::InputFloat(label, &std::get<float>(value));
+        } else {
+            return imgui_ext::InputString(label, &std::get<std::string>(value));
+        }
+    }
+
+    inline void Inspect(char const* label, moth_ui::Keyframe& keyframe) {
+        ImGui::PushID(label);
+        if (ImGui::CollapsingHeader(label)) {
+            Inspect("Frame", keyframe.m_frame);
+            Inspect("Value", keyframe.m_value);
+            Inspect("Interp", keyframe.m_interpType);
+        }
+        ImGui::PopID();
+    }
 }

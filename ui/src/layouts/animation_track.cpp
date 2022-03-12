@@ -103,7 +103,7 @@ namespace moth_ui {
             float const factor = totalTime == 0 ? 0 : deltaTime / totalTime;
             float const startValue = firstKeyframeIt->GetFloatValue();
             float const endValue = secondKeyframeIt->GetFloatValue();
-            value = lerp(startValue, endValue, factor);
+            value = Interp(startValue, endValue, factor, firstKeyframeIt->m_interpType);
         } else {
             // found one keyframe
             auto validKeyframeIt = firstKeyframeIt != endKeyframeIt ? firstKeyframeIt : secondKeyframeIt;
@@ -135,7 +135,7 @@ namespace moth_ui {
             float const factor = totalFrames == 0 ? 0 : deltaFrames / static_cast<float>(totalFrames);
             float const startValue = firstKeyframeIt->GetFloatValue();
             float const endValue = secondKeyframeIt->GetFloatValue();
-            value = lerp(startValue, endValue, factor);
+            value = Interp(startValue, endValue, factor, firstKeyframeIt->m_interpType);
         } else {
             // found one keyframe
             auto validKeyframeIt = firstKeyframeIt != endKeyframeIt ? firstKeyframeIt : secondKeyframeIt;

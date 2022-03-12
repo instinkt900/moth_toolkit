@@ -106,6 +106,7 @@
     <ClInclude Include="..\..\include\moth_ui\animation_clip.h" />
     <ClInclude Include="..\..\include\moth_ui\animation_controller.h" />
     <ClInclude Include="..\..\include\moth_ui\animation_track.h" />
+    <ClInclude Include="..\..\include\moth_ui\blend_mode.h" />
     <ClInclude Include="..\..\include\moth_ui\color.h" />
     <ClInclude Include="..\..\include\moth_ui\context.h" />
     <ClInclude Include="..\..\include\moth_ui\events\event.h" />

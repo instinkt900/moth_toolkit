@@ -140,6 +140,27 @@ namespace imgui_ext {
         }
     }
 
+    void FocusGroupInputColor(char const* label, moth_ui::Color const& value, std::function<void(moth_ui::Color const&)> const& onChanged, std::function<void()> const& onLostFocus) {
+        g_focusContext.LostFocusCallbacks[label] = onLostFocus;
+
+        float rgba[4];
+        rgba[0] = value.GetR();
+        rgba[1] = value.GetG();
+        rgba[2] = value.GetB();
+        rgba[3] = value.GetA();
+
+        if (ImGui::ColorEdit4(label, rgba, 0)) {
+            Color const newColor{
+                rgba[0], rgba[1], rgba[2], rgba[3]
+            };
+            onChanged(newColor);
+        }
+
+        if (ImGui::IsItemFocused()) {
+            g_focusContext.NewFocusLabel = label;
+        }
+    }
+
     void FocusGroupEnd() {
         if (!g_focusContext.ExistingContext->currentFocusLabel.empty() && g_focusContext.ExistingContext->currentFocusLabel != g_focusContext.NewFocusLabel) {
             auto const it = g_focusContext.LostFocusCallbacks.find(g_focusContext.ExistingContext->currentFocusLabel);

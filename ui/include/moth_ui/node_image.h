@@ -10,7 +10,6 @@ namespace moth_ui {
         virtual ~NodeImage();
 
         void Load(char const* path);
-        void Draw() override;
 
         void ReloadEntity() override;
         IImage* GetImage() const {
@@ -22,5 +21,7 @@ namespace moth_ui {
     protected:
         std::unique_ptr<IImage> m_image;
         IntRect m_sourceRect;
+
+        void DrawInternal() override;
     };
 }

@@ -26,7 +26,7 @@ namespace imgui_ext {
     }
 
     template <typename T>
-    void Inspect(char const* name, std::vector<T>& value) {
+    inline void Inspect(char const* name, std::vector<T>& value) {
         if (ImGui::CollapsingHeader(name)) {
             for (int i = 0; i < value.size(); ++i) {
                 auto const label = fmt::format("{}", i);
@@ -36,12 +36,12 @@ namespace imgui_ext {
     }
 
     template <typename T>
-    void Inspect(char const* name, std::function<T> const& value) {
+    inline void Inspect(char const* name, std::function<T> const& value) {
         ImGui::LabelText(name, "<function>");
     }
 
     template <typename T>
-    void Inspect(char const* name, T* value) {
+    inline void Inspect(char const* name, T* value) {
         if (nullptr == value) {
             ImGui::LabelText(name, "nullptr");
         } else {
@@ -89,6 +89,10 @@ namespace imgui_ext {
         }
         ImGui::PopID();
         return changed;
+    }
+
+    inline void Inspect(char const* label, moth_ui::Color& color) {
+        ImGui::ColorEdit4(label, reinterpret_cast<float*>(&color));
     }
 
 }

@@ -11,7 +11,6 @@ namespace moth_ui {
 
         bool OnEvent(Event const& event) override;
         void Update(uint32_t ticks) override;
-        void Draw() override;
 
         void UpdateChildBounds() override;
 
@@ -27,5 +26,7 @@ namespace moth_ui {
 
     protected:
         std::vector<std::shared_ptr<Node>> m_children;
+
+        void DrawInternal() override;
     };
 }

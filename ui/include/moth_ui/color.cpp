@@ -2,6 +2,13 @@
 #include "color.h"
 
 namespace moth_ui {
+
+    Color const Color::Red{ 1.0f, 0.0f, 0.0f, 1.0f };
+    Color const Color::Green{ 0.0f, 1.0f, 0.0f, 1.0f };
+    Color const Color::Blue{ 0.0f, 0.0f, 1.0f, 1.0f };
+    Color const Color::White{ 1.0f, 1.0f, 1.0f, 1.0f };
+    Color const Color::Black{ 0.0f, 0.0f, 0.0f, 1.0f };
+
     Color Color::FromARGB(uint32_t argb) {
         uint8_t const a = (argb & 0xFF000000) >> 24;
         uint8_t const r = (argb & 0x00FF0000) >> 16;

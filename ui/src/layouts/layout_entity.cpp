@@ -11,10 +11,12 @@ namespace moth_ui {
 
     LayoutEntity::LayoutEntity(LayoutEntityGroup* parent)
         : m_parent(parent) {
+        InitTracks({});
     }
 
     LayoutEntity::LayoutEntity(nlohmann::json const& json, LayoutEntityGroup* parent)
         : m_parent(parent) {
+        InitTracks({});
         Deserialize(json);
     }
 
@@ -81,6 +83,44 @@ namespace moth_ui {
         return bounds;
     }
 
+    Color LayoutEntity::GetColorAtTime(float time) const {
+        auto GetValue = [&](AnimationTrack::Target target) {
+            float value = 0;
+            auto const trackIt = m_tracks.find(target);
+            if (std::end(m_tracks) != trackIt) {
+                const auto track = trackIt->second;
+                value = track->GetValueAtTime(time);
+            }
+            return value;
+        };
+
+        Color color;
+        color.SetR(GetValue(AnimationTrack::Target::ColorRed));
+        color.SetG(GetValue(AnimationTrack::Target::ColorGreen));
+        color.SetB(GetValue(AnimationTrack::Target::ColorBlue));
+        color.SetA(GetValue(AnimationTrack::Target::ColorAlpha));
+        return color;
+    }
+
+    Color LayoutEntity::GetColorAtFrame(int frame) const {
+        auto GetValue = [&](AnimationTrack::Target target) {
+            float value = 0;
+            auto const trackIt = m_tracks.find(target);
+            if (std::end(m_tracks) != trackIt) {
+                const auto track = trackIt->second;
+                value = track->GetValueAtFrame(frame);
+            }
+            return value;
+        };
+
+        Color color;
+        color.SetR(GetValue(AnimationTrack::Target::ColorRed));
+        color.SetG(GetValue(AnimationTrack::Target::ColorGreen));
+        color.SetB(GetValue(AnimationTrack::Target::ColorBlue));
+        color.SetA(GetValue(AnimationTrack::Target::ColorAlpha));
+        return color;
+    }
+
     std::unique_ptr<Node> LayoutEntity::Instantiate() {
         return std::make_unique<Node>(shared_from_this());
     }
@@ -103,6 +143,10 @@ namespace moth_ui {
             std::make_pair(AnimationTrack::Target::LeftOffset, initialRect.offset.topLeft.x),
             std::make_pair(AnimationTrack::Target::BottomOffset, initialRect.offset.bottomRight.y),
             std::make_pair(AnimationTrack::Target::RightOffset, initialRect.offset.bottomRight.x),
+            std::make_pair(AnimationTrack::Target::ColorRed, 1.0f),
+            std::make_pair(AnimationTrack::Target::ColorGreen, 1.0f),
+            std::make_pair(AnimationTrack::Target::ColorBlue, 1.0f),
+            std::make_pair(AnimationTrack::Target::ColorAlpha, 1.0f),
         };
         if (std::end(m_tracks) == m_tracks.find(AnimationTrack::Target::Events)) {
             m_tracks.insert(std::make_pair(AnimationTrack::Target::Events, std::make_shared<AnimationTrack>(AnimationTrack::Target::Events)));
@@ -123,6 +167,7 @@ namespace moth_ui {
             trackJson.push_back(*track);
         }
         j["m_tracks"] = trackJson;
+        j["m_blend"] = m_blend;
         return j;
     }
 
@@ -133,9 +178,10 @@ namespace moth_ui {
     void LayoutEntity::Deserialize(nlohmann::json const& json) {
         auto const type = GetType();
         assert(json["type"] == type);
-        json["m_id"].get_to(m_id);
+        m_id = json.value("m_id", "");
+        m_blend = json.value("m_blend", BlendMode::Replace);
+
         if (json.contains("m_tracks")) {
-            m_tracks.clear();
             auto const* animationClips = m_parent ? &m_parent->GetAnimationClips() : nullptr;
             auto const& tracksJson = json["m_tracks"];
             for (auto&& trackJson : tracksJson) {
@@ -143,6 +189,7 @@ namespace moth_ui {
                 if (animationClips) {
                     track->UpdateTrackTimings(*animationClips);
                 }
+                m_tracks.erase(track->GetTarget());
                 m_tracks.insert(std::make_pair(track->GetTarget(), std::move(track)));
             }
         }

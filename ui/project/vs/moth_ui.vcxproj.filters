@@ -170,5 +170,8 @@
     <ClInclude Include="..\..\include\moth_ui\color.h">
       <Filter>include\moth_ui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\blend_mode.h">
+      <Filter>include\moth_ui</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

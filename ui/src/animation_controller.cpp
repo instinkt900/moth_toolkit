@@ -26,6 +26,14 @@ namespace {
             return layoutRect.anchor.topLeft.x;
         case AnimationTrack::Target::RightAnchor:
             return layoutRect.anchor.bottomRight.x;
+        case AnimationTrack::Target::ColorRed:
+            return node->GetColor().R();
+        case AnimationTrack::Target::ColorGreen:
+            return node->GetColor().G();
+        case AnimationTrack::Target::ColorBlue:
+            return node->GetColor().B();
+        case AnimationTrack::Target::ColorAlpha:
+            return node->GetColor().A();
         }
 
         // just a value dump for unknown targets

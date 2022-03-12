@@ -21,6 +21,11 @@ namespace moth_ui {
         float GetB() const;
         float GetA() const;
 
+        float& R() { return m_red; }
+        float& G() { return m_green; }
+        float& B() { return m_blue; }
+        float& A() { return m_alpha; }
+
         uint32_t GetRGBA() const;
         uint32_t GetARGB() const;
 
@@ -42,6 +47,12 @@ namespace moth_ui {
 
         bool operator==(Color const& other) const;
         bool operator!=(Color const& other) const;
+
+        static Color const Red;
+        static Color const Green;
+        static Color const Blue;
+        static Color const White;
+        static Color const Black;
 
     private:
         float m_red = 0;

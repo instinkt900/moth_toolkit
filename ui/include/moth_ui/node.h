@@ -2,6 +2,8 @@
 
 #include "event_listener.h"
 #include "layout/layout_types.h"
+#include "color.h"
+#include "blend_mode.h"
 #include "ui_fwd.h"
 
 namespace moth_ui {
@@ -34,12 +36,19 @@ namespace moth_ui {
         void SetScreenRect(IntRect const& rect);
         virtual void UpdateChildBounds() {}
 
-        void RefreshBounds(int frameNo);
+        void Refresh(int frameNo);
         void RecalculateBounds();
         virtual void ReloadEntity();
 
         bool IsInBounds(IntVec2 const& point) const;
         IntVec2 TranslatePosition(IntVec2 const& point) const;
+
+        void SetColor(Color const& color) { m_color = color; }
+        Color const& GetColor() const { return m_color; }
+        Color& GetColor() { return m_color; }
+
+        void SetBlendMode(BlendMode mode) { m_blend = mode; }
+        BlendMode GetBlendMode() const { return m_blend; }
 
         virtual bool SetAnimation(std::string const& name) { return false; }
         void SetAnimationClip(AnimationClip* clip);
@@ -59,6 +68,8 @@ namespace moth_ui {
 
         std::string m_id;
         LayoutRect m_layoutRect;
+        Color m_color = Color::White;
+        BlendMode m_blend = BlendMode::Replace;
 
         bool m_visible = true;
         bool m_showRect = false;
@@ -67,5 +78,7 @@ namespace moth_ui {
 
         std::unique_ptr<AnimationController> m_animationController;
         EventHandler m_eventHandler;
+
+        virtual void DrawInternal() {}
     };
 }

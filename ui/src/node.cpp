@@ -13,7 +13,9 @@ namespace moth_ui {
     Node::Node(std::shared_ptr<LayoutEntity> layoutEntity)
         : m_layout(layoutEntity)
         , m_id(m_layout->GetId())
-        , m_layoutRect(m_layout->GetBoundsAtFrame(0)) {
+        , m_layoutRect(m_layout->GetBoundsAtFrame(0))
+        , m_color(m_layout->GetColorAtFrame(0))
+        , m_blend(m_layout->GetBlendMode()) {
         m_animationController = std::make_unique<AnimationController>(this, m_layout->GetAnimationTracks());
     }
 
@@ -33,10 +35,15 @@ namespace moth_ui {
             return;
         }
 
+        Context::GetCurrentContext().GetRenderer().PushBlendMode(m_blend);
+        Context::GetCurrentContext().GetRenderer().PushColor(m_color);
+        DrawInternal();
+        Context::GetCurrentContext().GetRenderer().PopColor();
+        Context::GetCurrentContext().GetRenderer().PopBlendMode();
+
         if (m_showRect) {
             auto& renderer = Context::GetCurrentContext().GetRenderer();
-            renderer.SetRenderColor(0xFFFF0000);
-            renderer.RenderRect(m_screenRect);
+            renderer.DrawRect(m_screenRect, Color::Red, BlendMode::Replace);
         }
     }
 
@@ -57,8 +64,9 @@ namespace moth_ui {
         }
     }
 
-    void Node::RefreshBounds(int frameNo) {
+    void Node::Refresh(int frameNo) {
         m_layoutRect = m_layout->GetBoundsAtFrame(frameNo);
+        m_color = m_layout->GetColorAtFrame(frameNo);
         RecalculateBounds();
     }
 
@@ -76,6 +84,7 @@ namespace moth_ui {
     void Node::ReloadEntity() {
         m_id = m_layout->GetId();
         m_layoutRect = m_layout->GetBoundsAtFrame(0);
+        m_color = m_layout->GetColorAtFrame(0);
         m_animationController = std::make_unique<AnimationController>(this, m_layout->GetAnimationTracks());
     }
 
@@ -105,6 +114,7 @@ namespace moth_ui {
             imgui_ext::Inspect("visible", m_visible);
             imgui_ext::Inspect("show rect", m_showRect);
             imgui_ext::Inspect("override bounds", m_overrideScreenRect);
+            imgui_ext::Inspect("color", m_color);
             bool boundsChanged = false;
             boundsChanged |= imgui_ext::Inspect("bounds", m_layoutRect);
             boundsChanged |= imgui_ext::Inspect("screen rect", m_screenRect);

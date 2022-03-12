@@ -47,6 +47,11 @@ namespace moth_ui {
         j.at("bottomRight").get_to(rect.bottomRight);
     }
 
+    template <typename T>
+    inline bool IsZero(Rect<T> const& rect) {
+        return rect.topLeft.x == 0 && rect.topLeft.y == 0 && rect.bottomRight.x == 0 && rect.bottomRight.y == 0;
+    }
+
     template <typename T, typename U>
     inline bool IsInRect(Vec2<T> const& point, Rect<U> const& rect) {
         if (point.x > rect.bottomRight.x || point.x < rect.topLeft.x ||

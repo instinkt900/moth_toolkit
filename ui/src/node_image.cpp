@@ -27,18 +27,11 @@ namespace moth_ui {
 
     void NodeImage::Load(char const* path) {
         m_image = Context::GetCurrentContext().GetImageFactory().GetImage(path);
-    }
-
-    void NodeImage::Draw() {
-        if (!IsVisible()) {
-            return;
+        if (IsZero(m_sourceRect)) {
+            auto const imageDimensions = m_image->GetDimensions();
+            m_sourceRect.bottomRight.x = imageDimensions.x;
+            m_sourceRect.bottomRight.y = imageDimensions.y;
         }
-
-        if (m_image) {
-            Context::GetCurrentContext().GetRenderer().RenderImage(*m_image, m_sourceRect, m_screenRect);
-        }
-
-        Node::Draw();
     }
     
     void NodeImage::ReloadEntity() {
@@ -69,6 +62,12 @@ namespace moth_ui {
                 s_fileBrowser.ClearSelected();
                 s_loadingNodeImage = nullptr;
             }
+        }
+    }
+
+    void NodeImage::DrawInternal() {
+        if (m_image) {
+            Context::GetCurrentContext().GetRenderer().RenderImage(*m_image, m_sourceRect, m_screenRect);
         }
     }
 }

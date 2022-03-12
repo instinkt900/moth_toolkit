@@ -36,10 +36,9 @@ namespace moth_ui {
         }
     }
 
-    void Group::Draw() {
-        Node::Draw();
+    void Group::UpdateChildBounds() {
         for (auto&& child : m_children) {
-            child->Draw();
+            child->RecalculateBounds();
         }
     }
 
@@ -87,9 +86,10 @@ namespace moth_ui {
         }
     }
 
-    void Group::UpdateChildBounds() {
+    void Group::DrawInternal() {
         for (auto&& child : m_children) {
-            child->RecalculateBounds();
+            child->Draw();
         }
     }
+
 }

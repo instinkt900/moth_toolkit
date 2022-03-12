@@ -64,10 +64,14 @@ namespace moth_ui {
             TopAnchor,
             BottomAnchor,
             LeftAnchor,
-            RightAnchor
+            RightAnchor,
+            ColorRed,
+            ColorGreen,
+            ColorBlue,
+            ColorAlpha,
         };
 
-        static constexpr std::array<Target, 8> ContinuousTargets{
+        static constexpr std::array<Target, 12> ContinuousTargets{
             Target::TopOffset,
             Target::BottomOffset,
             Target::LeftOffset,
@@ -76,6 +80,10 @@ namespace moth_ui {
             Target::BottomAnchor,
             Target::LeftAnchor,
             Target::RightAnchor,
+            Target::ColorRed,
+            Target::ColorGreen,
+            Target::ColorBlue,
+            Target::ColorAlpha,
         };
 
         AnimationTrack() = default;

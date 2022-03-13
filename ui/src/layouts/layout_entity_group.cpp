@@ -16,6 +16,13 @@ namespace moth_ui {
         Deserialize(json);
     }
 
+    void LayoutEntityGroup::RefreshAnimationTimings() {
+        LayoutEntity::RefreshAnimationTimings();
+        for (auto&& child : m_children) {
+            child->RefreshAnimationTimings();
+        }
+    }
+
     std::unique_ptr<Node> LayoutEntityGroup::Instantiate() {
         return std::make_unique<Group>(std::static_pointer_cast<LayoutEntityGroup>(shared_from_this()));
     }

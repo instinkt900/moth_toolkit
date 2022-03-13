@@ -31,6 +31,7 @@ namespace moth_ui {
         Color GetColorAtFrame(int frame) const;
 
         auto& GetAnimationTracks() const { return m_tracks; }
+        virtual void RefreshAnimationTimings();
 
         virtual std::unique_ptr<Node> Instantiate();
 

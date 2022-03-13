@@ -45,9 +45,6 @@
     <ClCompile Include="..\..\src\imgui_ext\imgui_ext_focus.cpp">
       <Filter>src\imgui_ext</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\layouts\animation_track.cpp">
-      <Filter>src\layouts</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\layouts\layout.cpp">
       <Filter>src\layouts</Filter>
     </ClCompile>
@@ -61,6 +58,9 @@
       <Filter>src\layouts</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\context.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\animation_track.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

@@ -89,11 +89,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\animation_controller.cpp" />
+    <ClCompile Include="..\..\src\animation_track.cpp" />
     <ClCompile Include="..\..\src\context.cpp" />
     <ClCompile Include="..\..\src\group.cpp" />
     <ClCompile Include="..\..\src\imgui_ext\imgui_ext.cpp" />
     <ClCompile Include="..\..\src\imgui_ext\imgui_ext_focus.cpp" />
-    <ClCompile Include="..\..\src\layouts\animation_track.cpp" />
     <ClCompile Include="..\..\src\layouts\layout.cpp" />
     <ClCompile Include="..\..\src\layouts\layout_entity.cpp" />
     <ClCompile Include="..\..\src\layouts\layout_entity_group.cpp" />

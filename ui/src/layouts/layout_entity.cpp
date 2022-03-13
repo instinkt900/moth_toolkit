@@ -175,6 +175,15 @@ namespace moth_ui {
         return Serialize();
     }
 
+    void LayoutEntity::RefreshAnimationTimings() {
+        if (m_parent) {
+            auto const& animationClips = m_parent->GetAnimationClips();
+            for (auto&& [target, track] : m_tracks) {
+                track->UpdateTrackTimings(animationClips);
+            }
+        }
+    }
+
     void LayoutEntity::Deserialize(nlohmann::json const& json) {
         auto const type = GetType();
         assert(json["type"] == type);

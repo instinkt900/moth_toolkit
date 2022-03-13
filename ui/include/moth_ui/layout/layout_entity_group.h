@@ -16,6 +16,8 @@ namespace moth_ui {
         auto& GetAnimationClips() { return m_animationClips; }
         auto const& GetAnimationClips() const { return m_animationClips; }
 
+        void RefreshAnimationTimings() override;
+
         std::unique_ptr<Node> Instantiate() override;
 
         void OnEditDraw() override;

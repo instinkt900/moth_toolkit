@@ -16,10 +16,10 @@ public:
 
 inline bool operator==(Color const& a, ApproxColor const& b) {
     // clang-format off
-    return a.GetR() == Approx(b.m_color.GetR()).margin(0.01)
-        && a.GetG() == Approx(b.m_color.GetG()).margin(0.01)
-        && a.GetB() == Approx(b.m_color.GetB()).margin(0.01)
-        && a.GetA() == Approx(b.m_color.GetA()).margin(0.01);
+    return a.r == Approx(b.m_color.r).margin(0.01)
+        && a.g == Approx(b.m_color.g).margin(0.01)
+        && a.b == Approx(b.m_color.b).margin(0.01)
+        && a.a == Approx(b.m_color.a).margin(0.01);
     // clang-format on
 }
 
@@ -30,64 +30,64 @@ std::ostream& operator<<(std::ostream& os, ApproxColor const& value) {
 
 TEST_CASE("Color empty initialization", "[color][initialization]") {
     Color const testColor;
-    REQUIRE(testColor.GetRGBA() == 0x0);
-    REQUIRE(testColor.GetARGB() == 0x0);
-    REQUIRE(testColor.GetR() == 0);
-    REQUIRE(testColor.GetG() == 0);
-    REQUIRE(testColor.GetB() == 0);
-    REQUIRE(testColor.GetA() == 0);
+    REQUIRE(ToRGBA(testColor) == 0x0);
+    REQUIRE(ToARGB(testColor) == 0x0);
+    REQUIRE(testColor.r == 0);
+    REQUIRE(testColor.g == 0);
+    REQUIRE(testColor.b == 0);
+    REQUIRE(testColor.a == 0);
 }
 
 TEST_CASE("Color rgb initialization", "[color][initialization]") {
     Color const testColor(0.12f, 0.98f, 0.87f, 0.21f);
-    REQUIRE(testColor.GetRGBA() == 0x1FFADE36);
-    REQUIRE(testColor.GetARGB() == 0x361FFADE);
-    REQUIRE(testColor.GetR() == Approx(0.12f).margin(0.001));
-    REQUIRE(testColor.GetG() == Approx(0.98f).margin(0.001));
-    REQUIRE(testColor.GetB() == Approx(0.87f).margin(0.001));
-    REQUIRE(testColor.GetA() == Approx(0.21f).margin(0.001));
+    REQUIRE(ToRGBA(testColor) == 0x1FFADE36);
+    REQUIRE(ToARGB(testColor) == 0x361FFADE);
+    REQUIRE(testColor.r == Approx(0.12f).margin(0.001));
+    REQUIRE(testColor.g == Approx(0.98f).margin(0.001));
+    REQUIRE(testColor.b == Approx(0.87f).margin(0.001));
+    REQUIRE(testColor.a == Approx(0.21f).margin(0.001));
 }
 
 TEST_CASE("Color FromARGB initialization", "[color][initialization]") {
-    Color const testColor = Color::FromARGB(0x160C4E01);
-    REQUIRE(testColor.GetRGBA() == 0x0C4E0116);
-    REQUIRE(testColor.GetARGB() == 0x160C4E01);
-    REQUIRE(testColor.GetR() == Approx(0.047).margin(0.001));
-    REQUIRE(testColor.GetG() == Approx(0.306).margin(0.001));
-    REQUIRE(testColor.GetB() == Approx(0.004).margin(0.001));
-    REQUIRE(testColor.GetA() == Approx(0.086).margin(0.001));
+    Color const testColor = FromARGB(0x160C4E01);
+    REQUIRE(ToRGBA(testColor) == 0x0C4E0116);
+    REQUIRE(ToARGB(testColor) == 0x160C4E01);
+    REQUIRE(testColor.r == Approx(0.047).margin(0.001));
+    REQUIRE(testColor.g == Approx(0.306).margin(0.001));
+    REQUIRE(testColor.b == Approx(0.004).margin(0.001));
+    REQUIRE(testColor.a == Approx(0.086).margin(0.001));
 }
 
 TEST_CASE("Color FromRGBA initialization", "[color][initialization]") {
-    Color const testColor = Color::FromRGBA(0xF567AE10);
-    REQUIRE(testColor.GetRGBA() == 0xF567AE10);
-    REQUIRE(testColor.GetARGB() == 0x10F567AE);
-    REQUIRE(testColor.GetR() == Approx(0.961).margin(0.001));
-    REQUIRE(testColor.GetG() == Approx(0.404).margin(0.001));
-    REQUIRE(testColor.GetB() == Approx(0.682).margin(0.001));
-    REQUIRE(testColor.GetA() == Approx(0.063).margin(0.001));
+    Color const testColor = FromRGBA(0xF567AE10);
+    REQUIRE(ToRGBA(testColor) == 0xF567AE10);
+    REQUIRE(ToARGB(testColor) == 0x10F567AE);
+    REQUIRE(testColor.r == Approx(0.961).margin(0.001));
+    REQUIRE(testColor.g == Approx(0.404).margin(0.001));
+    REQUIRE(testColor.b == Approx(0.682).margin(0.001));
+    REQUIRE(testColor.a == Approx(0.063).margin(0.001));
 }
 
 TEST_CASE("Color large initialization", "[color][initialization][large]") {
-    Color const testColor(200.0f, 255.0f, 256.0f, 1022.f);
-    REQUIRE(testColor.GetRGBA() == 0xFFFFFFFF);
-    REQUIRE(testColor.GetARGB() == 0xFFFFFFFF);
-    REQUIRE(testColor.GetR() == Approx(1.000).margin(0.001));
-    REQUIRE(testColor.GetG() == Approx(1.000).margin(0.001));
-    REQUIRE(testColor.GetB() == Approx(1.000).margin(0.001));
-    REQUIRE(testColor.GetA() == Approx(1.000).margin(0.001));
+    Color const testColor(Normalize(Color{200.0f, 255.0f, 256.0f, 1022.f}));
+    REQUIRE(ToRGBA(testColor) == 0xFFFFFFFF);
+    REQUIRE(ToARGB(testColor) == 0xFFFFFFFF);
+    REQUIRE(testColor.r == Approx(1.000).margin(0.001));
+    REQUIRE(testColor.g == Approx(1.000).margin(0.001));
+    REQUIRE(testColor.b == Approx(1.000).margin(0.001));
+    REQUIRE(testColor.a == Approx(1.000).margin(0.001));
 }
 
 TEST_CASE("Color component getters and setters", "[color][get][set]") {
     Color testColor;
-    testColor.SetR(0.44f);
-    REQUIRE(testColor.GetR() == Approx(0.44).margin(0.001));
-    testColor.SetG(0.19f);
-    REQUIRE(testColor.GetG() == Approx(0.19).margin(0.001));
-    testColor.SetB(0.01f);
-    REQUIRE(testColor.GetB() == Approx(0.01).margin(0.001));
-    testColor.SetA(0.32f);
-    REQUIRE(testColor.GetA() == Approx(0.32).margin(0.001));
+    testColor.r = 0.44f;
+    REQUIRE(testColor.r == Approx(0.44).margin(0.001));
+    testColor.g = 0.19f;
+    REQUIRE(testColor.g == Approx(0.19).margin(0.001));
+    testColor.b = 0.01f;
+    REQUIRE(testColor.b == Approx(0.01).margin(0.001));
+    testColor.a = 0.32f;
+    REQUIRE(testColor.a == Approx(0.32).margin(0.001));
 }
 
 TEST_CASE("Color operators", "[color][operators]") {

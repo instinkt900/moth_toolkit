@@ -27,13 +27,13 @@ namespace {
         case AnimationTrack::Target::RightAnchor:
             return layoutRect.anchor.bottomRight.x;
         case AnimationTrack::Target::ColorRed:
-            return node->GetColor().R();
+            return node->GetColor().r;
         case AnimationTrack::Target::ColorGreen:
-            return node->GetColor().G();
+            return node->GetColor().g;
         case AnimationTrack::Target::ColorBlue:
-            return node->GetColor().B();
+            return node->GetColor().b;
         case AnimationTrack::Target::ColorAlpha:
-            return node->GetColor().A();
+            return node->GetColor().a;
         }
 
         // just a value dump for unknown targets

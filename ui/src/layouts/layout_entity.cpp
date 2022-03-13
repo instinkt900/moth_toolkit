@@ -95,10 +95,10 @@ namespace moth_ui {
         };
 
         Color color;
-        color.SetR(GetValue(AnimationTrack::Target::ColorRed));
-        color.SetG(GetValue(AnimationTrack::Target::ColorGreen));
-        color.SetB(GetValue(AnimationTrack::Target::ColorBlue));
-        color.SetA(GetValue(AnimationTrack::Target::ColorAlpha));
+        color.r = GetValue(AnimationTrack::Target::ColorRed);
+        color.g = GetValue(AnimationTrack::Target::ColorGreen);
+        color.b = GetValue(AnimationTrack::Target::ColorBlue);
+        color.a = GetValue(AnimationTrack::Target::ColorAlpha);
         return color;
     }
 
@@ -114,10 +114,10 @@ namespace moth_ui {
         };
 
         Color color;
-        color.SetR(GetValue(AnimationTrack::Target::ColorRed));
-        color.SetG(GetValue(AnimationTrack::Target::ColorGreen));
-        color.SetB(GetValue(AnimationTrack::Target::ColorBlue));
-        color.SetA(GetValue(AnimationTrack::Target::ColorAlpha));
+        color.r = GetValue(AnimationTrack::Target::ColorRed);
+        color.g = GetValue(AnimationTrack::Target::ColorGreen);
+        color.b = GetValue(AnimationTrack::Target::ColorBlue);
+        color.a = GetValue(AnimationTrack::Target::ColorAlpha);
         return color;
     }
 

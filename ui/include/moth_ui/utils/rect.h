@@ -1,12 +1,12 @@
 #pragma once
 
-#include "vec2.h"
+#include "vector.h"
 
 namespace moth_ui {
     template <typename T>
     struct Rect {
-        Vec2<T> topLeft;
-        Vec2<T> bottomRight;
+        Vector<T, 2> topLeft;
+        Vector<T, 2> bottomRight;
     };
 
     using IntRect = Rect<int>;
@@ -37,23 +37,12 @@ namespace moth_ui {
     }
 
     template <typename T>
-    inline void to_json(nlohmann::json& j, Rect<T> const& rect) {
-        j = nlohmann::json{ { "topLeft", rect.topLeft }, { "bottomRight", rect.bottomRight } };
-    }
-
-    template <typename T>
-    inline void from_json(nlohmann::json const& j, Rect<T>& rect) {
-        j.at("topLeft").get_to(rect.topLeft);
-        j.at("bottomRight").get_to(rect.bottomRight);
-    }
-
-    template <typename T>
     inline bool IsZero(Rect<T> const& rect) {
         return rect.topLeft.x == 0 && rect.topLeft.y == 0 && rect.bottomRight.x == 0 && rect.bottomRight.y == 0;
     }
 
     template <typename T, typename U>
-    inline bool IsInRect(Vec2<T> const& point, Rect<U> const& rect) {
+    inline bool IsInRect(Vector<T, 2> const& point, Rect<U> const& rect) {
         if (point.x > rect.bottomRight.x || point.x < rect.topLeft.x ||
             point.y > rect.bottomRight.y || point.y < rect.topLeft.y) {
             return false;

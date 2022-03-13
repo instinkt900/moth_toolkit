@@ -1,6 +1,7 @@
 #pragma once
 
 #include "moth_ui/utils/rect.h"
+#include "moth_ui/utils/rect_serialization.h"
 
 namespace moth_ui {
     enum class LayoutEntityType {

@@ -43,7 +43,7 @@ namespace moth_ui {
 
         if (m_showRect) {
             auto& renderer = Context::GetCurrentContext().GetRenderer();
-            renderer.DrawRect(m_screenRect, Color::Red, BlendMode::Replace);
+            renderer.DrawRect(m_screenRect, BasicColors::Red, BlendMode::Replace);
         }
     }
 

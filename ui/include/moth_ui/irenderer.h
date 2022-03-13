@@ -2,7 +2,7 @@
 
 #include "moth_ui/utils/rect.h"
 #include "moth_ui/iimage.h"
-#include "moth_ui/color.h"
+#include "moth_ui/utils/color.h"
 #include "moth_ui/blend_mode.h"
 
 namespace moth_ui {

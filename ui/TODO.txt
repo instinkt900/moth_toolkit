@@ -1,9 +1,11 @@
 Moth UI TODO
 ------------
 
-Change Color to be just a Vec4. perhaps extend it with Clamp() or something to clamp to 0-1
 Readme.md
 Adding more documentation
 Update tests for better coverage. hook in to cppcoverage.
 Update cmake to auto build and run tests.
 Updates to preview window. Input etc.
+Add color customisation to editor colors.
+Maybe default image blending to "alpha"
+Add modification notification. Lost work popup on exit/load etc.

@@ -2,7 +2,7 @@
 
 #include "event_listener.h"
 #include "layout/layout_types.h"
-#include "color.h"
+#include "utils/color.h"
 #include "blend_mode.h"
 #include "ui_fwd.h"
 
@@ -69,7 +69,7 @@ namespace moth_ui {
 
         std::string m_id;
         LayoutRect m_layoutRect;
-        Color m_color = Color::White;
+        Color m_color = BasicColors::White;
         BlendMode m_blend = BlendMode::Replace;
 
         bool m_visible = true;

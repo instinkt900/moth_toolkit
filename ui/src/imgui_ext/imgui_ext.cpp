@@ -1,7 +1,7 @@
 #include "common.h"
 #include "moth_ui/utils/imgui_ext.h"
 #include "imgui_internal.h"
-#include "moth_ui/utils/vec2.h"
+#include "moth_ui/utils/vector.h"
 
 namespace imgui_ext {
     using namespace moth_ui;

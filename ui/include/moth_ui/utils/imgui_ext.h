@@ -1,7 +1,7 @@
 #pragma once
 
 #include "moth_ui/ui_fwd.h"
-#include "moth_ui/utils/vec2.h"
+#include "moth_ui/utils/vector.h"
 
 #define NLOHMANN_JSON_FROM_WITH_DEFAULT(v1) nlohmann_json_t.v1 = nlohmann_json_j.value(#v1, nlohmann_json_default_obj.v1);
 

@@ -89,7 +89,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\animation_controller.cpp" />
-    <ClCompile Include="..\..\src\color.cpp" />
     <ClCompile Include="..\..\src\context.cpp" />
     <ClCompile Include="..\..\src\group.cpp" />
     <ClCompile Include="..\..\src\imgui_ext\imgui_ext.cpp" />
@@ -107,7 +106,6 @@
     <ClInclude Include="..\..\include\moth_ui\animation_controller.h" />
     <ClInclude Include="..\..\include\moth_ui\animation_track.h" />
     <ClInclude Include="..\..\include\moth_ui\blend_mode.h" />
-    <ClInclude Include="..\..\include\moth_ui\color.h" />
     <ClInclude Include="..\..\include\moth_ui\context.h" />
     <ClInclude Include="..\..\include\moth_ui\events\event.h" />
     <ClInclude Include="..\..\include\moth_ui\events\event_animation.h" />
@@ -130,14 +128,17 @@
     <ClInclude Include="..\..\include\moth_ui\node.h" />
     <ClInclude Include="..\..\include\moth_ui\node_image.h" />
     <ClInclude Include="..\..\include\moth_ui\ui_fwd.h" />
+    <ClInclude Include="..\..\include\moth_ui\utils\color.h" />
     <ClInclude Include="..\..\include\moth_ui\utils\imgui_ext.h" />
     <ClInclude Include="..\..\include\moth_ui\utils\imgui_ext_focus.h" />
     <ClInclude Include="..\..\include\moth_ui\utils\imgui_ext_inspect.h" />
     <ClInclude Include="..\..\include\moth_ui\utils\interp.h" />
     <ClInclude Include="..\..\include\moth_ui\utils\math_utils.h" />
     <ClInclude Include="..\..\include\moth_ui\utils\rect.h" />
+    <ClInclude Include="..\..\include\moth_ui\utils\rect_serialization.h" />
     <ClInclude Include="..\..\include\moth_ui\utils\serialize_utils.h" />
-    <ClInclude Include="..\..\include\moth_ui\utils\vec2.h" />
+    <ClInclude Include="..\..\include\moth_ui\utils\vector.h" />
+    <ClInclude Include="..\..\include\moth_ui\utils\vector_serialization.h" />
     <ClInclude Include="..\..\src\common.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

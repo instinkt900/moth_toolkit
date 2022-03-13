@@ -21,6 +21,7 @@ namespace moth_ui {
         auto const& GetChildren() const { return m_children; }
 
         bool SetAnimation(std::string const& name) override;
+        void StopAnimation() override;
 
         void DebugDraw() override;
 

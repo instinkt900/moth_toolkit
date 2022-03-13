@@ -51,6 +51,7 @@ namespace moth_ui {
         BlendMode GetBlendMode() const { return m_blend; }
 
         virtual bool SetAnimation(std::string const& name) { return false; }
+        virtual void StopAnimation() {}
         void SetAnimationClip(AnimationClip* clip);
         virtual void UpdateAnimTime(float delta);
 

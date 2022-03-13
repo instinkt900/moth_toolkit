@@ -112,6 +112,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\editor\keyframe_context.h" />
     <ClInclude Include="..\..\editor\src\editor\keyframe_widget.h" />
     <ClInclude Include="..\..\editor\src\editor\offset_bounds_handle.h" />
+    <ClInclude Include="..\..\editor\src\editor\preview_window.h" />
     <ClInclude Include="..\..\editor\src\editor\properties_editor.h" />
     <ClInclude Include="..\..\editor\src\editor\utils.h" />
     <ClInclude Include="..\..\editor\src\event_factory.h" />
@@ -149,6 +150,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClCompile Include="..\..\editor\src\editor\editor_layer.cpp" />
     <ClCompile Include="..\..\editor\src\editor\keyframe_widget.cpp" />
     <ClCompile Include="..\..\editor\src\editor\offset_bounds_handle.cpp" />
+    <ClCompile Include="..\..\editor\src\editor\preview_window.cpp" />
     <ClCompile Include="..\..\editor\src\editor\properties_editor.cpp" />
     <ClCompile Include="..\..\editor\src\event_factory.cpp" />
     <ClCompile Include="..\..\editor\src\app.cpp" />

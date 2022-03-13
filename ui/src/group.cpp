@@ -70,6 +70,12 @@ namespace moth_ui {
         return false;
     }
 
+    void Group::StopAnimation() {
+        for (auto&& child : m_children) {
+            child->SetAnimationClip(nullptr);
+        }
+    }
+
     void Group::DebugDraw() {
         Node::DebugDraw();
         //ImGuiInspectMember("anim time", m_animTime);

@@ -2,6 +2,7 @@
 
 #include <variant>
 #include "moth_ui/utils/interp.h"
+#include "moth_ui/utils/imgui_ext.h"
 
 namespace nlohmann {
     template <>
@@ -32,16 +33,16 @@ namespace moth_ui {
 
     class Keyframe {
     public:
-        int m_frame;
+        int m_frame = 0;
         KeyframeValue m_value;
         InterpType m_interpType = InterpType::Linear;
 
-        float m_time; // calculated based on clips
+        float m_time = 0; // calculated based on clips
 
         float GetFloatValue() const { return std::get<float>(m_value); }
         std::string const& GetStringValue() const { return std::get<std::string>(m_value); }
 
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Keyframe, m_frame, m_value);
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Keyframe, m_frame, m_value, m_interpType);
     };
 
     class AnimationEvent {

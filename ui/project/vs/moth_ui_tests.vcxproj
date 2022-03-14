@@ -58,15 +58,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_ITERATOR_DEBUG_LEVEL=0;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\include;D:\Development\Catch2\src;D:\Development\Catch2\build\generated-includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\include;D:\Development\catch2_new\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Development\Catch2\build\src\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Catch2.lib;Catch2Main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -93,6 +91,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\tests\src\test_color.cpp" />
     <ClCompile Include="..\..\tests\src\test_main.cpp" />
+    <ClCompile Include="..\..\tests\src\test_vector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\tests\src\string_helpers.h" />

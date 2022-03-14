@@ -2,6 +2,7 @@
 
 #include "moth_ui/utils/vector.h"
 #include <algorithm>
+#include <cmath>
 
 namespace moth_ui {
     using Color = Vector<float, 4>;
@@ -14,7 +15,24 @@ namespace moth_ui {
         static Color const Black{ 0.0f, 0.0f, 0.0f, 1.0f };
     }
 
+    // scales all components equally so the largest is 1
     inline Color Normalize(Color const& color) {
+        auto const maxComponent = std::max({ color.r, color.g, color.b, color.a });
+        auto const factor = 1.0f / maxComponent;
+        return color * factor;
+    }
+
+    // like Normalize but only scales down if the largest component is > 1
+    inline Color Limit(Color const& color) {
+        auto const maxComponent = std::max({ color.r, color.g, color.b, color.a });
+        if (maxComponent > 1.0f) {
+            return Normalize(color);
+        }
+        return color;
+    }
+
+    // clamps all components to 0-1
+    inline Color Clamp(Color const& color) {
         return Color{ std::clamp(color.r, 0.0f, 1.0f), std::clamp(color.g, 0.0f, 1.0f), std::clamp(color.b, 0.0f, 1.0f), std::clamp(color.a, 0.0f, 1.0f) };
     }
 
@@ -35,18 +53,20 @@ namespace moth_ui {
     }
 
     inline uint32_t ToRGBA(Color const& color) {
-        uint32_t const r = static_cast<uint32_t>(std::round(color.r * 255));
-        uint32_t const g = static_cast<uint32_t>(std::round(color.g * 255));
-        uint32_t const b = static_cast<uint32_t>(std::round(color.b * 255));
-        uint32_t const a = static_cast<uint32_t>(std::round(color.a * 255));
+        auto const limitedColor = Clamp(color);
+        uint32_t const r = static_cast<uint32_t>(std::round(limitedColor.r * 255));
+        uint32_t const g = static_cast<uint32_t>(std::round(limitedColor.g * 255));
+        uint32_t const b = static_cast<uint32_t>(std::round(limitedColor.b * 255));
+        uint32_t const a = static_cast<uint32_t>(std::round(limitedColor.a * 255));
         return (r << 24) | (g << 16) | (b << 8) | a;
     }
 
     inline uint32_t ToARGB(Color const& color) {
-        uint32_t const r = static_cast<uint32_t>(std::round(color.r * 255));
-        uint32_t const g = static_cast<uint32_t>(std::round(color.g * 255));
-        uint32_t const b = static_cast<uint32_t>(std::round(color.b * 255));
-        uint32_t const a = static_cast<uint32_t>(std::round(color.a * 255));
+        auto const limitedColor = Clamp(color);
+        uint32_t const r = static_cast<uint32_t>(std::round(limitedColor.r * 255));
+        uint32_t const g = static_cast<uint32_t>(std::round(limitedColor.g * 255));
+        uint32_t const b = static_cast<uint32_t>(std::round(limitedColor.b * 255));
+        uint32_t const a = static_cast<uint32_t>(std::round(limitedColor.a * 255));
         return (a << 24) | (r << 16) | (g << 8) | b;
     }
 }

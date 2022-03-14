@@ -17,12 +17,11 @@ set(SOURCES ${SOURCES}
 	external/imgui/imgui_tables.cpp
 	external/imgui/imgui_widgets.cpp
 	src/animation_controller.cpp
-	src/color.cpp
+	src/animation_track.cpp
 	src/context.cpp
 	src/group.cpp
 	src/imgui_ext/imgui_ext.cpp
 	src/imgui_ext/imgui_ext_focus.cpp
-	src/layouts/animation_track.cpp
 	src/layouts/layout.cpp
 	src/layouts/layout_entity.cpp
 	src/layouts/layout_entity_group.cpp
@@ -35,5 +34,4 @@ add_library(${PROJECT_NAME} STATIC ${SOURCES})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 target_include_directories(${PROJECT_NAME} PRIVATE src)
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
-set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/W3")
-
+set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/W3 /WX")

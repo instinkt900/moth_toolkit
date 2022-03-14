@@ -3,6 +3,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\tests\src\test_main.cpp" />
     <ClCompile Include="..\..\tests\src\test_color.cpp" />
+    <ClCompile Include="..\..\tests\src\test_vector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\tests\src\string_helpers.h" />

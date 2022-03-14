@@ -1,5 +1,6 @@
 /build
 /editor/build
+/tests/build
 .vs
 /out
 /project/vs/editor/Debug

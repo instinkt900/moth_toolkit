@@ -11,3 +11,4 @@
 /project/vs/moth_ui_tests/Intermediate
 *.vcxproj.user
 imgui.ini
+/lib/win/x64

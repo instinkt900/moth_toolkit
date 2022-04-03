@@ -2,6 +2,7 @@
 
 namespace moth_ui {
     class IImage;
+    class IFont;
 
     class Event;
     
@@ -9,6 +10,7 @@ namespace moth_ui {
     class Group;
     class NodeImage;
 
+    class LayoutEntityText;
     class LayoutEntityImage;
     class LayoutEntityGroup;
     class LayoutEntity;

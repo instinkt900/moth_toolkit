@@ -7,7 +7,8 @@ namespace moth_ui {
     enum class LayoutEntityType {
         Entity,
         Group,
-        Image
+        Image,
+        Text
     };
 
     struct LayoutRect {

@@ -7,7 +7,7 @@
     <SDLTTF_DIR>D:\Development\SDL2_ttf-2.0.15</SDLTTF_DIR>
     <NLOHMANN_DIR>D:\Development\ChristmasProject2021\external\json</NLOHMANN_DIR>
     <MAGICENUM_DIR>D:\Development\ChristmasProject2021\external\magic_enum</MAGICENUM_DIR>
-    <RANGEV3_DIR>D:\Development\ChristmasProject2021\external\range-v3</RANGEV3_DIR>
+    <RANGEV3_DIR>D:\Development\range-v3</RANGEV3_DIR>
     <FMT_DIR>D:\Development\fmt</FMT_DIR>
   </PropertyGroup>
   <PropertyGroup />

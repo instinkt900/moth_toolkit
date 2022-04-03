@@ -4,6 +4,7 @@
 #include "moth_ui/iimage.h"
 #include "moth_ui/utils/color.h"
 #include "moth_ui/blend_mode.h"
+#include "moth_ui/text_alignment.h"
 
 namespace moth_ui {
     class IRenderer {
@@ -17,5 +18,6 @@ namespace moth_ui {
         virtual void DrawRect(IntRect const& rect, Color const& color, BlendMode blendMode) = 0;
         virtual void DrawFilledRect(IntRect const& rect, Color const& color, BlendMode blendMode) = 0;
         virtual void RenderImage(IImage& image, IntRect const& sourceRect, IntRect const& destRect) = 0;
+        virtual void RenderText(std::string const& text, IFont& font, TextAlignment alignment, IntRect const& destRect) = 0;
     };
 }

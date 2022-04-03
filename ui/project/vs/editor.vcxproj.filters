@@ -135,6 +135,12 @@
     <ClInclude Include="..\..\editor\src\editor\preview_window.h">
       <Filter>src\editor</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\editor\src\font_factory.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\font.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\editor\src\app.cpp">
@@ -236,5 +242,9 @@
     <ClCompile Include="..\..\editor\src\editor\preview_window.cpp">
       <Filter>src\editor</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\editor\src\font_factory.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\font.cpp" />
   </ItemGroup>
 </Project>

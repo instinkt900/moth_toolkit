@@ -1,6 +1,10 @@
 Moth UI TODO
 ------------
 
+text elements
+9 slicing
+clip rect
+texture wrapping handling
 Readme.md
 Adding more documentation
 Update tests for better coverage. hook in to cppcoverage.
@@ -12,8 +16,4 @@ Add modification notification. Lost work popup on exit/load etc.
 Tests for the node/layout entity classes. Loading a hard coded test layout etc.
 Update layout of imgui elements. swapping label sides etc. tables?
 Display source rect on image entity properties panel.
-9 slicing
-clip rect
-text elements
-change the renderer interface so that we create a draw list
-texture wrapping handling
+change the renderer interface so that we create a draw list - (maybe not? might be a user side implementation)

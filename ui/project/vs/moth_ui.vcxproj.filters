@@ -63,6 +63,12 @@
     <ClCompile Include="..\..\src\animation_track.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\layouts\layout_entity_text.cpp">
+      <Filter>src\layouts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\node_text.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\common.h">
@@ -178,6 +184,21 @@
     </ClInclude>
     <ClInclude Include="..\..\include\moth_ui\utils\rect_serialization.h">
       <Filter>include\moth_ui\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\node_text.h">
+      <Filter>include\moth_ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_text.h">
+      <Filter>include\moth_ui\layout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\ifont_factory.h">
+      <Filter>include\moth_ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\ifont.h">
+      <Filter>include\moth_ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\text_alignment.h">
+      <Filter>include\moth_ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

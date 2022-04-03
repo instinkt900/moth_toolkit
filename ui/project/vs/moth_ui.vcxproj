@@ -102,8 +102,10 @@
     <ClCompile Include="..\..\src\layouts\layout_entity.cpp" />
     <ClCompile Include="..\..\src\layouts\layout_entity_group.cpp" />
     <ClCompile Include="..\..\src\layouts\layout_entity_image.cpp" />
+    <ClCompile Include="..\..\src\layouts\layout_entity_text.cpp" />
     <ClCompile Include="..\..\src\node.cpp" />
     <ClCompile Include="..\..\src\node_image.cpp" />
+    <ClCompile Include="..\..\src\node_text.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\moth_ui\animation_clip.h" />
@@ -121,6 +123,8 @@
     <ClInclude Include="..\..\include\moth_ui\event_dispatch.h" />
     <ClInclude Include="..\..\include\moth_ui\event_listener.h" />
     <ClInclude Include="..\..\include\moth_ui\group.h" />
+    <ClInclude Include="..\..\include\moth_ui\ifont.h" />
+    <ClInclude Include="..\..\include\moth_ui\ifont_factory.h" />
     <ClInclude Include="..\..\include\moth_ui\iimage.h" />
     <ClInclude Include="..\..\include\moth_ui\iimage_factory.h" />
     <ClInclude Include="..\..\include\moth_ui\irenderer.h" />
@@ -128,9 +132,12 @@
     <ClInclude Include="..\..\include\moth_ui\layout\layout_entity.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_group.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_image.h" />
+    <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_text.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout_types.h" />
     <ClInclude Include="..\..\include\moth_ui\node.h" />
     <ClInclude Include="..\..\include\moth_ui\node_image.h" />
+    <ClInclude Include="..\..\include\moth_ui\node_text.h" />
+    <ClInclude Include="..\..\include\moth_ui\text_alignment.h" />
     <ClInclude Include="..\..\include\moth_ui\ui_fwd.h" />
     <ClInclude Include="..\..\include\moth_ui\utils\color.h" />
     <ClInclude Include="..\..\include\moth_ui\utils\imgui_ext.h" />

@@ -117,6 +117,8 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\editor\utils.h" />
     <ClInclude Include="..\..\editor\src\event_factory.h" />
     <ClInclude Include="..\..\editor\src\app.h" />
+    <ClInclude Include="..\..\editor\src\font.h" />
+    <ClInclude Include="..\..\editor\src\font_factory.h" />
     <ClInclude Include="..\..\editor\src\image.h" />
     <ClInclude Include="..\..\editor\src\image_factory.h" />
     <ClInclude Include="..\..\editor\src\layers\layer.h" />
@@ -154,6 +156,8 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClCompile Include="..\..\editor\src\editor\properties_editor.cpp" />
     <ClCompile Include="..\..\editor\src\event_factory.cpp" />
     <ClCompile Include="..\..\editor\src\app.cpp" />
+    <ClCompile Include="..\..\editor\src\font.cpp" />
+    <ClCompile Include="..\..\editor\src\font_factory.cpp" />
     <ClCompile Include="..\..\editor\src\image.cpp" />
     <ClCompile Include="..\..\editor\src\image_factory.cpp" />
     <ClCompile Include="..\..\editor\src\layers\layer.cpp" />

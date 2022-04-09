@@ -1,5 +1,6 @@
 #include "common.h"
 #include "moth_ui/layout/layout.h"
+#include "moth_ui/layout/layout_entity_text.h"
 #include "moth_ui/layout/layout_entity_image.h"
 #include "moth_ui/layout/layout_entity_group.h"
 #include "moth_ui/animation_clip.h"
@@ -13,6 +14,9 @@ namespace moth_ui {
         json["type"].get_to(type);
 
         switch (type) {
+        case LayoutEntityType::Text:
+            entity = std::make_unique<LayoutEntityText>(json, parent);
+            break;
         case LayoutEntityType::Image:
             entity = std::make_unique<LayoutEntityImage>(json, parent);
             break;

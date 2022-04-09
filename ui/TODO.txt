@@ -1,7 +1,6 @@
 Moth UI TODO
 ------------
 
-text elements
 9 slicing
 clip rect
 texture wrapping handling
@@ -17,3 +16,5 @@ Tests for the node/layout entity classes. Loading a hard coded test layout etc.
 Update layout of imgui elements. swapping label sides etc. tables?
 Display source rect on image entity properties panel.
 change the renderer interface so that we create a draw list - (maybe not? might be a user side implementation)
+old version data loading support.
+properties window in editor needs to use actions.

@@ -141,6 +141,9 @@
     <ClInclude Include="..\..\editor\src\font.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\change_index_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\editor\src\app.cpp">
@@ -246,5 +249,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\editor\src\font.cpp" />
+    <ClCompile Include="..\..\editor\src\editor\actions\change_index_action.cpp" />
   </ItemGroup>
 </Project>

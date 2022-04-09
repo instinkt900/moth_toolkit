@@ -97,6 +97,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\common.h" />
     <ClInclude Include="..\..\editor\src\editor\actions\add_action.h" />
     <ClInclude Include="..\..\editor\src\editor\actions\add_keyframe_action.h" />
+    <ClInclude Include="..\..\editor\src\editor\actions\change_index_action.h" />
     <ClInclude Include="..\..\editor\src\editor\actions\composite_action.h" />
     <ClInclude Include="..\..\editor\src\editor\actions\delete_action.h" />
     <ClInclude Include="..\..\editor\src\editor\actions\delete_keyframe_action.h" />
@@ -139,6 +140,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
   <ItemGroup>
     <ClCompile Include="..\..\editor\src\editor\actions\add_action.cpp" />
     <ClCompile Include="..\..\editor\src\editor\actions\add_keyframe_action.cpp" />
+    <ClCompile Include="..\..\editor\src\editor\actions\change_index_action.cpp" />
     <ClCompile Include="..\..\editor\src\editor\actions\composite_action.cpp" />
     <ClCompile Include="..\..\editor\src\editor\actions\delete_action.cpp" />
     <ClCompile Include="..\..\editor\src\editor\actions\delete_keyframe_action.cpp" />

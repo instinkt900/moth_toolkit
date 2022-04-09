@@ -1,9 +1,15 @@
 #pragma once
 
 namespace moth_ui {
-    enum class TextAlignment {
+    enum class TextHorizAlignment {
         Left,
         Center,
         Right
+    };
+
+    enum class TextVertAlignment {
+        Top,
+        Middle,
+        Bottom
     };
 }

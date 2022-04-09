@@ -18,18 +18,20 @@ namespace moth_ui {
 
     nlohmann::json LayoutEntityText::Serialize() const {
         nlohmann::json j = LayoutEntity::Serialize();
-        j["m_fontPath"] = m_fontPath;
+        j["m_fontName"] = m_fontName;
         j["m_fontSize"] = m_fontSize;
         j["m_text"] = m_text;
-        j["m_alignment"] = m_alignment;
+        j["m_horizontalAlignment"] = m_horizontalAlignment;
+        j["m_verticalAlignment"] = m_verticalAlignment;
         return j;
     }
 
     void LayoutEntityText::Deserialize(nlohmann::json const& json) {
         LayoutEntity::Deserialize(json);
-        json["m_fontPath"].get_to(m_fontPath);
+        json["m_fontName"].get_to(m_fontName);
         json["m_fontSize"].get_to(m_fontSize);
         json["m_text"].get_to(m_text);
-        json["m_alignment"].get_to(m_alignment);
+        json["m_horizontalAlignment"].get_to(m_horizontalAlignment);
+        json["m_verticalAlignment"].get_to(m_verticalAlignment);
     }
 }

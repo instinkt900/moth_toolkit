@@ -12,18 +12,19 @@ namespace moth_ui {
     NodeText::NodeText(std::shared_ptr<LayoutEntityText> layoutEntity)
         : Node(layoutEntity)
         , m_text(layoutEntity->m_text)
-        , m_alignment(layoutEntity->m_alignment) {
-        Load(layoutEntity->m_fontPath.c_str(), layoutEntity->m_fontSize);
+        , m_horizontalAlignment(layoutEntity->m_horizontalAlignment)
+        , m_verticalAlignment(layoutEntity->m_verticalAlignment) {
+        Load(layoutEntity->m_fontName.c_str(), layoutEntity->m_fontSize);
     }
 
     NodeText::~NodeText() {
     }
 
-    void NodeText::Load(char const* path, int size) {
-        if (path == nullptr || *path == 0) {
+    void NodeText::Load(char const* fontName, int size) {
+        if (fontName == nullptr || *fontName == 0) {
             m_font = Context::GetCurrentContext().GetFontFactory().GetDefaultFont(size);
         } else {
-            m_font = Context::GetCurrentContext().GetFontFactory().GetFont(path, size);
+            m_font = Context::GetCurrentContext().GetFontFactory().GetFont(fontName, size);
         }
     }
 
@@ -31,8 +32,9 @@ namespace moth_ui {
         Node::ReloadEntity();
         auto layoutEntity = std::static_pointer_cast<LayoutEntityText>(m_layout);
         m_text = layoutEntity->m_text;
-        m_alignment = layoutEntity->m_alignment;
-        Load(layoutEntity->m_fontPath.c_str(), layoutEntity->m_fontSize);
+        m_horizontalAlignment = layoutEntity->m_horizontalAlignment;
+        m_verticalAlignment = layoutEntity->m_verticalAlignment;
+        Load(layoutEntity->m_fontName.c_str(), layoutEntity->m_fontSize);
     }
 
     void NodeText::DebugDraw() {
@@ -47,7 +49,7 @@ namespace moth_ui {
 
     void NodeText::DrawInternal() {
         if (m_font) {
-            Context::GetCurrentContext().GetRenderer().RenderText(m_text, *m_font, m_alignment, m_screenRect);
+            Context::GetCurrentContext().GetRenderer().RenderText(m_text, *m_font, m_horizontalAlignment, m_verticalAlignment, m_screenRect);
         }
     }
 }

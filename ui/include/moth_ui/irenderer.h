@@ -18,6 +18,6 @@ namespace moth_ui {
         virtual void DrawRect(IntRect const& rect, Color const& color, BlendMode blendMode) = 0;
         virtual void DrawFilledRect(IntRect const& rect, Color const& color, BlendMode blendMode) = 0;
         virtual void RenderImage(IImage& image, IntRect const& sourceRect, IntRect const& destRect) = 0;
-        virtual void RenderText(std::string const& text, IFont& font, TextAlignment alignment, IntRect const& destRect) = 0;
+        virtual void RenderText(std::string const& text, IFont& font, TextHorizAlignment horizontalAlignment, TextVertAlignment verticalAlignment, IntRect const& destRect) = 0;
     };
 }

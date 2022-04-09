@@ -11,7 +11,7 @@ namespace moth_ui {
         NodeText(std::shared_ptr<LayoutEntityText> layoutEntity);
         virtual ~NodeText();
 
-        void Load(char const* path, int size);
+        void Load(char const* fontName, int size);
 
         void ReloadEntity() override;
         IFont* GetFont() const {
@@ -23,7 +23,8 @@ namespace moth_ui {
     protected:
         std::unique_ptr<IFont> m_font;
         std::string m_text;
-        TextAlignment m_alignment;
+        TextHorizAlignment m_horizontalAlignment;
+        TextVertAlignment m_verticalAlignment;
 
         void DrawInternal() override;
     };

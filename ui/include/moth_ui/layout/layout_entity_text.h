@@ -16,9 +16,10 @@ namespace moth_ui {
         nlohmann::json Serialize() const override;
         void Deserialize(nlohmann::json const& json) override;
 
-        std::string m_fontPath;
+        std::string m_fontName;
         int m_fontSize = 16;
         std::string m_text = "Text Element";
-        TextAlignment m_alignment = TextAlignment::Left;
+        TextHorizAlignment m_horizontalAlignment = TextHorizAlignment::Left;
+        TextVertAlignment m_verticalAlignment = TextVertAlignment::Top;
     };
 }

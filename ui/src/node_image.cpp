@@ -38,6 +38,8 @@ namespace moth_ui {
         Node::ReloadEntity();
         auto layoutEntity = std::static_pointer_cast<LayoutEntityImage>(m_layout);
         m_sourceRect = layoutEntity->m_sourceRect;
+        m_imageScaleType = layoutEntity->m_imageScaleType;
+        m_imageScale = layoutEntity->m_imageScale;
         Load(layoutEntity->m_texturePath.c_str());
     }
 
@@ -67,7 +69,7 @@ namespace moth_ui {
 
     void NodeImage::DrawInternal() {
         if (m_image) {
-            Context::GetCurrentContext().GetRenderer().RenderImage(*m_image, m_sourceRect, m_screenRect);
+            Context::GetCurrentContext().GetRenderer().RenderImage(*m_image, m_sourceRect, m_screenRect, m_imageScaleType, m_imageScale);
         }
     }
 }

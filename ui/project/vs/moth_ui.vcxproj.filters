@@ -200,5 +200,6 @@
     <ClInclude Include="..\..\include\moth_ui\text_alignment.h">
       <Filter>include\moth_ui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\image_scale_type.h" />
   </ItemGroup>
 </Project>

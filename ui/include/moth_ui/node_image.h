@@ -1,6 +1,7 @@
 #pragma once
 
 #include "node.h"
+#include "image_scale_type.h"
 
 namespace moth_ui {
     class NodeImage : public Node {
@@ -21,6 +22,8 @@ namespace moth_ui {
     protected:
         std::unique_ptr<IImage> m_image;
         IntRect m_sourceRect;
+        ImageScaleType m_imageScaleType = ImageScaleType::Stretch;
+        float m_imageScale = 1.0f;
 
         void DrawInternal() override;
     };

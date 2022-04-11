@@ -18,6 +18,8 @@ namespace moth_ui {
             return m_font.get();
         }
 
+        void SetText(char const* text) { m_text = text; }
+
         void DebugDraw();
 
     protected:

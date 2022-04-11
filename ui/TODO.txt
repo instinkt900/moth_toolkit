@@ -18,3 +18,4 @@ Display source rect on image entity properties panel.
 change the renderer interface so that we create a draw list - (maybe not? might be a user side implementation)
 old version data loading support.
 properties window in editor needs to use actions.
+reflection and the ability to replace a lot of undo/redo actions with change property actions

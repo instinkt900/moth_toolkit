@@ -144,6 +144,45 @@
     <ClInclude Include="..\..\editor\src\editor\actions\change_index_action.h">
       <Filter>src\editor\actions</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\change_id_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\properties_elements.h">
+      <Filter>src\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\change_text_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\set_visible_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\show_bounds_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\set_blend_mode_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\set_image_scale_type_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\set_image_scale_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\change_image_path_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\change_font_size_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\change_font_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\change_h_alignment_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\change_v_alignment_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\editor\src\app.cpp">
@@ -248,7 +287,50 @@
     <ClCompile Include="..\..\editor\src\font_factory.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\editor\src\font.cpp" />
-    <ClCompile Include="..\..\editor\src\editor\actions\change_index_action.cpp" />
+    <ClCompile Include="..\..\editor\src\editor\actions\change_index_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\change_id_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\properties_elements.cpp">
+      <Filter>src\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\font.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\change_text_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\set_visible_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\show_bounds_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\set_blend_mode_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\set_image_scale_type_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\set_image_scale_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\change_image_path_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\change_font_size_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\change_font_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\change_h_alignment_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\change_v_alignment_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

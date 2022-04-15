@@ -11,7 +11,6 @@ namespace moth_ui {
     public:
         explicit LayoutEntity(LayoutRect const& initialBounds);
         explicit LayoutEntity(LayoutEntityGroup* parent);
-        LayoutEntity(nlohmann::json const& json, LayoutEntityGroup* parent);
 
         virtual LayoutEntityType GetType() const { return LayoutEntityType::Entity; }
 
@@ -26,7 +25,6 @@ namespace moth_ui {
         virtual void RefreshAnimationTimings();
 
         virtual nlohmann::json Serialize() const;
-        virtual nlohmann::json SerializeAsChild() const;
         virtual void Deserialize(nlohmann::json const& json);
 
         std::string m_id;

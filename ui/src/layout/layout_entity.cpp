@@ -11,13 +11,7 @@ namespace moth_ui {
 
     LayoutEntity::LayoutEntity(LayoutEntityGroup* parent)
         : m_parent(parent) {
-        InitTracks({});
-    }
-
-    LayoutEntity::LayoutEntity(nlohmann::json const& json, LayoutEntityGroup* parent)
-        : m_parent(parent) {
-        InitTracks({});
-        Deserialize(json);
+        InitTracks(MakeDefaultLayoutRect());
     }
 
     std::unique_ptr<Node> LayoutEntity::Instantiate() {
@@ -147,13 +141,10 @@ namespace moth_ui {
         return j;
     }
 
-    nlohmann::json LayoutEntity::SerializeAsChild() const {
-        return Serialize();
-    }
-
     void LayoutEntity::Deserialize(nlohmann::json const& json) {
         auto const type = GetType();
-        assert(json["type"] == type);
+        auto const jsonType = json["type"];
+        assert((jsonType == LayoutEntityType::Layout && type == LayoutEntityType::Ref) || jsonType == type);
         m_id = json.value("m_id", "");
         m_blend = json.value("m_blend", BlendMode::Replace);
 

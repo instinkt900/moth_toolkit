@@ -9,6 +9,15 @@ namespace moth_ui {
         FloatRect offset;
     };
 
+    inline LayoutRect MakeDefaultLayoutRect() {
+        LayoutRect rect;
+        rect.anchor.topLeft = { 0.0f, 0.0f };
+        rect.anchor.bottomRight = { 1.0f, 1.0f };
+        rect.offset.topLeft = { 0.0f, 0.0f };
+        rect.offset.bottomRight = { 0.0f, 0.0f };
+        return rect;
+    }
+
     inline LayoutRect& operator+=(LayoutRect& a, LayoutRect const& b) {
         a.anchor += b.anchor;
         a.offset += b.offset;

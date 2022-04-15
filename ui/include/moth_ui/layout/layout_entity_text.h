@@ -6,8 +6,8 @@
 namespace moth_ui {
     class LayoutEntityText : public LayoutEntity {
     public:
-        LayoutEntityText(LayoutRect const& initialBounds);
-        LayoutEntityText(nlohmann::json const& json, LayoutEntityGroup* parent);
+        explicit LayoutEntityText(LayoutRect const& initialBounds);
+        explicit LayoutEntityText(LayoutEntityGroup* parent);
 
         LayoutEntityType GetType() const override { return LayoutEntityType::Text; }
 

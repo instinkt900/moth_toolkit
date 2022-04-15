@@ -12,10 +12,12 @@ namespace moth_ui {
     class NodeImage;
     class NodeText;
 
+    class Layout;
     class LayoutEntityText;
     class LayoutEntityImage;
     class LayoutEntityRect;
     class LayoutEntityGroup;
+    class LayoutEntityRef;
     class LayoutEntity;
 
     class Keyframe;

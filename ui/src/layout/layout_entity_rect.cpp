@@ -7,9 +7,8 @@ namespace moth_ui {
         : LayoutEntity(initialBounds) {
     }
 
-    LayoutEntityRect::LayoutEntityRect(nlohmann::json const& json, LayoutEntityGroup* parent)
+    LayoutEntityRect::LayoutEntityRect(LayoutEntityGroup* parent)
         : LayoutEntity(parent) {
-        Deserialize(json);
     }
 
     std::unique_ptr<Node> LayoutEntityRect::Instantiate() {

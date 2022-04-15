@@ -118,6 +118,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\editor\properties_editor.h" />
     <ClInclude Include="..\..\editor\src\editor\properties_elements.h" />
     <ClInclude Include="..\..\editor\src\editor\utils.h" />
+    <ClInclude Include="..\..\editor\src\events\event.h" />
     <ClInclude Include="..\..\editor\src\event_factory.h" />
     <ClInclude Include="..\..\editor\src\app.h" />
     <ClInclude Include="..\..\editor\src\font.h" />

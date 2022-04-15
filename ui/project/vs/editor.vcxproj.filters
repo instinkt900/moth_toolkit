@@ -16,6 +16,9 @@
     <Filter Include="imgui">
       <UniqueIdentifier>{ce364b27-30ab-4d54-9219-a4db145e9689}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\events">
+      <UniqueIdentifier>{97107edd-ba16-47f6-a73d-0462de195e6b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\editor\src\common.h">
@@ -146,6 +149,9 @@
     </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\properties_elements.h">
       <Filter>src\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\events\event.h">
+      <Filter>src\events</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -2,17 +2,14 @@
 
 namespace moth_ui {
     enum EventType : int {
-        EVENTTYPE_RENDERDEVICERESET,
-        EVENTTYPE_RENDERTARGETRESET,
-        EVENTTYPE_WINDOWSIZE,
-        EVENTTYPE_REQUEST_QUIT,
-        EVENTTYPE_QUIT,
         EVENTTYPE_KEY,
         EVENTTYPE_MOUSE_DOWN,
         EVENTTYPE_MOUSE_UP,
         EVENTTYPE_MOUSE_MOVE,
         EVENTTYPE_MOUSE_WHEEL,
         EVENTTYPE_ANIMATION,
+
+        EVENTTYPE_USER,
     };
 
     class Event {

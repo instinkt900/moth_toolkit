@@ -113,19 +113,10 @@
     <ClInclude Include="..\..\include\moth_ui\events\event_animation.h">
       <Filter>include\moth_ui\events</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\moth_ui\events\event_device.h">
-      <Filter>include\moth_ui\events</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\moth_ui\events\event_key.h">
       <Filter>include\moth_ui\events</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\moth_ui\events\event_mouse.h">
-      <Filter>include\moth_ui\events</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\moth_ui\events\event_quit.h">
-      <Filter>include\moth_ui\events</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\moth_ui\events\event_window_size.h">
       <Filter>include\moth_ui\events</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\moth_ui\layout\layout.h">
@@ -217,9 +208,6 @@
     </ClInclude>
     <ClInclude Include="..\..\include\moth_ui\node_rect.h">
       <Filter>include\moth_ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\moth_ui\events\event_request_quit.h">
-      <Filter>include\moth_ui\events</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

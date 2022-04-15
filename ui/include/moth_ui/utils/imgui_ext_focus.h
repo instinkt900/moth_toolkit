@@ -1,8 +1,8 @@
 #pragma once
 
-#include "moth_ui/layout/layout_types.h"
 #include "moth_ui/utils/color.h"
 #include "moth_ui/animation_track.h"
+#include "moth_ui/utils/rect.h"
 
 namespace imgui_ext {
     struct FocusGroupContext {

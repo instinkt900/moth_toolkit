@@ -36,7 +36,6 @@ namespace moth_ui {
         int m_frame = 0;
         KeyframeValue m_value;
         InterpType m_interpType = InterpType::Linear;
-
         float m_time = 0; // calculated based on clips
 
         float GetFloatValue() const { return std::get<float>(m_value); }
@@ -49,7 +48,6 @@ namespace moth_ui {
     public:
         int m_frame;
         std::string m_name;
-
         float m_time; // calculated based on clips
 
         NLOHMANN_DEFINE_TYPE_INTRUSIVE(AnimationEvent, m_frame, m_name);

@@ -1,7 +1,8 @@
 #pragma once
 
-#include "layout_entity.h"
+#include "moth_ui/layout/layout_entity.h"
 #include "moth_ui/image_scale_type.h"
+#include "moth_ui/utils/rect.h"
 
 namespace moth_ui {
     class LayoutEntityImage : public LayoutEntity {

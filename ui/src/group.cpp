@@ -10,7 +10,7 @@ namespace moth_ui {
 
     Group::Group(std::shared_ptr<LayoutEntityGroup> layoutEntityGroup)
         : Node(layoutEntityGroup) {
-        for (auto&& childEntity : layoutEntityGroup->GetChildren()) {
+        for (auto&& childEntity : layoutEntityGroup->m_children) {
             AddChild(childEntity->Instantiate());
         }
     }
@@ -58,7 +58,7 @@ namespace moth_ui {
     bool Group::SetAnimation(std::string const& name) {
         if (m_layout) {
             auto layout = std::static_pointer_cast<LayoutEntityGroup>(m_layout);
-            auto& animationClips = layout->GetAnimationClips();
+            auto& animationClips = layout->m_clips;
             auto it = ranges::find_if(animationClips, [&name](auto& clip) { return clip->m_name == name; });
             if (std::end(animationClips) != it) {
                 for (auto&& child : m_children) {

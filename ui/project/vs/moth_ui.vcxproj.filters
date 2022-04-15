@@ -69,6 +69,12 @@
     <ClCompile Include="..\..\src\node_text.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\layouts\layout_entity_rect.cpp">
+      <Filter>src\layouts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\node_rect.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\common.h">
@@ -134,7 +140,7 @@
     <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_image.h">
       <Filter>include\moth_ui\layout</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\moth_ui\layout\layout_types.h">
+    <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_type.h">
       <Filter>include\moth_ui\layout</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\moth_ui\utils\imgui_ext.h">
@@ -201,6 +207,15 @@
       <Filter>include\moth_ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\moth_ui\image_scale_type.h">
+      <Filter>include\moth_ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\layout\layout_rect.h">
+      <Filter>include\moth_ui\layout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_rect.h">
+      <Filter>include\moth_ui\layout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\node_rect.h">
       <Filter>include\moth_ui</Filter>
     </ClInclude>
   </ItemGroup>

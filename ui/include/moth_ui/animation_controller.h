@@ -19,7 +19,7 @@ namespace moth_ui {
 
     class AnimationController {
     public:
-        AnimationController(Node* node, std::map<AnimationTrack::Target, std::shared_ptr<AnimationTrack>> const& tracks);
+        AnimationController(Node* node, std::map<AnimationTrack::Target, std::unique_ptr<AnimationTrack>> const& tracks);
 
         auto GetTime() const { return m_time; }
         auto GetClip() const { return m_clip; }

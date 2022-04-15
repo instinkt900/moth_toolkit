@@ -1,6 +1,6 @@
 #pragma once
 
-#include "layout_entity.h"
+#include "moth_ui/layout/layout_entity.h"
 #include "moth_ui/text_alignment.h"
 
 namespace moth_ui {

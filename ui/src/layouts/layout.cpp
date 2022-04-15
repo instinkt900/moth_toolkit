@@ -40,7 +40,7 @@ namespace moth_ui {
         ifile >> json;
         auto layout = std::make_unique<LayoutEntityGroup>(json, nullptr);
 
-        auto& animationClips = layout->GetAnimationClips();
+        auto& animationClips = layout->m_clips;
         json["m_animationClips"].get_to(animationClips);
         float startTime = 0;
         for (auto&& clip : animationClips) {
@@ -50,7 +50,7 @@ namespace moth_ui {
 
         for (auto&& childJson : json["m_children"]) {
             auto child = LoadEntity(childJson, layout.get());
-            layout->GetChildren().push_back(std::move(child));
+            layout->m_children.push_back(std::move(child));
         }
 
         return layout;

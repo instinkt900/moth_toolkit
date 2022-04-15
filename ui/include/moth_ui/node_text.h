@@ -1,7 +1,6 @@
 #pragma once
 
 #include "node.h"
-#include "layout/layout_types.h"
 #include "text_alignment.h"
 
 namespace moth_ui {

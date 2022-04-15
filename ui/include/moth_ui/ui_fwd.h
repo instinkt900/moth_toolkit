@@ -8,11 +8,13 @@ namespace moth_ui {
     
     class Node;
     class Group;
+    class NodeRect;
     class NodeImage;
     class NodeText;
 
     class LayoutEntityText;
     class LayoutEntityImage;
+    class LayoutEntityRect;
     class LayoutEntityGroup;
     class LayoutEntity;
 

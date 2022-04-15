@@ -12,11 +12,11 @@ namespace moth_ui {
 
     Node::Node(std::shared_ptr<LayoutEntity> layoutEntity)
         : m_layout(layoutEntity)
-        , m_id(m_layout->GetId())
+        , m_id(m_layout->m_id)
         , m_layoutRect(m_layout->GetBoundsAtFrame(0))
         , m_color(m_layout->GetColorAtFrame(0))
-        , m_blend(m_layout->GetBlendMode()) {
-        m_animationController = std::make_unique<AnimationController>(this, m_layout->GetAnimationTracks());
+        , m_blend(m_layout->m_blend) {
+        m_animationController = std::make_unique<AnimationController>(this, m_layout->m_tracks);
     }
 
     Node::~Node() {
@@ -43,7 +43,11 @@ namespace moth_ui {
 
         if (m_showRect) {
             auto& renderer = Context::GetCurrentContext().GetRenderer();
-            renderer.DrawRect(m_screenRect, BasicColors::Red, BlendMode::Replace);
+            renderer.PushColor(BasicColors::Red);
+            renderer.PushBlendMode(BlendMode::Replace);
+            renderer.RenderRect(m_screenRect);
+            renderer.PopBlendMode();
+            renderer.PopColor();
         }
     }
 
@@ -82,10 +86,10 @@ namespace moth_ui {
     }
 
     void Node::ReloadEntity() {
-        m_id = m_layout->GetId();
+        m_id = m_layout->m_id;
         m_layoutRect = m_layout->GetBoundsAtFrame(0);
         m_color = m_layout->GetColorAtFrame(0);
-        m_animationController = std::make_unique<AnimationController>(this, m_layout->GetAnimationTracks());
+        m_animationController = std::make_unique<AnimationController>(this, m_layout->m_tracks);
     }
 
     bool Node::IsInBounds(IntVec2 const& point) const {

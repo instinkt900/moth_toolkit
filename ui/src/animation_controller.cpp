@@ -56,7 +56,7 @@ namespace moth_ui {
         m_track.ForKeyframesOverTime(startTime, endTime, eventCallback);
     }
 
-    AnimationController::AnimationController(Node* node, std::map<AnimationTrack::Target, std::shared_ptr<AnimationTrack>> const& tracks)
+    AnimationController::AnimationController(Node* node, std::map<AnimationTrack::Target, std::unique_ptr<AnimationTrack>> const& tracks)
         : m_node(node) {
         for (auto&& [target, track] : tracks) {
             m_trackControllers.push_back(std::make_unique<AnimationTrackController>(GetTargetReference(node, target), *track));

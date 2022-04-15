@@ -4,13 +4,6 @@
 #include "moth_ui/utils/rect_serialization.h"
 
 namespace moth_ui {
-    enum class LayoutEntityType {
-        Entity,
-        Group,
-        Image,
-        Text
-    };
-
     struct LayoutRect {
         FloatRect anchor;
         FloatRect offset;

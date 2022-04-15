@@ -30,35 +30,24 @@ namespace moth_ui {
     void LayoutEntityGroup::Clone(LayoutEntityGroup const& other) {
         for (auto&& child : other.m_children) {
             m_children.push_back(child);
-            child->SetParent(this);
+            child->m_parent = this;
         }
 
-        for (auto&& clip : other.m_animationClips) {
-            m_animationClips.push_back(std::make_unique<AnimationClip>(*clip));
-        }
-    }
-
-    void LayoutEntityGroup::OnEditDraw() {
-        if (ImGui::TreeNode("group")) {
-            imgui_ext::Inspect("id", m_id);
-            //ImGuiInspectMember("bounds", m_bounds);
-            for (auto&& child : m_children) {
-                child->OnEditDraw();
-            }
-            ImGui::TreePop();
+        for (auto&& clip : other.m_clips) {
+            m_clips.push_back(std::make_unique<AnimationClip>(*clip));
         }
     }
 
     nlohmann::json LayoutEntityGroup::Serialize() const {
         nlohmann::json j;
         j = LayoutEntity::Serialize();
-        j["m_animationClips"] = m_animationClips;
+        j["m_animationClips"] = m_clips;
         std::vector<nlohmann::json> childJsons;
         for (auto&& child : m_children) {
             childJsons.push_back(child->SerializeAsChild());
         }
         j["m_children"] = childJsons;
-        j["m_animationClips"] = m_animationClips;
+        j["m_animationClips"] = m_clips;
         return j;
     }
 

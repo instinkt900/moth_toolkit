@@ -20,9 +20,13 @@ namespace moth_ui {
         Deserialize(json);
     }
 
+    std::unique_ptr<Node> LayoutEntity::Instantiate() {
+        return std::make_unique<Node>(shared_from_this());
+    }
+
     void LayoutEntity::SetBounds(LayoutRect const& bounds, int frame) {
         auto SetValue = [&](AnimationTrack::Target target, float value) {
-            auto track = m_tracks.at(target);
+            auto& track = m_tracks.at(target);
             auto& keyframe = track->GetOrCreateKeyframe(frame);
             keyframe.m_value = value;
         };
@@ -42,7 +46,7 @@ namespace moth_ui {
             float value = 0;
             auto const trackIt = m_tracks.find(target);
             if (std::end(m_tracks) != trackIt) {
-                const auto track = trackIt->second;
+                const auto& track = trackIt->second;
                 value = track->GetValueAtTime(time);
             }
             return value;
@@ -65,7 +69,7 @@ namespace moth_ui {
             float value = 0;
             auto const trackIt = m_tracks.find(target);
             if (std::end(m_tracks) != trackIt) {
-                const auto track = trackIt->second;
+                const auto& track = trackIt->second;
                 value = track->GetValueAtFrame(frame);
             }
             return value;
@@ -88,7 +92,7 @@ namespace moth_ui {
             float value = 0;
             auto const trackIt = m_tracks.find(target);
             if (std::end(m_tracks) != trackIt) {
-                const auto track = trackIt->second;
+                const auto& track = trackIt->second;
                 value = track->GetValueAtTime(time);
             }
             return value;
@@ -107,7 +111,7 @@ namespace moth_ui {
             float value = 0;
             auto const trackIt = m_tracks.find(target);
             if (std::end(m_tracks) != trackIt) {
-                const auto track = trackIt->second;
+                const auto& track = trackIt->second;
                 value = track->GetValueAtFrame(frame);
             }
             return value;
@@ -121,39 +125,11 @@ namespace moth_ui {
         return color;
     }
 
-    std::unique_ptr<Node> LayoutEntity::Instantiate() {
-        return std::make_unique<Node>(shared_from_this());
-    }
-
-    void LayoutEntity::OnEditDraw() {
-        if (ImGui::TreeNode("node")) {
-            imgui_ext::Inspect("id", m_id);
-            //ImGuiInspectMember("bounds", m_bounds);
-            ImGui::TreePop();
-        }
-    }
-
-    void LayoutEntity::InitTracks(LayoutRect const& initialRect) {
-        auto const targetList = {
-            std::make_pair(AnimationTrack::Target::TopAnchor, initialRect.anchor.topLeft.y),
-            std::make_pair(AnimationTrack::Target::LeftAnchor, initialRect.anchor.topLeft.x),
-            std::make_pair(AnimationTrack::Target::BottomAnchor, initialRect.anchor.bottomRight.y),
-            std::make_pair(AnimationTrack::Target::RightAnchor, initialRect.anchor.bottomRight.x),
-            std::make_pair(AnimationTrack::Target::TopOffset, initialRect.offset.topLeft.y),
-            std::make_pair(AnimationTrack::Target::LeftOffset, initialRect.offset.topLeft.x),
-            std::make_pair(AnimationTrack::Target::BottomOffset, initialRect.offset.bottomRight.y),
-            std::make_pair(AnimationTrack::Target::RightOffset, initialRect.offset.bottomRight.x),
-            std::make_pair(AnimationTrack::Target::ColorRed, 1.0f),
-            std::make_pair(AnimationTrack::Target::ColorGreen, 1.0f),
-            std::make_pair(AnimationTrack::Target::ColorBlue, 1.0f),
-            std::make_pair(AnimationTrack::Target::ColorAlpha, 1.0f),
-        };
-        if (std::end(m_tracks) == m_tracks.find(AnimationTrack::Target::Events)) {
-            m_tracks.insert(std::make_pair(AnimationTrack::Target::Events, std::make_shared<AnimationTrack>(AnimationTrack::Target::Events)));
-        }
-        for (auto&& [target, value] : targetList) {
-            if (std::end(m_tracks) == m_tracks.find(target)) {
-                m_tracks.insert(std::make_pair(target, std::make_shared<AnimationTrack>(target, value)));
+    void LayoutEntity::RefreshAnimationTimings() {
+        if (m_parent) {
+            auto const& animationClips = m_parent->m_clips;
+            for (auto&& [target, track] : m_tracks) {
+                track->UpdateTrackTimings(animationClips);
             }
         }
     }
@@ -175,15 +151,6 @@ namespace moth_ui {
         return Serialize();
     }
 
-    void LayoutEntity::RefreshAnimationTimings() {
-        if (m_parent) {
-            auto const& animationClips = m_parent->GetAnimationClips();
-            for (auto&& [target, track] : m_tracks) {
-                track->UpdateTrackTimings(animationClips);
-            }
-        }
-    }
-
     void LayoutEntity::Deserialize(nlohmann::json const& json) {
         auto const type = GetType();
         assert(json["type"] == type);
@@ -191,7 +158,7 @@ namespace moth_ui {
         m_blend = json.value("m_blend", BlendMode::Replace);
 
         if (json.contains("m_tracks")) {
-            auto const* animationClips = m_parent ? &m_parent->GetAnimationClips() : nullptr;
+            auto const* animationClips = m_parent ? &m_parent->m_clips : nullptr;
             auto const& tracksJson = json["m_tracks"];
             for (auto&& trackJson : tracksJson) {
                 auto track = std::make_unique<AnimationTrack>(trackJson);
@@ -200,6 +167,31 @@ namespace moth_ui {
                 }
                 m_tracks.erase(track->GetTarget());
                 m_tracks.insert(std::make_pair(track->GetTarget(), std::move(track)));
+            }
+        }
+    }
+
+    void LayoutEntity::InitTracks(LayoutRect const& initialRect) {
+        auto const targetList = {
+            std::make_pair(AnimationTrack::Target::TopAnchor, initialRect.anchor.topLeft.y),
+            std::make_pair(AnimationTrack::Target::LeftAnchor, initialRect.anchor.topLeft.x),
+            std::make_pair(AnimationTrack::Target::BottomAnchor, initialRect.anchor.bottomRight.y),
+            std::make_pair(AnimationTrack::Target::RightAnchor, initialRect.anchor.bottomRight.x),
+            std::make_pair(AnimationTrack::Target::TopOffset, initialRect.offset.topLeft.y),
+            std::make_pair(AnimationTrack::Target::LeftOffset, initialRect.offset.topLeft.x),
+            std::make_pair(AnimationTrack::Target::BottomOffset, initialRect.offset.bottomRight.y),
+            std::make_pair(AnimationTrack::Target::RightOffset, initialRect.offset.bottomRight.x),
+            std::make_pair(AnimationTrack::Target::ColorRed, 1.0f),
+            std::make_pair(AnimationTrack::Target::ColorGreen, 1.0f),
+            std::make_pair(AnimationTrack::Target::ColorBlue, 1.0f),
+            std::make_pair(AnimationTrack::Target::ColorAlpha, 1.0f),
+        };
+        if (std::end(m_tracks) == m_tracks.find(AnimationTrack::Target::Events)) {
+            m_tracks.insert(std::make_pair(AnimationTrack::Target::Events, std::make_unique<AnimationTrack>(AnimationTrack::Target::Events)));
+        }
+        for (auto&& [target, value] : targetList) {
+            if (std::end(m_tracks) == m_tracks.find(target)) {
+                m_tracks.insert(std::make_pair(target, std::make_unique<AnimationTrack>(target, value)));
             }
         }
     }

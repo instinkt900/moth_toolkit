@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imgui_ext.h"
+#include "moth_ui/layout/layout_rect.h"
 
 namespace imgui_ext {
     inline void Inspect(char const* name, bool& value) {

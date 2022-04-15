@@ -1,9 +1,9 @@
 #pragma once
 
 #include "event_listener.h"
-#include "layout/layout_types.h"
 #include "utils/color.h"
 #include "blend_mode.h"
+#include "layout/layout_rect.h"
 #include "ui_fwd.h"
 
 namespace moth_ui {

@@ -89,6 +89,7 @@ namespace moth_ui {
         m_id = m_layout->m_id;
         m_layoutRect = m_layout->GetBoundsAtFrame(0);
         m_color = m_layout->GetColorAtFrame(0);
+        m_blend = m_layout->m_blend;
         m_animationController = std::make_unique<AnimationController>(this, m_layout->m_tracks);
     }
 

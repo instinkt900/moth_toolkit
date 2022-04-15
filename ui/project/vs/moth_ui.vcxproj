@@ -121,6 +121,7 @@
     <ClInclude Include="..\..\include\moth_ui\events\event_key.h" />
     <ClInclude Include="..\..\include\moth_ui\events\event_mouse.h" />
     <ClInclude Include="..\..\include\moth_ui\events\event_quit.h" />
+    <ClInclude Include="..\..\include\moth_ui\events\event_request_quit.h" />
     <ClInclude Include="..\..\include\moth_ui\events\event_window_size.h" />
     <ClInclude Include="..\..\include\moth_ui\event_dispatch.h" />
     <ClInclude Include="..\..\include\moth_ui\event_listener.h" />

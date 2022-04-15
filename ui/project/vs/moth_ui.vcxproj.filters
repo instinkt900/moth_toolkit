@@ -218,5 +218,8 @@
     <ClInclude Include="..\..\include\moth_ui\node_rect.h">
       <Filter>include\moth_ui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\events\event_request_quit.h">
+      <Filter>include\moth_ui\events</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 Moth UI TODO
 ------------
 
-Add modification notification. Lost work popup on exit/load etc.
+Work out a better way to handle events. Extract application events from ui specific.
 old version data loading support.
 reflection/introspection. might not be needed. maybe find a lightweight way of doing it? boost hana?
 9 slicing

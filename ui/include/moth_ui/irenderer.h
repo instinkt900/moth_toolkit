@@ -16,6 +16,10 @@ namespace moth_ui {
         virtual void PopBlendMode() = 0;
         virtual void PushColor(Color const& color) = 0;
         virtual void PopColor() = 0;
+
+        virtual void PushClip(IntRect const& rect) = 0;
+        virtual void PopClip() = 0;
+
         virtual void RenderRect(IntRect const& rect) = 0;
         virtual void RenderFilledRect(IntRect const& rect) = 0;
         virtual void RenderImage(IImage& image, IntRect const& sourceRect, IntRect const& destRect, ImageScaleType scaleType, float scale) = 0;

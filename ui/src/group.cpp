@@ -3,6 +3,8 @@
 #include "moth_ui/layout/layout_entity_group.h"
 #include "moth_ui/animation_clip.h"
 #include "moth_ui/event_dispatch.h"
+#include "moth_ui/node_clip.h"
+#include "moth_ui/context.h"
 
 namespace moth_ui {
     Group::Group() {
@@ -45,9 +47,17 @@ namespace moth_ui {
     void Group::AddChild(std::shared_ptr<Node> child) {
         m_children.push_back(child);
         child->SetParent(this);
+
+        if (auto const clipNode = std::dynamic_pointer_cast<NodeClip>(child)) {
+            m_clipRect = clipNode.get();
+        }
     }
 
     void Group::RemoveChild(std::shared_ptr<Node> child) {
+        if (child.get() == m_clipRect) {
+            m_clipRect = nullptr;
+        }
+
         auto it = ranges::find(m_children, child);
         if (std::end(m_children) != it) {
             (*it)->SetParent(nullptr);
@@ -93,8 +103,18 @@ namespace moth_ui {
     }
 
     void Group::DrawInternal() {
+        bool popClip = false;
+        if (m_clipRect && m_clipRect->IsVisible()) {
+            Context::GetCurrentContext().GetRenderer().PushClip(m_clipRect->GetScreenRect());
+            popClip = true;
+        }
+
         for (auto&& child : m_children) {
             child->Draw();
+        }
+
+        if (popClip) {
+            Context::GetCurrentContext().GetRenderer().PopClip();
         }
     }
 

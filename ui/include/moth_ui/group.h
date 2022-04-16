@@ -27,6 +27,7 @@ namespace moth_ui {
 
     protected:
         std::vector<std::shared_ptr<Node>> m_children;
+        NodeClip* m_clipRect = nullptr;
 
         void DrawInternal() override;
     };

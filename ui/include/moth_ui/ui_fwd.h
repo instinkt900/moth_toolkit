@@ -11,6 +11,7 @@ namespace moth_ui {
     class NodeRect;
     class NodeImage;
     class NodeText;
+    class NodeClip;
 
     class Layout;
     class LayoutEntityText;
@@ -18,6 +19,7 @@ namespace moth_ui {
     class LayoutEntityRect;
     class LayoutEntityGroup;
     class LayoutEntityRef;
+    class LayoutEntityClip;
     class LayoutEntity;
 
     class Keyframe;

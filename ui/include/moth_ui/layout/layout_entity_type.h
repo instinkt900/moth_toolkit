@@ -8,6 +8,7 @@ namespace moth_ui {
         Ref,
         Rect,
         Image,
-        Text
+        Text,
+        Clip
     };
 }

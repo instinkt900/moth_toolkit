@@ -78,6 +78,12 @@
     <ClCompile Include="..\..\src\layout\layout_entity_text.cpp">
       <Filter>src\layout</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\layout\layout_entity_clip.cpp">
+      <Filter>src\layout</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\node_clip.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\common.h">
@@ -214,6 +220,12 @@
     </ClInclude>
     <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_ref.h">
       <Filter>include\moth_ui\layout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_clip.h">
+      <Filter>include\moth_ui\layout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\node_clip.h">
+      <Filter>include\moth_ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

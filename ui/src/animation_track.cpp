@@ -15,7 +15,6 @@ namespace moth_ui {
 
     AnimationTrack::AnimationTrack(nlohmann::json const& json) {
         *this = json;
-
         SortKeyframes();
     }
 

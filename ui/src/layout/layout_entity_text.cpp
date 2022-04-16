@@ -17,20 +17,20 @@ namespace moth_ui {
 
     nlohmann::json LayoutEntityText::Serialize() const {
         nlohmann::json j = LayoutEntity::Serialize();
-        j["m_fontName"] = m_fontName;
-        j["m_fontSize"] = m_fontSize;
-        j["m_text"] = m_text;
-        j["m_horizontalAlignment"] = m_horizontalAlignment;
-        j["m_verticalAlignment"] = m_verticalAlignment;
+        j["fontName"] = m_fontName;
+        j["fontSize"] = m_fontSize;
+        j["text"] = m_text;
+        j["horizontalAlignment"] = m_horizontalAlignment;
+        j["verticalAlignment"] = m_verticalAlignment;
         return j;
     }
 
-    void LayoutEntityText::Deserialize(nlohmann::json const& json) {
-        LayoutEntity::Deserialize(json);
-        json["m_fontName"].get_to(m_fontName);
-        json["m_fontSize"].get_to(m_fontSize);
-        json["m_text"].get_to(m_text);
-        json["m_horizontalAlignment"].get_to(m_horizontalAlignment);
-        json["m_verticalAlignment"].get_to(m_verticalAlignment);
+    void LayoutEntityText::Deserialize(nlohmann::json const& json, int dataVersion) {
+        LayoutEntity::Deserialize(json, dataVersion);
+        json["fontName"].get_to(m_fontName);
+        json["fontSize"].get_to(m_fontSize);
+        json["text"].get_to(m_text);
+        json["horizontalAlignment"].get_to(m_horizontalAlignment);
+        json["verticalAlignment"].get_to(m_verticalAlignment);
     }
 }

@@ -1,7 +1,6 @@
 Moth UI TODO
 ------------
 
-old version data loading support.
 reflection/introspection. might not be needed. maybe find a lightweight way of doing it? boost hana?
 9 slicing
 clip rect

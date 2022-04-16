@@ -17,12 +17,12 @@ namespace moth_ui {
 
     nlohmann::json LayoutEntityRect::Serialize() const {
         nlohmann::json j = LayoutEntity::Serialize();
-        j["m_filled"] = m_filled;
+        j["filled"] = m_filled;
         return j;
     }
 
-    void LayoutEntityRect::Deserialize(nlohmann::json const& json) {
-        LayoutEntity::Deserialize(json);
-        json.at("m_filled").get_to(m_filled);
+    void LayoutEntityRect::Deserialize(nlohmann::json const& json, int dataVersion) {
+        LayoutEntity::Deserialize(json, dataVersion);
+        json.at("filled").get_to(m_filled);
     }
 }

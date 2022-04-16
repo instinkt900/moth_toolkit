@@ -12,9 +12,12 @@ namespace moth_ui {
         LayoutEntityType GetType() const override { return LayoutEntityType::Layout; }
 
         nlohmann::json Serialize() const override;
-        void Deserialize(nlohmann::json const& json) override;
+        void Deserialize(nlohmann::json const& json) { Deserialize(json, 0); }
+        void Deserialize(nlohmann::json const& json, int dataVersion) override;
 
         static std::shared_ptr<Layout> Load(char const* path);
         static std::shared_ptr<LayoutEntityRef> LoadSublayout(char const* path);
+
+        static const int Version = 1;
     };
 }

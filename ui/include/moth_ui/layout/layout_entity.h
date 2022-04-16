@@ -25,7 +25,7 @@ namespace moth_ui {
         virtual void RefreshAnimationTimings();
 
         virtual nlohmann::json Serialize() const;
-        virtual void Deserialize(nlohmann::json const& json);
+        virtual void Deserialize(nlohmann::json const& json, int dataVersion);
 
         std::string m_id;
         LayoutEntityGroup* m_parent = nullptr;

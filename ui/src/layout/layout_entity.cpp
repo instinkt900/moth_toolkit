@@ -131,26 +131,25 @@ namespace moth_ui {
     nlohmann::json LayoutEntity::Serialize() const {
         nlohmann::json j;
         j["type"] = GetType();
-        j["m_id"] = m_id;
+        j["id"] = m_id;
+        j["blend"] = m_blend;
         nlohmann::json trackJson;
         for (auto&& [target, track] : m_tracks) {
             trackJson.push_back(*track);
         }
-        j["m_tracks"] = trackJson;
-        j["m_blend"] = m_blend;
+        j["tracks"] = trackJson;
         return j;
     }
 
-    void LayoutEntity::Deserialize(nlohmann::json const& json) {
-        auto const type = GetType();
-        auto const jsonType = json["type"];
-        assert((jsonType == LayoutEntityType::Layout && type == LayoutEntityType::Ref) || jsonType == type);
-        m_id = json.value("m_id", "");
-        m_blend = json.value("m_blend", BlendMode::Replace);
+    void LayoutEntity::Deserialize(nlohmann::json const& json, int dataVersion) {
+        assert(json["type"] == GetType());
 
-        if (json.contains("m_tracks")) {
+        m_id = json.value("id", "");
+        m_blend = json.value("blend", BlendMode::Replace);
+
+        if (json.contains("tracks")) {
+            auto const& tracksJson = json["tracks"];
             auto const* animationClips = m_parent ? &m_parent->m_clips : nullptr;
-            auto const& tracksJson = json["m_tracks"];
             for (auto&& trackJson : tracksJson) {
                 auto track = std::make_unique<AnimationTrack>(trackJson);
                 if (animationClips) {

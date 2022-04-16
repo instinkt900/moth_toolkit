@@ -17,18 +17,18 @@ namespace moth_ui {
 
     nlohmann::json LayoutEntityImage::Serialize() const {
         nlohmann::json j = LayoutEntity::Serialize();
-        j["m_texturePath"] = m_texturePath;
-        j["m_sourceRect"] = m_sourceRect;
-        j["m_imageScaleType"] = m_imageScaleType;
-        j["m_imageScale"] = m_imageScale;
+        j["texturePath"] = m_texturePath;
+        j["sourceRect"] = m_sourceRect;
+        j["imageScaleType"] = m_imageScaleType;
+        j["imageScale"] = m_imageScale;
         return j;
     }
 
-    void LayoutEntityImage::Deserialize(nlohmann::json const& json) {
-        LayoutEntity::Deserialize(json);
-        json["m_texturePath"].get_to(m_texturePath);
-        json["m_sourceRect"].get_to(m_sourceRect);
-        json["m_imageScaleType"].get_to(m_imageScaleType);
-        json["m_imageScale"].get_to(m_imageScale);
+    void LayoutEntityImage::Deserialize(nlohmann::json const& json, int dataVersion) {
+        LayoutEntity::Deserialize(json, dataVersion);
+        json["texturePath"].get_to(m_texturePath);
+        json["sourceRect"].get_to(m_sourceRect);
+        json["imageScaleType"].get_to(m_imageScaleType);
+        json["imageScale"].get_to(m_imageScale);
     }
 }

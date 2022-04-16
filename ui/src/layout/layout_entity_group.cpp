@@ -28,7 +28,7 @@ namespace moth_ui {
         return {};
     }
 
-    void LayoutEntityGroup::Deserialize(nlohmann::json const& json) {
+    void LayoutEntityGroup::Deserialize(nlohmann::json const& json, int dataVersion) {
         assert(false && "Group should never be deserialized");
     }
 }

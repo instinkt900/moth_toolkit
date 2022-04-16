@@ -8,7 +8,7 @@
 #include "moth_ui/group.h"
 
 namespace moth_ui {
-    std::unique_ptr<LayoutEntity> LoadEntity(nlohmann::json const& json, LayoutEntityGroup* parent) {
+    std::unique_ptr<LayoutEntity> LoadEntity(nlohmann::json const& json, LayoutEntityGroup* parent, int dataVersion) {
         std::unique_ptr<LayoutEntity> entity;
 
         LayoutEntityType type;
@@ -31,7 +31,7 @@ namespace moth_ui {
             assert(false && "unknown entity type");
         }
 
-        entity->Deserialize(json);
+        entity->Deserialize(json, dataVersion);
         return entity;
     }
 
@@ -41,28 +41,35 @@ namespace moth_ui {
 
     nlohmann::json Layout::Serialize() const {
         nlohmann::json j;
+        j["version"] = Version;
         j["type"] = GetType();
-        j["m_blend"] = m_blend;
-        j["m_animationClips"] = m_clips;
+        j["blend"] = m_blend;
+        j["clips"] = m_clips;
         std::vector<nlohmann::json> childJsons;
         for (auto&& child : m_children) {
             childJsons.push_back(child->Serialize());
         }
-        j["m_children"] = childJsons;
+        j["children"] = childJsons;
         return j;
     }
 
-    void Layout::Deserialize(nlohmann::json const& json) {
-        LayoutEntity::Deserialize(json);
-        json["m_animationClips"].get_to(m_clips);
+    void Layout::Deserialize(nlohmann::json const& json, int dataVersion) {
+        dataVersion = json["version"];
+
+        auto const jsonType = json["type"];
+        assert(jsonType == LayoutEntityType::Layout);
+
+        m_blend = json.value("blend", BlendMode::Replace);
+        json["clips"].get_to(m_clips);
+
         float startTime = 0;
         for (auto&& clip : m_clips) {
             clip->SetStartTime(startTime);
             startTime = clip->m_endTime;
         }
 
-        for (auto&& childJson : json["m_children"]) {
-            auto child = LoadEntity(childJson, this);
+        for (auto&& childJson : json["children"]) {
+            auto child = LoadEntity(childJson, this, dataVersion);
             m_children.push_back(std::move(child));
         }
     }

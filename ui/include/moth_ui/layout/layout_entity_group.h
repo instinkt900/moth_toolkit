@@ -15,7 +15,7 @@ namespace moth_ui {
         void RefreshAnimationTimings() override;
 
         nlohmann::json Serialize() const override;
-        void Deserialize(nlohmann::json const& json) override;
+        void Deserialize(nlohmann::json const& json, int dataVersion) override;
 
         std::vector<std::shared_ptr<LayoutEntity>> m_children;
         std::vector<std::unique_ptr<AnimationClip>> m_clips; // sorted by time/frame

@@ -41,7 +41,17 @@ namespace moth_ui {
         float GetFloatValue() const { return std::get<float>(m_value); }
         std::string const& GetStringValue() const { return std::get<std::string>(m_value); }
 
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Keyframe, m_frame, m_value, m_interpType);
+        friend void to_json(nlohmann::json& j, Keyframe const& keyframe) {
+            j["frame"] = keyframe.m_frame;
+            j["value"] = keyframe.m_value;
+            j["interp"] = keyframe.m_interpType;
+        }
+
+        friend void from_json(nlohmann::json const& j, Keyframe& keyframe) {
+            j.at("frame").get_to(keyframe.m_frame);
+            j.at("value").get_to(keyframe.m_value);
+            j.at("interp").get_to(keyframe.m_interpType);
+        }
     };
 
     class AnimationEvent {
@@ -50,7 +60,15 @@ namespace moth_ui {
         std::string m_name;
         float m_time; // calculated based on clips
 
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(AnimationEvent, m_frame, m_name);
+        friend void to_json(nlohmann::json& j, AnimationEvent const& event) {
+            j["frame"] = event.m_frame;
+            j["name"] = event.m_name;
+        }
+
+        friend void from_json(nlohmann::json const& j, AnimationEvent& event) {
+            j.at("frame").get_to(event.m_frame);
+            j.at("name").get_to(event.m_name);
+        }
     };
 
     class AnimationTrack {
@@ -88,7 +106,7 @@ namespace moth_ui {
         };
 
         AnimationTrack() = default;
-        AnimationTrack(Target target);
+        explicit AnimationTrack(Target target);
         AnimationTrack(Target target, float initialValue);
         explicit AnimationTrack(nlohmann::json const& json);
 
@@ -105,14 +123,21 @@ namespace moth_ui {
         float GetValueAtTime(float time) const;
         float GetValueAtFrame(int frame) const;
 
-        auto& GetKeyframes() { return m_keyframes; }
-
         void SortKeyframes();
 
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(AnimationTrack, m_target, m_keyframes);
+        friend void to_json(nlohmann::json& j, AnimationTrack const& track) {
+            j["target"] = track.m_target;
+            j["keyframes"] = track.m_keyframes;
+        }
+
+        friend void from_json(nlohmann::json const& j, AnimationTrack& track) {
+            j.at("target").get_to(track.m_target);
+            j.at("keyframes").get_to(track.m_keyframes);
+        }
+
+        std::vector<Keyframe> m_keyframes;
 
     private:
         Target m_target;
-        std::vector<Keyframe> m_keyframes;
     };
 }

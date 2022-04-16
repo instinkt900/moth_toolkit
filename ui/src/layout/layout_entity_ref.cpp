@@ -34,14 +34,14 @@ namespace moth_ui {
         nlohmann::json j;
         j = LayoutEntity::Serialize();     // dont save out the group data. children etc
         j["type"] = LayoutEntityType::Ref; // override the type as a reference
-        j["layout_path"] = m_layoutPath;
+        j["layoutPath"] = m_layoutPath;
         return j;
     }
 
-    void LayoutEntityRef::Deserialize(nlohmann::json const& json) {
-        LayoutEntity::Deserialize(json);
-        if (json.contains("layout_path")) {
-            json["layout_path"].get_to(m_layoutPath);
+    void LayoutEntityRef::Deserialize(nlohmann::json const& json, int dataVersion) {
+        LayoutEntity::Deserialize(json, dataVersion);
+        if (json.contains("layoutPath")) {
+            json["layoutPath"].get_to(m_layoutPath);
             auto subLayout = Layout::Load(m_layoutPath.c_str());
             Clone(*subLayout);
         }

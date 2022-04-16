@@ -14,7 +14,7 @@ namespace moth_ui {
         std::unique_ptr<Node> Instantiate() override;
 
         nlohmann::json Serialize() const override;
-        void Deserialize(nlohmann::json const& json) override;
+        void Deserialize(nlohmann::json const& json, int dataVersion) override;
 
         std::string m_fontName;
         int m_fontSize = 16;

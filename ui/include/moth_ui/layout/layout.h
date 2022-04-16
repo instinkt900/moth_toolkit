@@ -17,9 +17,6 @@ namespace moth_ui {
 
         static std::shared_ptr<Layout> Load(char const* path);
 
-    private:
-        static std::shared_ptr<LayoutEntityRef> LoadSublayout(char const* path);
-
         static const int Version = 1;
     };
 }

@@ -86,11 +86,4 @@ namespace moth_ui {
         layout->Deserialize(json);
         return layout;
     }
-
-    std::shared_ptr<LayoutEntityRef> Layout::LoadSublayout(char const* path) {
-        std::shared_ptr<Layout> layout = Load(path);
-        auto layoutRef = std::make_shared<LayoutEntityRef>(*layout);
-        layoutRef->m_layoutPath = path;
-        return layoutRef;
-    }
 }

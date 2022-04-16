@@ -6,7 +6,7 @@
 namespace moth_ui {
     class LayoutEntityRef : public LayoutEntityGroup {
     public:
-        explicit LayoutEntityRef(Layout const& subLayout);
+        LayoutEntityRef(char const* srcPath, Layout const& subLayout);
         explicit LayoutEntityRef(LayoutEntityGroup* parent);
 
         LayoutEntityType GetType() const override { return LayoutEntityType::Ref; }

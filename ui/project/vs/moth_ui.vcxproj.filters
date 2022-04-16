@@ -84,6 +84,9 @@
     <ClCompile Include="..\..\src\node_clip.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\layout\layout_cache.cpp">
+      <Filter>src\layout</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\common.h">
@@ -226,6 +229,9 @@
     </ClInclude>
     <ClInclude Include="..\..\include\moth_ui\node_clip.h">
       <Filter>include\moth_ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\layout\layout_cache.h">
+      <Filter>include\moth_ui\layout</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

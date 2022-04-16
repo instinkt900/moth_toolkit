@@ -99,6 +99,7 @@
     <ClCompile Include="..\..\src\imgui_ext\imgui_ext.cpp" />
     <ClCompile Include="..\..\src\imgui_ext\imgui_ext_focus.cpp" />
     <ClCompile Include="..\..\src\layout\layout.cpp" />
+    <ClCompile Include="..\..\src\layout\layout_cache.cpp" />
     <ClCompile Include="..\..\src\layout\layout_entity.cpp" />
     <ClCompile Include="..\..\src\layout\layout_entity_clip.cpp" />
     <ClCompile Include="..\..\src\layout\layout_entity_group.cpp" />
@@ -132,6 +133,7 @@
     <ClInclude Include="..\..\include\moth_ui\image_scale_type.h" />
     <ClInclude Include="..\..\include\moth_ui\irenderer.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout.h" />
+    <ClInclude Include="..\..\include\moth_ui\layout\layout_cache.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout_entity.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_clip.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_group.h" />

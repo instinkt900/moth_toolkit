@@ -16,6 +16,8 @@ namespace moth_ui {
         void Deserialize(nlohmann::json const& json, int dataVersion) override;
 
         static std::shared_ptr<Layout> Load(char const* path);
+
+    private:
         static std::shared_ptr<LayoutEntityRef> LoadSublayout(char const* path);
 
         static const int Version = 1;

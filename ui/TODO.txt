@@ -1,20 +1,19 @@
 Moth UI TODO
 ------------
 
-reflection/introspection. might not be needed. maybe find a lightweight way of doing it? boost hana?
+add layouts to a layout factory/project. refer to them by name rather than path.
+same with images.
+widget factory for instantiating nodes and linking them with custom classes. re. static class registration from ea.
 9 slicing
-clip rect
-texture wrapping handling
+texture packing.
+reflection/introspection. might not be needed. maybe find a lightweight way of doing it? boost hana?
 Readme.md
 Adding more documentation
 Update tests for better coverage. hook in to cppcoverage.
 Update cmake to auto build and run tests.
 Updates to preview window. Input etc. Reload animation stuff. currently broken.
 Add color customisation to editor colors.
-Maybe default image blending to "alpha"
 Add blending to editor text rendering. need to change SDL cache font code.
 Tests for the node/layout entity classes. Loading a hard coded test layout etc.
 Update layout of imgui elements. swapping label sides etc. tables?
 Display source rect on image entity properties panel.
-add layouts to a layout factory/project. refer to them by name rather than path.
-widget factory for instantiating nodes and linking them with custom classes. re. static class registration from ea.

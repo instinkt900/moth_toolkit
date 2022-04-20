@@ -19,6 +19,9 @@
     <Filter Include="src\events">
       <UniqueIdentifier>{97107edd-ba16-47f6-a73d-0462de195e6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\editor\panels">
+      <UniqueIdentifier>{ebf4b8cd-a6bd-4530-94b3-725bc66e263e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\editor\src\common.h">
@@ -28,9 +31,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\anchor_bounds_handle.h">
-      <Filter>src\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\editor\animation_widget.h">
       <Filter>src\editor</Filter>
     </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\bounds_handle.h">
@@ -45,13 +45,7 @@
     <ClInclude Include="..\..\editor\src\editor\keyframe_context.h">
       <Filter>src\editor</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\editor\src\editor\keyframe_widget.h">
-      <Filter>src\editor</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\offset_bounds_handle.h">
-      <Filter>src\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\editor\properties_editor.h">
       <Filter>src\editor</Filter>
     </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\utils.h">
@@ -135,9 +129,6 @@
     <ClInclude Include="..\..\editor\src\event_factory.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\editor\src\editor\preview_window.h">
-      <Filter>src\editor</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\editor\src\font_factory.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -153,6 +144,45 @@
     <ClInclude Include="..\..\editor\src\events\event.h">
       <Filter>src\events</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\layout_project.h">
+      <Filter>src\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel.h">
+      <Filter>src\editor\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_layout_list.h">
+      <Filter>src\editor\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_canvas_properties.h">
+      <Filter>src\editor\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_properties.h">
+      <Filter>src\editor\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_elements.h">
+      <Filter>src\editor\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_animation.h">
+      <Filter>src\editor\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_keyframes.h">
+      <Filter>src\editor\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_undo_stack.h">
+      <Filter>src\editor\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_preview.h">
+      <Filter>src\editor\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_image_list.h">
+      <Filter>src\editor\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_project_properties.h">
+      <Filter>src\editor\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\confirm_prompt.h">
+      <Filter>src\editor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\editor\src\app.cpp">
@@ -164,9 +194,6 @@
     <ClCompile Include="..\..\editor\src\editor\anchor_bounds_handle.cpp">
       <Filter>src\editor</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\editor\src\editor\animation_widget.cpp">
-      <Filter>src\editor</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\bounds_handle.cpp">
       <Filter>src\editor</Filter>
     </ClCompile>
@@ -176,13 +203,7 @@
     <ClCompile Include="..\..\editor\src\editor\editor_layer.cpp">
       <Filter>src\editor</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\editor\src\editor\keyframe_widget.cpp">
-      <Filter>src\editor</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\offset_bounds_handle.cpp">
-      <Filter>src\editor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\editor\properties_editor.cpp">
       <Filter>src\editor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\actions\add_action.cpp">
@@ -251,9 +272,6 @@
     <ClCompile Include="..\..\editor\src\event_factory.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\editor\src\editor\preview_window.cpp">
-      <Filter>src\editor</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\editor\src\font_factory.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -268,6 +286,42 @@
     </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\actions\editor_action.cpp">
       <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel.cpp">
+      <Filter>src\editor\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_layout_list.cpp">
+      <Filter>src\editor\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_canvas_properties.cpp">
+      <Filter>src\editor\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_properties.cpp">
+      <Filter>src\editor\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_elements.cpp">
+      <Filter>src\editor\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_animation.cpp">
+      <Filter>src\editor\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_keyframes.cpp">
+      <Filter>src\editor\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_undo_stack.cpp">
+      <Filter>src\editor\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_preview.cpp">
+      <Filter>src\editor\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_image_list.cpp">
+      <Filter>src\editor\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_project_properties.cpp">
+      <Filter>src\editor\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\confirm_prompt.cpp">
+      <Filter>src\editor</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

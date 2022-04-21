@@ -14,10 +14,6 @@ namespace moth_ui {
         InitTracks(MakeDefaultLayoutRect());
     }
 
-    std::unique_ptr<Node> LayoutEntity::Instantiate() {
-        return std::make_unique<Node>(shared_from_this());
-    }
-
     void LayoutEntity::SetBounds(LayoutRect const& bounds, int frame) {
         auto SetValue = [&](AnimationTrack::Target target, float value) {
             auto& track = m_tracks.at(target);
@@ -128,7 +124,7 @@ namespace moth_ui {
         }
     }
 
-    nlohmann::json LayoutEntity::Serialize() const {
+    nlohmann::json LayoutEntity::Serialize(SerializeContext const& context) const {
         nlohmann::json j;
         j["type"] = GetType();
         j["id"] = m_id;
@@ -141,7 +137,7 @@ namespace moth_ui {
         return j;
     }
 
-    void LayoutEntity::Deserialize(nlohmann::json const& json, int dataVersion) {
+    void LayoutEntity::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
         assert(json["type"] == GetType());
 
         m_id = json.value("id", "");

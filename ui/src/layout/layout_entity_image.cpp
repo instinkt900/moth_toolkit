@@ -15,19 +15,23 @@ namespace moth_ui {
         return std::make_unique<NodeImage>(std::static_pointer_cast<LayoutEntityImage>(shared_from_this()));
     }
 
-    nlohmann::json LayoutEntityImage::Serialize() const {
-        nlohmann::json j = LayoutEntity::Serialize();
-        j["texturePath"] = m_texturePath;
-        j["sourceRect"] = m_sourceRect;
+    nlohmann::json LayoutEntityImage::Serialize(SerializeContext const& context) const {
+        nlohmann::json j = LayoutEntity::Serialize(context);
+
+        std::filesystem::path imagePath(m_imagePath);
+        auto const relativePath = std::filesystem::relative(imagePath, context.m_rootPath);
+        j["imagePath"] = relativePath.string();
         j["imageScaleType"] = m_imageScaleType;
         j["imageScale"] = m_imageScale;
         return j;
     }
 
-    void LayoutEntityImage::Deserialize(nlohmann::json const& json, int dataVersion) {
-        LayoutEntity::Deserialize(json, dataVersion);
-        json["texturePath"].get_to(m_texturePath);
-        json["sourceRect"].get_to(m_sourceRect);
+    void LayoutEntityImage::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
+        LayoutEntity::Deserialize(json, context);
+
+        std::string relativePath;
+        json["imagePath"].get_to(relativePath);
+        m_imagePath = (context.m_rootPath / relativePath).string();
         json["imageScaleType"].get_to(m_imageScaleType);
         json["imageScale"].get_to(m_imageScale);
     }

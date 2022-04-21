@@ -19,16 +19,12 @@ namespace moth_ui {
         }
     }
 
-    std::unique_ptr<Node> LayoutEntityGroup::Instantiate() {
-        return std::make_unique<Group>(std::static_pointer_cast<LayoutEntityGroup>(shared_from_this()));
-    }
-
-    nlohmann::json LayoutEntityGroup::Serialize() const {
+    nlohmann::json LayoutEntityGroup::Serialize(SerializeContext const& context) const {
         assert(false && "Group should never be serialized");
         return {};
     }
 
-    void LayoutEntityGroup::Deserialize(nlohmann::json const& json, int dataVersion) {
+    void LayoutEntityGroup::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
         assert(false && "Group should never be deserialized");
     }
 }

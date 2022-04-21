@@ -14,7 +14,7 @@ namespace moth_ui {
 
         virtual LayoutEntityType GetType() const { return LayoutEntityType::Entity; }
 
-        virtual std::unique_ptr<Node> Instantiate();
+        virtual std::unique_ptr<Node> Instantiate() = 0;
 
         void SetBounds(LayoutRect const& bounds, int frame);
         LayoutRect GetBoundsAtTime(float time) const;
@@ -24,8 +24,13 @@ namespace moth_ui {
 
         virtual void RefreshAnimationTimings();
 
-        virtual nlohmann::json Serialize() const;
-        virtual void Deserialize(nlohmann::json const& json, int dataVersion);
+        struct SerializeContext {
+            int m_version = 1;
+            std::filesystem::path m_rootPath;
+        };
+
+        virtual nlohmann::json Serialize(SerializeContext const& context) const;
+        virtual void Deserialize(nlohmann::json const& json, SerializeContext const& context);
 
         std::string m_id;
         LayoutEntityGroup* m_parent = nullptr;

@@ -8,7 +8,7 @@
 #include "moth_ui/group.h"
 
 namespace moth_ui {
-    std::unique_ptr<LayoutEntity> LoadEntity(nlohmann::json const& json, LayoutEntityGroup* parent, int dataVersion) {
+    std::unique_ptr<LayoutEntity> LoadEntity(nlohmann::json const& json, LayoutEntityGroup* parent, LayoutEntity::SerializeContext const& context) {
         std::unique_ptr<LayoutEntity> entity;
 
         LayoutEntityType type;
@@ -31,7 +31,7 @@ namespace moth_ui {
             assert(false && "unknown entity type");
         }
 
-        entity->Deserialize(json, dataVersion);
+        entity->Deserialize(json, context);
         return entity;
     }
 
@@ -39,7 +39,11 @@ namespace moth_ui {
         : LayoutEntityGroup(nullptr) {
     }
 
-    nlohmann::json Layout::Serialize() const {
+    std::unique_ptr<Node> Layout::Instantiate() {
+        return std::make_unique<Group>(std::static_pointer_cast<LayoutEntityGroup>(shared_from_this()));
+    }
+
+    nlohmann::json Layout::Serialize(SerializeContext const& context) const {
         nlohmann::json j;
         j["version"] = Version;
         j["type"] = GetType();
@@ -47,14 +51,16 @@ namespace moth_ui {
         j["clips"] = m_clips;
         std::vector<nlohmann::json> childJsons;
         for (auto&& child : m_children) {
-            childJsons.push_back(child->Serialize());
+            childJsons.push_back(child->Serialize(context));
         }
         j["children"] = childJsons;
         return j;
     }
 
-    void Layout::Deserialize(nlohmann::json const& json, int dataVersion) {
-        dataVersion = json["version"];
+    void Layout::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
+        SerializeContext loadedContext;
+        loadedContext.m_rootPath = context.m_rootPath;
+        loadedContext.m_version = json["version"];
 
         auto const jsonType = json["type"];
         assert(jsonType == LayoutEntityType::Layout);
@@ -69,7 +75,7 @@ namespace moth_ui {
         }
 
         for (auto&& childJson : json["children"]) {
-            auto child = LoadEntity(childJson, this, dataVersion);
+            auto child = LoadEntity(childJson, this, loadedContext);
             m_children.push_back(std::move(child));
         }
     }
@@ -80,10 +86,28 @@ namespace moth_ui {
             return nullptr;
         }
 
+        std::filesystem::path loadPath(path);
+        SerializeContext context;
+        context.m_rootPath = loadPath.parent_path();
+
         nlohmann::json json;
         ifile >> json;
         auto const layout = std::make_shared<Layout>();
-        layout->Deserialize(json);
+        layout->Deserialize(json, context);
         return layout;
+    }
+
+    bool Layout::Save(char const* path) {
+        std::ofstream ofile(path);
+        if (!ofile.is_open()) {
+            return false;
+        }
+
+        std::filesystem::path savePath(path);
+        SerializeContext serializeContext;
+        serializeContext.m_rootPath = savePath.parent_path();
+        nlohmann::json json = Serialize(serializeContext);
+        ofile << json;
+        return true;
     }
 }

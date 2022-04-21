@@ -1,6 +1,10 @@
 Moth UI TODO
 ------------
 
+change image node to just refer to an image. remove the source rect.
+not sure if image and sublayouts should be relative paths or names.
+the problem with relative paths is the serialization code doesnt know the path its being saved to. I could add that information in a context object that gets passed around but i kind of dont like the idea that the generic data needs to know its going to a file.
+maybe add a pre pass that converts all references to a relative path before serialization.
 add layouts to a layout factory/project. refer to them by name rather than path.
 same with images.
 widget factory for instantiating nodes and linking them with custom classes. re. static class registration from ea.

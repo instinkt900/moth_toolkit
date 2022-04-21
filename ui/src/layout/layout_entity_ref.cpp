@@ -31,18 +31,23 @@ namespace moth_ui {
         }
     }
 
-    nlohmann::json LayoutEntityRef::Serialize() const {
+    nlohmann::json LayoutEntityRef::Serialize(SerializeContext const& context) const {
         nlohmann::json j;
-        j = LayoutEntity::Serialize();     // dont save out the group data. children etc
-        j["type"] = LayoutEntityType::Ref; // override the type as a reference
-        j["layoutPath"] = m_layoutPath;
+        j = LayoutEntity::Serialize(context); // dont save out the group data. children etc
+        j["type"] = LayoutEntityType::Ref;    // override the type as a reference
+
+        std::filesystem::path imagePath(m_layoutPath);
+        auto const relativePath = std::filesystem::relative(imagePath, context.m_rootPath);
+        j["layoutPath"] = relativePath.string();
         return j;
     }
 
-    void LayoutEntityRef::Deserialize(nlohmann::json const& json, int dataVersion) {
-        LayoutEntity::Deserialize(json, dataVersion);
+    void LayoutEntityRef::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
+        LayoutEntity::Deserialize(json, context);
         if (json.contains("layoutPath")) {
-            json["layoutPath"].get_to(m_layoutPath);
+            std::string relativePath;
+            json["layoutPath"].get_to(relativePath);
+            m_layoutPath = (context.m_rootPath / relativePath).string();
             auto subLayout = Layout::Load(m_layoutPath.c_str());
             Clone(*subLayout);
         }

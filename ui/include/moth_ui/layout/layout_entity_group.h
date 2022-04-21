@@ -10,12 +10,10 @@ namespace moth_ui {
 
         LayoutEntityType GetType() const override { return LayoutEntityType::Group; }
 
-        std::unique_ptr<Node> Instantiate() override;
-
         void RefreshAnimationTimings() override;
 
-        nlohmann::json Serialize() const override;
-        void Deserialize(nlohmann::json const& json, int dataVersion) override;
+        nlohmann::json Serialize(SerializeContext const& context) const override;
+        void Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
 
         std::vector<std::shared_ptr<LayoutEntity>> m_children;
         std::vector<std::unique_ptr<AnimationClip>> m_clips; // sorted by time/frame

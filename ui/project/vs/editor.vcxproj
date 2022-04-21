@@ -110,6 +110,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\editor\bounds_handle.h" />
     <ClInclude Include="..\..\editor\src\editor\bounds_widget.h" />
     <ClInclude Include="..\..\editor\src\editor\confirm_prompt.h" />
+    <ClInclude Include="..\..\editor\src\editor\content_list.h" />
     <ClInclude Include="..\..\editor\src\editor\editor_layer.h" />
     <ClInclude Include="..\..\editor\src\editor\keyframe_context.h" />
     <ClInclude Include="..\..\editor\src\editor\layout_project.h" />
@@ -134,6 +135,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\font_factory.h" />
     <ClInclude Include="..\..\editor\src\image.h" />
     <ClInclude Include="..\..\editor\src\image_factory.h" />
+    <ClInclude Include="..\..\editor\src\imgui-filebrowser\imfilebrowser.h" />
     <ClInclude Include="..\..\editor\src\layers\layer.h" />
     <ClInclude Include="..\..\editor\src\layers\layer_stack.h" />
     <ClInclude Include="..\..\editor\src\ui_renderer.h" />
@@ -164,6 +166,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClCompile Include="..\..\editor\src\editor\bounds_handle.cpp" />
     <ClCompile Include="..\..\editor\src\editor\bounds_widget.cpp" />
     <ClCompile Include="..\..\editor\src\editor\confirm_prompt.cpp" />
+    <ClCompile Include="..\..\editor\src\editor\content_list.cpp" />
     <ClCompile Include="..\..\editor\src\editor\editor_layer.cpp" />
     <ClCompile Include="..\..\editor\src\editor\offset_bounds_handle.cpp" />
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel.cpp" />

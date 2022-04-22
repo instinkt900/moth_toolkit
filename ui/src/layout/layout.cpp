@@ -4,6 +4,7 @@
 #include "moth_ui/layout/layout_entity_image.h"
 #include "moth_ui/layout/layout_entity_rect.h"
 #include "moth_ui/layout/layout_entity_ref.h"
+#include "moth_ui/layout/layout_entity_9slice.h"
 #include "moth_ui/animation_clip.h"
 #include "moth_ui/group.h"
 
@@ -26,6 +27,9 @@ namespace moth_ui {
             break;
         case LayoutEntityType::Ref:
             entity = std::make_unique<LayoutEntityRef>(parent);
+            break;
+        case LayoutEntityType::NineSlice:
+            entity = std::make_unique<LayoutEntity9Slice>(parent);
             break;
         default:
             assert(false && "unknown entity type");

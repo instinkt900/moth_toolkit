@@ -18,6 +18,7 @@ namespace moth_ui {
         void Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
 
         std::string m_imagePath;
+        IntRect m_sourceRect;
         ImageScaleType m_imageScaleType = ImageScaleType::Stretch;
         float m_imageScale = 1.0f;
     };

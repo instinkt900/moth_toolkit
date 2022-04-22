@@ -9,6 +9,7 @@ namespace moth_ui {
         Rect,
         Image,
         Text,
-        Clip
+        Clip,
+        NineSlice,
     };
 }

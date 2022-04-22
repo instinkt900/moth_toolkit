@@ -17,7 +17,8 @@ namespace moth_ui {
     }
 
     NodeImage::NodeImage(std::shared_ptr<LayoutEntityImage> layoutEntity)
-        : Node(layoutEntity) {
+        : Node(layoutEntity)
+        , m_sourceRect(layoutEntity->m_sourceRect) {
         Load(layoutEntity->m_imagePath.c_str());
     }
 
@@ -26,11 +27,17 @@ namespace moth_ui {
 
     void NodeImage::Load(char const* path) {
         m_image = Context::GetCurrentContext().GetImageFactory().GetImage(path);
+        if (IsZero(m_sourceRect)) {
+            auto const imageDimensions = m_image->GetDimensions();
+            m_sourceRect.bottomRight.x = imageDimensions.x;
+            m_sourceRect.bottomRight.y = imageDimensions.y;
+        }
     }
     
     void NodeImage::ReloadEntity() {
         Node::ReloadEntity();
         auto layoutEntity = std::static_pointer_cast<LayoutEntityImage>(m_layout);
+        m_sourceRect = layoutEntity->m_sourceRect;
         m_imageScaleType = layoutEntity->m_imageScaleType;
         m_imageScale = layoutEntity->m_imageScale;
         Load(layoutEntity->m_imagePath.c_str());
@@ -61,7 +68,7 @@ namespace moth_ui {
 
     void NodeImage::DrawInternal() {
         if (m_image) {
-            Context::GetCurrentContext().GetRenderer().RenderImage(*m_image, m_screenRect, m_imageScaleType, m_imageScale);
+            Context::GetCurrentContext().GetRenderer().RenderImage(*m_image, m_sourceRect, m_screenRect, m_imageScaleType, m_imageScale);
         }
     }
 }

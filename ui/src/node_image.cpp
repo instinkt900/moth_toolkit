@@ -19,7 +19,7 @@ namespace moth_ui {
     NodeImage::NodeImage(std::shared_ptr<LayoutEntityImage> layoutEntity)
         : Node(layoutEntity)
         , m_sourceRect(layoutEntity->m_sourceRect) {
-        Load(layoutEntity->m_imagePath.c_str());
+        ReloadEntity();
     }
 
     NodeImage::~NodeImage() {
@@ -36,6 +36,7 @@ namespace moth_ui {
             m_sourceRect.bottomRight.x = imageDimensions.x;
             m_sourceRect.bottomRight.y = imageDimensions.y;
         }
+        Slice();
     }
 
     void NodeImage::ReloadEntity() {
@@ -47,7 +48,6 @@ namespace moth_ui {
         m_sourceBorders = layoutEntity->m_sourceBorders;
         m_targetBorders = layoutEntity->m_targetBorders;
         Load(layoutEntity->m_imagePath.c_str());
-        Slice();
     }
 
     void NodeImage::DebugDraw() {

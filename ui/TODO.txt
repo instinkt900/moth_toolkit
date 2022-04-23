@@ -1,23 +1,16 @@
 Moth UI TODO
 ------------
 
-change image node to just refer to an image. remove the source rect.
-not sure if image and sublayouts should be relative paths or names.
-the problem with relative paths is the serialization code doesnt know the path its being saved to. I could add that information in a context object that gets passed around but i kind of dont like the idea that the generic data needs to know its going to a file.
-maybe add a pre pass that converts all references to a relative path before serialization.
-add layouts to a layout factory/project. refer to them by name rather than path.
-same with images.
+copy/paste functionality
+clean up project handling in the editor.
 widget factory for instantiating nodes and linking them with custom classes. re. static class registration from ea.
-9 slicing
 texture packing.
-reflection/introspection. might not be needed. maybe find a lightweight way of doing it? boost hana?
 Readme.md
 Adding more documentation
 Update tests for better coverage. hook in to cppcoverage.
 Update cmake to auto build and run tests.
 Updates to preview window. Input etc. Reload animation stuff. currently broken.
 Add color customisation to editor colors.
-Add blending to editor text rendering. need to change SDL cache font code.
 Tests for the node/layout entity classes. Loading a hard coded test layout etc.
 Update layout of imgui elements. swapping label sides etc. tables?
-Display source rect on image entity properties panel.
+Display source rect/9 slicing on image entity properties panel.

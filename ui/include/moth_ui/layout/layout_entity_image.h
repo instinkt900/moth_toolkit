@@ -9,6 +9,7 @@ namespace moth_ui {
     public:
         explicit LayoutEntityImage(LayoutRect const& initialBounds);
         explicit LayoutEntityImage(LayoutEntityGroup* parent);
+        LayoutEntityImage(LayoutRect const& initialBounds, char const* imagePath);
 
         LayoutEntityType GetType() const override { return LayoutEntityType::Image; }
 
@@ -21,5 +22,9 @@ namespace moth_ui {
         IntRect m_sourceRect;
         ImageScaleType m_imageScaleType = ImageScaleType::Stretch;
         float m_imageScale = 1.0f;
+
+        // 9slice only
+        IntRect m_sourceBorders = { { 15, 15 }, { 15, 15 } };
+        IntRect m_targetBorders = { { 15, 15 }, { 15, 15 } };
     };
 }

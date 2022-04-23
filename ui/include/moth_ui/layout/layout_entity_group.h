@@ -1,6 +1,7 @@
 #pragma once
 
 #include "moth_ui/layout/layout_entity.h"
+#include "moth_ui/animation_clip.h"
 
 namespace moth_ui {
     class LayoutEntityGroup : public LayoutEntity {

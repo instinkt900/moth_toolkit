@@ -25,6 +25,10 @@ namespace moth_ui {
     NodeImage::~NodeImage() {
     }
 
+    void NodeImage::UpdateChildBounds() {
+        Slice();
+    }
+
     void NodeImage::Load(char const* path) {
         m_image = Context::GetCurrentContext().GetImageFactory().GetImage(path);
         if (IsZero(m_sourceRect)) {
@@ -33,14 +37,17 @@ namespace moth_ui {
             m_sourceRect.bottomRight.y = imageDimensions.y;
         }
     }
-    
+
     void NodeImage::ReloadEntity() {
         Node::ReloadEntity();
         auto layoutEntity = std::static_pointer_cast<LayoutEntityImage>(m_layout);
         m_sourceRect = layoutEntity->m_sourceRect;
         m_imageScaleType = layoutEntity->m_imageScaleType;
         m_imageScale = layoutEntity->m_imageScale;
+        m_sourceBorders = layoutEntity->m_sourceBorders;
+        m_targetBorders = layoutEntity->m_targetBorders;
         Load(layoutEntity->m_imagePath.c_str());
+        Slice();
     }
 
     void NodeImage::DebugDraw() {
@@ -68,7 +75,41 @@ namespace moth_ui {
 
     void NodeImage::DrawInternal() {
         if (m_image) {
-            Context::GetCurrentContext().GetRenderer().RenderImage(*m_image, m_sourceRect, m_screenRect, m_imageScaleType, m_imageScale);
+            auto& renderer = Context::GetCurrentContext().GetRenderer();
+            if (m_imageScaleType == ImageScaleType::NineSlice) {
+                for (int horizSliceIdx = 0; horizSliceIdx < 3; ++horizSliceIdx) {
+                    for (int vertSliceIdx = 0; vertSliceIdx < 3; ++vertSliceIdx) {
+                        IntRect sourceRect;
+                        IntRect targetRect;
+                        sourceRect.topLeft.x = m_sourceSlices[vertSliceIdx].x;
+                        sourceRect.topLeft.y = m_sourceSlices[horizSliceIdx].y;
+                        sourceRect.bottomRight.x = m_sourceSlices[vertSliceIdx + 1].x;
+                        sourceRect.bottomRight.y = m_sourceSlices[horizSliceIdx + 1].y;
+                        targetRect.topLeft.x = m_targetSlices[vertSliceIdx].x;
+                        targetRect.topLeft.y = m_targetSlices[horizSliceIdx].y;
+                        targetRect.bottomRight.x = m_targetSlices[vertSliceIdx + 1].x;
+                        targetRect.bottomRight.y = m_targetSlices[horizSliceIdx + 1].y;
+                        renderer.RenderImage(*m_image, sourceRect, targetRect, ImageScaleType::Stretch, 1.0f);
+                    }
+                }
+            } else {
+                renderer.RenderImage(*m_image, m_sourceRect, m_screenRect, m_imageScaleType, m_imageScale);
+            }
         }
     }
+
+    void NodeImage::Slice() {
+        if (m_image) {
+            m_sourceSlices[0] = { 0, 0 };
+            m_sourceSlices[1] = m_sourceBorders.topLeft;
+            m_sourceSlices[2] = m_image->GetDimensions() - m_sourceBorders.bottomRight;
+            m_sourceSlices[3] = m_image->GetDimensions();
+
+            m_targetSlices[0] = m_screenRect.topLeft;
+            m_targetSlices[1] = m_screenRect.topLeft + m_targetBorders.topLeft;
+            m_targetSlices[2] = m_screenRect.bottomRight - m_targetBorders.bottomRight;
+            m_targetSlices[3] = m_screenRect.bottomRight;
+        }
+    }
+
 }

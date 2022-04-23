@@ -10,11 +10,12 @@ namespace moth_ui {
         NodeImage(std::shared_ptr<LayoutEntityImage> layoutEntity);
         virtual ~NodeImage();
 
+        void UpdateChildBounds() override;
+
         void Load(char const* path);
 
         void ReloadEntity() override;
 
-        void SetImage(std::shared_ptr<IImage> image) { m_image = image; }
         IImage const* GetImage() const { return m_image.get(); }
 
         IntRect& GetSourceRect() { return m_sourceRect; }
@@ -25,11 +26,18 @@ namespace moth_ui {
         void DebugDraw();
 
     protected:
-        std::shared_ptr<IImage> m_image;
+        std::unique_ptr<IImage> m_image;
         IntRect m_sourceRect;
         ImageScaleType m_imageScaleType = ImageScaleType::Stretch;
         float m_imageScale = 1.0f;
 
+        IntRect m_sourceBorders;
+        IntRect m_targetBorders;
+        IntVec2 m_sourceSlices[4];
+        IntVec2 m_targetSlices[4];
+
         void DrawInternal() override;
+
+        void Slice();
     };
 }

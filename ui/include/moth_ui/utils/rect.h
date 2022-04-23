@@ -7,6 +7,9 @@ namespace moth_ui {
     struct Rect {
         Vector<T, 2> topLeft;
         Vector<T, 2> bottomRight;
+
+        T w() const { return bottomRight.x - topLeft.x; }
+        T h() const { return bottomRight.y - topLeft.y; }
     };
 
     using IntRect = Rect<int>;

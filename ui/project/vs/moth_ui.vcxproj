@@ -92,7 +92,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\include\moth_ui\layout\layout_entity_9slice.cpp" />
     <ClCompile Include="..\..\src\animation_controller.cpp" />
     <ClCompile Include="..\..\src\animation_track.cpp" />
     <ClCompile Include="..\..\src\context.cpp" />
@@ -109,7 +108,6 @@
     <ClCompile Include="..\..\src\layout\layout_entity_ref.cpp" />
     <ClCompile Include="..\..\src\layout\layout_entity_text.cpp" />
     <ClCompile Include="..\..\src\node.cpp" />
-    <ClCompile Include="..\..\src\node_9slice.cpp" />
     <ClCompile Include="..\..\src\node_clip.cpp" />
     <ClCompile Include="..\..\src\node_image.cpp" />
     <ClCompile Include="..\..\src\node_rect.cpp" />
@@ -137,7 +135,6 @@
     <ClInclude Include="..\..\include\moth_ui\layout\layout.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout_cache.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout_entity.h" />
-    <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_9slice.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_clip.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_group.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_image.h" />
@@ -147,7 +144,6 @@
     <ClInclude Include="..\..\include\moth_ui\layout\layout_rect.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_type.h" />
     <ClInclude Include="..\..\include\moth_ui\node.h" />
-    <ClInclude Include="..\..\include\moth_ui\node_9slice.h" />
     <ClInclude Include="..\..\include\moth_ui\node_clip.h" />
     <ClInclude Include="..\..\include\moth_ui\node_image.h" />
     <ClInclude Include="..\..\include\moth_ui\node_rect.h" />

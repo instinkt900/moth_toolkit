@@ -3,13 +3,12 @@
 namespace moth_ui {
     enum class LayoutEntityType {
         Layout,
-        Entity,
         Group,
         Ref,
+        Entity,
         Rect,
         Image,
         Text,
         Clip,
-        NineSlice,
     };
 }

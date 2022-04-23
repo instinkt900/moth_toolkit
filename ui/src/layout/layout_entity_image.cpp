@@ -11,6 +11,11 @@ namespace moth_ui {
         : LayoutEntity(parent) {
     }
 
+    LayoutEntityImage::LayoutEntityImage(LayoutRect const& initialBounds, char const* imagePath)
+        : LayoutEntity(initialBounds)
+        , m_imagePath(imagePath) {
+    }
+
     std::unique_ptr<Node> LayoutEntityImage::Instantiate() {
         return std::make_unique<NodeImage>(std::static_pointer_cast<LayoutEntityImage>(shared_from_this()));
     }
@@ -24,6 +29,8 @@ namespace moth_ui {
         j["sourceRect"] = m_sourceRect;
         j["imageScaleType"] = m_imageScaleType;
         j["imageScale"] = m_imageScale;
+        j["sourceBorders"] = m_sourceBorders;
+        j["targetBorders"] = m_targetBorders;
         return j;
     }
 
@@ -36,5 +43,7 @@ namespace moth_ui {
         json["sourceRect"].get_to(m_sourceRect);
         json["imageScaleType"].get_to(m_imageScaleType);
         json["imageScale"].get_to(m_imageScale);
+        json["sourceBorders"].get_to(m_sourceBorders);
+        json["targetBorders"].get_to(m_targetBorders);
     }
 }

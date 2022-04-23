@@ -5,10 +5,11 @@
 #include "moth_ui/animation_clip.h"
 
 namespace moth_ui {
-    LayoutEntityRef::LayoutEntityRef(char const* srcPath, Layout const& subLayout)
-        : LayoutEntityGroup(nullptr)
+    LayoutEntityRef::LayoutEntityRef(LayoutRect const& initialBounds, char const* srcPath)
+        : LayoutEntityGroup(initialBounds)
         , m_layoutPath(srcPath) {
-        Clone(subLayout);
+        auto const sourceLayout = Layout::Load(srcPath);
+        Clone(*sourceLayout);
     }
 
     LayoutEntityRef::LayoutEntityRef(LayoutEntityGroup* parent)

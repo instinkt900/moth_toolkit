@@ -20,6 +20,7 @@ namespace moth_ui {
 
         IntRect& GetSourceRect() { return m_sourceRect; }
         IntVec2 const* GetSourceSlices() const { return m_sourceSlices; }
+        IntVec2 const* GetTargetSlices() const { return m_targetSlices; }
 
         ImageScaleType GetImageScaleType() const { return m_imageScaleType; }
         void SetImageScaleType(ImageScaleType type) { m_imageScaleType = type; }

@@ -100,10 +100,10 @@ namespace moth_ui {
 
     void NodeImage::Slice() {
         if (m_image) {
-            m_sourceSlices[0] = { 0, 0 };
-            m_sourceSlices[1] = m_sourceBorders.topLeft;
-            m_sourceSlices[2] = m_image->GetDimensions() - m_sourceBorders.bottomRight;
-            m_sourceSlices[3] = m_image->GetDimensions();
+            m_sourceSlices[0] = m_sourceRect.topLeft;
+            m_sourceSlices[1] = m_sourceRect.topLeft + m_sourceBorders.topLeft;
+            m_sourceSlices[2] = m_sourceRect.bottomRight - m_sourceBorders.bottomRight;
+            m_sourceSlices[3] = m_sourceRect.bottomRight;
 
             m_targetSlices[0] = m_screenRect.topLeft;
             m_targetSlices[1] = m_screenRect.topLeft + m_targetBorders.topLeft;

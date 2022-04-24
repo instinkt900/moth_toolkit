@@ -10,6 +10,15 @@ namespace moth_ui {
 
         T w() const { return bottomRight.x - topLeft.x; }
         T h() const { return bottomRight.y - topLeft.y; }
+
+        // cast operator
+        template <typename U>
+        explicit operator Rect<U>() const {
+            Rect<U> result;
+            result.topLeft = static_cast<Vector<U, 2>>(topLeft);
+            result.bottomRight = static_cast<Vector<U, 2>>(bottomRight);
+            return result;
+        }
     };
 
     using IntRect = Rect<int>;

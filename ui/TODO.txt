@@ -2,6 +2,7 @@ Moth UI TODO
 ------------
 
 copy/paste functionality
+flipbook animation?
 clean up project handling in the editor.
 widget factory for instantiating nodes and linking them with custom classes. re. static class registration from ea.
 texture packing.

@@ -9,6 +9,8 @@ namespace moth_ui {
         explicit LayoutEntityText(LayoutRect const& initialBounds);
         explicit LayoutEntityText(LayoutEntityGroup* parent);
 
+        std::shared_ptr<LayoutEntity> Clone() override;
+
         LayoutEntityType GetType() const override { return LayoutEntityType::Text; }
 
         std::unique_ptr<Node> Instantiate() override;

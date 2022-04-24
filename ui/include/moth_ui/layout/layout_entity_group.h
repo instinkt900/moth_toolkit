@@ -8,6 +8,7 @@ namespace moth_ui {
     public:
         explicit LayoutEntityGroup(LayoutRect const& initialBounds);
         explicit LayoutEntityGroup(LayoutEntityGroup* parent);
+        LayoutEntityGroup(LayoutEntityGroup const& other);
 
         LayoutEntityType GetType() const override { return LayoutEntityType::Group; }
 

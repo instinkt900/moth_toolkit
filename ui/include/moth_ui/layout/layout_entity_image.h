@@ -11,6 +11,8 @@ namespace moth_ui {
         explicit LayoutEntityImage(LayoutEntityGroup* parent);
         LayoutEntityImage(LayoutRect const& initialBounds, char const* imagePath);
 
+        std::shared_ptr<LayoutEntity> Clone() override;
+
         LayoutEntityType GetType() const override { return LayoutEntityType::Image; }
 
         std::unique_ptr<Node> Instantiate() override;

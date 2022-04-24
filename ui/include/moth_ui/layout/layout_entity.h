@@ -11,6 +11,9 @@ namespace moth_ui {
     public:
         explicit LayoutEntity(LayoutRect const& initialBounds);
         explicit LayoutEntity(LayoutEntityGroup* parent);
+        LayoutEntity(LayoutEntity const& other);
+
+        virtual std::shared_ptr<LayoutEntity> Clone() = 0; // deep copy
 
         virtual LayoutEntityType GetType() const { return LayoutEntityType::Entity; }
 

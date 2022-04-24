@@ -16,6 +16,10 @@ namespace moth_ui {
         , m_imagePath(imagePath) {
     }
 
+    std::shared_ptr<LayoutEntity> LayoutEntityImage::Clone() {
+        return std::make_shared<LayoutEntityImage>(*this);
+    }
+
     std::unique_ptr<Node> LayoutEntityImage::Instantiate() {
         return std::make_unique<NodeImage>(std::static_pointer_cast<LayoutEntityImage>(shared_from_this()));
     }

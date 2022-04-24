@@ -9,6 +9,8 @@ namespace moth_ui {
         Layout();
         virtual ~Layout() = default;
 
+        std::shared_ptr<LayoutEntity> Clone() override;
+
         LayoutEntityType GetType() const override { return LayoutEntityType::Layout; }
 
         std::unique_ptr<Node> Instantiate() override;

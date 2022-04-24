@@ -14,6 +14,15 @@ namespace moth_ui {
         InitTracks(MakeDefaultLayoutRect());
     }
 
+    LayoutEntity::LayoutEntity(LayoutEntity const& other)
+        : m_id(other.m_id)
+        , m_parent(nullptr)
+        , m_blend(other.m_blend) {
+        for (auto&& [target, track] : other.m_tracks) {
+            m_tracks.insert(std::pair<AnimationTrack::Target, std::unique_ptr<AnimationTrack>>(target, std::make_unique<AnimationTrack>(*track)));
+        }
+    }
+
     void LayoutEntity::SetBounds(LayoutRect const& bounds, int frame) {
         auto SetValue = [&](AnimationTrack::Target target, float value) {
             auto& track = m_tracks.at(target);

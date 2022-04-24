@@ -11,6 +11,10 @@ namespace moth_ui {
         : LayoutEntity(parent) {
     }
 
+    std::shared_ptr<LayoutEntity> LayoutEntityText::Clone() {
+        return std::make_shared<LayoutEntityText>(*this);
+    }
+
     std::unique_ptr<Node> LayoutEntityText::Instantiate() {
         return std::make_unique<NodeText>(std::static_pointer_cast<LayoutEntityText>(shared_from_this()));
     }

@@ -1,8 +1,10 @@
 Moth UI TODO
 ------------
 
-copy/paste functionality
+copy/paste functionality for keyframes?
 flipbook animation?
+show guides on images showing 9slice regions when selected
+show 9slice guides on image preview in properties window
 clean up project handling in the editor.
 widget factory for instantiating nodes and linking them with custom classes. re. static class registration from ea.
 texture packing.

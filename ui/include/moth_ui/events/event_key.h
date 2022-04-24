@@ -8,6 +8,17 @@ namespace moth_ui {
         Up
     };
 
+    static int constexpr KeyMod_LeftShift = 1 << 0;
+    static int constexpr KeyMod_RightShift = 1 << 1;
+    static int constexpr KeyMod_LeftCtrl = 1 << 2;
+    static int constexpr KeyMod_RightCtrl = 1 << 3;
+    static int constexpr KeyMod_LeftAlt = 1 << 4;
+    static int constexpr KeyMod_RightAlt = 1 << 5;
+
+    static int constexpr KeyMod_Shift = KeyMod_LeftShift | KeyMod_RightShift;
+    static int constexpr KeyMod_Ctrl = KeyMod_LeftCtrl | KeyMod_RightCtrl;
+    static int constexpr KeyMod_Alt = KeyMod_LeftAlt | KeyMod_RightAlt;
+
     enum class Key {
         Unknown,
 
@@ -139,23 +150,26 @@ namespace moth_ui {
 
     class EventKey : public Event {
     public:
-        EventKey(KeyAction action, Key key)
+        EventKey(KeyAction action, Key key, int mods)
             : Event(GetStaticType())
             , m_action(action)
-            , m_key(key) {}
+            , m_key(key)
+            , m_mods(mods) {}
         virtual ~EventKey() {}
 
         static constexpr int GetStaticType() { return EVENTTYPE_KEY; }
 
         KeyAction GetAction() const { return m_action; }
         Key GetKey() const { return m_key; }
+        int GetMods() const { return m_mods; }
 
         std::unique_ptr<Event> Clone() const override {
-            return std::make_unique<EventKey>(m_action, m_key);
+            return std::make_unique<EventKey>(m_action, m_key, m_mods);
         }
 
     private:
         KeyAction m_action;
         Key m_key;
+        int m_mods;
     };
 }

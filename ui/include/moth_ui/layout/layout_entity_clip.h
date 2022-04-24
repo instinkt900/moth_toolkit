@@ -8,6 +8,8 @@ namespace moth_ui {
         explicit LayoutEntityClip(LayoutRect const& initialBounds);
         explicit LayoutEntityClip(LayoutEntityGroup* parent);
 
+        std::shared_ptr<LayoutEntity> Clone() override;
+
         LayoutEntityType GetType() const override { return LayoutEntityType::Clip; }
 
         std::unique_ptr<Node> Instantiate() override;

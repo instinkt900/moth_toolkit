@@ -39,6 +39,10 @@ namespace moth_ui {
         : LayoutEntityGroup(nullptr) {
     }
 
+    std::shared_ptr<LayoutEntity> Layout::Clone() {
+        return std::make_shared<Layout>(*this);
+    }
+
     std::unique_ptr<Node> Layout::Instantiate() {
         return std::make_unique<Group>(std::static_pointer_cast<LayoutEntityGroup>(shared_from_this()));
     }

@@ -12,6 +12,16 @@ namespace moth_ui {
         : LayoutEntity(parent) {
     }
 
+    LayoutEntityGroup::LayoutEntityGroup(LayoutEntityGroup const& other)
+        : LayoutEntity(other) {
+        for (auto&& child : other.m_children) {
+            m_children.push_back(child->Clone());
+        }
+        for (auto&& clip : other.m_clips) {
+            m_clips.push_back(std::make_unique<AnimationClip>(*clip));
+        }
+    }
+
     void LayoutEntityGroup::RefreshAnimationTimings() {
         LayoutEntity::RefreshAnimationTimings();
         for (auto&& child : m_children) {

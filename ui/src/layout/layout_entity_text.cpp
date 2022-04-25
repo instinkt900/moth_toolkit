@@ -29,12 +29,17 @@ namespace moth_ui {
         return j;
     }
 
-    void LayoutEntityText::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
-        LayoutEntity::Deserialize(json, context);
-        json["fontName"].get_to(m_fontName);
-        json["fontSize"].get_to(m_fontSize);
-        json["text"].get_to(m_text);
-        json["horizontalAlignment"].get_to(m_horizontalAlignment);
-        json["verticalAlignment"].get_to(m_verticalAlignment);
+    bool LayoutEntityText::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
+        bool success = LayoutEntity::Deserialize(json, context);
+
+        if (success) {
+            m_fontName = json.value("fontName", "");
+            m_fontSize = json.value("fontSize", 10);
+            m_text = json.value("text", "");
+            m_horizontalAlignment = json.value("horizontalAlignment", TextHorizAlignment::Left);
+            m_verticalAlignment = json.value("verticalAlignment", TextVertAlignment::Top);
+        }
+
+        return success;
     }
 }

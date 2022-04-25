@@ -1,7 +1,9 @@
 Moth UI TODO
 ------------
 
+change the layout/image list panels to a simple asset list. eventually double click will open the asset. drag will drop it onto the canvas. need to replace the viewport with a canvas window first though.
 multiple entity selection
+paths should probably be std::filesystem::path
 copy/paste functionality for keyframes?
 flipbook animation?
 clean up project handling in the editor.

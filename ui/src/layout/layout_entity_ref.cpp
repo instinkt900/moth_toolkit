@@ -5,11 +5,11 @@
 #include "moth_ui/animation_clip.h"
 
 namespace moth_ui {
-    LayoutEntityRef::LayoutEntityRef(LayoutRect const& initialBounds, char const* srcPath)
+    LayoutEntityRef::LayoutEntityRef(LayoutRect const& initialBounds, Layout const& layoutRef)
         : LayoutEntityGroup(initialBounds)
-        , m_layoutPath(srcPath) {
-        auto const sourceLayout = Layout::Load(srcPath);
-        Clone(*sourceLayout);
+        , m_layoutPath(layoutRef.GetLoadedPath().string()) {
+        std::shared_ptr<Layout> targetLayout;
+        Clone(layoutRef);
     }
 
     LayoutEntityRef::LayoutEntityRef(LayoutEntityGroup* parent)
@@ -47,14 +47,21 @@ namespace moth_ui {
         return j;
     }
 
-    void LayoutEntityRef::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
-        LayoutEntity::Deserialize(json, context);
-        if (json.contains("layoutPath")) {
-            std::string relativePath;
-            json["layoutPath"].get_to(relativePath);
+    bool LayoutEntityRef::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
+        bool success = LayoutEntity::Deserialize(json, context);
+
+        if (success) {
+            std::string relativePath = json.value("layoutPath", "");
             m_layoutPath = (context.m_rootPath / relativePath).string();
-            auto subLayout = Layout::Load(m_layoutPath.c_str());
-            Clone(*subLayout);
+            std::shared_ptr<Layout> targetLayout;
+            auto const loadResult = Layout::Load(m_layoutPath.c_str(), &targetLayout);
+            if (loadResult == Layout::LoadResult::Success) {
+                Clone(*targetLayout);
+            } else {
+                success = false;
+            }
         }
+
+        return success;
     }
 }

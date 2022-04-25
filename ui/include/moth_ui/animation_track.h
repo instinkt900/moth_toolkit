@@ -131,8 +131,8 @@ namespace moth_ui {
         }
 
         friend void from_json(nlohmann::json const& j, AnimationTrack& track) {
-            j.at("target").get_to(track.m_target);
-            j.at("keyframes").get_to(track.m_keyframes);
+            track.m_target = j.value("target", Target::Unknown);
+            track.m_keyframes = j.value("keyframes", std::vector<Keyframe>{});
         }
 
         std::vector<Keyframe> m_keyframes;

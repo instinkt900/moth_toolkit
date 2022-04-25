@@ -38,16 +38,19 @@ namespace moth_ui {
         return j;
     }
 
-    void LayoutEntityImage::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
-        LayoutEntity::Deserialize(json, context);
+    bool LayoutEntityImage::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
+        bool success = LayoutEntity::Deserialize(json, context);
 
-        std::string relativePath;
-        json["imagePath"].get_to(relativePath);
-        m_imagePath = (context.m_rootPath / relativePath).string();
-        json["sourceRect"].get_to(m_sourceRect);
-        json["imageScaleType"].get_to(m_imageScaleType);
-        json["imageScale"].get_to(m_imageScale);
-        json["sourceBorders"].get_to(m_sourceBorders);
-        json["targetBorders"].get_to(m_targetBorders);
+        if (success) {
+            m_sourceRect = json.value("sourceRect", IntRect{});
+            m_imageScaleType = json.value("imageScaleType", ImageScaleType::Stretch);
+            m_imageScale = json.value("imageScale", 1.0f);
+            m_sourceBorders = json.value("sourceBorders", IntRect{});
+            m_targetBorders = json.value("targetBorders", IntRect{});
+            std::string relativePath = json.value("imagePath", "");
+            m_imagePath = (context.m_rootPath / relativePath).string();
+        }
+
+        return success;
     }
 }

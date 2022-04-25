@@ -146,24 +146,30 @@ namespace moth_ui {
         return j;
     }
 
-    void LayoutEntity::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
+    bool LayoutEntity::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
         assert(json["type"] == GetType());
 
-        m_id = json.value("id", "");
-        m_blend = json.value("blend", BlendMode::Replace);
+        bool success = false;
+        if (json["type"] == GetType()) {
+            m_id = json.value("id", "");
+            m_blend = json.value("blend", BlendMode::Replace);
 
-        if (json.contains("tracks")) {
-            auto const& tracksJson = json["tracks"];
-            auto const* animationClips = m_parent ? &m_parent->m_clips : nullptr;
-            for (auto&& trackJson : tracksJson) {
-                auto track = std::make_unique<AnimationTrack>(trackJson);
-                if (animationClips) {
-                    track->UpdateTrackTimings(*animationClips);
+            if (json.contains("tracks")) {
+                auto const& tracksJson = json["tracks"];
+                auto const* animationClips = m_parent ? &m_parent->m_clips : nullptr;
+                for (auto&& trackJson : tracksJson) {
+                    auto track = std::make_unique<AnimationTrack>(trackJson);
+                    if (animationClips) {
+                        track->UpdateTrackTimings(*animationClips);
+                    }
+                    m_tracks.erase(track->GetTarget());
+                    m_tracks.insert(std::make_pair(track->GetTarget(), std::move(track)));
                 }
-                m_tracks.erase(track->GetTarget());
-                m_tracks.insert(std::make_pair(track->GetTarget(), std::move(track)));
             }
+            success = true;
         }
+
+        return success;
     }
 
     void LayoutEntity::InitTracks(LayoutRect const& initialRect) {

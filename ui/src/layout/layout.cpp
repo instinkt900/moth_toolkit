@@ -8,11 +8,12 @@
 #include "moth_ui/group.h"
 
 namespace moth_ui {
+    std::string const Layout::Extension(".mothui");
+
     std::unique_ptr<LayoutEntity> LoadEntity(nlohmann::json const& json, LayoutEntityGroup* parent, LayoutEntity::SerializeContext const& context) {
         std::unique_ptr<LayoutEntity> entity;
 
-        LayoutEntityType type;
-        json["type"].get_to(type);
+        LayoutEntityType type = json.value("type", LayoutEntityType::Unknown);
 
         switch (type) {
         case LayoutEntityType::Text:
@@ -31,8 +32,11 @@ namespace moth_ui {
             assert(false && "unknown entity type");
         }
 
-        entity->Deserialize(json, context);
-        return entity;
+        if (entity && entity->Deserialize(json, context)) {
+            return entity;
+        }
+
+        return nullptr;
     }
 
     Layout::Layout()
@@ -49,7 +53,7 @@ namespace moth_ui {
 
     nlohmann::json Layout::Serialize(SerializeContext const& context) const {
         nlohmann::json j;
-        j["version"] = Version;
+        j["mothui_version"] = Version;
         j["type"] = GetType();
         j["blend"] = m_blend;
         j["clips"] = m_clips;
@@ -61,33 +65,53 @@ namespace moth_ui {
         return j;
     }
 
-    void Layout::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
-        SerializeContext loadedContext;
-        loadedContext.m_rootPath = context.m_rootPath;
-        loadedContext.m_version = json["version"];
+    bool Layout::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
+        bool success = false;
 
-        auto const jsonType = json["type"];
-        assert(jsonType == LayoutEntityType::Layout);
+        if (json.contains("mothui_version")) {
+            SerializeContext loadedContext;
+            loadedContext.m_rootPath = context.m_rootPath;
+            loadedContext.m_version = json["mothui_version"];
 
-        m_blend = json.value("blend", BlendMode::Replace);
-        json["clips"].get_to(m_clips);
+            auto const jsonType = json.value("type", LayoutEntityType::Unknown);
+            assert(jsonType == LayoutEntityType::Layout);
 
-        float startTime = 0;
-        for (auto&& clip : m_clips) {
-            clip->SetStartTime(startTime);
-            startTime = clip->m_endTime;
+            if (jsonType == LayoutEntityType::Layout) {
+                m_blend = json.value("blend", BlendMode::Replace);
+
+                if (json.contains("clips")) {
+                    json.at("clips").get_to(m_clips);
+                }
+
+                float startTime = 0;
+                for (auto&& clip : m_clips) {
+                    clip->SetStartTime(startTime);
+                    startTime = clip->m_endTime;
+                }
+
+                if (json.contains("children")) {
+                    for (auto&& childJson : json["children"]) {
+                        if (auto child = LoadEntity(childJson, this, loadedContext)) {
+                            m_children.push_back(std::move(child));
+                        }
+                    }
+                }
+
+                success = true;
+            }
         }
 
-        for (auto&& childJson : json["children"]) {
-            auto child = LoadEntity(childJson, this, loadedContext);
-            m_children.push_back(std::move(child));
-        }
+        return success;
     }
 
-    std::shared_ptr<Layout> Layout::Load(char const* path) {
+    Layout::LoadResult Layout::Load(char const* path, std::shared_ptr<Layout>* outLayout) {
+        if (outLayout == nullptr) {
+            return LoadResult::NoOutput;
+        }
+
         std::ifstream ifile(path);
         if (!ifile.is_open()) {
-            return nullptr;
+            return LoadResult::DoesNotExist;
         }
 
         std::filesystem::path loadPath(path);
@@ -97,8 +121,13 @@ namespace moth_ui {
         nlohmann::json json;
         ifile >> json;
         auto const layout = std::make_shared<Layout>();
-        layout->Deserialize(json, context);
-        return layout;
+        if (!layout->Deserialize(json, context)) {
+            return LoadResult::IncorrectFormat;
+        }
+
+        layout->m_loadedPath = std::filesystem::path(path);
+        *outLayout = layout;
+        return LoadResult::Success;
     }
 
     bool Layout::Save(char const* path) {

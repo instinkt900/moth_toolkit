@@ -25,8 +25,13 @@ namespace moth_ui {
         return j;
     }
 
-    void LayoutEntityRect::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
-        LayoutEntity::Deserialize(json, context);
-        json.at("filled").get_to(m_filled);
+    bool LayoutEntityRect::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
+        bool success = LayoutEntity::Deserialize(json, context);
+
+        if (success) {
+            m_filled = json.value("filled", true);
+        }
+
+        return success;
     }
 }

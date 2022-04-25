@@ -33,7 +33,7 @@ namespace moth_ui {
         };
 
         virtual nlohmann::json Serialize(SerializeContext const& context) const;
-        virtual void Deserialize(nlohmann::json const& json, SerializeContext const& context);
+        virtual bool Deserialize(nlohmann::json const& json, SerializeContext const& context);
 
         std::string m_id;
         LayoutEntityGroup* m_parent = nullptr;

@@ -16,11 +16,25 @@ namespace moth_ui {
         std::unique_ptr<Node> Instantiate() override;
 
         nlohmann::json Serialize(SerializeContext const& context) const override;
-        void Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
+        bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
 
-        static std::shared_ptr<Layout> Load(char const* path);
+        std::filesystem::path const& GetLoadedPath() const { return m_loadedPath; }
+
+        enum class LoadResult {
+            Success,
+            NoOutput,
+            DoesNotExist,
+            IncorrectFormat,
+
+        };
+
+        static LoadResult Load(char const* path, std::shared_ptr<Layout>* outLayout = nullptr);
         bool Save(char const* path);
 
-        static const int Version = 1;
+        static int const Version = 1;
+        static std::string const Extension;
+
+    private:
+        std::filesystem::path m_loadedPath;
     };
 }

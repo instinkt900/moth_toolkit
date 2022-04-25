@@ -6,7 +6,7 @@
 namespace moth_ui {
     class LayoutEntityRef : public LayoutEntityGroup {
     public:
-        LayoutEntityRef(LayoutRect const& initialBounds, char const* srcPath);
+        LayoutEntityRef(LayoutRect const& initialBounds, Layout const& layoutRef);
         explicit LayoutEntityRef(LayoutEntityGroup* parent);
 
         std::shared_ptr<LayoutEntity> Clone() override;
@@ -16,7 +16,7 @@ namespace moth_ui {
         std::unique_ptr<Node> Instantiate() override;
 
         nlohmann::json Serialize(SerializeContext const& context) const override;
-        void Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
+        bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
 
         std::string m_layoutPath;
 

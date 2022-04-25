@@ -2,6 +2,7 @@
 
 namespace moth_ui {
     enum class LayoutEntityType {
+        Unknown,
         Layout,
         Group,
         Ref,

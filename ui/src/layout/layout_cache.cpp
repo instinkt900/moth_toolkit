@@ -22,10 +22,11 @@ namespace moth_ui {
 
     std::shared_ptr<Layout> LayoutCache::LoadLayout(char const* name) {
         std::string const filename = fmt::format("{}/{}.json", m_root, name);
-        auto const layout = Layout::Load(filename.c_str());
-        if (layout) {
-            m_cache[name] = layout;
-            return layout;
+        std::shared_ptr<moth_ui::Layout> newLayout;
+        auto const loadResult = Layout::Load(filename.c_str(), &newLayout);
+        if (loadResult == moth_ui::Layout::LoadResult::Success) {
+            m_cache[name] = newLayout;
+            return newLayout;
         }
         return nullptr;
     }

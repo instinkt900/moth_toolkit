@@ -17,7 +17,7 @@ namespace moth_ui {
         std::unique_ptr<Node> Instantiate() override;
 
         nlohmann::json Serialize(SerializeContext const& context) const override;
-        void Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
+        bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
 
         bool m_filled = true;
     };

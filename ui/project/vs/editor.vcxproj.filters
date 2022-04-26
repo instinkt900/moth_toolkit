@@ -192,6 +192,9 @@
     <ClInclude Include="..\..\editor\src\imgui-filebrowser\imfilebrowser.h">
       <Filter>src\imgui-filebrowser</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_canvas.h">
+      <Filter>src\editor\panels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\editor\src\app.cpp">
@@ -334,6 +337,9 @@
     </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\content_list.cpp">
       <Filter>src\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_canvas.cpp">
+      <Filter>src\editor\panels</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

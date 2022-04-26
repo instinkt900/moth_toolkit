@@ -1,12 +1,15 @@
 Moth UI TODO
 ------------
 
-change the layout/image list panels to a simple asset list. eventually double click will open the asset. drag will drop it onto the canvas. need to replace the viewport with a canvas window first though.
+fix the canvas selection logic. will deselect current entity if you drag into the canvas.
+maybe make 9 slicing target values to be a layout rect so you can do anchor/offset style.
+update drag and drop placement to not use hard coded positions and instead use mouse position.
 multiple entity selection
+allow multiple panels. specifically for asset panels.
+Replace most line/primitive drawing with imgui calls. this will simplify moving to other renderer backends.
 paths should probably be std::filesystem::path
 copy/paste functionality for keyframes?
 flipbook animation?
-clean up project handling in the editor.
 widget factory for instantiating nodes and linking them with custom classes. re. static class registration from ea.
 texture packing.
 Readme.md
@@ -17,4 +20,3 @@ Updates to preview window. Input etc. Reload animation stuff. currently broken.
 Add color customisation to editor colors.
 Tests for the node/layout entity classes. Loading a hard coded test layout etc.
 Update layout of imgui elements. swapping label sides etc. tables?
-Display source rect/9 slicing on image entity properties panel.

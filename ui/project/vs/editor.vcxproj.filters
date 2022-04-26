@@ -147,9 +147,6 @@
     <ClInclude Include="..\..\editor\src\events\event.h">
       <Filter>src\events</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\editor\src\editor\layout_project.h">
-      <Filter>src\editor</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel.h">
       <Filter>src\editor\panels</Filter>
     </ClInclude>
@@ -175,9 +172,6 @@
       <Filter>src\editor\panels</Filter>
     </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_preview.h">
-      <Filter>src\editor\panels</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_project_properties.h">
       <Filter>src\editor\panels</Filter>
     </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\confirm_prompt.h">
@@ -324,9 +318,6 @@
       <Filter>src\editor\panels</Filter>
     </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_preview.cpp">
-      <Filter>src\editor\panels</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_project_properties.cpp">
       <Filter>src\editor\panels</Filter>
     </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\confirm_prompt.cpp">

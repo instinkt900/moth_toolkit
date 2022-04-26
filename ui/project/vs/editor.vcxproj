@@ -114,7 +114,6 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\editor\editor_layer.h" />
     <ClInclude Include="..\..\editor\src\editor\element_utils.h" />
     <ClInclude Include="..\..\editor\src\editor\keyframe_context.h" />
-    <ClInclude Include="..\..\editor\src\editor\layout_project.h" />
     <ClInclude Include="..\..\editor\src\editor\offset_bounds_handle.h" />
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel.h" />
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_animation.h" />
@@ -124,7 +123,6 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_keyframes.h" />
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_asset_list.h" />
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_preview.h" />
-    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_project_properties.h" />
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_properties.h" />
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_undo_stack.h" />
     <ClInclude Include="..\..\editor\src\editor\properties_elements.h" />
@@ -178,7 +176,6 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_keyframes.cpp" />
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_asset_list.cpp" />
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_preview.cpp" />
-    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_project_properties.cpp" />
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_properties.cpp" />
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_undo_stack.cpp" />
     <ClCompile Include="..\..\editor\src\editor\properties_elements.cpp" />

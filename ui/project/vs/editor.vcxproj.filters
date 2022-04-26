@@ -153,7 +153,7 @@
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel.h">
       <Filter>src\editor\panels</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_layout_list.h">
+    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_asset_list.h">
       <Filter>src\editor\panels</Filter>
     </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_canvas_properties.h">
@@ -177,9 +177,6 @@
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_preview.h">
       <Filter>src\editor\panels</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_image_list.h">
-      <Filter>src\editor\panels</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_project_properties.h">
       <Filter>src\editor\panels</Filter>
     </ClInclude>
@@ -194,6 +191,9 @@
     </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_canvas.h">
       <Filter>src\editor\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\element_utils.h">
+      <Filter>src\editor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -302,7 +302,7 @@
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel.cpp">
       <Filter>src\editor\panels</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_layout_list.cpp">
+    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_asset_list.cpp">
       <Filter>src\editor\panels</Filter>
     </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_canvas_properties.cpp">
@@ -324,9 +324,6 @@
       <Filter>src\editor\panels</Filter>
     </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_preview.cpp">
-      <Filter>src\editor\panels</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_image_list.cpp">
       <Filter>src\editor\panels</Filter>
     </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_project_properties.cpp">

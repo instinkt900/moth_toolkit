@@ -49,6 +49,48 @@ namespace moth_ui {
     }
 
     template <typename T>
+    inline Rect<T>& operator*=(Rect<T>& a, T b) {
+        a.topLeft *= b;
+        a.bottomRight *= b;
+        return a;
+    }
+
+    template <typename T>
+    inline Rect<T>& operator/=(Rect<T>& a, T b) {
+        a.topLeft /= b;
+        a.bottomRight /= b;
+        return a;
+    }
+
+    template <typename T>
+    inline Rect<T> operator+(Rect<T> const& rect, T other) {
+        auto ret = rect;
+        ret += other;
+        return ret;
+    }
+
+    template <typename T>
+    inline Rect<T> operator-(Rect<T> const& rect, T other) {
+        auto ret = rect;
+        ret -= other;
+        return ret;
+    }
+
+    template <typename T>
+    inline Rect<T> operator*(Rect<T> const& rect, T other) {
+        auto ret = rect;
+        ret *= other;
+        return ret;
+    }
+
+    template <typename T>
+    inline Rect<T> operator/(Rect<T> const& rect, T other) {
+        auto ret = rect;
+        ret /= other;
+        return ret;
+    }
+
+    template <typename T>
     inline bool IsZero(Rect<T> const& rect) {
         return rect.topLeft.x == 0 && rect.topLeft.y == 0 && rect.bottomRight.x == 0 && rect.bottomRight.y == 0;
     }
@@ -60,5 +102,10 @@ namespace moth_ui {
             return false;
         }
         return true;
+    }
+
+    template <typename T>
+    inline bool Intersects(Rect<T> const& rect1, Rect<T> const& rect2) {
+        return !(rect2.topLeft.x > rect1.bottomRight.x || rect2.bottomRight.x < rect1.topLeft.x || rect2.topLeft.y > rect1.bottomRight.y || rect2.bottomRight.y < rect1.topLeft.y);
     }
 }

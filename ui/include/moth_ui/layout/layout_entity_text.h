@@ -23,5 +23,8 @@ namespace moth_ui {
         std::string m_text = "Text Element";
         TextHorizAlignment m_horizontalAlignment = TextHorizAlignment::Left;
         TextVertAlignment m_verticalAlignment = TextVertAlignment::Top;
+        bool m_dropShadow = false;
+        IntVec2 m_dropShadowOffset{ 0, 0 };
+        Color m_dropShadowColor = BasicColors::Black;
     };
 }

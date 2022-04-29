@@ -26,6 +26,9 @@ namespace moth_ui {
         std::string m_text;
         TextHorizAlignment m_horizontalAlignment;
         TextVertAlignment m_verticalAlignment;
+        bool m_dropShadow;
+        IntVec2 m_dropShadowOffset;
+        Color m_dropShadowColor;
 
         void DrawInternal() override;
     };

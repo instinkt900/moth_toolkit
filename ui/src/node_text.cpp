@@ -13,7 +13,10 @@ namespace moth_ui {
         : Node(layoutEntity)
         , m_text(layoutEntity->m_text)
         , m_horizontalAlignment(layoutEntity->m_horizontalAlignment)
-        , m_verticalAlignment(layoutEntity->m_verticalAlignment) {
+        , m_verticalAlignment(layoutEntity->m_verticalAlignment)
+        , m_dropShadow(layoutEntity->m_dropShadow)
+        , m_dropShadowOffset(layoutEntity->m_dropShadowOffset)
+        , m_dropShadowColor(layoutEntity->m_dropShadowColor) {
         Load(layoutEntity->m_fontName.c_str(), layoutEntity->m_fontSize);
     }
 
@@ -34,6 +37,9 @@ namespace moth_ui {
         m_text = layoutEntity->m_text;
         m_horizontalAlignment = layoutEntity->m_horizontalAlignment;
         m_verticalAlignment = layoutEntity->m_verticalAlignment;
+        m_dropShadow = layoutEntity->m_dropShadow;
+        m_dropShadowOffset = layoutEntity->m_dropShadowOffset;
+        m_dropShadowColor = layoutEntity->m_dropShadowColor;
         Load(layoutEntity->m_fontName.c_str(), layoutEntity->m_fontSize);
     }
 
@@ -49,7 +55,19 @@ namespace moth_ui {
 
     void NodeText::DrawInternal() {
         if (m_font) {
-            Context::GetCurrentContext().GetRenderer().RenderText(m_text, *m_font, m_horizontalAlignment, m_verticalAlignment, m_screenRect);
+            auto& renderer = Context::GetCurrentContext().GetRenderer();
+            if (m_dropShadow) {
+                // pop the color so the dropshadow color isnt affected by the node color unlike the text
+                renderer.PopColor();
+                renderer.PushColor(m_dropShadowColor);
+                IntRect dropRect = m_screenRect;
+                dropRect.topLeft += m_dropShadowOffset;
+                dropRect.bottomRight += m_dropShadowOffset;
+                renderer.RenderText(m_text, *m_font, m_horizontalAlignment, m_verticalAlignment, dropRect);
+                renderer.PopColor();
+                renderer.PushColor(m_color);
+            }
+            renderer.RenderText(m_text, *m_font, m_horizontalAlignment, m_verticalAlignment, m_screenRect);
         }
     }
 }

@@ -26,6 +26,9 @@ namespace moth_ui {
         j["text"] = m_text;
         j["horizontalAlignment"] = m_horizontalAlignment;
         j["verticalAlignment"] = m_verticalAlignment;
+        j["dropShadow"] = m_dropShadow;
+        j["dropShadowOffset"] = m_dropShadowOffset;
+        j["dropShadowColor"] = m_dropShadowColor;
         return j;
     }
 
@@ -38,6 +41,9 @@ namespace moth_ui {
             m_text = json.value("text", "");
             m_horizontalAlignment = json.value("horizontalAlignment", TextHorizAlignment::Left);
             m_verticalAlignment = json.value("verticalAlignment", TextVertAlignment::Top);
+            m_dropShadow = json.value("dropShadow", false);
+            m_dropShadowOffset = json.value("dropShadowOffset", IntVec2{ 0, 0 });
+            m_dropShadowColor = json.value("dropShadowColor", BasicColors::Black);
         }
 
         return success;

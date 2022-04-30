@@ -11,7 +11,7 @@ namespace moth_ui {
         : LayoutEntity(parent) {
     }
 
-    std::shared_ptr<LayoutEntity> LayoutEntityClip::Clone() {
+    std::shared_ptr<LayoutEntity> LayoutEntityClip::Clone(CloneType cloneType) {
         return std::make_shared<LayoutEntityClip>(*this);
     }
 

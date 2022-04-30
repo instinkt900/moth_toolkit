@@ -12,7 +12,6 @@ namespace moth_ui {
 
         void Load(char const* fontName, int size);
 
-        void ReloadEntity() override;
         IFont* GetFont() const {
             return m_font.get();
         }
@@ -30,6 +29,10 @@ namespace moth_ui {
         IntVec2 m_dropShadowOffset;
         Color m_dropShadowColor;
 
+        void ReloadEntityInternal() override;
         void DrawInternal() override;
+
+    private:
+        void ReloadEntityPrivate();
     };
 }

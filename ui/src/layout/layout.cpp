@@ -1,9 +1,5 @@
 #include "common.h"
 #include "moth_ui/layout/layout.h"
-#include "moth_ui/layout/layout_entity_text.h"
-#include "moth_ui/layout/layout_entity_image.h"
-#include "moth_ui/layout/layout_entity_rect.h"
-#include "moth_ui/layout/layout_entity_ref.h"
 #include "moth_ui/animation_clip.h"
 #include "moth_ui/group.h"
 
@@ -11,31 +7,14 @@ namespace moth_ui {
     std::string const Layout::Extension(".mothui");
 
     std::unique_ptr<LayoutEntity> LoadEntity(nlohmann::json const& json, LayoutEntityGroup* parent, LayoutEntity::SerializeContext const& context) {
-        std::unique_ptr<LayoutEntity> entity;
-
         LayoutEntityType type = json.value("type", LayoutEntityType::Unknown);
-
-        switch (type) {
-        case LayoutEntityType::Text:
-            entity = std::make_unique<LayoutEntityText>(parent);
-            break;
-        case LayoutEntityType::Image:
-            entity = std::make_unique<LayoutEntityImage>(parent);
-            break;
-        case LayoutEntityType::Rect:
-            entity = std::make_unique<LayoutEntityRect>(parent);
-            break;
-        case LayoutEntityType::Ref:
-            entity = std::make_unique<LayoutEntityRef>(parent);
-            break;
-        default:
-            assert(false && "unknown entity type");
+        std::unique_ptr<LayoutEntity> entity = CreateLayoutEntity(type);
+        if (entity) {
+            entity->m_parent = parent;
+            if (entity->Deserialize(json, context)) {
+                return entity;
+            }
         }
-
-        if (entity && entity->Deserialize(json, context)) {
-            return entity;
-        }
-
         return nullptr;
     }
 
@@ -43,7 +22,7 @@ namespace moth_ui {
         : LayoutEntityGroup(nullptr) {
     }
 
-    std::shared_ptr<LayoutEntity> Layout::Clone() {
+    std::shared_ptr<LayoutEntity> Layout::Clone(CloneType cloneType) {
         return std::make_shared<Layout>(*this);
     }
 

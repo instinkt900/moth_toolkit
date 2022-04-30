@@ -7,13 +7,19 @@
 #include "moth_ui/blend_mode.h"
 
 namespace moth_ui {
+    std::unique_ptr<LayoutEntity> CreateLayoutEntity(LayoutEntityType type);
+
     class LayoutEntity : public std::enable_shared_from_this<LayoutEntity> {
     public:
         explicit LayoutEntity(LayoutRect const& initialBounds);
         explicit LayoutEntity(LayoutEntityGroup* parent);
         LayoutEntity(LayoutEntity const& other);
 
-        virtual std::shared_ptr<LayoutEntity> Clone() = 0; // deep copy
+        enum class CloneType {
+            Deep,
+            Shallow,
+        };
+        virtual std::shared_ptr<LayoutEntity> Clone(CloneType cloneType) = 0;
 
         virtual LayoutEntityType GetType() const { return LayoutEntityType::Entity; }
 
@@ -35,10 +41,14 @@ namespace moth_ui {
         virtual nlohmann::json Serialize(SerializeContext const& context) const;
         virtual bool Deserialize(nlohmann::json const& json, SerializeContext const& context);
 
+        virtual nlohmann::json SerializeOverrides() const;
+        virtual void DeserializeOverrides(nlohmann::json const& overridesJson);
+
         std::string m_id;
         LayoutEntityGroup* m_parent = nullptr;
         BlendMode m_blend = BlendMode::Replace;
         std::map<AnimationTrack::Target, std::unique_ptr<AnimationTrack>> m_tracks;
+        std::shared_ptr<LayoutEntity> m_hardReference; // when loading a sublayout this will point to the immutable save data. used to diff overrides
 
     private:
         void InitTracks(LayoutRect const& initialRect);

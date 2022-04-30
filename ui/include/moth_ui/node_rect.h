@@ -9,11 +9,13 @@ namespace moth_ui {
         NodeRect(std::shared_ptr<LayoutEntityRect> layoutEntity);
         virtual ~NodeRect();
 
-        void ReloadEntity() override;
-
     protected:
         bool m_filled = true;
 
+        void ReloadEntityInternal() override;
         void DrawInternal() override;
+
+    private:
+        void ReloadEntityPrivate();
     };
 }

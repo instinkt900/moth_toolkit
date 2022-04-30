@@ -15,7 +15,7 @@ namespace moth_ui {
     LayoutEntityGroup::LayoutEntityGroup(LayoutEntityGroup const& other)
         : LayoutEntity(other) {
         for (auto&& child : other.m_children) {
-            m_children.push_back(child->Clone());
+            m_children.push_back(child->Clone(moth_ui::LayoutEntity::CloneType::Deep));
         }
         for (auto&& clip : other.m_clips) {
             m_clips.push_back(std::make_unique<AnimationClip>(*clip));

@@ -2,9 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <SDL_DIR>D:\Development\moth_ui_externals\SDL2-2.0.18</SDL_DIR>
-    <SDLIMAGE_DIR>D:\Development\moth_ui_externals\SDL2_image-2.0.5</SDLIMAGE_DIR>
-    <SDLTTF_DIR>D:\Development\moth_ui_externals\SDL2_ttf-2.0.15</SDLTTF_DIR>
+    <SDL_DIR>D:\Development\SDL2-2.0.18</SDL_DIR>
+    <SDLIMAGE_DIR>D:\Development\SDL2_image-2.0.5</SDLIMAGE_DIR>
+    <SDLTTF_DIR>D:\Development\SDL2_ttf-2.0.15</SDLTTF_DIR>
     <NLOHMANN_DIR>D:\Development\moth_ui_externals\json</NLOHMANN_DIR>
     <MAGICENUM_DIR>D:\Development\moth_ui_externals\magic_enum</MAGICENUM_DIR>
     <RANGEV3_DIR>D:\Development\moth_ui_externals\range-v3</RANGEV3_DIR>

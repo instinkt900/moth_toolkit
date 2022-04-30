@@ -2,6 +2,7 @@
 
 #include "moth_ui/utils/rect.h"
 #include "moth_ui/iimage.h"
+#include "moth_ui/ifont.h"
 #include "moth_ui/utils/color.h"
 #include "moth_ui/blend_mode.h"
 #include "moth_ui/text_alignment.h"

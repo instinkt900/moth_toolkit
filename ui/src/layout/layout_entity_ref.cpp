@@ -9,31 +9,25 @@ namespace moth_ui {
         : LayoutEntityGroup(initialBounds)
         , m_layoutPath(layoutRef.GetLoadedPath().string()) {
         std::shared_ptr<Layout> targetLayout;
-        Clone(layoutRef);
+        CopyLayout(layoutRef);
     }
 
     LayoutEntityRef::LayoutEntityRef(LayoutEntityGroup* parent)
         : LayoutEntityGroup(parent) {
     }
 
-    std::shared_ptr<LayoutEntity> LayoutEntityRef::Clone() {
-        return std::make_shared<LayoutEntityRef>(*this);
+    std::shared_ptr<LayoutEntity> LayoutEntityRef::Clone(CloneType cloneType) {
+        auto const cloned = std::make_shared<LayoutEntityRef>(*this);
+        if (cloneType == CloneType::Shallow) {
+            // its easier to deep copy then discard when not needed than to have to
+            // make sure all the base class info is copied
+            cloned->m_children.clear();
+        }
+        return cloned;
     }
 
     std::unique_ptr<Node> LayoutEntityRef::Instantiate() {
         return std::make_unique<Group>(std::static_pointer_cast<LayoutEntityRef>(shared_from_this()));
-    }
-
-    // clones a layout into this reference
-    void LayoutEntityRef::Clone(Layout const& other) {
-        for (auto&& child : other.m_children) {
-            m_children.push_back(child);
-            child->m_parent = this;
-        }
-
-        for (auto&& clip : other.m_clips) {
-            m_clips.push_back(std::make_unique<AnimationClip>(*clip));
-        }
     }
 
     nlohmann::json LayoutEntityRef::Serialize(SerializeContext const& context) const {
@@ -44,6 +38,21 @@ namespace moth_ui {
         std::filesystem::path imagePath(m_layoutPath);
         auto const relativePath = std::filesystem::relative(imagePath, context.m_rootPath);
         j["layoutPath"] = relativePath.string();
+
+        nlohmann::json overrides;
+        int childIndex = 0;
+        for (auto&& child : m_children) {
+            nlohmann::json data = child->SerializeOverrides();
+            if (!data.empty()) {
+                nlohmann::json entry;
+                entry["childIndex"] = childIndex;
+                entry["type"] = child->GetType();
+                entry["data"] = data;
+                overrides.push_back(entry);
+            }
+            ++childIndex;
+        }
+        j["propertyOverrides"] = overrides;
         return j;
     }
 
@@ -56,12 +65,44 @@ namespace moth_ui {
             std::shared_ptr<Layout> targetLayout;
             auto const loadResult = Layout::Load(m_layoutPath.c_str(), &targetLayout);
             if (loadResult == Layout::LoadResult::Success) {
-                Clone(*targetLayout);
+                CopyLayout(*targetLayout);
+
+                for (auto&& child : m_children) {
+                    std::shared_ptr<LayoutEntity> entityCopy = child->Clone(CloneType::Shallow);
+                    child->m_hardReference = entityCopy;
+                }
+
+                auto overrides = json.value("propertyOverrides", nlohmann::json{});
+                for (auto&& overrideEntry : overrides) {
+                    if (overrideEntry.contains("childIndex") && overrideEntry.contains("type") && overrideEntry.contains("data")) {
+                        auto const childIndex = overrideEntry["childIndex"];
+                        if (childIndex >= 0 && childIndex < m_children.size()) {
+                            auto const overrideType = overrideEntry["type"];
+                            auto child = m_children[childIndex];
+                            if (child->GetType() == overrideType) {
+                                auto const overrideJson = overrideEntry["data"];
+                                child->DeserializeOverrides(overrideJson);
+                            }
+                        }
+                    }
+                }
             } else {
                 success = false;
             }
         }
 
         return success;
+    }
+
+    // clones a layout into this reference
+    void LayoutEntityRef::CopyLayout(Layout const& other) {
+        for (auto&& child : other.m_children) {
+            m_children.push_back(child);
+            child->m_parent = this;
+        }
+
+        for (auto&& clip : other.m_clips) {
+            m_clips.push_back(std::make_unique<AnimationClip>(*clip));
+        }
     }
 }

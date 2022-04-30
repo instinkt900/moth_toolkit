@@ -11,12 +11,8 @@ namespace moth_ui {
     }
 
     Node::Node(std::shared_ptr<LayoutEntity> layoutEntity)
-        : m_layout(layoutEntity)
-        , m_id(m_layout->m_id)
-        , m_layoutRect(m_layout->GetBoundsAtFrame(0))
-        , m_color(m_layout->GetColorAtFrame(0))
-        , m_blend(m_layout->m_blend) {
-        m_animationController = std::make_unique<AnimationController>(this, m_layout->m_tracks);
+        : m_layout(layoutEntity) {
+        ReloadEntityInternal();
     }
 
     Node::~Node() {
@@ -86,11 +82,10 @@ namespace moth_ui {
     }
 
     void Node::ReloadEntity() {
-        m_id = m_layout->m_id;
-        m_layoutRect = m_layout->GetBoundsAtFrame(0);
-        m_color = m_layout->GetColorAtFrame(0);
-        m_blend = m_layout->m_blend;
-        m_animationController = std::make_unique<AnimationController>(this, m_layout->m_tracks);
+        ReloadEntityInternal();
+
+        // if our parent is a ref, check our overloads.
+        // TODO
     }
 
     bool Node::IsInBounds(IntVec2 const& point) const {
@@ -128,5 +123,17 @@ namespace moth_ui {
             }
             ImGui::TreePop();
         }
+    }
+
+    void Node::ReloadEntityInternal() {
+        ReloadEntityPrivate();
+    }
+
+    void Node::ReloadEntityPrivate() {
+        m_id = m_layout->m_id;
+        m_layoutRect = m_layout->GetBoundsAtFrame(0);
+        m_color = m_layout->GetColorAtFrame(0);
+        m_blend = m_layout->m_blend;
+        m_animationController = std::make_unique<AnimationController>(this, m_layout->m_tracks);
     }
 }

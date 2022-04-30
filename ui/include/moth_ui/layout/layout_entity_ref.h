@@ -9,7 +9,7 @@ namespace moth_ui {
         LayoutEntityRef(LayoutRect const& initialBounds, Layout const& layoutRef);
         explicit LayoutEntityRef(LayoutEntityGroup* parent);
 
-        std::shared_ptr<LayoutEntity> Clone() override;
+        std::shared_ptr<LayoutEntity> Clone(CloneType cloneType) override;
 
         LayoutEntityType GetType() const override { return LayoutEntityType::Ref; }
 
@@ -21,6 +21,6 @@ namespace moth_ui {
         std::string m_layoutPath;
 
     private:
-        void Clone(Layout const& other);
+        void CopyLayout(Layout const& other);
     };
 }

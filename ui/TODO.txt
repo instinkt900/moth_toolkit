@@ -3,6 +3,7 @@ Moth UI TODO
 
 Fixes/Todos
 -----------
+append the .mothui extension to saves automatically
 save state of canvas size, asset panel path, open panels etc.
 drag selecting in the animation panel
 maybe make 9 slicing target values to be a layout rect so you can do anchor/offset style.
@@ -20,6 +21,7 @@ Update layout of imgui elements. swapping label sides etc. tables?
 
 Features
 --------
+being able to alter properties within a sublayout ref. ie. changing the text of a button label
 flipbook animation?
 texture packing.
 widget factory for instantiating nodes and linking them with custom classes. re. static class registration from ea.

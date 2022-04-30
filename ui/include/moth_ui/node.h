@@ -38,7 +38,7 @@ namespace moth_ui {
 
         void Refresh(int frameNo);
         void RecalculateBounds();
-        virtual void ReloadEntity();
+        void ReloadEntity();
 
         bool IsInBounds(IntVec2 const& point) const;
         IntVec2 TranslatePosition(IntVec2 const& point) const;
@@ -80,6 +80,10 @@ namespace moth_ui {
         std::unique_ptr<AnimationController> m_animationController;
         EventHandler m_eventHandler;
 
+        virtual void ReloadEntityInternal();
         virtual void DrawInternal() {}
+
+    private:
+        void ReloadEntityPrivate();
     };
 }

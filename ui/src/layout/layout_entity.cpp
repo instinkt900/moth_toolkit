@@ -1,10 +1,30 @@
 #include "common.h"
 #include "moth_ui/layout/layout_entity.h"
 #include "moth_ui/layout/layout_entity_group.h"
+#include "moth_ui/layout/layout_entity_text.h"
+#include "moth_ui/layout/layout_entity_image.h"
+#include "moth_ui/layout/layout_entity_rect.h"
+#include "moth_ui/layout/layout_entity_ref.h"
 #include "moth_ui/node.h"
 #include "moth_ui/utils/imgui_ext_inspect.h"
 
 namespace moth_ui {
+    std::unique_ptr<LayoutEntity> CreateLayoutEntity(LayoutEntityType type) {
+        switch (type) {
+        case LayoutEntityType::Text:
+            return std::make_unique<LayoutEntityText>(nullptr);
+        case LayoutEntityType::Image:
+            return std::make_unique<LayoutEntityImage>(nullptr);
+        case LayoutEntityType::Rect:
+            return std::make_unique<LayoutEntityRect>(nullptr);
+        case LayoutEntityType::Ref:
+            return std::make_unique<LayoutEntityRef>(nullptr);
+        default:
+            assert(false && "unknown entity type");
+            return nullptr;
+        }
+    }
+
     LayoutEntity::LayoutEntity(LayoutRect const& initialBounds) {
         InitTracks(initialBounds);
     }
@@ -170,6 +190,20 @@ namespace moth_ui {
         }
 
         return success;
+    }
+
+    nlohmann::json LayoutEntity::SerializeOverrides() const {
+        nlohmann::json j;
+        if (m_hardReference) {
+            if (m_hardReference->m_blend != m_blend) {
+                j["blend"] = m_blend;
+            }
+        }
+        return j;
+    }
+
+    void LayoutEntity::DeserializeOverrides(nlohmann::json const& overridesJson) {
+        m_blend = overridesJson.value("blend", m_blend);
     }
 
     void LayoutEntity::InitTracks(LayoutRect const& initialRect) {

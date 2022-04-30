@@ -47,7 +47,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectName)\$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)\..\..\lib\win\x64\</OutDir>
     <IntDir>$(ProjectName)\Intermediate\$(Configuration)\</IntDir>
     <IncludePath>
     </IncludePath>

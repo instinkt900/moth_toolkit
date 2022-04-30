@@ -11,7 +11,7 @@ namespace moth_ui {
         : LayoutEntity(parent) {
     }
 
-    std::shared_ptr<LayoutEntity> LayoutEntityText::Clone() {
+    std::shared_ptr<LayoutEntity> LayoutEntityText::Clone(CloneType cloneType) {
         return std::make_shared<LayoutEntityText>(*this);
     }
 
@@ -47,5 +47,21 @@ namespace moth_ui {
         }
 
         return success;
+    }
+
+    nlohmann::json LayoutEntityText::SerializeOverrides() const {
+        nlohmann::json j;
+        if (m_hardReference) {
+            auto const textEntity = std::static_pointer_cast<LayoutEntityText>(m_hardReference);
+            if (textEntity->m_text != m_text) {
+                j["text"] = m_text;
+            }
+        }
+        return j;
+    }
+
+    void LayoutEntityText::DeserializeOverrides(nlohmann::json const& overridesJson) {
+        auto const textEntity = std::static_pointer_cast<LayoutEntityText>(m_hardReference);
+        m_text = overridesJson.value("text", m_text);
     }
 }

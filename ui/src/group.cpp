@@ -12,9 +12,7 @@ namespace moth_ui {
 
     Group::Group(std::shared_ptr<LayoutEntityGroup> layoutEntityGroup)
         : Node(layoutEntityGroup) {
-        for (auto&& childEntity : layoutEntityGroup->m_children) {
-            AddChild(childEntity->Instantiate());
-        }
+        ReloadEntityPrivate();
     }
 
     Group::~Group() {
@@ -102,6 +100,11 @@ namespace moth_ui {
         }
     }
 
+    void Group::ReloadEntityInternal() {
+        Node::ReloadEntityInternal();
+        ReloadEntityPrivate();
+    }
+
     void Group::DrawInternal() {
         bool popClip = false;
         if (m_clipRect && m_clipRect->IsVisible()) {
@@ -118,4 +121,11 @@ namespace moth_ui {
         }
     }
 
+    void Group::ReloadEntityPrivate() {
+        auto const layoutEntity = std::static_pointer_cast<LayoutEntityGroup>(m_layout);
+        m_children.clear();
+        for (auto&& childEntity : layoutEntity->m_children) {
+            AddChild(childEntity->Instantiate());
+        }
+    }
 }

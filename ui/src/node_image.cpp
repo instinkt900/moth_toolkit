@@ -17,9 +17,8 @@ namespace moth_ui {
     }
 
     NodeImage::NodeImage(std::shared_ptr<LayoutEntityImage> layoutEntity)
-        : Node(layoutEntity)
-        , m_sourceRect(layoutEntity->m_sourceRect) {
-        ReloadEntity();
+        : Node(layoutEntity) {
+        ReloadEntityPrivate();
     }
 
     NodeImage::~NodeImage() {
@@ -37,17 +36,6 @@ namespace moth_ui {
             m_sourceRect.bottomRight.y = imageDimensions.y;
         }
         Slice();
-    }
-
-    void NodeImage::ReloadEntity() {
-        Node::ReloadEntity();
-        auto layoutEntity = std::static_pointer_cast<LayoutEntityImage>(m_layout);
-        m_sourceRect = layoutEntity->m_sourceRect;
-        m_imageScaleType = layoutEntity->m_imageScaleType;
-        m_imageScale = layoutEntity->m_imageScale;
-        m_sourceBorders = layoutEntity->m_sourceBorders;
-        m_targetBorders = layoutEntity->m_targetBorders;
-        Load(layoutEntity->m_imagePath.c_str());
     }
 
     void NodeImage::DebugDraw() {
@@ -71,6 +59,11 @@ namespace moth_ui {
                 s_loadingNodeImage = nullptr;
             }
         }
+    }
+
+    void NodeImage::ReloadEntityInternal() {
+        Node::ReloadEntityInternal();
+        ReloadEntityPrivate();
     }
 
     void NodeImage::DrawInternal() {
@@ -112,4 +105,13 @@ namespace moth_ui {
         }
     }
 
+    void NodeImage::ReloadEntityPrivate() {
+        auto const layoutEntity = std::static_pointer_cast<LayoutEntityImage>(m_layout);
+        m_sourceRect = layoutEntity->m_sourceRect;
+        m_imageScaleType = layoutEntity->m_imageScaleType;
+        m_imageScale = layoutEntity->m_imageScale;
+        m_sourceBorders = layoutEntity->m_sourceBorders;
+        m_targetBorders = layoutEntity->m_targetBorders;
+        Load(layoutEntity->m_imagePath.c_str());
+    }
 }

@@ -29,6 +29,10 @@ namespace moth_ui {
         std::vector<std::shared_ptr<Node>> m_children;
         NodeClip* m_clipRect = nullptr;
 
+        void ReloadEntityInternal() override;
         void DrawInternal() override;
+
+    private:
+        void ReloadEntityPrivate();
     };
 }

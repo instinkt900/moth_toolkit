@@ -10,14 +10,8 @@ namespace moth_ui {
     }
 
     NodeText::NodeText(std::shared_ptr<LayoutEntityText> layoutEntity)
-        : Node(layoutEntity)
-        , m_text(layoutEntity->m_text)
-        , m_horizontalAlignment(layoutEntity->m_horizontalAlignment)
-        , m_verticalAlignment(layoutEntity->m_verticalAlignment)
-        , m_dropShadow(layoutEntity->m_dropShadow)
-        , m_dropShadowOffset(layoutEntity->m_dropShadowOffset)
-        , m_dropShadowColor(layoutEntity->m_dropShadowColor) {
-        Load(layoutEntity->m_fontName.c_str(), layoutEntity->m_fontSize);
+        : Node(layoutEntity) {
+        ReloadEntityPrivate();
     }
 
     NodeText::~NodeText() {
@@ -31,18 +25,6 @@ namespace moth_ui {
         }
     }
 
-    void NodeText::ReloadEntity() {
-        Node::ReloadEntity();
-        auto layoutEntity = std::static_pointer_cast<LayoutEntityText>(m_layout);
-        m_text = layoutEntity->m_text;
-        m_horizontalAlignment = layoutEntity->m_horizontalAlignment;
-        m_verticalAlignment = layoutEntity->m_verticalAlignment;
-        m_dropShadow = layoutEntity->m_dropShadow;
-        m_dropShadowOffset = layoutEntity->m_dropShadowOffset;
-        m_dropShadowColor = layoutEntity->m_dropShadowColor;
-        Load(layoutEntity->m_fontName.c_str(), layoutEntity->m_fontSize);
-    }
-
     void NodeText::DebugDraw() {
         Node::DebugDraw();
         if (ImGui::TreeNode("NodeText")) {
@@ -51,6 +33,11 @@ namespace moth_ui {
             //imgui_ext::Inspect("alignment", m_alignment);
             ImGui::TreePop();
         }
+    }
+
+    void NodeText::ReloadEntityInternal() {
+        Node::ReloadEntityInternal();
+        ReloadEntityPrivate();
     }
 
     void NodeText::DrawInternal() {
@@ -69,5 +56,16 @@ namespace moth_ui {
             }
             renderer.RenderText(m_text, *m_font, m_horizontalAlignment, m_verticalAlignment, m_screenRect);
         }
+    }
+
+    void NodeText::ReloadEntityPrivate() {
+        auto const layoutEntity = std::static_pointer_cast<LayoutEntityText>(m_layout);
+        m_text = layoutEntity->m_text;
+        m_horizontalAlignment = layoutEntity->m_horizontalAlignment;
+        m_verticalAlignment = layoutEntity->m_verticalAlignment;
+        m_dropShadow = layoutEntity->m_dropShadow;
+        m_dropShadowOffset = layoutEntity->m_dropShadowOffset;
+        m_dropShadowColor = layoutEntity->m_dropShadowColor;
+        Load(layoutEntity->m_fontName.c_str(), layoutEntity->m_fontSize);
     }
 }

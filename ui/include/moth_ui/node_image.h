@@ -14,8 +14,6 @@ namespace moth_ui {
 
         void Load(char const* path);
 
-        void ReloadEntity() override;
-
         IImage const* GetImage() const { return m_image.get(); }
 
         IntRect& GetSourceRect() { return m_sourceRect; }
@@ -38,8 +36,12 @@ namespace moth_ui {
         IntVec2 m_sourceSlices[4];
         IntVec2 m_targetSlices[4];
 
+        void ReloadEntityInternal() override;
         void DrawInternal() override;
 
         void Slice();
+
+    private:
+        void ReloadEntityPrivate();
     };
 }

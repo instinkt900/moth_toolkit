@@ -44,6 +44,9 @@ namespace moth_ui {
     }
 
     bool Node::OnEvent(Event const& event) {
+        if (m_eventHandler) {
+            return m_eventHandler(this, event);
+        }
         return false;
     }
 

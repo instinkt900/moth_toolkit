@@ -18,6 +18,31 @@ namespace moth_ui {
     Node::~Node() {
     }
 
+    bool Node::SendEvent(Event const& event, EventDirection direction) {
+        if (direction == EventDirection::Up) {
+            return SendEventUp(event);
+        } else if (direction == EventDirection::Down) {
+            return SendEventDown(event);
+        }
+        assert(false && "Bad event direction.");
+        return false;
+    }
+
+    bool Node::SendEventUp(Event const& event) {
+        auto currentNode = this;
+        do {
+            if (currentNode->OnEvent(event)) {
+                return true;
+            }
+            currentNode = currentNode->GetParent();
+        } while (currentNode != nullptr);
+        return false;
+    }
+
+    bool Node::SendEventDown(Event const& event) {
+        return OnEvent(event);
+    }
+
     bool Node::OnEvent(Event const& event) {
         return false;
     }
@@ -44,15 +69,6 @@ namespace moth_ui {
             renderer.RenderRect(m_screenRect);
             renderer.PopBlendMode();
             renderer.PopColor();
-        }
-    }
-
-    void Node::SendEvent(Event const& event) {
-        if (m_eventHandler && m_eventHandler(this, event)) {
-            return;
-        }
-        if (m_parent) {
-            m_parent->SendEvent(event);
         }
     }
 

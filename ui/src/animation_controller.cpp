@@ -132,7 +132,7 @@ namespace moth_ui {
         for (auto&& track : m_trackControllers) {
             if (track->GetTarget() == AnimationTrack::Target::Events) {
                 track->ForEvents(startTime, endTime, [&](Keyframe const& keyframe) {
-                    m_node->SendEvent(EventAnimation(m_node, track->GetTarget(), keyframe.GetStringValue()));
+                    m_node->SendEvent(EventAnimation(m_node, track->GetTarget(), keyframe.GetStringValue()), Node::EventDirection::Up);
                 });
                 break;
             }

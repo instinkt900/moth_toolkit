@@ -9,7 +9,7 @@ namespace moth_ui {
         Group(std::shared_ptr<LayoutEntityGroup> layoutEntityGroup);
         virtual ~Group();
 
-        bool OnEvent(Event const& event) override;
+        bool SendEventDown(Event const& event) override;
         void Update(uint32_t ticks) override;
 
         void UpdateChildBounds() override;

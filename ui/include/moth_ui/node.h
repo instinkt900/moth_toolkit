@@ -13,11 +13,17 @@ namespace moth_ui {
         Node(std::shared_ptr<LayoutEntity> layoutEntity);
         virtual ~Node();
 
+        enum class EventDirection {
+            Up,
+            Down,
+        };
+        bool SendEvent(Event const& event, EventDirection direction);
+        bool SendEventUp(Event const& event);
+        virtual bool SendEventDown(Event const& event);
+
         virtual bool OnEvent(Event const& event) override;
         virtual void Update(uint32_t ticks);
         virtual void Draw();
-
-        virtual void SendEvent(Event const& event);
 
         void SetId(std::string const& id) { m_id = id; }
         std::string const& GetId() const { return m_id; }

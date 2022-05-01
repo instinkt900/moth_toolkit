@@ -18,15 +18,20 @@ namespace moth_ui {
     Group::~Group() {
     }
 
-    bool Group::OnEvent(Event const& event) {
-        if (Node::OnEvent(event)) {
+    bool Group::SendEventDown(Event const& event) {
+        // disabled/visible checks?
+
+        if (OnEvent(event)) {
             return true;
         }
-        EventDispatch dispatch(event);
+
         for (auto&& child : m_children) {
-            dispatch.Dispatch(child.get());
+            if (child->SendEventDown(event)) {
+                return true;
+            }
         }
-        return dispatch.GetHandled();
+
+        return false;
     }
 
     void Group::Update(uint32_t ticks) {

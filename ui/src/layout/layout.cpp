@@ -2,6 +2,7 @@
 #include "moth_ui/layout/layout.h"
 #include "moth_ui/animation_clip.h"
 #include "moth_ui/group.h"
+#include "moth_ui/node_factory.h"
 
 namespace moth_ui {
     std::string const Layout::Extension(".mothui");
@@ -27,13 +28,14 @@ namespace moth_ui {
     }
 
     std::unique_ptr<Node> Layout::Instantiate() {
-        return std::make_unique<Group>(std::static_pointer_cast<LayoutEntityGroup>(shared_from_this()));
+        return NodeFactory::GetInstance().CreateNode(std::static_pointer_cast<Layout>(shared_from_this()));
     }
 
     nlohmann::json Layout::Serialize(SerializeContext const& context) const {
         nlohmann::json j;
         j["mothui_version"] = Version;
         j["type"] = GetType();
+        j["class"] = m_class;
         j["blend"] = m_blend;
         j["clips"] = m_clips;
         std::vector<nlohmann::json> childJsons;
@@ -56,6 +58,7 @@ namespace moth_ui {
             assert(jsonType == LayoutEntityType::Layout);
 
             if (jsonType == LayoutEntityType::Layout) {
+                m_class = json.value("class", "");
                 m_blend = json.value("blend", BlendMode::Replace);
 
                 if (json.contains("clips")) {

@@ -109,6 +109,7 @@
     <ClCompile Include="..\..\src\layout\layout_entity_text.cpp" />
     <ClCompile Include="..\..\src\node.cpp" />
     <ClCompile Include="..\..\src\node_clip.cpp" />
+    <ClCompile Include="..\..\src\node_factory.cpp" />
     <ClCompile Include="..\..\src\node_image.cpp" />
     <ClCompile Include="..\..\src\node_rect.cpp" />
     <ClCompile Include="..\..\src\node_text.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_type.h" />
     <ClInclude Include="..\..\include\moth_ui\node.h" />
     <ClInclude Include="..\..\include\moth_ui\node_clip.h" />
+    <ClInclude Include="..\..\include\moth_ui\node_factory.h" />
     <ClInclude Include="..\..\include\moth_ui\node_image.h" />
     <ClInclude Include="..\..\include\moth_ui\node_rect.h" />
     <ClInclude Include="..\..\include\moth_ui\node_text.h" />

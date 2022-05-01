@@ -67,11 +67,6 @@ namespace moth_ui {
             if (loadResult == Layout::LoadResult::Success) {
                 CopyLayout(*targetLayout);
 
-                for (auto&& child : m_children) {
-                    std::shared_ptr<LayoutEntity> entityCopy = child->Clone(CloneType::Shallow);
-                    child->m_hardReference = entityCopy;
-                }
-
                 auto overrides = json.value("propertyOverrides", nlohmann::json{});
                 for (auto&& overrideEntry : overrides) {
                     if (overrideEntry.contains("childIndex") && overrideEntry.contains("type") && overrideEntry.contains("data")) {
@@ -99,6 +94,7 @@ namespace moth_ui {
         for (auto&& child : other.m_children) {
             m_children.push_back(child);
             child->m_parent = this;
+            child->m_hardReference = child->Clone(CloneType::Shallow);
         }
 
         for (auto&& clip : other.m_clips) {

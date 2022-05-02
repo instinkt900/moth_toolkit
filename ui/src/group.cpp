@@ -68,6 +68,14 @@ namespace moth_ui {
         }
     }
 
+    std::shared_ptr<Node> Group::FindChild(std::string const& childId) {
+        auto const it = ranges::find_if(m_children, [&](auto child) { return child->GetId() == childId; });
+        if (std::end(m_children) != it) {
+            return *it;
+        }
+        return nullptr;
+    }
+
     bool Group::SetAnimation(std::string const& name) {
         if (m_layout) {
             auto layout = std::static_pointer_cast<LayoutEntityGroup>(m_layout);
@@ -113,7 +121,7 @@ namespace moth_ui {
     void Group::DrawInternal() {
         bool popClip = false;
         if (m_clipRect && m_clipRect->IsVisible()) {
-            Context::GetCurrentContext().GetRenderer().PushClip(m_clipRect->GetScreenRect());
+            Context::GetCurrentContext()->GetRenderer().PushClip(m_clipRect->GetScreenRect());
             popClip = true;
         }
 
@@ -122,15 +130,16 @@ namespace moth_ui {
         }
 
         if (popClip) {
-            Context::GetCurrentContext().GetRenderer().PopClip();
+            Context::GetCurrentContext()->GetRenderer().PopClip();
         }
     }
 
     void Group::ReloadEntityPrivate() {
         auto const layoutEntity = std::static_pointer_cast<LayoutEntityGroup>(m_layout);
         m_children.clear();
+        auto& nodeFactory = Context::GetCurrentContext()->GetNodeFactory();
         for (auto&& childEntity : layoutEntity->m_children) {
-            AddChild(childEntity->Instantiate());
+            AddChild(nodeFactory.CreateNode(childEntity));
         }
     }
 }

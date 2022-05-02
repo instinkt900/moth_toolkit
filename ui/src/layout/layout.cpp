@@ -3,6 +3,7 @@
 #include "moth_ui/animation_clip.h"
 #include "moth_ui/group.h"
 #include "moth_ui/node_factory.h"
+#include "moth_ui/context.h"
 
 namespace moth_ui {
     std::string const Layout::Extension(".mothui");
@@ -28,7 +29,7 @@ namespace moth_ui {
     }
 
     std::unique_ptr<Node> Layout::Instantiate() {
-        return NodeFactory::GetInstance().CreateNode(std::static_pointer_cast<Layout>(shared_from_this()));
+        return std::make_unique<Group>(std::static_pointer_cast<Layout>(shared_from_this()));
     }
 
     nlohmann::json Layout::Serialize(SerializeContext const& context) const {

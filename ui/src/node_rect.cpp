@@ -22,9 +22,9 @@ namespace moth_ui {
 
     void NodeRect::DrawInternal() {
         if (m_filled) {
-            Context::GetCurrentContext().GetRenderer().RenderFilledRect(m_screenRect);
+            Context::GetCurrentContext()->GetRenderer().RenderFilledRect(m_screenRect);
         } else {
-            Context::GetCurrentContext().GetRenderer().RenderRect(m_screenRect);
+            Context::GetCurrentContext()->GetRenderer().RenderRect(m_screenRect);
         }
     }
 

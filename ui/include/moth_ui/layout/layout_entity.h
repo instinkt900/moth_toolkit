@@ -45,6 +45,7 @@ namespace moth_ui {
         virtual void DeserializeOverrides(nlohmann::json const& overridesJson);
 
         std::string m_id;
+        std::string m_class;
         LayoutEntityGroup* m_parent = nullptr;
         BlendMode m_blend = BlendMode::Replace;
         std::map<AnimationTrack::Target, std::unique_ptr<AnimationTrack>> m_tracks;

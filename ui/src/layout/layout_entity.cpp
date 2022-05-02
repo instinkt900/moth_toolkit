@@ -157,6 +157,7 @@ namespace moth_ui {
         nlohmann::json j;
         j["type"] = GetType();
         j["id"] = m_id;
+        j["class"] = m_class;
         j["blend"] = m_blend;
         nlohmann::json trackJson;
         for (auto&& [target, track] : m_tracks) {
@@ -172,6 +173,7 @@ namespace moth_ui {
         bool success = false;
         if (json["type"] == GetType()) {
             m_id = json.value("id", "");
+            m_class = json.value("class", "");
             m_blend = json.value("blend", BlendMode::Replace);
 
             if (json.contains("tracks")) {

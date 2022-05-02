@@ -64,7 +64,7 @@ namespace moth_ui {
         using EventHandler = std::function<bool(Node*, Event const&)>;
         void SetEventHandler(EventHandler const& handler) { m_eventHandler = handler; }
 
-        auto GetLayoutEntity() const { return m_layout; }
+        std::shared_ptr<LayoutEntity> GetLayoutEntity() const { return m_layout; }
 
         virtual void DebugDraw();
 

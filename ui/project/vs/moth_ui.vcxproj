@@ -132,6 +132,7 @@
     <ClInclude Include="..\..\include\moth_ui\iimage.h" />
     <ClInclude Include="..\..\include\moth_ui\iimage_factory.h" />
     <ClInclude Include="..\..\include\moth_ui\image_scale_type.h" />
+    <ClInclude Include="..\..\include\moth_ui\inode_factory.h" />
     <ClInclude Include="..\..\include\moth_ui\irenderer.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout_cache.h" />

@@ -5,15 +5,6 @@
 #include "moth_ui/group.h"
 
 namespace moth_ui {
-    std::unique_ptr<NodeFactory> NodeFactory::s_instance;
-
-    NodeFactory& NodeFactory::GetInstance() {
-        if (!s_instance) {
-            s_instance = std::make_unique<NodeFactory>();
-        }
-        return *s_instance;
-    }
-
     void NodeFactory::RegisterClass(std::string const& className, NodeCreationFunction const& func) {
         m_creationFunctions[className] = func;
     }
@@ -34,7 +25,7 @@ namespace moth_ui {
         return nullptr;
     }
 
-    std::unique_ptr<Node> NodeFactory::CreateNode(std::shared_ptr<LayoutEntityGroup> entity) {
+    std::unique_ptr<Node> NodeFactory::CreateNode(std::shared_ptr<LayoutEntity> entity) {
         std::unique_ptr<Node> resultNode;
 
         if (!entity->m_class.empty()) {
@@ -45,7 +36,7 @@ namespace moth_ui {
         }
 
         if (!resultNode) {
-            resultNode = std::make_unique<Group>(entity);
+            resultNode = entity->Instantiate();
         }
 
         return resultNode;

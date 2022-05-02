@@ -29,7 +29,7 @@ namespace moth_ui {
     }
 
     void NodeImage::Load(char const* path) {
-        m_image = Context::GetCurrentContext().GetImageFactory().GetImage(path);
+        m_image = Context::GetCurrentContext()->GetImageFactory().GetImage(path);
         if (IsZero(m_sourceRect)) {
             auto const imageDimensions = m_image->GetDimensions();
             m_sourceRect.bottomRight.x = imageDimensions.x;
@@ -54,7 +54,7 @@ namespace moth_ui {
         if (s_loadingNodeImage == this) {
             s_fileBrowser.Display();
             if (s_fileBrowser.HasSelected()) {
-                m_image = Context::GetCurrentContext().GetImageFactory().GetImage(s_fileBrowser.GetSelected().string().c_str());
+                m_image = Context::GetCurrentContext()->GetImageFactory().GetImage(s_fileBrowser.GetSelected().string().c_str());
                 s_fileBrowser.ClearSelected();
                 s_loadingNodeImage = nullptr;
             }
@@ -68,7 +68,7 @@ namespace moth_ui {
 
     void NodeImage::DrawInternal() {
         if (m_image) {
-            auto& renderer = Context::GetCurrentContext().GetRenderer();
+            auto& renderer = Context::GetCurrentContext()->GetRenderer();
             if (m_imageScaleType == ImageScaleType::NineSlice) {
                 for (int horizSliceIdx = 0; horizSliceIdx < 3; ++horizSliceIdx) {
                     for (int vertSliceIdx = 0; vertSliceIdx < 3; ++vertSliceIdx) {

@@ -59,14 +59,14 @@ namespace moth_ui {
             return;
         }
 
-        Context::GetCurrentContext().GetRenderer().PushBlendMode(m_blend);
-        Context::GetCurrentContext().GetRenderer().PushColor(m_color);
+        auto& renderer = Context::GetCurrentContext()->GetRenderer();
+        renderer.PushBlendMode(m_blend);
+        renderer.PushColor(m_color);
         DrawInternal();
-        Context::GetCurrentContext().GetRenderer().PopColor();
-        Context::GetCurrentContext().GetRenderer().PopBlendMode();
+        renderer.PopColor();
+        renderer.PopBlendMode();
 
         if (m_showRect) {
-            auto& renderer = Context::GetCurrentContext().GetRenderer();
             renderer.PushColor(BasicColors::Red);
             renderer.PushBlendMode(BlendMode::Replace);
             renderer.RenderRect(m_screenRect);

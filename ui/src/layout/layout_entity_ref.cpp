@@ -28,7 +28,7 @@ namespace moth_ui {
     }
 
     std::unique_ptr<Node> LayoutEntityRef::Instantiate() {
-        return NodeFactory::GetInstance().CreateNode(std::static_pointer_cast<LayoutEntityGroup>(shared_from_this()));
+        return std::make_unique<Group>(std::static_pointer_cast<LayoutEntityGroup>(shared_from_this()));
     }
 
     nlohmann::json LayoutEntityRef::Serialize(SerializeContext const& context) const {

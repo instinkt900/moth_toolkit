@@ -19,9 +19,9 @@ namespace moth_ui {
 
     void NodeText::Load(char const* fontName, int size) {
         if (fontName == nullptr || *fontName == 0) {
-            m_font = Context::GetCurrentContext().GetFontFactory().GetDefaultFont(size);
+            m_font = Context::GetCurrentContext()->GetFontFactory().GetDefaultFont(size);
         } else {
-            m_font = Context::GetCurrentContext().GetFontFactory().GetFont(fontName, size);
+            m_font = Context::GetCurrentContext()->GetFontFactory().GetFont(fontName, size);
         }
     }
 
@@ -42,7 +42,7 @@ namespace moth_ui {
 
     void NodeText::DrawInternal() {
         if (m_font) {
-            auto& renderer = Context::GetCurrentContext().GetRenderer();
+            auto& renderer = Context::GetCurrentContext()->GetRenderer();
             if (m_dropShadow) {
                 // pop the color so the dropshadow color isnt affected by the node color unlike the text
                 renderer.PopColor();

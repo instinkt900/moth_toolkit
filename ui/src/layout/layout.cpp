@@ -66,12 +66,6 @@ namespace moth_ui {
                     json.at("clips").get_to(m_clips);
                 }
 
-                float startTime = 0;
-                for (auto&& clip : m_clips) {
-                    clip->SetStartTime(startTime);
-                    startTime = clip->m_endTime;
-                }
-
                 if (json.contains("children")) {
                     for (auto&& childJson : json["children"]) {
                         if (auto child = LoadEntity(childJson, this, loadedContext)) {

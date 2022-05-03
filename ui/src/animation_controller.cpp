@@ -48,12 +48,12 @@ namespace moth_ui {
         , m_track(track) {
     }
 
-    void AnimationTrackController::SetTime(float time) {
-        m_target = m_track.GetValueAtTime(time);
+    void AnimationTrackController::SetFrame(float frame) {
+        m_target = m_track.GetValueAtFrame(frame);
     }
 
-    void AnimationTrackController::ForEvents(float startTime, float endTime, std::function<void(Keyframe const&)> const& eventCallback) {
-        m_track.ForKeyframesOverTime(startTime, endTime, eventCallback);
+    void AnimationTrackController::ForEvents(float startFrame, float endFrame, std::function<void(Keyframe const&)> const& eventCallback) {
+        m_track.ForKeyframesOverFrames(startFrame, endFrame, eventCallback);
     }
 
     AnimationController::AnimationController(Node* node, std::map<AnimationTrack::Target, std::unique_ptr<AnimationTrack>> const& tracks)
@@ -66,11 +66,11 @@ namespace moth_ui {
     void AnimationController::SetClip(AnimationClip* clip) {
         m_clip = clip;
         if (m_clip) {
-            m_time = m_clip->m_startTime;
+            m_frame = static_cast<float>(m_clip->m_startFrame);
         }
     }
 
-    void AnimationController::Update(float delta) {
+    void AnimationController::Update(float deltaSeconds) {
         if (m_clip) {
             struct Span {
                 float Start = 0;
@@ -85,35 +85,36 @@ namespace moth_ui {
 
             std::array<Span, 2> eventChecks;
 
-            auto const oldTime = m_time;
-            m_time += delta;
+            auto const oldFrame = m_frame;
+            auto const deltaFrames = deltaSeconds * m_clip->m_fps;
+            m_frame += deltaFrames;
 
-            if (m_time >= m_clip->m_endTime) {
+            if (m_frame >= m_clip->m_endFrame) {
                 switch (m_clip->m_loopType) {
                 case AnimationClip::LoopType::Stop:
-                    m_time = m_clip->m_endTime;
+                    m_frame = static_cast<float>(m_clip->m_endFrame);
                     m_clip = nullptr;
-                    eventChecks[0].Set(oldTime, m_time);
+                    eventChecks[0].Set(oldFrame, m_frame);
                     break;
                 case AnimationClip::LoopType::Loop:
-                    eventChecks[0].Set(oldTime, m_clip->m_endTime);
-                    m_time -= m_clip->GetDuration();
-                    eventChecks[1].Set(m_clip->m_startTime, m_time);
+                    eventChecks[0].Set(oldFrame, static_cast<float>(m_clip->m_endFrame));
+                    m_frame -= static_cast<float>(m_clip->FrameCount());
+                    eventChecks[1].Set(static_cast<float>(m_clip->m_startFrame), m_frame);
                     break;
                 case AnimationClip::LoopType::Reset:
-                    eventChecks[0].Set(oldTime, m_clip->m_endTime);
-                    m_time = m_clip->m_startTime;
+                    eventChecks[0].Set(oldFrame, static_cast<float>(m_clip->m_endFrame));
+                    m_frame = static_cast<float>(m_clip->m_startFrame);
                     m_clip = nullptr;
                     break;
                 }
             } else {
-                eventChecks[0].Set(oldTime, m_time);
+                eventChecks[0].Set(oldFrame, m_frame);
             }
 
             // update each tracks time
             for (auto&& track : m_trackControllers) {
                 if (track->GetTarget() != AnimationTrack::Target::Events) {
-                    track->SetTime(m_time);
+                    track->SetFrame(m_frame);
                 }
             }
 
@@ -128,10 +129,10 @@ namespace moth_ui {
         }
     }
 
-    void AnimationController::CheckEvents(float startTime, float endTime) {
+    void AnimationController::CheckEvents(float startFrame, float endFrame) {
         for (auto&& track : m_trackControllers) {
             if (track->GetTarget() == AnimationTrack::Target::Events) {
-                track->ForEvents(startTime, endTime, [&](Keyframe const& keyframe) {
+                track->ForEvents(startFrame, endFrame, [&](Keyframe const& keyframe) {
                     m_node->SendEvent(EventAnimation(m_node, track->GetTarget(), keyframe.GetStringValue()), Node::EventDirection::Up);
                 });
                 break;

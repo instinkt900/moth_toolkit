@@ -3,23 +3,26 @@ Moth UI TODO
 
 Fixes/Todos
 -----------
+deleting keyframes now seems to delete the wrong frame.
+duplicate keyframes
+copy/paste keyframes
+drag select keyframes
+keyframe panel. only show when you hit edit or something.
+keyframe type display on keyframe icons? easy way to change interp type? right click menu?
+fix up clip edit panel. seems to hold references that cause crashing when changing layouts or something
 append the .mothui extension to saves automatically
 save state of canvas size, asset panel path, open panels etc.
-drag selecting in the animation panel
 maybe make 9 slicing target values to be a layout rect so you can do anchor/offset style.
 update drag and drop placement to not use hard coded positions and instead use mouse position.
 Replace most line/primitive drawing with imgui calls. this will simplify moving to other renderer backends.
 paths should probably be std::filesystem::path
-copy/paste functionality for keyframes?
 Readme.md
 Adding more documentation
 Update tests for better coverage. hook in to cppcoverage.
 Update cmake to auto build and run tests.
-Updates to preview window. Input etc. Reload animation stuff. currently broken.
+Updates to preview window. Input etc.
 Tests for the node/layout entity classes. Loading a hard coded test layout etc.
 Update layout of imgui elements. swapping label sides etc. tables?
-fix up clip edit panel. seems to hold references that cause crashing when changing layouts or something
-fix keyframe editing panel. only show it when we select edit or something.
 
 Features
 --------

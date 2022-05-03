@@ -60,30 +60,7 @@ namespace moth_ui {
         SetValue(AnimationTrack::Target::BottomOffset, bounds.offset.bottomRight.y);
     }
 
-    LayoutRect LayoutEntity::GetBoundsAtTime(float time) const {
-        auto GetValue = [&](AnimationTrack::Target target) {
-            float value = 0;
-            auto const trackIt = m_tracks.find(target);
-            if (std::end(m_tracks) != trackIt) {
-                const auto& track = trackIt->second;
-                value = track->GetValueAtTime(time);
-            }
-            return value;
-        };
-
-        LayoutRect bounds;
-        bounds.anchor.topLeft.x = GetValue(AnimationTrack::Target::LeftAnchor);
-        bounds.anchor.topLeft.y = GetValue(AnimationTrack::Target::TopAnchor);
-        bounds.anchor.bottomRight.x = GetValue(AnimationTrack::Target::RightAnchor);
-        bounds.anchor.bottomRight.y = GetValue(AnimationTrack::Target::BottomAnchor);
-        bounds.offset.topLeft.x = GetValue(AnimationTrack::Target::LeftOffset);
-        bounds.offset.topLeft.y = GetValue(AnimationTrack::Target::TopOffset);
-        bounds.offset.bottomRight.x = GetValue(AnimationTrack::Target::RightOffset);
-        bounds.offset.bottomRight.y = GetValue(AnimationTrack::Target::BottomOffset);
-        return bounds;
-    }
-
-    LayoutRect LayoutEntity::GetBoundsAtFrame(int frame) const {
+    LayoutRect LayoutEntity::GetBoundsAtFrame(float frame) const {
         auto GetValue = [&](AnimationTrack::Target target) {
             float value = 0;
             auto const trackIt = m_tracks.find(target);
@@ -106,26 +83,7 @@ namespace moth_ui {
         return bounds;
     }
 
-    Color LayoutEntity::GetColorAtTime(float time) const {
-        auto GetValue = [&](AnimationTrack::Target target) {
-            float value = 0;
-            auto const trackIt = m_tracks.find(target);
-            if (std::end(m_tracks) != trackIt) {
-                const auto& track = trackIt->second;
-                value = track->GetValueAtTime(time);
-            }
-            return value;
-        };
-
-        Color color;
-        color.r = GetValue(AnimationTrack::Target::ColorRed);
-        color.g = GetValue(AnimationTrack::Target::ColorGreen);
-        color.b = GetValue(AnimationTrack::Target::ColorBlue);
-        color.a = GetValue(AnimationTrack::Target::ColorAlpha);
-        return color;
-    }
-
-    Color LayoutEntity::GetColorAtFrame(int frame) const {
+    Color LayoutEntity::GetColorAtFrame(float frame) const {
         auto GetValue = [&](AnimationTrack::Target target) {
             float value = 0;
             auto const trackIt = m_tracks.find(target);
@@ -142,15 +100,6 @@ namespace moth_ui {
         color.b = GetValue(AnimationTrack::Target::ColorBlue);
         color.a = GetValue(AnimationTrack::Target::ColorAlpha);
         return color;
-    }
-
-    void LayoutEntity::RefreshAnimationTimings() {
-        if (m_parent) {
-            auto const& animationClips = m_parent->m_clips;
-            for (auto&& [target, track] : m_tracks) {
-                track->UpdateTrackTimings(animationClips);
-            }
-        }
     }
 
     nlohmann::json LayoutEntity::Serialize(SerializeContext const& context) const {
@@ -181,9 +130,6 @@ namespace moth_ui {
                 auto const* animationClips = m_parent ? &m_parent->m_clips : nullptr;
                 for (auto&& trackJson : tracksJson) {
                     auto track = std::make_unique<AnimationTrack>(trackJson);
-                    if (animationClips) {
-                        track->UpdateTrackTimings(*animationClips);
-                    }
                     m_tracks.erase(track->GetTarget());
                     m_tracks.insert(std::make_pair(track->GetTarget(), std::move(track)));
                 }

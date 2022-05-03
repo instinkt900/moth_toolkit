@@ -22,13 +22,6 @@ namespace moth_ui {
         }
     }
 
-    void LayoutEntityGroup::RefreshAnimationTimings() {
-        LayoutEntity::RefreshAnimationTimings();
-        for (auto&& child : m_children) {
-            child->RefreshAnimationTimings();
-        }
-    }
-
     nlohmann::json LayoutEntityGroup::Serialize(SerializeContext const& context) const {
         assert(false && "Group should never be serialized");
         return {};

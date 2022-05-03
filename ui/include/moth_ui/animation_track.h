@@ -36,7 +36,6 @@ namespace moth_ui {
         int m_frame = 0;
         KeyframeValue m_value;
         InterpType m_interpType = InterpType::Linear;
-        float m_time = 0; // calculated based on clips
 
         float GetFloatValue() const { return std::get<float>(m_value); }
         std::string const& GetStringValue() const { return std::get<std::string>(m_value); }
@@ -58,7 +57,6 @@ namespace moth_ui {
     public:
         int m_frame;
         std::string m_name;
-        float m_time; // calculated based on clips
 
         friend void to_json(nlohmann::json& j, AnimationEvent const& event) {
             j["frame"] = event.m_frame;
@@ -117,11 +115,9 @@ namespace moth_ui {
         void DeleteKeyframe(int frameNo);
         void DeleteKeyframe(Keyframe* frame);
 
-        void ForKeyframesOverTime(float startTime, float endTime, std::function<void(Keyframe const&)> const& callback);
+        void ForKeyframesOverFrames(float startFrame, float endFrame, std::function<void(Keyframe const&)> const& callback);
 
-        void UpdateTrackTimings(std::vector<std::unique_ptr<AnimationClip>> const& clips);
-        float GetValueAtTime(float time) const;
-        float GetValueAtFrame(int frame) const;
+        float GetValueAtFrame(float frame) const;
 
         void SortKeyframes();
 

@@ -4,13 +4,6 @@ namespace moth_ui {
     struct AnimationClip {
         AnimationClip() = default;
 
-        void SetStartTime(float time) {
-            m_startTime = time;
-            m_endTime = m_startTime + GetDuration();
-        }
-
-        float GetDuration() const { return (m_endFrame - m_startFrame) / m_fps; }
-
         enum class LoopType {
             Stop,
             Loop,
@@ -23,8 +16,7 @@ namespace moth_ui {
         float m_fps = 30;
         LoopType m_loopType = LoopType::Stop;
 
-        float m_startTime = 0;
-        float m_endTime = 0;
+        int FrameCount() const { return m_endFrame - m_startFrame; }
 
         bool operator==(AnimationClip const& other) {
             return m_name == other.m_name && m_startFrame == other.m_startFrame && m_endFrame == other.m_endFrame && m_fps == other.m_fps && m_loopType == other.m_loopType;

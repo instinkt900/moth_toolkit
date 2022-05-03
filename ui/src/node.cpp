@@ -83,9 +83,9 @@ namespace moth_ui {
         }
     }
 
-    void Node::Refresh(int frameNo) {
-        m_layoutRect = m_layout->GetBoundsAtFrame(frameNo);
-        m_color = m_layout->GetColorAtFrame(frameNo);
+    void Node::Refresh(float frame) {
+        m_layoutRect = m_layout->GetBoundsAtFrame(frame);
+        m_color = m_layout->GetColorAtFrame(frame);
         RecalculateBounds();
     }
 

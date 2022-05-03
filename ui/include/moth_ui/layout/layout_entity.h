@@ -26,12 +26,8 @@ namespace moth_ui {
         virtual std::unique_ptr<Node> Instantiate() = 0;
 
         void SetBounds(LayoutRect const& bounds, int frame);
-        LayoutRect GetBoundsAtTime(float time) const;
-        LayoutRect GetBoundsAtFrame(int frame) const;
-        Color GetColorAtTime(float time) const;
-        Color GetColorAtFrame(int frame) const;
-
-        virtual void RefreshAnimationTimings();
+        LayoutRect GetBoundsAtFrame(float frame) const;
+        Color GetColorAtFrame(float frame) const;
 
         struct SerializeContext {
             int m_version = 1;

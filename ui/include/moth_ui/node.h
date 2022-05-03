@@ -42,7 +42,7 @@ namespace moth_ui {
         void SetScreenRect(IntRect const& rect);
         virtual void UpdateChildBounds() {}
 
-        void Refresh(int frameNo);
+        void Refresh(float frame);
         void RecalculateBounds();
         void ReloadEntity();
 

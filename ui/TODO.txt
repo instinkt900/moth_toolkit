@@ -3,9 +3,7 @@ Moth UI TODO
 
 Fixes/Todos
 -----------
-deleting keyframes now seems to delete the wrong frame.
-duplicate keyframes
-copy/paste keyframes
+copy/paste keyframes - maybe dont need with drag duplicate
 drag select keyframes
 keyframe panel. only show when you hit edit or something.
 keyframe type display on keyframe icons? easy way to change interp type? right click menu?

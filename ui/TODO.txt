@@ -3,7 +3,6 @@ Moth UI TODO
 
 Fixes/Todos
 -----------
-append the .mothui extension to saves automatically
 save state of canvas size, asset panel path, open panels etc.
 link the asset panel path with load/save popups.
 maybe make 9 slicing target values to be a layout rect so you can do anchor/offset style.

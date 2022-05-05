@@ -49,6 +49,20 @@ namespace moth_ui {
     }
 
     template <typename T>
+    inline Rect<T>& operator+=(Rect<T>& a, Vector<T, 2> const& b) {
+        a.topLeft += b;
+        a.bottomRight += b;
+        return a;
+    }
+
+    template <typename T>
+    inline Rect<T>& operator-=(Rect<T>& a, Vector<T, 2> const& b) {
+        a.topLeft -= b;
+        a.bottomRight -= b;
+        return a;
+    }
+
+    template <typename T>
     inline Rect<T>& operator*=(Rect<T>& a, T b) {
         a.topLeft *= b;
         a.bottomRight *= b;

@@ -3,11 +3,8 @@ Moth UI TODO
 
 Fixes/Todos
 -----------
-save state of canvas size, asset panel path, open panels etc.
-link the asset panel path with load/save popups.
 maybe make 9 slicing target values to be a layout rect so you can do anchor/offset style.
 update drag and drop placement to not use hard coded positions and instead use mouse position.
-Replace most line/primitive drawing with imgui calls. this will simplify moving to other renderer backends.
 paths should probably be std::filesystem::path
 Readme.md
 Adding more documentation
@@ -16,11 +13,11 @@ Update cmake to auto build and run tests.
 Updates to preview window. Input etc.
 Tests for the node/layout entity classes. Loading a hard coded test layout etc.
 Update layout of imgui elements. swapping label sides etc. tables?
+Replace most line/primitive drawing with imgui calls. this will simplify moving to other renderer backends.
 
 Features
 --------
 flipbook animation?
 texture packing.
-widget factory for instantiating nodes and linking them with custom classes. re. static class registration from ea.
 Add color customisation to editor colors.
 allow multiple panels. specifically for asset panels.

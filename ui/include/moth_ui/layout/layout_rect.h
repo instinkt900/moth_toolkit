@@ -47,7 +47,7 @@ namespace moth_ui {
     }
 
     inline void from_json(nlohmann::json const& j, LayoutRect& rect) {
-        j.at("anchor").get_to(rect.anchor);
-        j.at("offset").get_to(rect.offset);
+        rect.anchor = j.value("anchor", rect.anchor);
+        rect.offset = j.value("offset", rect.offset);
     }
 }

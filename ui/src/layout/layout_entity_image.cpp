@@ -46,7 +46,7 @@ namespace moth_ui {
             m_imageScaleType = json.value("imageScaleType", ImageScaleType::Stretch);
             m_imageScale = json.value("imageScale", 1.0f);
             m_sourceBorders = json.value("sourceBorders", IntRect{});
-            m_targetBorders = json.value("targetBorders", IntRect{});
+            m_targetBorders = json.value("targetBorders", MakeDefaultLayoutRect());
             std::string relativePath = json.value("imagePath", "");
             m_imagePath = (context.m_rootPath / relativePath).string();
         }

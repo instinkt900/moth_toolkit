@@ -3,7 +3,6 @@ Moth UI TODO
 
 Fixes/Todos
 -----------
-maybe make 9 slicing target values to be a layout rect so you can do anchor/offset style.
 paths should probably be std::filesystem::path
 Readme.md
 Adding more documentation

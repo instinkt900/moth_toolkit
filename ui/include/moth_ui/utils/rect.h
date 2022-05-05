@@ -10,6 +10,7 @@ namespace moth_ui {
 
         T w() const { return bottomRight.x - topLeft.x; }
         T h() const { return bottomRight.y - topLeft.y; }
+        Vector<T, 2> dim() const { return bottomRight - topLeft; }
 
         // cast operator
         template <typename U>

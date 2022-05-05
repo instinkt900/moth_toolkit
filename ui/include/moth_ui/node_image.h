@@ -32,7 +32,7 @@ namespace moth_ui {
         float m_imageScale = 1.0f;
 
         IntRect m_sourceBorders;
-        IntRect m_targetBorders;
+        LayoutRect m_targetBorders;
         IntVec2 m_sourceSlices[4];
         IntVec2 m_targetSlices[4];
 

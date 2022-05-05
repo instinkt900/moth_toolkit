@@ -189,6 +189,12 @@
     <ClInclude Include="..\..\editor\src\editor\element_utils.h">
       <Filter>src\editor</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\delete_clip_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\add_clip_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\editor\src\app.cpp">
@@ -328,6 +334,12 @@
     </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_canvas.cpp">
       <Filter>src\editor\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\delete_clip_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\add_clip_action.cpp">
+      <Filter>src\editor\actions</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

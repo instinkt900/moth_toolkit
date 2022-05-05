@@ -3,13 +3,9 @@ Moth UI TODO
 
 Fixes/Todos
 -----------
-copy/paste keyframes - maybe dont need with drag duplicate
-drag select keyframes
-keyframe panel. only show when you hit edit or something.
-keyframe type display on keyframe icons? easy way to change interp type? right click menu?
-fix up clip edit panel. seems to hold references that cause crashing when changing layouts or something
 append the .mothui extension to saves automatically
 save state of canvas size, asset panel path, open panels etc.
+link the asset panel path with load/save popups.
 maybe make 9 slicing target values to be a layout rect so you can do anchor/offset style.
 update drag and drop placement to not use hard coded positions and instead use mouse position.
 Replace most line/primitive drawing with imgui calls. this will simplify moving to other renderer backends.

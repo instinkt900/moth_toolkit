@@ -8,6 +8,8 @@ namespace moth_ui {
     // Smoothing functions from http://easings.net/ (With visual examples)
 
     enum class InterpType {
+        Unknown,
+
         Step,
         Linear,
         Smooth,

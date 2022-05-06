@@ -66,8 +66,6 @@ namespace moth_ui {
 
         std::shared_ptr<LayoutEntity> GetLayoutEntity() const { return m_layout; }
 
-        virtual void DebugDraw();
-
     protected:
         std::shared_ptr<LayoutEntity> m_layout;
 

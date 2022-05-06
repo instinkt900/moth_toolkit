@@ -2,15 +2,7 @@
 #include "moth_ui/node_image.h"
 #include "moth_ui/layout/layout_entity.h"
 #include "moth_ui/layout/layout_entity_image.h"
-#include "moth_ui/utils/imgui_ext_inspect.h"
 #include "moth_ui/context.h"
-
-#include "imgui-filebrowser/imfilebrowser.h"
-
-namespace {
-    ImGui::FileBrowser s_fileBrowser;
-    moth_ui::NodeImage* s_loadingNodeImage = nullptr;
-}
 
 namespace moth_ui {
     NodeImage::NodeImage() {
@@ -36,29 +28,6 @@ namespace moth_ui {
             m_sourceRect.bottomRight.y = imageDimensions.y;
         }
         Slice();
-    }
-
-    void NodeImage::DebugDraw() {
-        Node::DebugDraw();
-        if (ImGui::TreeNode("NodeImage")) {
-            //imgui_ext::Inspect("texture", m_image);
-            if (ImGui::Button("Load Image..")) {
-                s_fileBrowser.SetTitle("Load Image..");
-                s_fileBrowser.SetTypeFilters({ ".jpg", ".jpeg", ".png", ".bmp" });
-                s_fileBrowser.Open();
-                s_loadingNodeImage = this;
-            }
-            ImGui::TreePop();
-        }
-
-        if (s_loadingNodeImage == this) {
-            s_fileBrowser.Display();
-            if (s_fileBrowser.HasSelected()) {
-                m_image = Context::GetCurrentContext()->GetImageFactory().GetImage(s_fileBrowser.GetSelected().string().c_str());
-                s_fileBrowser.ClearSelected();
-                s_loadingNodeImage = nullptr;
-            }
-        }
     }
 
     void NodeImage::ReloadEntityInternal() {

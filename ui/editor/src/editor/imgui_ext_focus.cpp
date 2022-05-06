@@ -1,7 +1,7 @@
 #include "common.h"
-#include "moth_ui/utils/imgui_ext_focus.h"
-#include "moth_ui/utils/imgui_ext.h"
-#include "moth_ui/utils/imgui_ext_inspect.h"
+#include "imgui_ext_focus.h"
+#include "imgui_ext.h"
+#include "imgui_ext_inspect.h"
 
 namespace {
     struct FocusContextDetails {

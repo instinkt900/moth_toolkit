@@ -3,7 +3,6 @@
 #include "moth_ui/layout/layout_entity.h"
 #include "moth_ui/animation_controller.h"
 #include "moth_ui/group.h"
-#include "moth_ui/utils/imgui_ext_inspect.h"
 #include "moth_ui/context.h"
 
 namespace moth_ui {
@@ -125,23 +124,6 @@ namespace moth_ui {
     void Node::UpdateAnimTime(float delta) {
         m_animationController->Update(delta);
         RecalculateBounds();
-    }
-
-    void Node::DebugDraw() {
-        if (ImGui::TreeNode("Node")) {
-            imgui_ext::Inspect("id", m_id);
-            imgui_ext::Inspect("visible", m_visible);
-            imgui_ext::Inspect("show rect", m_showRect);
-            imgui_ext::Inspect("override bounds", m_overrideScreenRect);
-            imgui_ext::Inspect("color", m_color);
-            bool boundsChanged = false;
-            boundsChanged |= imgui_ext::Inspect("bounds", m_layoutRect);
-            boundsChanged |= imgui_ext::Inspect("screen rect", m_screenRect);
-            if (boundsChanged) {
-                RecalculateBounds();
-            }
-            ImGui::TreePop();
-        }
     }
 
     void Node::ReloadEntityInternal() {

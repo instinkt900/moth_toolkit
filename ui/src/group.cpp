@@ -97,22 +97,6 @@ namespace moth_ui {
         }
     }
 
-    void Group::DebugDraw() {
-        Node::DebugDraw();
-        //ImGuiInspectMember("anim time", m_animTime);
-        if (ImGui::TreeNode("Children")) {
-            for (int i = 0; i < m_children.size(); ++i) {
-                auto& child = m_children[i];
-                auto const label = fmt::format("[{}]: {}", i, child->GetId());
-                if (ImGui::TreeNode(label.c_str())) {
-                    child->DebugDraw();
-                    ImGui::TreePop();
-                }
-            }
-            ImGui::TreePop();
-        }
-    }
-
     void Group::ReloadEntityInternal() {
         Node::ReloadEntityInternal();
         ReloadEntityPrivate();

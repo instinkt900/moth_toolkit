@@ -2,7 +2,6 @@
 #include "moth_ui/node_text.h"
 #include "moth_ui/layout/layout_entity.h"
 #include "moth_ui/layout/layout_entity_text.h"
-#include "moth_ui/utils/imgui_ext_inspect.h"
 #include "moth_ui/context.h"
 
 namespace moth_ui {
@@ -22,16 +21,6 @@ namespace moth_ui {
             m_font = Context::GetCurrentContext()->GetFontFactory().GetDefaultFont(size);
         } else {
             m_font = Context::GetCurrentContext()->GetFontFactory().GetFont(fontName, size);
-        }
-    }
-
-    void NodeText::DebugDraw() {
-        Node::DebugDraw();
-        if (ImGui::TreeNode("NodeText")) {
-            //imgui_ext::Inspect("font", m_font);
-            imgui_ext::Inspect("text", m_text.c_str());
-            //imgui_ext::Inspect("alignment", m_alignment);
-            ImGui::TreePop();
         }
     }
 

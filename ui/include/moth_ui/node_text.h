@@ -18,8 +18,6 @@ namespace moth_ui {
 
         void SetText(char const* text) { m_text = text; }
 
-        void DebugDraw();
-
     protected:
         std::unique_ptr<IFont> m_font;
         std::string m_text;

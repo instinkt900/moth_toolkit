@@ -42,6 +42,7 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="moth_ui.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -51,6 +52,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(ProjectName)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectName)\Intermediate\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -84,15 +87,25 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;IMGUI_DEFINE_MATH_OPERATORS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>..\..\editor\src;..\..\external\imgui;..\..\include;$(SDL_DIR)\include;$(SDLIMAGE_DIR)\include;$(SDLTTF_DIR)\include;$(MAGICENUM_DIR)\include;$(NLOHMANN_DIR)\include;$(FMT_DIR)\include;$(RANGEV3_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SDL_DIR)\lib\x64;$(SDLIMAGE_DIR)\lib\x64;$(SDLTTF_DIR)\lib\x64;$(FMT_DIR)\build\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;fmt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y $(SDL_DIR)\lib\x64\SDL2.dll $(OutDirFullPath)
+xcopy /y $(SDLIMAGE_DIR)\lib\x64\*.dll $(OutDirFullPath)
+xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\editor\src\common.h" />
@@ -115,6 +128,9 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\editor\content_list.h" />
     <ClInclude Include="..\..\editor\src\editor\editor_layer.h" />
     <ClInclude Include="..\..\editor\src\editor\element_utils.h" />
+    <ClInclude Include="..\..\editor\src\editor\imgui_ext.h" />
+    <ClInclude Include="..\..\editor\src\editor\imgui_ext_focus.h" />
+    <ClInclude Include="..\..\editor\src\editor\imgui_ext_inspect.h" />
     <ClInclude Include="..\..\editor\src\editor\keyframe_context.h" />
     <ClInclude Include="..\..\editor\src\editor\offset_bounds_handle.h" />
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel.h" />
@@ -171,6 +187,8 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClCompile Include="..\..\editor\src\editor\confirm_prompt.cpp" />
     <ClCompile Include="..\..\editor\src\editor\content_list.cpp" />
     <ClCompile Include="..\..\editor\src\editor\editor_layer.cpp" />
+    <ClCompile Include="..\..\editor\src\editor\imgui_ext.cpp" />
+    <ClCompile Include="..\..\editor\src\editor\imgui_ext_focus.cpp" />
     <ClCompile Include="..\..\editor\src\editor\offset_bounds_handle.cpp" />
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel.cpp" />
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_animation.cpp" />
@@ -195,6 +213,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClCompile Include="..\..\editor\src\ui_renderer.cpp" />
     <ClCompile Include="..\..\editor\src\SDL_FontCache.c">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
     </ClCompile>
     <ClCompile Include="..\..\external\imgui\backends\imgui_impl_sdl.cpp" />
     <ClCompile Include="..\..\external\imgui\backends\imgui_impl_sdlrenderer.cpp" />

@@ -24,8 +24,6 @@ namespace moth_ui {
         bool SetAnimation(std::string const& name) override;
         void StopAnimation() override;
 
-        void DebugDraw() override;
-
     protected:
         std::vector<std::shared_ptr<Node>> m_children;
         NodeClip* m_clipRect = nullptr;

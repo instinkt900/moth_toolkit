@@ -84,9 +84,6 @@
     <ClInclude Include="..\..\editor\src\layers\layer.h">
       <Filter>src\layers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\editor\src\layers\layer_stack.h">
-      <Filter>src\layers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\external\imgui\imconfig.h">
       <Filter>imgui</Filter>
     </ClInclude>
@@ -194,6 +191,18 @@
     </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\actions\add_clip_action.h">
       <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\imgui_ext.h">
+      <Filter>src\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\imgui_ext_focus.h">
+      <Filter>src\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\imgui_ext_inspect.h">
+      <Filter>src\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\layers\layer_stack.h">
+      <Filter>src\layers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -340,6 +349,12 @@
     </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\actions\add_clip_action.cpp">
       <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\imgui_ext.cpp">
+      <Filter>src\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\imgui_ext_focus.cpp">
+      <Filter>src\editor</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -10,9 +10,6 @@
     <Filter Include="include\moth_ui">
       <UniqueIdentifier>{ce06fa2f-9884-4206-bd7f-a561d2b0ee4f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\imgui_ext">
-      <UniqueIdentifier>{7f389c27-e1a4-44d6-85df-065b0d8d5bd6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include\moth_ui\events">
       <UniqueIdentifier>{142c8ec1-8ae7-4c4f-8b39-562ca88d3d8c}</UniqueIdentifier>
     </Filter>
@@ -38,12 +35,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\node_image.cpp">
       <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\imgui_ext\imgui_ext.cpp">
-      <Filter>src\imgui_ext</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\imgui_ext\imgui_ext_focus.cpp">
-      <Filter>src\imgui_ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\context.cpp">
       <Filter>src</Filter>
@@ -148,15 +139,6 @@
     </ClInclude>
     <ClInclude Include="..\..\include\moth_ui\layout\layout_entity_type.h">
       <Filter>include\moth_ui\layout</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\moth_ui\utils\imgui_ext.h">
-      <Filter>include\moth_ui\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\moth_ui\utils\imgui_ext_focus.h">
-      <Filter>include\moth_ui\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\moth_ui\utils\imgui_ext_inspect.h">
-      <Filter>include\moth_ui\utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\moth_ui\utils\math_utils.h">
       <Filter>include\moth_ui\utils</Filter>

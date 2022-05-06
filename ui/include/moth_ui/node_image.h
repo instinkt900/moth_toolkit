@@ -23,8 +23,6 @@ namespace moth_ui {
         ImageScaleType GetImageScaleType() const { return m_imageScaleType; }
         void SetImageScaleType(ImageScaleType type) { m_imageScaleType = type; }
 
-        void DebugDraw();
-
     protected:
         std::unique_ptr<IImage> m_image;
         IntRect m_sourceRect;

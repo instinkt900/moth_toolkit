@@ -6,7 +6,6 @@
 #include "moth_ui/layout/layout_entity_rect.h"
 #include "moth_ui/layout/layout_entity_ref.h"
 #include "moth_ui/node.h"
-#include "moth_ui/utils/imgui_ext_inspect.h"
 
 namespace moth_ui {
     std::unique_ptr<LayoutEntity> CreateLayoutEntity(LayoutEntityType type) {

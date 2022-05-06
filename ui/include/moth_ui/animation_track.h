@@ -2,7 +2,6 @@
 
 #include <variant>
 #include "moth_ui/utils/interp.h"
-#include "moth_ui/utils/imgui_ext.h"
 
 namespace nlohmann {
     template <>

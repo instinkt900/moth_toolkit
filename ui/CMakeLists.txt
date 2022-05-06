@@ -13,25 +13,26 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MD")
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
-include_directories(external/imgui)
-
 set(SOURCES ${SOURCES}
-	external/imgui/imgui.cpp
-	external/imgui/imgui_draw.cpp
-	external/imgui/imgui_tables.cpp
-	external/imgui/imgui_widgets.cpp
+	src/layout/layout.cpp
+	src/layout/layout_cache.cpp
+	src/layout/layout_entity.cpp
+	src/layout/layout_entity_clip.cpp
+	src/layout/layout_entity_group.cpp
+	src/layout/layout_entity_image.cpp
+	src/layout/layout_entity_rect.cpp
+	src/layout/layout_entity_ref.cpp
+	src/layout/layout_entity_text.cpp
 	src/animation_controller.cpp
 	src/animation_track.cpp
 	src/context.cpp
 	src/group.cpp
-	src/imgui_ext/imgui_ext.cpp
-	src/imgui_ext/imgui_ext_focus.cpp
-	src/layouts/layout.cpp
-	src/layouts/layout_entity.cpp
-	src/layouts/layout_entity_group.cpp
-	src/layouts/layout_entity_image.cpp
 	src/node.cpp
+	src/node_clip.cpp
+	src/node_factory.cpp
 	src/node_image.cpp
+	src/node_rect.cpp
+	src/node_text.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})

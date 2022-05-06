@@ -18,7 +18,7 @@ namespace moth_ui {
         nlohmann::json Serialize(SerializeContext const& context) const override;
         bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
 
-        std::string m_layoutPath;
+        std::filesystem::path m_layoutPath;
 
     private:
         void CopyLayout(Layout const& other);

@@ -43,6 +43,7 @@ namespace moth_ui {
         std::string m_id;
         std::string m_class;
         LayoutEntityGroup* m_parent = nullptr;
+        bool m_visible = true;
         BlendMode m_blend = BlendMode::Replace;
         std::map<AnimationTrack::Target, std::unique_ptr<AnimationTrack>> m_tracks;
         std::shared_ptr<LayoutEntity> m_hardReference; // when loading a sublayout this will point to the immutable save data. used to diff overrides

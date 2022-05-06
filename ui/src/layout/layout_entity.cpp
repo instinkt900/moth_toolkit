@@ -37,6 +37,7 @@ namespace moth_ui {
     LayoutEntity::LayoutEntity(LayoutEntity const& other)
         : m_id(other.m_id)
         , m_parent(nullptr)
+        , m_visible(other.m_visible)
         , m_blend(other.m_blend) {
         for (auto&& [target, track] : other.m_tracks) {
             m_tracks.insert(std::pair<AnimationTrack::Target, std::unique_ptr<AnimationTrack>>(target, std::make_unique<AnimationTrack>(*track)));
@@ -107,6 +108,7 @@ namespace moth_ui {
         j["type"] = GetType();
         j["id"] = m_id;
         j["class"] = m_class;
+        j["visible"] = m_visible;
         j["blend"] = m_blend;
         nlohmann::json trackJson;
         for (auto&& [target, track] : m_tracks) {
@@ -123,7 +125,8 @@ namespace moth_ui {
         if (json["type"] == GetType()) {
             m_id = json.value("id", "");
             m_class = json.value("class", "");
-            m_blend = json.value("blend", BlendMode::Replace);
+            m_visible = json.value("visible", m_visible);
+            m_blend = json.value("blend", m_blend);
 
             if (json.contains("tracks")) {
                 auto const& tracksJson = json["tracks"];
@@ -143,6 +146,9 @@ namespace moth_ui {
     nlohmann::json LayoutEntity::SerializeOverrides() const {
         nlohmann::json j;
         if (m_hardReference) {
+            if (m_hardReference->m_visible != m_visible) {
+                j["visible"] = m_visible;
+            }
             if (m_hardReference->m_blend != m_blend) {
                 j["blend"] = m_blend;
             }
@@ -151,6 +157,7 @@ namespace moth_ui {
     }
 
     void LayoutEntity::DeserializeOverrides(nlohmann::json const& overridesJson) {
+        m_visible = overridesJson.value("visible", m_visible);
         m_blend = overridesJson.value("blend", m_blend);
     }
 

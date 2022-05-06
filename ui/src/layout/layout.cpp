@@ -81,7 +81,7 @@ namespace moth_ui {
         return success;
     }
 
-    Layout::LoadResult Layout::Load(char const* path, std::shared_ptr<Layout>* outLayout) {
+    Layout::LoadResult Layout::Load(std::filesystem::path const& path, std::shared_ptr<Layout>* outLayout) {
         if (outLayout == nullptr) {
             return LoadResult::NoOutput;
         }
@@ -91,9 +91,8 @@ namespace moth_ui {
             return LoadResult::DoesNotExist;
         }
 
-        std::filesystem::path loadPath(path);
         SerializeContext context;
-        context.m_rootPath = loadPath.parent_path();
+        context.m_rootPath = path.parent_path();
 
         nlohmann::json json;
         ifile >> json;
@@ -102,20 +101,19 @@ namespace moth_ui {
             return LoadResult::IncorrectFormat;
         }
 
-        layout->m_loadedPath = std::filesystem::path(path);
+        layout->m_loadedPath = path;
         *outLayout = layout;
         return LoadResult::Success;
     }
 
-    bool Layout::Save(char const* path) {
+    bool Layout::Save(std::filesystem::path const& path) {
         std::ofstream ofile(path);
         if (!ofile.is_open()) {
             return false;
         }
 
-        std::filesystem::path savePath(path);
         SerializeContext serializeContext;
-        serializeContext.m_rootPath = savePath.parent_path();
+        serializeContext.m_rootPath = path.parent_path();
         nlohmann::json json = Serialize(serializeContext);
         ofile << json;
         return true;

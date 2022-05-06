@@ -10,7 +10,7 @@ namespace moth_ui {
     public:
         explicit LayoutEntityImage(LayoutRect const& initialBounds);
         explicit LayoutEntityImage(LayoutEntityGroup* parent);
-        LayoutEntityImage(LayoutRect const& initialBounds, char const* imagePath);
+        LayoutEntityImage(LayoutRect const& initialBounds, std::filesystem::path const& imagePath);
 
         std::shared_ptr<LayoutEntity> Clone(CloneType cloneType) override;
 
@@ -21,7 +21,7 @@ namespace moth_ui {
         nlohmann::json Serialize(SerializeContext const& context) const override;
         bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
 
-        std::string m_imagePath;
+        std::filesystem::path m_imagePath;
         IntRect m_sourceRect;
         ImageScaleType m_imageScaleType = ImageScaleType::Stretch;
         float m_imageScale = 1.0f;

@@ -28,8 +28,8 @@ namespace moth_ui {
 
         };
 
-        static LoadResult Load(char const* path, std::shared_ptr<Layout>* outLayout = nullptr);
-        bool Save(char const* path);
+        static LoadResult Load(std::filesystem::path const& path, std::shared_ptr<Layout>* outLayout = nullptr);
+        bool Save(std::filesystem::path const& path);
 
         static int const Version = 1;
         static std::string const Extension;

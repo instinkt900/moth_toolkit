@@ -12,7 +12,7 @@ namespace moth_ui {
 
         void UpdateChildBounds() override;
 
-        void Load(char const* path);
+        void Load(std::filesystem::path const& path);
 
         IImage const* GetImage() const { return m_image.get(); }
 

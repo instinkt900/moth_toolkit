@@ -8,7 +8,7 @@
 namespace moth_ui {
     LayoutEntityRef::LayoutEntityRef(LayoutRect const& initialBounds, Layout const& layoutRef)
         : LayoutEntityGroup(initialBounds)
-        , m_layoutPath(layoutRef.GetLoadedPath().string()) {
+        , m_layoutPath(layoutRef.GetLoadedPath()) {
         std::shared_ptr<Layout> targetLayout;
         CopyLayout(layoutRef);
     }
@@ -36,8 +36,7 @@ namespace moth_ui {
         j = LayoutEntity::Serialize(context); // dont save out the group data. children etc
         j["type"] = LayoutEntityType::Ref;    // override the type as a reference
 
-        std::filesystem::path imagePath(m_layoutPath);
-        auto const relativePath = std::filesystem::relative(imagePath, context.m_rootPath);
+        auto const relativePath = std::filesystem::relative(m_layoutPath, context.m_rootPath);
         j["layoutPath"] = relativePath.string();
 
         nlohmann::json overrides;
@@ -62,9 +61,9 @@ namespace moth_ui {
 
         if (success) {
             std::string relativePath = json.value("layoutPath", "");
-            m_layoutPath = (context.m_rootPath / relativePath).string();
+            m_layoutPath = context.m_rootPath / relativePath;
             std::shared_ptr<Layout> targetLayout;
-            auto const loadResult = Layout::Load(m_layoutPath.c_str(), &targetLayout);
+            auto const loadResult = Layout::Load(m_layoutPath, &targetLayout);
             if (loadResult == Layout::LoadResult::Success) {
                 CopyLayout(*targetLayout);
 

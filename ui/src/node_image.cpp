@@ -28,7 +28,7 @@ namespace moth_ui {
         Slice();
     }
 
-    void NodeImage::Load(char const* path) {
+    void NodeImage::Load(std::filesystem::path const& path) {
         m_image = Context::GetCurrentContext()->GetImageFactory().GetImage(path);
         if (IsZero(m_sourceRect)) {
             auto const imageDimensions = m_image->GetDimensions();
@@ -113,6 +113,6 @@ namespace moth_ui {
         m_imageScale = layoutEntity->m_imageScale;
         m_sourceBorders = layoutEntity->m_sourceBorders;
         m_targetBorders = layoutEntity->m_targetBorders;
-        Load(layoutEntity->m_imagePath.c_str());
+        Load(layoutEntity->m_imagePath);
     }
 }

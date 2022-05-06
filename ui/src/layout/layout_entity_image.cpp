@@ -11,7 +11,7 @@ namespace moth_ui {
         : LayoutEntity(parent) {
     }
 
-    LayoutEntityImage::LayoutEntityImage(LayoutRect const& initialBounds, char const* imagePath)
+    LayoutEntityImage::LayoutEntityImage(LayoutRect const& initialBounds, std::filesystem::path const& imagePath)
         : LayoutEntity(initialBounds)
         , m_imagePath(imagePath) {
     }
@@ -27,8 +27,7 @@ namespace moth_ui {
     nlohmann::json LayoutEntityImage::Serialize(SerializeContext const& context) const {
         nlohmann::json j = LayoutEntity::Serialize(context);
 
-        std::filesystem::path imagePath(m_imagePath);
-        auto const relativePath = std::filesystem::relative(imagePath, context.m_rootPath);
+        auto const relativePath = std::filesystem::relative(m_imagePath, context.m_rootPath);
         j["imagePath"] = relativePath.string();
         j["sourceRect"] = m_sourceRect;
         j["imageScaleType"] = m_imageScaleType;
@@ -48,7 +47,7 @@ namespace moth_ui {
             m_sourceBorders = json.value("sourceBorders", IntRect{});
             m_targetBorders = json.value("targetBorders", MakeDefaultLayoutRect());
             std::string relativePath = json.value("imagePath", "");
-            m_imagePath = (context.m_rootPath / relativePath).string();
+            m_imagePath = context.m_rootPath / relativePath;
         }
 
         return success;

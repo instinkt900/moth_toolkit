@@ -7,6 +7,6 @@ namespace moth_ui {
     public:
         virtual ~IImageFactory() = default;
 
-        virtual std::unique_ptr<IImage> GetImage(char const* path) = 0;
+        virtual std::unique_ptr<IImage> GetImage(std::filesystem::path const& path) = 0;
     };
 }

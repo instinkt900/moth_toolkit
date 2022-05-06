@@ -3,7 +3,6 @@ Moth UI TODO
 
 Fixes/Todos
 -----------
-paths should probably be std::filesystem::path
 Readme.md
 Adding more documentation
 Update tests for better coverage. hook in to cppcoverage.

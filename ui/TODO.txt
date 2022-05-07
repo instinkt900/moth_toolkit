@@ -11,6 +11,8 @@ Updates to preview window. Input etc.
 Tests for the node/layout entity classes. Loading a hard coded test layout etc.
 Update layout of imgui elements. swapping label sides etc. tables?
 Replace most line/primitive drawing with imgui calls. this will simplify moving to other renderer backends.
+Sort out how to handle fonts. Leave as is? Add a font project with names and paths?
+Extract the SDL rendering into some kind of module.
 
 Features
 --------
@@ -18,3 +20,4 @@ flipbook animation?
 texture packing.
 Add color customisation to editor colors.
 allow multiple panels. specifically for asset panels.
+Prebuilt rendering backends. SDL, OpenGL, Vulkan, DirectX?

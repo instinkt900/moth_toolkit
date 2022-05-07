@@ -7,7 +7,8 @@ namespace moth_ui {
     public:
         ~INodeFactory() = default;
 
-        virtual std::unique_ptr<Node> CreateNode(std::string const& path, int width, int height) = 0;
-        virtual std::unique_ptr<Node> CreateNode(std::shared_ptr<LayoutEntity> entity) = 0;
+        virtual std::unique_ptr<Group> Create(std::filesystem::path const& path, int width, int height) = 0;
+        virtual std::unique_ptr<Group> Create(std::shared_ptr<LayoutEntityGroup> group) = 0;
+        virtual std::unique_ptr<Node> Create(std::shared_ptr<LayoutEntity> entity) = 0;
     };
 }

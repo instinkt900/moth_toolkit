@@ -25,7 +25,8 @@ namespace moth_ui {
             return true;
         }
 
-        for (auto&& child : m_children) {
+        auto childrenCopy = m_children;
+        for (auto&& child : childrenCopy) {
             if (child->SendEventDown(event)) {
                 return true;
             }
@@ -68,14 +69,6 @@ namespace moth_ui {
         }
     }
 
-    std::shared_ptr<Node> Group::FindChild(std::string const& childId) {
-        auto const it = ranges::find_if(m_children, [&](auto child) { return child->GetId() == childId; });
-        if (std::end(m_children) != it) {
-            return *it;
-        }
-        return nullptr;
-    }
-
     bool Group::SetAnimation(std::string const& name) {
         if (m_layout) {
             auto layout = std::static_pointer_cast<LayoutEntityGroup>(m_layout);
@@ -95,6 +88,28 @@ namespace moth_ui {
         for (auto&& child : m_children) {
             child->SetAnimationClip(nullptr);
         }
+    }
+
+    std::shared_ptr<Node> Group::GetChild(std::string const& id) {
+        auto const it = ranges::find_if(m_children, [&](auto child) { return child->GetId() == id; });
+        if (std::end(m_children) != it) {
+            return *it;
+        }
+        return nullptr;
+    }
+
+    std::shared_ptr<Node> Group::FindChild(std::string const& id) {
+        if (id == m_id) {
+            return shared_from_this();
+        }
+        std::shared_ptr<Node> found;
+        for (auto&& child : m_children) {
+            found = child->FindChild(id);
+            if (found) {
+                break;
+            }
+        }
+        return found;
     }
 
     void Group::ReloadEntityInternal() {
@@ -123,7 +138,7 @@ namespace moth_ui {
         m_children.clear();
         auto& nodeFactory = Context::GetCurrentContext()->GetNodeFactory();
         for (auto&& childEntity : layoutEntity->m_children) {
-            AddChild(nodeFactory.CreateNode(childEntity));
+            AddChild(nodeFactory.Create(childEntity));
         }
     }
 }

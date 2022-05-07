@@ -126,6 +126,13 @@ namespace moth_ui {
         RecalculateBounds();
     }
 
+    std::shared_ptr<Node> Node::FindChild(std::string const& id) {
+        if (id == m_id) {
+            return shared_from_this();
+        }
+        return nullptr;
+    }
+
     void Node::ReloadEntityInternal() {
         ReloadEntityPrivate();
     }

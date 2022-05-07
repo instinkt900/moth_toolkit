@@ -7,7 +7,7 @@
 #include "ui_fwd.h"
 
 namespace moth_ui {
-    class Node : public EventListener {
+    class Node : public EventListener, public std::enable_shared_from_this<Node> {
     public:
         Node();
         Node(std::shared_ptr<LayoutEntity> layoutEntity);
@@ -65,6 +65,8 @@ namespace moth_ui {
         void SetEventHandler(EventHandler const& handler) { m_eventHandler = handler; }
 
         std::shared_ptr<LayoutEntity> GetLayoutEntity() const { return m_layout; }
+
+        virtual std::shared_ptr<Node> FindChild(std::string const& id);
 
     protected:
         std::shared_ptr<LayoutEntity> m_layout;

@@ -19,10 +19,17 @@ namespace moth_ui {
         int GetChildCount() const { return static_cast<int>(m_children.size()); }
         std::vector<std::shared_ptr<Node>>& GetChildren() { return m_children; }
         std::vector<std::shared_ptr<Node>> const& GetChildren() const { return m_children; }
-        std::shared_ptr<Node> FindChild(std::string const& childId);
 
         bool SetAnimation(std::string const& name) override;
         void StopAnimation() override;
+
+        std::shared_ptr<Node> GetChild(std::string const& id);
+        std::shared_ptr<Node> FindChild(std::string const& id) override;
+
+        template<typename T>
+        std::shared_ptr<T> FindChild(std::string const& id) {
+            return std::dynamic_pointer_cast<T>(FindChild(id));
+        }
 
     protected:
         std::vector<std::shared_ptr<Node>> m_children;

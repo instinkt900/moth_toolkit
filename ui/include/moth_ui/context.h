@@ -8,10 +8,10 @@
 namespace moth_ui {
     class Context {
     public:
-        Context(std::unique_ptr<IImageFactory> imageFactory,
-                std::unique_ptr<IFontFactory> fontFactory,
-                std::unique_ptr<IRenderer> renderer,
-                std::unique_ptr<INodeFactory> nodeFactory);
+        Context(IImageFactory* imageFactory,
+                IFontFactory* fontFactory,
+                IRenderer* renderer,
+                INodeFactory* nodeFactory);
         ~Context() = default;
 
         static void SetCurrentContext(std::shared_ptr<Context> context) {
@@ -46,9 +46,9 @@ namespace moth_ui {
     private:
         static std::shared_ptr<Context> s_currentContext;
 
-        std::unique_ptr<IImageFactory> m_imageFactory;
-        std::unique_ptr<IFontFactory> m_fontFactory;
-        std::unique_ptr<IRenderer> m_renderer;
-        std::unique_ptr<INodeFactory> m_nodeFactory;
+        IImageFactory* m_imageFactory;
+        IFontFactory* m_fontFactory;
+        IRenderer* m_renderer;
+        INodeFactory* m_nodeFactory;
     };
 }

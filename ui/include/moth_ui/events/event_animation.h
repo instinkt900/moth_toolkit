@@ -1,6 +1,7 @@
 #pragma once
 
 #include "event.h"
+#include "moth_ui/node.h"
 #include "moth_ui/animation_track.h"
 
 namespace moth_ui {

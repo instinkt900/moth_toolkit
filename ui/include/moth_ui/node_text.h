@@ -16,7 +16,7 @@ namespace moth_ui {
             return m_font.get();
         }
 
-        void SetText(char const* text) { m_text = text; }
+        void SetText(std::string const& text) { m_text = text; }
 
     protected:
         std::unique_ptr<IFont> m_font;

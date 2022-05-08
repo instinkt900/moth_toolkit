@@ -16,6 +16,11 @@ Extract the SDL rendering into some kind of module.
 Anim start/stop events.
 something weird going on with anchor/offset positioning. focus changing resets some values
 changing ids will turn the node invisible until the canvas is moved.
+events should be under clips. fired by the layout.
+need to be able to edit event names.
+ability to change the canvas color.
+deleting a node then hitting undo will change its index. need to replace it at the same index.
+less uses of std::string and more uses of stringview
 
 Features
 --------

@@ -5,7 +5,9 @@
 #include "moth_ui/group.h"
 
 namespace moth_ui {
-    std::string NodeFactory::RegisterClass(std::string const& className, CreationFunction const& func) {
+    std::unique_ptr<NodeFactory> NodeFactory::s_instance;
+
+    std::string NodeFactory::RegisterWidget(std::string const& className, CreationFunction const& func) {
         m_creationFunctions[className] = func;
         return className;
     }

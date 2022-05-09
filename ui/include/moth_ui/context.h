@@ -3,15 +3,13 @@
 #include "iimage_factory.h"
 #include "ifont_factory.h"
 #include "irenderer.h"
-#include "inode_factory.h"
 
 namespace moth_ui {
     class Context {
     public:
         Context(IImageFactory* imageFactory,
                 IFontFactory* fontFactory,
-                IRenderer* renderer,
-                INodeFactory* nodeFactory);
+                IRenderer* renderer);
         ~Context() = default;
 
         static void SetCurrentContext(std::shared_ptr<Context> context) {
@@ -38,17 +36,11 @@ namespace moth_ui {
             return *m_renderer;
         }
 
-        INodeFactory& GetNodeFactory() const {
-            assert(m_nodeFactory && "No node factory?");
-            return *m_nodeFactory;
-        }
-
     private:
         static std::shared_ptr<Context> s_currentContext;
 
         IImageFactory* m_imageFactory;
         IFontFactory* m_fontFactory;
         IRenderer* m_renderer;
-        INodeFactory* m_nodeFactory;
     };
 }

@@ -5,6 +5,7 @@
 #include "moth_ui/event_dispatch.h"
 #include "moth_ui/node_clip.h"
 #include "moth_ui/context.h"
+#include "moth_ui/node_factory.h"
 
 namespace moth_ui {
     Group::Group() {
@@ -150,7 +151,7 @@ namespace moth_ui {
     void Group::ReloadEntityPrivate() {
         auto const layoutEntity = std::static_pointer_cast<LayoutEntityGroup>(m_layout);
         m_children.clear();
-        auto& nodeFactory = Context::GetCurrentContext()->GetNodeFactory();
+        auto& nodeFactory = NodeFactory::Get();
         for (auto&& childEntity : layoutEntity->m_children) {
             AddChild(nodeFactory.Create(childEntity));
         }

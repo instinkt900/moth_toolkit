@@ -1,23 +1,31 @@
 #pragma once
 
-#include "moth_ui/inode_factory.h"
-
-#undef RegisterClass
+#include "moth_ui/ui_fwd.h"
 
 namespace moth_ui {
-    class NodeFactory : public INodeFactory {
+    class NodeFactory {
     public:
-        NodeFactory() = default;
         virtual ~NodeFactory() = default;
 
-        using CreationFunction = std::function<std::unique_ptr<Group>(std::shared_ptr<LayoutEntityGroup>)>;
-        std::string RegisterClass(std::string const& className, CreationFunction const& func);
+        static NodeFactory& Get() {
+            if (s_instance == nullptr) {
+                s_instance = std::unique_ptr<NodeFactory>(new NodeFactory);
+            }
+            return *s_instance;
+        }
 
-        std::unique_ptr<Group> Create(std::filesystem::path const& path, int width, int height) override;
-        std::unique_ptr<Group> Create(std::shared_ptr<LayoutEntityGroup> group) override;
-        std::unique_ptr<Node> Create(std::shared_ptr<LayoutEntity> entity) override;
+        using CreationFunction = std::unique_ptr<Group> (*)(std::shared_ptr<LayoutEntityGroup>);
+        std::string RegisterWidget(std::string const& className, CreationFunction const& func);
+
+        std::unique_ptr<Group> Create(std::filesystem::path const& path, int width, int height);
+        std::unique_ptr<Group> Create(std::shared_ptr<LayoutEntityGroup> group);
+        std::unique_ptr<Node> Create(std::shared_ptr<LayoutEntity> entity);
 
     private:
+        NodeFactory() = default;
+
         std::map<std::string, CreationFunction> m_creationFunctions;
+
+        static std::unique_ptr<NodeFactory> s_instance;
     };
 }

@@ -20,6 +20,9 @@ need to be able to edit event names.
 ability to change the canvas color.
 less uses of std::string and more uses of stringview
 Probably want to move away from using copy constructors to do the cloning.
+Changing layout bounds sometimes alters the bounds in incorrect ways. the focus input stuff is probably using incorrect values.
+Better names for nodes/entities/layouts etc.
+Add default size to layouts.
 
 Features
 --------

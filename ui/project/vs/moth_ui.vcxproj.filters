@@ -221,7 +221,7 @@
     <ClInclude Include="..\..\include\moth_ui\node_factory.h">
       <Filter>include\moth_ui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\moth_ui\inode_factory.h">
+    <ClInclude Include="..\..\include\moth_ui\widget.h">
       <Filter>include\moth_ui</Filter>
     </ClInclude>
   </ItemGroup>

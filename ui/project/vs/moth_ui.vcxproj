@@ -131,7 +131,6 @@
     <ClInclude Include="..\..\include\moth_ui\iimage.h" />
     <ClInclude Include="..\..\include\moth_ui\iimage_factory.h" />
     <ClInclude Include="..\..\include\moth_ui\image_scale_type.h" />
-    <ClInclude Include="..\..\include\moth_ui\inode_factory.h" />
     <ClInclude Include="..\..\include\moth_ui\irenderer.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout_cache.h" />
@@ -160,6 +159,7 @@
     <ClInclude Include="..\..\include\moth_ui\utils\serialize_utils.h" />
     <ClInclude Include="..\..\include\moth_ui\utils\vector.h" />
     <ClInclude Include="..\..\include\moth_ui\utils\vector_serialization.h" />
+    <ClInclude Include="..\..\include\moth_ui\widget.h" />
     <ClInclude Include="..\..\src\common.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

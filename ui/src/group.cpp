@@ -48,8 +48,14 @@ namespace moth_ui {
         }
     }
 
-    void Group::AddChild(std::shared_ptr<Node> child) {
-        m_children.push_back(child);
+    void Group::AddChild(std::shared_ptr<Node> child, size_t index) {
+        if (index != -1) {
+            auto it = std::begin(m_children) + index;
+            m_children.insert(it, child);
+        } else {
+            m_children.push_back(child);
+        }
+
         child->SetParent(this);
 
         if (auto const clipNode = std::dynamic_pointer_cast<NodeClip>(child)) {
@@ -67,6 +73,14 @@ namespace moth_ui {
             (*it)->SetParent(nullptr);
             m_children.erase(it);
         }
+    }
+
+    size_t Group::IndexOf(std::shared_ptr<Node> child) const {
+        auto const it = ranges::find(m_children, child);
+        if (std::end(m_children) != it) {
+            return it - std::begin(m_children);
+        }
+        return static_cast<size_t>(-1);
     }
 
     bool Group::SetAnimation(std::string const& name) {
@@ -140,5 +154,6 @@ namespace moth_ui {
         for (auto&& childEntity : layoutEntity->m_children) {
             AddChild(nodeFactory.Create(childEntity));
         }
+        UpdateChildBounds();
     }
 }

@@ -38,6 +38,9 @@ namespace moth_ui {
         , m_parent(nullptr)
         , m_visible(other.m_visible)
         , m_blend(other.m_blend) {
+        if (other.m_hardReference) {
+            m_hardReference = other.m_hardReference->Clone(CloneType::Shallow);
+        }
         for (auto&& [target, track] : other.m_tracks) {
             m_tracks.insert(std::pair<AnimationTrack::Target, std::unique_ptr<AnimationTrack>>(target, std::make_unique<AnimationTrack>(*track)));
         }

@@ -23,6 +23,12 @@ namespace moth_ui {
             // its easier to deep copy then discard when not needed than to have to
             // make sure all the base class info is copied
             cloned->m_children.clear();
+        } else {
+            for (auto childEntity : cloned->m_children) {
+                if (childEntity->m_hardReference) {
+                    childEntity->m_hardReference = childEntity->m_hardReference->Clone(CloneType::Shallow);
+                }
+            }
         }
         return cloned;
     }

@@ -14,8 +14,9 @@ namespace moth_ui {
 
         void UpdateChildBounds() override;
 
-        void AddChild(std::shared_ptr<Node> child);
+        void AddChild(std::shared_ptr<Node> child, size_t index = -1);
         void RemoveChild(std::shared_ptr<Node> child);
+        size_t IndexOf(std::shared_ptr<Node> child) const;
         int GetChildCount() const { return static_cast<int>(m_children.size()); }
         std::vector<std::shared_ptr<Node>>& GetChildren() { return m_children; }
         std::vector<std::shared_ptr<Node>> const& GetChildren() const { return m_children; }

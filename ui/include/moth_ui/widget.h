@@ -4,11 +4,11 @@
 #include "moth_ui/group.h"
 
 namespace moth_ui {
-    template <typename T>
-    class Widget : public Group {
+    template <typename T, typename BaseType = Group>
+    class Widget : public BaseType {
     public:
         Widget(std::shared_ptr<LayoutEntityGroup> entity)
-            : Group(entity) {
+            : BaseType(entity) {
             (void)s_widgetIsRegistered_;
         }
 
@@ -20,6 +20,6 @@ namespace moth_ui {
         static bool s_widgetIsRegistered_;
     };
 
-    template <typename T>
-    bool Widget<T>::s_widgetIsRegistered_ = Widget<T>::SelfRegister();
+    template <typename T, typename BaseType = Group>
+    bool Widget<T, BaseType>::s_widgetIsRegistered_ = Widget<T, BaseType>::SelfRegister();
 }

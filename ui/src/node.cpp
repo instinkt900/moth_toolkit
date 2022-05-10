@@ -117,8 +117,8 @@ namespace moth_ui {
         return translated;
     }
 
-    void Node::SetAnimationClip(AnimationClip* clip) {
-        m_animationController->SetClip(clip);
+    void Node::SetAnimationClip(AnimationClip* clip, bool notifyParentOnFinish) {
+        m_animationController->SetClip(clip, notifyParentOnFinish);
     }
 
     void Node::UpdateAnimTime(float delta) {

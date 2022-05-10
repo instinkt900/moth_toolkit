@@ -90,8 +90,10 @@ namespace moth_ui {
             auto& animationClips = layout->m_clips;
             auto it = ranges::find_if(animationClips, [&name](auto& clip) { return clip->m_name == name; });
             if (std::end(animationClips) != it) {
+                bool firstChild = true;
                 for (auto&& child : m_children) {
-                    child->SetAnimationClip(it->get());
+                    child->SetAnimationClip(it->get(), firstChild);
+                    firstChild = false;
                 }
                 return true;
             }
@@ -101,7 +103,7 @@ namespace moth_ui {
 
     void Group::StopAnimation() {
         for (auto&& child : m_children) {
-            child->SetAnimationClip(nullptr);
+            child->SetAnimationClip(nullptr, false);
         }
     }
 

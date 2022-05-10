@@ -29,4 +29,26 @@ namespace moth_ui {
         AnimationTrack::Target m_target = AnimationTrack::Target::Unknown;
         std::string m_name;
     };
+
+    class EventAnimationStopped : public Event {
+    public:
+        EventAnimationStopped(Node* node, std::string const& clipName)
+            : Event(GetStaticType())
+            , m_node(node)
+            , m_clipName(clipName) {}
+        virtual ~EventAnimationStopped() {}
+
+        static constexpr int GetStaticType() { return EVENTTYPE_ANIMATION_STOPPED; }
+
+        auto GetNode() const { return m_node; }
+        auto const& GetClipName() const { return m_clipName; }
+
+        std::unique_ptr<Event> Clone() const override {
+            return std::make_unique<EventAnimationStopped>(m_node, m_clipName);
+        }
+
+    private:
+        Node* m_node = nullptr;
+        std::string m_clipName;
+    };
 }

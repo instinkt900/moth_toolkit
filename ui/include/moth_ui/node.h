@@ -58,7 +58,7 @@ namespace moth_ui {
 
         virtual bool SetAnimation(std::string const& name) { return false; }
         virtual void StopAnimation() {}
-        void SetAnimationClip(AnimationClip* clip);
+        void SetAnimationClip(AnimationClip* clip, bool notifyParentOnFinish);
         virtual void UpdateAnimTime(float delta);
 
         using EventHandler = std::function<bool(Node*, Event const&)>;

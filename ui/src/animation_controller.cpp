@@ -1,6 +1,6 @@
 #include "common.h"
 #include "moth_ui/animation_controller.h"
-#include "moth_ui/node.h"
+#include "moth_ui/group.h"
 #include "moth_ui/animation_clip.h"
 #include "moth_ui/events/event_animation.h"
 
@@ -63,8 +63,9 @@ namespace moth_ui {
         }
     }
 
-    void AnimationController::SetClip(AnimationClip* clip) {
+    void AnimationController::SetClip(AnimationClip* clip, bool notifyParentOnFinish) {
         m_clip = clip;
+        m_notify = notifyParentOnFinish;
         if (m_clip) {
             m_frame = static_cast<float>(m_clip->m_startFrame);
         }
@@ -89,12 +90,15 @@ namespace moth_ui {
             auto const deltaFrames = deltaSeconds * m_clip->m_fps;
             m_frame += deltaFrames;
 
+            bool animationEnded = false;
+            std::string const animationName = m_clip->m_name;
             if (m_frame >= m_clip->m_endFrame) {
                 switch (m_clip->m_loopType) {
                 case AnimationClip::LoopType::Stop:
                     m_frame = static_cast<float>(m_clip->m_endFrame);
                     m_clip = nullptr;
                     eventChecks[0].Set(oldFrame, m_frame);
+                    animationEnded = true;
                     break;
                 case AnimationClip::LoopType::Loop:
                     eventChecks[0].Set(oldFrame, static_cast<float>(m_clip->m_endFrame));
@@ -105,6 +109,7 @@ namespace moth_ui {
                     eventChecks[0].Set(oldFrame, static_cast<float>(m_clip->m_endFrame));
                     m_frame = static_cast<float>(m_clip->m_startFrame);
                     m_clip = nullptr;
+                    animationEnded = true;
                     break;
                 }
             } else {
@@ -123,6 +128,10 @@ namespace moth_ui {
                 if (check.IsSet) {
                     CheckEvents(check.Start, check.End);
                 }
+            }
+
+            if (m_notify && animationEnded) {
+                m_node->SendEvent(EventAnimationStopped(m_node->GetParent(), animationName), Node::EventDirection::Up);
             }
 
             m_node->RecalculateBounds();

@@ -31,3 +31,4 @@ texture packing.
 Add color customisation to editor colors.
 allow multiple panels. specifically for asset panels.
 Prebuilt rendering backends. SDL, OpenGL, Vulkan, DirectX?
+binary versions of layouts.

@@ -22,7 +22,7 @@ namespace moth_ui {
 
     void NodeImage::Load(std::filesystem::path const& path) {
         m_image = Context::GetCurrentContext()->GetImageFactory().GetImage(path);
-        if (IsZero(m_sourceRect)) {
+        if (m_image && IsZero(m_sourceRect)) {
             auto const imageDimensions = m_image->GetDimensions();
             m_sourceRect.bottomRight.x = imageDimensions.x;
             m_sourceRect.bottomRight.y = imageDimensions.y;

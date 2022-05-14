@@ -30,6 +30,28 @@ namespace moth_ui {
         std::string m_name;
     };
 
+    class EventAnimationStarted : public Event {
+    public:
+        EventAnimationStarted(Node* node, std::string const& clipName)
+            : Event(GetStaticType())
+            , m_node(node)
+            , m_clipName(clipName) {}
+        virtual ~EventAnimationStarted() {}
+
+        static constexpr int GetStaticType() { return EVENTTYPE_ANIMATION_STARTED; }
+
+        auto GetNode() const { return m_node; }
+        auto const& GetClipName() const { return m_clipName; }
+
+        std::unique_ptr<Event> Clone() const override {
+            return std::make_unique<EventAnimationStarted>(m_node, m_clipName);
+        }
+
+    private:
+        Node* m_node = nullptr;
+        std::string m_clipName;
+    };
+
     class EventAnimationStopped : public Event {
     public:
         EventAnimationStopped(Node* node, std::string const& clipName)

@@ -6,6 +6,7 @@
 #include "moth_ui/node_clip.h"
 #include "moth_ui/context.h"
 #include "moth_ui/node_factory.h"
+#include "moth_ui/events/event_animation.h"
 
 namespace moth_ui {
     Group::Group() {
@@ -95,6 +96,7 @@ namespace moth_ui {
                     child->SetAnimationClip(it->get(), firstChild);
                     firstChild = false;
                 }
+                SendEvent(EventAnimationStarted(this, name), Node::EventDirection::Up);
                 return true;
             }
         }

@@ -3,26 +3,13 @@ Moth UI TODO
 
 Fixes/Todos
 -----------
-Readme.md
-Adding more documentation
-Update tests for better coverage. hook in to cppcoverage.
-Update cmake to auto build and run tests.
-Updates to preview window. Input etc.
-Tests for the node/layout entity classes. Loading a hard coded test layout etc.
+Readme.md - Adding more documentation
 Update layout of imgui elements. swapping label sides etc. tables?
-Replace most line/primitive drawing with imgui calls. this will simplify moving to other renderer backends.
-Sort out how to handle fonts. Leave as is? Add a font project with names and paths?
-Extract the SDL rendering into some kind of module.
-Anim start/stop events.
-something weird going on with anchor/offset positioning. focus changing resets some values
 events should be under clips. fired by the layout.
-need to be able to edit event names.
-ability to change the canvas color.
 less uses of std::string and more uses of stringview
 Probably want to move away from using copy constructors to do the cloning.
-Changing layout bounds sometimes alters the bounds in incorrect ways. the focus input stuff is probably using incorrect values.
 Better names for nodes/entities/layouts etc.
-Add default size to layouts.
+Add default size to layout data.
 
 Features
 --------
@@ -32,3 +19,11 @@ Add color customisation to editor colors.
 allow multiple panels. specifically for asset panels.
 Prebuilt rendering backends. SDL, OpenGL, Vulkan, DirectX?
 binary versions of layouts.
+Preview window input.
+Vulkan/OpenGL/DirectX support. Both editor and runtime lib.
+
+Testing
+-------
+Update tests for better coverage. hook in to cppcoverage.
+Update cmake to auto build and run tests.
+Tests for the node/layout entity classes. Loading a hard coded test layout etc.

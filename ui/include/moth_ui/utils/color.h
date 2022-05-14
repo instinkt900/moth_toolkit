@@ -69,4 +69,13 @@ namespace moth_ui {
         uint32_t const a = static_cast<uint32_t>(std::round(limitedColor.a * 255));
         return (a << 24) | (r << 16) | (g << 8) | b;
     }
+
+    inline uint32_t ToABGR(Color const& color) {
+        auto const limitedColor = Clamp(color);
+        uint32_t const r = static_cast<uint32_t>(std::round(limitedColor.r * 255));
+        uint32_t const g = static_cast<uint32_t>(std::round(limitedColor.g * 255));
+        uint32_t const b = static_cast<uint32_t>(std::round(limitedColor.b * 255));
+        uint32_t const a = static_cast<uint32_t>(std::round(limitedColor.a * 255));
+        return (a << 24) | (b << 16) | (g << 8) | r;
+    }
 }

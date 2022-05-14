@@ -204,6 +204,12 @@
     <ClInclude Include="..\..\editor\src\layers\layer_stack.h">
       <Filter>src\layers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\editor_config.h">
+      <Filter>src\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_config.h">
+      <Filter>src\editor\panels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\editor\src\app.cpp">
@@ -355,6 +361,9 @@
     </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\imgui_ext_focus.cpp">
       <Filter>src\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_config.cpp">
+      <Filter>src\editor\panels</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -210,6 +210,12 @@
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_config.h">
       <Filter>src\editor\panels</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\editor\src\stb_rect_pack.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\texture_packer.h">
+      <Filter>src\editor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\editor\src\app.cpp">
@@ -364,6 +370,9 @@
     </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_config.cpp">
       <Filter>src\editor\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\texture_packer.cpp">
+      <Filter>src\editor</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

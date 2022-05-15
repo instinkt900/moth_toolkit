@@ -22,6 +22,11 @@ namespace moth_ui {
         }
     };
 
+    template <typename T>
+    Rect<T> MakeRect(T x, T y, T w, T h) {
+        return { { x, y }, { x + w, y + h } };
+    }
+
     using IntRect = Rect<int>;
     using FloatRect = Rect<float>;
 

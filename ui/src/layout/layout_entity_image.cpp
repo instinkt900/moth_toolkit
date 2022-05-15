@@ -47,7 +47,7 @@ namespace moth_ui {
             m_sourceBorders = json.value("sourceBorders", IntRect{});
             m_targetBorders = json.value("targetBorders", MakeDefaultLayoutRect());
             std::string relativePath = json.value("imagePath", "");
-            m_imagePath = context.m_rootPath / relativePath;
+            m_imagePath = std::filesystem::absolute(context.m_rootPath / relativePath);
         }
 
         return success;

@@ -146,6 +146,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_properties.h" />
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_undo_stack.h" />
     <ClInclude Include="..\..\editor\src\editor\properties_elements.h" />
+    <ClInclude Include="..\..\editor\src\editor\texture_packer.h" />
     <ClInclude Include="..\..\editor\src\editor\utils.h" />
     <ClInclude Include="..\..\editor\src\events\event.h" />
     <ClInclude Include="..\..\editor\src\event_factory.h" />
@@ -157,6 +158,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\imgui-filebrowser\imfilebrowser.h" />
     <ClInclude Include="..\..\editor\src\layers\layer.h" />
     <ClInclude Include="..\..\editor\src\layers\layer_stack.h" />
+    <ClInclude Include="..\..\editor\src\stb_rect_pack.h" />
     <ClInclude Include="..\..\editor\src\ui_renderer.h" />
     <ClInclude Include="..\..\editor\src\SDL_FontCache.h" />
     <ClInclude Include="..\..\editor\src\smart_sdl.h" />
@@ -204,6 +206,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_properties.cpp" />
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_undo_stack.cpp" />
     <ClCompile Include="..\..\editor\src\editor\properties_elements.cpp" />
+    <ClCompile Include="..\..\editor\src\editor\texture_packer.cpp" />
     <ClCompile Include="..\..\editor\src\event_factory.cpp" />
     <ClCompile Include="..\..\editor\src\app.cpp" />
     <ClCompile Include="..\..\editor\src\font.cpp" />

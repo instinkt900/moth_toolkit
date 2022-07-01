@@ -178,9 +178,6 @@ namespace moth_ui {
             std::make_pair(AnimationTrack::Target::ColorBlue, 1.0f),
             std::make_pair(AnimationTrack::Target::ColorAlpha, 1.0f),
         };
-        if (std::end(m_tracks) == m_tracks.find(AnimationTrack::Target::Events)) {
-            m_tracks.insert(std::make_pair(AnimationTrack::Target::Events, std::make_unique<AnimationTrack>(AnimationTrack::Target::Events)));
-        }
         for (auto&& [target, value] : targetList) {
             if (std::end(m_tracks) == m_tracks.find(target)) {
                 m_tracks.insert(std::make_pair(target, std::make_unique<AnimationTrack>(target, value)));

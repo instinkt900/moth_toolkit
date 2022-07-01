@@ -58,8 +58,6 @@ namespace moth_ui {
 
         virtual bool SetAnimation(std::string const& name) { return false; }
         virtual void StopAnimation() {}
-        void SetAnimationClip(AnimationClip* clip, bool notifyParentOnFinish);
-        virtual void UpdateAnimTime(float delta);
 
         using EventHandler = std::function<bool(Node*, Event const&)>;
         void SetEventHandler(EventHandler const& handler) { m_eventHandler = handler; }
@@ -67,6 +65,8 @@ namespace moth_ui {
         std::shared_ptr<LayoutEntity> GetLayoutEntity() const { return m_layout; }
 
         virtual std::shared_ptr<Node> FindChild(std::string const& id);
+
+        AnimationController& GetAnimationController() { return *m_animationController; }
 
     protected:
         std::shared_ptr<LayoutEntity> m_layout;

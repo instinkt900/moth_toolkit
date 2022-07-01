@@ -162,9 +162,6 @@
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_animation.h">
       <Filter>src\editor\panels</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_keyframes.h">
-      <Filter>src\editor\panels</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_undo_stack.h">
       <Filter>src\editor\panels</Filter>
     </ClInclude>
@@ -215,6 +212,15 @@
     </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\texture_packer.h">
       <Filter>src\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\add_event_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\delete_event_action.h">
+      <Filter>src\editor\actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\actions\modify_event_action.h">
+      <Filter>src\editor\actions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -338,9 +344,6 @@
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_animation.cpp">
       <Filter>src\editor\panels</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_keyframes.cpp">
-      <Filter>src\editor\panels</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_undo_stack.cpp">
       <Filter>src\editor\panels</Filter>
     </ClCompile>
@@ -373,6 +376,15 @@
     </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\texture_packer.cpp">
       <Filter>src\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\add_event_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\delete_event_action.cpp">
+      <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\actions\modify_event_action.cpp">
+      <Filter>src\editor\actions</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

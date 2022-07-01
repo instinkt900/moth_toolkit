@@ -10,7 +10,6 @@ namespace moth_ui {
 
         auto GetTarget() const { return m_track.GetTarget(); }
         void SetFrame(float frame);
-        void ForEvents(float startFrame, float endFrame, std::function<void(Keyframe const&)> const& eventCallback);
 
     private:
         float& m_target;
@@ -19,21 +18,27 @@ namespace moth_ui {
 
     class AnimationController {
     public:
-        AnimationController(Node* node, std::map<AnimationTrack::Target, std::unique_ptr<AnimationTrack>> const& tracks);
+        AnimationController(Node* node);
 
-        auto GetFrame() const { return m_frame; }
-        auto GetClip() const { return m_clip; }
-
-        void SetClip(AnimationClip* clip, bool notifyParentOnFinish);
-        void Update(float deltaSeconds);
+        void SetFrame(float frame);
 
     private:
         Node* m_node = nullptr;
-        AnimationClip* m_clip = nullptr;
         std::vector<std::unique_ptr<AnimationTrackController>> m_trackControllers;
-        float m_frame = 0.0f;
-        bool m_notify = false;
+    };
 
-        void CheckEvents(float startTime, float endTime);
+    class AnimationClipController {
+    public:
+        AnimationClipController(Group* group);
+
+        void SetClip(AnimationClip* clip);
+        void Update(float deltaSeconds);
+
+    private:
+        Group* m_group;
+        AnimationClip* m_clip = nullptr;
+        float m_frame = 0.0f;
+
+        void CheckEvents(float startFrame, float endFrame);
     };
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "node.h"
+#include "animation_controller.h"
 
 namespace moth_ui {
     class Group : public Node {
@@ -35,6 +36,7 @@ namespace moth_ui {
     protected:
         std::vector<std::shared_ptr<Node>> m_children;
         NodeClip* m_clipRect = nullptr;
+        std::unique_ptr<AnimationClipController> m_animationClipController;
 
         void ReloadEntityInternal() override;
         void DrawInternal() override;

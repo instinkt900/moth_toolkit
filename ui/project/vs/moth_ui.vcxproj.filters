@@ -224,5 +224,8 @@
     <ClInclude Include="..\..\include\moth_ui\widget.h">
       <Filter>include\moth_ui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\clip_controller.h">
+      <Filter>include\moth_ui</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

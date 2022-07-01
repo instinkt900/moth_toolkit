@@ -3,6 +3,7 @@
 #include "moth_ui/group.h"
 #include "moth_ui/animation_clip.h"
 #include "moth_ui/events/event_animation.h"
+#include "moth_ui/layout/layout_entity_group.h"
 
 namespace {
     using namespace moth_ui;
@@ -52,26 +53,36 @@ namespace moth_ui {
         m_target = m_track.GetValueAtFrame(frame);
     }
 
-    void AnimationTrackController::ForEvents(float startFrame, float endFrame, std::function<void(Keyframe const&)> const& eventCallback) {
-        m_track.ForKeyframesOverFrames(startFrame, endFrame, eventCallback);
-    }
-
-    AnimationController::AnimationController(Node* node, std::map<AnimationTrack::Target, std::unique_ptr<AnimationTrack>> const& tracks)
+    AnimationController::AnimationController(Node* node)
         : m_node(node) {
-        for (auto&& [target, track] : tracks) {
+        for (auto&& [target, track] : node->GetLayoutEntity()->m_tracks) {
             m_trackControllers.push_back(std::make_unique<AnimationTrackController>(GetTargetReference(node, target), *track));
         }
     }
 
-    void AnimationController::SetClip(AnimationClip* clip, bool notifyParentOnFinish) {
+    void AnimationController::SetFrame(float frame) {
+        // update each tracks time
+        for (auto&& track : m_trackControllers) {
+            track->SetFrame(frame);
+        }
+        m_node->RecalculateBounds();
+    }
+
+    AnimationClipController::AnimationClipController(Group* group)
+        : m_group(group) {
+    }
+
+    void AnimationClipController::SetClip(AnimationClip* clip) {
         m_clip = clip;
-        m_notify = notifyParentOnFinish;
         if (m_clip) {
-            m_frame = static_cast<float>(m_clip->m_startFrame);
+            for (auto& child : m_group->GetChildren()) {
+                child->GetAnimationController().SetFrame(static_cast<float>(m_clip->m_startFrame));
+            }
+            m_group->SendEvent(EventAnimationStarted(m_group, m_clip->m_name), Node::EventDirection::Up);
         }
     }
 
-    void AnimationController::Update(float deltaSeconds) {
+    void AnimationClipController::Update(float deltaSeconds) {
         if (m_clip) {
             struct Span {
                 float Start = 0;
@@ -117,10 +128,8 @@ namespace moth_ui {
             }
 
             // update each tracks time
-            for (auto&& track : m_trackControllers) {
-                if (track->GetTarget() != AnimationTrack::Target::Events) {
-                    track->SetFrame(m_frame);
-                }
+            for (auto& child : m_group->GetChildren()) {
+                child->GetAnimationController().SetFrame(m_frame);
             }
 
             // check for events over spans
@@ -130,21 +139,17 @@ namespace moth_ui {
                 }
             }
 
-            if (m_notify && animationEnded) {
-                m_node->SendEvent(EventAnimationStopped(m_node->GetParent(), animationName), Node::EventDirection::Up);
+            if (animationEnded) {
+                m_group->SendEvent(EventAnimationStopped(m_group, animationName), Node::EventDirection::Up);
             }
-
-            m_node->RecalculateBounds();
         }
     }
 
-    void AnimationController::CheckEvents(float startFrame, float endFrame) {
-        for (auto&& track : m_trackControllers) {
-            if (track->GetTarget() == AnimationTrack::Target::Events) {
-                track->ForEvents(startFrame, endFrame, [&](Keyframe const& keyframe) {
-                    m_node->SendEvent(EventAnimation(m_node, track->GetTarget(), keyframe.GetStringValue()), Node::EventDirection::Up);
-                });
-                break;
+    void AnimationClipController::CheckEvents(float startFrame, float endFrame) {
+        auto layout = std::static_pointer_cast<LayoutEntityGroup>(m_group->GetLayoutEntity());
+        for (auto& animEvent : layout->m_events) {
+            if (animEvent->m_frame > startFrame && animEvent->m_frame <= endFrame) {
+                m_group->SendEvent(EventAnimation(m_group, animEvent->m_name), Node::EventDirection::Up);
             }
         }
     }

@@ -89,7 +89,10 @@ namespace nlohmann {
         static void from_json(const json& j, T& e) {
             std::string v;
             j.get_to(v);
-            e = magic_enum::enum_cast<T>(v).value();
+            auto enumValue = magic_enum::enum_cast<T>(v);
+            if (enumValue.has_value()) {
+                e = magic_enum::enum_cast<T>(v).value();
+            }
         }
     };
 }

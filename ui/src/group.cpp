@@ -39,6 +39,7 @@ namespace moth_ui {
 
     void Group::Update(uint32_t ticks) {
         Node::Update(ticks);
+        m_animationClipController->Update(ticks / 1000.0f);
         for (auto&& child : m_children) {
             child->Update(ticks);
         }
@@ -91,12 +92,7 @@ namespace moth_ui {
             auto& animationClips = layout->m_clips;
             auto it = ranges::find_if(animationClips, [&name](auto& clip) { return clip->m_name == name; });
             if (std::end(animationClips) != it) {
-                bool firstChild = true;
-                for (auto&& child : m_children) {
-                    child->SetAnimationClip(it->get(), firstChild);
-                    firstChild = false;
-                }
-                SendEvent(EventAnimationStarted(this, name), Node::EventDirection::Up);
+                m_animationClipController->SetClip(it->get());
                 return true;
             }
         }
@@ -104,9 +100,7 @@ namespace moth_ui {
     }
 
     void Group::StopAnimation() {
-        for (auto&& child : m_children) {
-            child->SetAnimationClip(nullptr, false);
-        }
+        m_animationClipController->SetClip(nullptr);
     }
 
     std::shared_ptr<Node> Group::GetChild(std::string const& id) {
@@ -160,5 +154,6 @@ namespace moth_ui {
             AddChild(nodeFactory.Create(childEntity));
         }
         UpdateChildBounds();
+        m_animationClipController = std::make_unique<AnimationClipController>(this);
     }
 }

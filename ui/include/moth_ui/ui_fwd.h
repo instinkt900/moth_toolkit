@@ -32,5 +32,5 @@ namespace moth_ui {
 
     struct LayoutRect;
 
-    using KeyframeValue = std::variant<float, std::string>;
+    using KeyframeValue = float;
 }

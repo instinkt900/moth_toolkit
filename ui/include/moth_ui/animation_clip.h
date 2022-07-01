@@ -18,11 +18,11 @@ namespace moth_ui {
 
         int FrameCount() const { return m_endFrame - m_startFrame; }
 
-        bool operator==(AnimationClip const& other) {
+        bool operator==(AnimationClip const& other) const {
             return m_name == other.m_name && m_startFrame == other.m_startFrame && m_endFrame == other.m_endFrame && m_fps == other.m_fps && m_loopType == other.m_loopType;
         }
 
-        bool operator!=(AnimationClip const& other) {
+        bool operator!=(AnimationClip const& other) const {
             return !(*this == other);
         }
 

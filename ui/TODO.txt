@@ -11,6 +11,11 @@ Probably want to move away from using copy constructors to do the cloning.
 Better names for nodes/entities/layouts etc.
 Add default size to layout data.
 
+Updates to animation events...
+Remove events track from nodes.
+When setting an animation on group. Have a ClipController or something that handles the start/events/end events
+
+
 Features
 --------
 flipbook animation?

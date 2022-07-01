@@ -39,6 +39,7 @@ namespace moth_ui {
         j["class"] = m_class;
         j["blend"] = m_blend;
         j["clips"] = m_clips;
+        j["events"] = m_events;
         std::vector<nlohmann::json> childJsons;
         for (auto&& child : m_children) {
             childJsons.push_back(child->Serialize(context));
@@ -64,6 +65,10 @@ namespace moth_ui {
 
                 if (json.contains("clips")) {
                     json.at("clips").get_to(m_clips);
+                }
+
+                if (json.contains("events")) {
+                    json.at("events").get_to(m_events);
                 }
 
                 if (json.contains("children")) {

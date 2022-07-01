@@ -20,6 +20,9 @@ namespace moth_ui {
         for (auto&& clip : other.m_clips) {
             m_clips.push_back(std::make_unique<AnimationClip>(*clip));
         }
+        for (auto&& event : other.m_events) {
+            m_events.push_back(std::make_unique<AnimationEvent>(*event));
+        }
     }
 
     nlohmann::json LayoutEntityGroup::Serialize(SerializeContext const& context) const {

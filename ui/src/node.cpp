@@ -50,7 +50,6 @@ namespace moth_ui {
     }
 
     void Node::Update(uint32_t ticks) {
-        m_animationController->Update(ticks / 1000.0f);
     }
 
     void Node::Draw() {
@@ -117,15 +116,6 @@ namespace moth_ui {
         return translated;
     }
 
-    void Node::SetAnimationClip(AnimationClip* clip, bool notifyParentOnFinish) {
-        m_animationController->SetClip(clip, notifyParentOnFinish);
-    }
-
-    void Node::UpdateAnimTime(float delta) {
-        m_animationController->Update(delta);
-        RecalculateBounds();
-    }
-
     std::shared_ptr<Node> Node::FindChild(std::string const& id) {
         if (id == m_id) {
             return shared_from_this();
@@ -143,6 +133,6 @@ namespace moth_ui {
         m_color = m_layout->GetColorAtFrame(0);
         m_visible = m_layout->m_visible;
         m_blend = m_layout->m_blend;
-        m_animationController = std::make_unique<AnimationController>(this, m_layout->m_tracks);
+        m_animationController = std::make_unique<AnimationController>(this);
     }
 }

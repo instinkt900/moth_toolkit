@@ -16,6 +16,7 @@ namespace moth_ui {
         bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
 
         std::vector<std::shared_ptr<LayoutEntity>> m_children;
-        std::vector<std::unique_ptr<AnimationClip>> m_clips; // sorted by time/frame
+        std::vector<std::unique_ptr<AnimationClip>> m_clips;
+        std::vector<std::unique_ptr<AnimationEvent>> m_events;
     };
 }

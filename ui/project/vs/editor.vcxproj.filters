@@ -25,12 +25,15 @@
     <Filter Include="src\imgui-filebrowser">
       <UniqueIdentifier>{c2aa9ecf-2119-45e3-8a96-9b4508a930b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\backends">
+      <UniqueIdentifier>{b5367694-6015-4489-a37b-0a7f3c4f00d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\backends\sdl">
+      <UniqueIdentifier>{68924218-e779-4fe9-9e6f-97a00ba0e881}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\editor\src\common.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\app.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\anchor_bounds_handle.h">
@@ -108,31 +111,7 @@
     <ClInclude Include="..\..\external\imgui\backends\imgui_impl_sdlrenderer.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\editor\src\image.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\image_factory.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\SDL_FontCache.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\smart_sdl.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\ui_renderer.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\editor\src\utils.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\event_factory.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\font_factory.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\font.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\actions\change_index_action.h">
@@ -222,11 +201,47 @@
     <ClInclude Include="..\..\editor\src\editor\actions\modify_event_action.h">
       <Filter>src\editor\actions</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_app.h">
+      <Filter>src\backends\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_event_factory.h">
+      <Filter>src\backends\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_font.h">
+      <Filter>src\backends\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_font_factory.h">
+      <Filter>src\backends\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backends\sdl\SDL_FontCache.h">
+      <Filter>src\backends\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_image.h">
+      <Filter>src\backends\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_image_factory.h">
+      <Filter>src\backends\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_ui_renderer.h">
+      <Filter>src\backends\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_utils.h">
+      <Filter>src\backends\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backends\sdl\smart_sdl.h">
+      <Filter>src\backends\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backends\backend_imgui.h">
+      <Filter>src\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\iapp.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backends\backend_utils.h">
+      <Filter>src\backends</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\editor\src\app.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\editor\src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -296,32 +311,11 @@
     <ClCompile Include="..\..\external\imgui\backends\imgui_impl_sdlrenderer.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\editor\src\image.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\SDL_FontCache.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\image_factory.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\ui_renderer.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\event_factory.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\font_factory.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\actions\change_index_action.cpp">
       <Filter>src\editor\actions</Filter>
     </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\properties_elements.cpp">
       <Filter>src\editor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\font.cpp">
-      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\actions\editor_action.cpp">
       <Filter>src\editor\actions</Filter>
@@ -385,6 +379,36 @@
     </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\actions\modify_event_action.cpp">
       <Filter>src\editor\actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_app.cpp">
+      <Filter>src\backends\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_event_factory.cpp">
+      <Filter>src\backends\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_font.cpp">
+      <Filter>src\backends\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_font_factory.cpp">
+      <Filter>src\backends\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backends\sdl\SDL_FontCache.c">
+      <Filter>src\backends\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_image.cpp">
+      <Filter>src\backends\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_image_factory.cpp">
+      <Filter>src\backends\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_ui_renderer.cpp">
+      <Filter>src\backends\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_imgui.cpp">
+      <Filter>src\backends\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_utils.cpp">
+      <Filter>src\backends\sdl</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

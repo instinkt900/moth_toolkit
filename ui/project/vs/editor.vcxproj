@@ -59,9 +59,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NA_CONSOLE;_ITERATOR_DEBUG_LEVEL=0;_CRT_SECURE_NO_WARNINGS;IMGUI_DEFINE_MATH_OPERATORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NA_CONSOLE;_ITERATOR_DEBUG_LEVEL=0;_CRT_SECURE_NO_WARNINGS;IMGUI_DEFINE_MATH_OPERATORS;JSON_HAS_FILESYSTEM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\editor\src;..\..\external\imgui;..\..\include;$(SDL_DIR)\include;$(SDLIMAGE_DIR)\include;$(SDLTTF_DIR)\include;$(MAGICENUM_DIR)\include;$(NLOHMANN_DIR)\include;$(FMT_DIR)\include;$(RANGEV3_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\editor\src;..\..\external\imgui;..\..\include;$(SDL_DIR)\include;$(SDLIMAGE_DIR)\include;$(SDLTTF_DIR)\include;$(MAGICENUM_DIR)\include;$(NLOHMANN_DIR)\include;$(FMT_DIR)\include;$(RANGEV3_DIR)\include;$(GLFW_DIR)\include;$(VULKAN_DIR)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -70,8 +70,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SDL_DIR)\lib\x64;$(SDLIMAGE_DIR)\lib\x64;$(SDLTTF_DIR)\lib\x64;$(FMT_DIR)\build\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;fmt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SDL_DIR)\lib\x64;$(SDLIMAGE_DIR)\lib\x64;$(SDLTTF_DIR)\lib\x64;$(FMT_DIR)\lib;$(GLFW_DIR)\lib;$(VULKAN_DIR)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;fmt.lib;glfw3.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
@@ -108,18 +108,23 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\editor\src\backends\backend_imgui.h" />
-    <ClInclude Include="..\..\editor\src\backends\backend_utils.h" />
+    <ClInclude Include="..\..\editor\src\backends\igraphics.h" />
     <ClInclude Include="..\..\editor\src\backends\sdl\sdl_app.h" />
     <ClInclude Include="..\..\editor\src\backends\sdl\sdl_event_factory.h" />
     <ClInclude Include="..\..\editor\src\backends\sdl\sdl_font.h" />
     <ClInclude Include="..\..\editor\src\backends\sdl\SDL_FontCache.h" />
     <ClInclude Include="..\..\editor\src\backends\sdl\sdl_font_factory.h" />
+    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_graphics.h" />
     <ClInclude Include="..\..\editor\src\backends\sdl\sdl_image.h" />
     <ClInclude Include="..\..\editor\src\backends\sdl\sdl_image_factory.h" />
     <ClInclude Include="..\..\editor\src\backends\sdl\sdl_ui_renderer.h" />
     <ClInclude Include="..\..\editor\src\backends\sdl\sdl_utils.h" />
     <ClInclude Include="..\..\editor\src\backends\sdl\smart_sdl.h" />
+    <ClInclude Include="..\..\editor\src\backends\vulkan\font_factory_vulkan.h" />
+    <ClInclude Include="..\..\editor\src\backends\vulkan\image_factory_vulkan.h" />
+    <ClInclude Include="..\..\editor\src\backends\vulkan\ui_renderer_vulkan.h" />
+    <ClInclude Include="..\..\editor\src\backends\vulkan\vulkan_app.h" />
+    <ClInclude Include="..\..\editor\src\backends\vulkan\vulkan_graphics.h" />
     <ClInclude Include="..\..\editor\src\common.h" />
     <ClInclude Include="..\..\editor\src\editor\actions\add_action.h" />
     <ClInclude Include="..\..\editor\src\editor\actions\add_clip_action.h" />
@@ -169,8 +174,10 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\layers\layer_stack.h" />
     <ClInclude Include="..\..\editor\src\stb_rect_pack.h" />
     <ClInclude Include="..\..\editor\src\utils.h" />
+    <ClInclude Include="..\..\external\imgui\backends\imgui_impl_glfw.h" />
     <ClInclude Include="..\..\external\imgui\backends\imgui_impl_sdl.h" />
     <ClInclude Include="..\..\external\imgui\backends\imgui_impl_sdlrenderer.h" />
+    <ClInclude Include="..\..\external\imgui\backends\imgui_impl_vulkan.h" />
     <ClInclude Include="..\..\external\imgui\imconfig.h" />
     <ClInclude Include="..\..\external\imgui\imgui.h" />
     <ClInclude Include="..\..\external\imgui\imgui_internal.h" />
@@ -186,11 +193,15 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
     </ClCompile>
     <ClCompile Include="..\..\editor\src\backends\sdl\sdl_font_factory.cpp" />
+    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_graphics.cpp" />
     <ClCompile Include="..\..\editor\src\backends\sdl\sdl_image.cpp" />
     <ClCompile Include="..\..\editor\src\backends\sdl\sdl_image_factory.cpp" />
-    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_imgui.cpp" />
     <ClCompile Include="..\..\editor\src\backends\sdl\sdl_ui_renderer.cpp" />
-    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_utils.cpp" />
+    <ClCompile Include="..\..\editor\src\backends\vulkan\font_factory_vulkan.cpp" />
+    <ClCompile Include="..\..\editor\src\backends\vulkan\image_factory_vulkan.cpp" />
+    <ClCompile Include="..\..\editor\src\backends\vulkan\ui_renderer_vulkan.cpp" />
+    <ClCompile Include="..\..\editor\src\backends\vulkan\vulkan_app.cpp" />
+    <ClCompile Include="..\..\editor\src\backends\vulkan\vulkan_graphics.cpp" />
     <ClCompile Include="..\..\editor\src\editor\actions\add_action.cpp" />
     <ClCompile Include="..\..\editor\src\editor\actions\add_clip_action.cpp" />
     <ClCompile Include="..\..\editor\src\editor\actions\add_event_action.cpp" />
@@ -230,8 +241,10 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClCompile Include="..\..\editor\src\layers\layer.cpp" />
     <ClCompile Include="..\..\editor\src\layers\layer_stack.cpp" />
     <ClCompile Include="..\..\editor\src\main.cpp" />
+    <ClCompile Include="..\..\external\imgui\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="..\..\external\imgui\backends\imgui_impl_sdl.cpp" />
     <ClCompile Include="..\..\external\imgui\backends\imgui_impl_sdlrenderer.cpp" />
+    <ClCompile Include="..\..\external\imgui\backends\imgui_impl_vulkan.cpp" />
     <ClCompile Include="..\..\external\imgui\imgui.cpp" />
     <ClCompile Include="..\..\external\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\..\external\imgui\imgui_draw.cpp" />
@@ -244,6 +257,5 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

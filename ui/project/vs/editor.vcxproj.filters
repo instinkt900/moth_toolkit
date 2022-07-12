@@ -25,14 +25,14 @@
     <Filter Include="src\imgui-filebrowser">
       <UniqueIdentifier>{c2aa9ecf-2119-45e3-8a96-9b4508a930b4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\backends">
-      <UniqueIdentifier>{b5367694-6015-4489-a37b-0a7f3c4f00d0}</UniqueIdentifier>
+    <Filter Include="src\backend">
+      <UniqueIdentifier>{268c8e51-2ecb-48cf-9196-de6367ffefc2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\backends\sdl">
-      <UniqueIdentifier>{68924218-e779-4fe9-9e6f-97a00ba0e881}</UniqueIdentifier>
+    <Filter Include="src\backend\sdl">
+      <UniqueIdentifier>{709a62ee-f4f9-4c0b-8aa1-402ffa5cb679}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\backends\vulkan">
-      <UniqueIdentifier>{3fc1a1c7-1942-4596-9cf0-a0fd1f71fcdc}</UniqueIdentifier>
+    <Filter Include="src\backend\vulkan">
+      <UniqueIdentifier>{e28f6f9d-bf5a-4952-937d-51329f5f371a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -204,65 +204,65 @@
     <ClInclude Include="..\..\editor\src\editor\actions\modify_event_action.h">
       <Filter>src\editor\actions</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_app.h">
-      <Filter>src\backends\sdl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_event_factory.h">
-      <Filter>src\backends\sdl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_font.h">
-      <Filter>src\backends\sdl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_font_factory.h">
-      <Filter>src\backends\sdl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\backends\sdl\SDL_FontCache.h">
-      <Filter>src\backends\sdl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_image.h">
-      <Filter>src\backends\sdl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_image_factory.h">
-      <Filter>src\backends\sdl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_ui_renderer.h">
-      <Filter>src\backends\sdl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_utils.h">
-      <Filter>src\backends\sdl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\backends\sdl\smart_sdl.h">
-      <Filter>src\backends\sdl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\iapp.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\backends\igraphics.h">
-      <Filter>src\backends</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_graphics.h">
-      <Filter>src\backends\sdl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\backends\vulkan\font_factory_vulkan.h">
-      <Filter>src\backends\vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\backends\vulkan\image_factory_vulkan.h">
-      <Filter>src\backends\vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\backends\vulkan\ui_renderer_vulkan.h">
-      <Filter>src\backends\vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\backends\vulkan\vulkan_app.h">
-      <Filter>src\backends\vulkan</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\external\imgui\backends\imgui_impl_glfw.h">
       <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\external\imgui\backends\imgui_impl_vulkan.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\editor\src\backends\vulkan\vulkan_graphics.h">
-      <Filter>src\backends\vulkan</Filter>
+    <ClInclude Include="..\..\editor\src\backend\iapplication.h">
+      <Filter>src\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\igraphics_context.h">
+      <Filter>src\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\sdl\sdl_app.h">
+      <Filter>src\backend\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\sdl\sdl_events.h">
+      <Filter>src\backend\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\sdl\sdl_font.h">
+      <Filter>src\backend\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\sdl\sdl_font_factory.h">
+      <Filter>src\backend\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\sdl\SDL_FontCache.h">
+      <Filter>src\backend\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\sdl\sdl_graphics.h">
+      <Filter>src\backend\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\sdl\sdl_image.h">
+      <Filter>src\backend\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\sdl\sdl_image_factory.h">
+      <Filter>src\backend\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\sdl\sdl_ui_renderer.h">
+      <Filter>src\backend\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\sdl\sdl_utils.h">
+      <Filter>src\backend\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\sdl\smart_sdl.h">
+      <Filter>src\backend\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\vulkan\font_factory_vulkan.h">
+      <Filter>src\backend\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\vulkan\image_factory_vulkan.h">
+      <Filter>src\backend\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\vulkan\ui_renderer_vulkan.h">
+      <Filter>src\backend\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_app.h">
+      <Filter>src\backend\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_graphics.h">
+      <Filter>src\backend\vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -404,53 +404,53 @@
     <ClCompile Include="..\..\editor\src\editor\actions\modify_event_action.cpp">
       <Filter>src\editor\actions</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_app.cpp">
-      <Filter>src\backends\sdl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_event_factory.cpp">
-      <Filter>src\backends\sdl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_font.cpp">
-      <Filter>src\backends\sdl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_font_factory.cpp">
-      <Filter>src\backends\sdl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\backends\sdl\SDL_FontCache.c">
-      <Filter>src\backends\sdl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_image.cpp">
-      <Filter>src\backends\sdl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_image_factory.cpp">
-      <Filter>src\backends\sdl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_ui_renderer.cpp">
-      <Filter>src\backends\sdl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_graphics.cpp">
-      <Filter>src\backends\sdl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\backends\vulkan\font_factory_vulkan.cpp">
-      <Filter>src\backends\vulkan</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\backends\vulkan\image_factory_vulkan.cpp">
-      <Filter>src\backends\vulkan</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\backends\vulkan\ui_renderer_vulkan.cpp">
-      <Filter>src\backends\vulkan</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\backends\vulkan\vulkan_app.cpp">
-      <Filter>src\backends\vulkan</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\external\imgui\backends\imgui_impl_glfw.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\external\imgui\backends\imgui_impl_vulkan.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\editor\src\backends\vulkan\vulkan_graphics.cpp">
-      <Filter>src\backends\vulkan</Filter>
+    <ClCompile Include="..\..\editor\src\backend\sdl\sdl_app.cpp">
+      <Filter>src\backend\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\sdl\sdl_events.cpp">
+      <Filter>src\backend\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\sdl\sdl_font.cpp">
+      <Filter>src\backend\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\sdl\sdl_font_factory.cpp">
+      <Filter>src\backend\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\sdl\SDL_FontCache.c">
+      <Filter>src\backend\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\sdl\sdl_graphics.cpp">
+      <Filter>src\backend\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\sdl\sdl_image.cpp">
+      <Filter>src\backend\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\sdl\sdl_image_factory.cpp">
+      <Filter>src\backend\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\sdl\sdl_ui_renderer.cpp">
+      <Filter>src\backend\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\vulkan\font_factory_vulkan.cpp">
+      <Filter>src\backend\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\vulkan\image_factory_vulkan.cpp">
+      <Filter>src\backend\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\vulkan\ui_renderer_vulkan.cpp">
+      <Filter>src\backend\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_app.cpp">
+      <Filter>src\backend\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_graphics.cpp">
+      <Filter>src\backend\vulkan</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

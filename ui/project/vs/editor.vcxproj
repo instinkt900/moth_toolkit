@@ -108,23 +108,24 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\editor\src\backends\igraphics.h" />
-    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_app.h" />
-    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_event_factory.h" />
-    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_font.h" />
-    <ClInclude Include="..\..\editor\src\backends\sdl\SDL_FontCache.h" />
-    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_font_factory.h" />
-    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_graphics.h" />
-    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_image.h" />
-    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_image_factory.h" />
-    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_ui_renderer.h" />
-    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_utils.h" />
-    <ClInclude Include="..\..\editor\src\backends\sdl\smart_sdl.h" />
-    <ClInclude Include="..\..\editor\src\backends\vulkan\font_factory_vulkan.h" />
-    <ClInclude Include="..\..\editor\src\backends\vulkan\image_factory_vulkan.h" />
-    <ClInclude Include="..\..\editor\src\backends\vulkan\ui_renderer_vulkan.h" />
-    <ClInclude Include="..\..\editor\src\backends\vulkan\vulkan_app.h" />
-    <ClInclude Include="..\..\editor\src\backends\vulkan\vulkan_graphics.h" />
+    <ClInclude Include="..\..\editor\src\backend\iapplication.h" />
+    <ClInclude Include="..\..\editor\src\backend\igraphics_context.h" />
+    <ClInclude Include="..\..\editor\src\backend\sdl\sdl_app.h" />
+    <ClInclude Include="..\..\editor\src\backend\sdl\sdl_events.h" />
+    <ClInclude Include="..\..\editor\src\backend\sdl\sdl_font.h" />
+    <ClInclude Include="..\..\editor\src\backend\sdl\SDL_FontCache.h" />
+    <ClInclude Include="..\..\editor\src\backend\sdl\sdl_font_factory.h" />
+    <ClInclude Include="..\..\editor\src\backend\sdl\sdl_graphics.h" />
+    <ClInclude Include="..\..\editor\src\backend\sdl\sdl_image.h" />
+    <ClInclude Include="..\..\editor\src\backend\sdl\sdl_image_factory.h" />
+    <ClInclude Include="..\..\editor\src\backend\sdl\sdl_ui_renderer.h" />
+    <ClInclude Include="..\..\editor\src\backend\sdl\sdl_utils.h" />
+    <ClInclude Include="..\..\editor\src\backend\sdl\smart_sdl.h" />
+    <ClInclude Include="..\..\editor\src\backend\vulkan\font_factory_vulkan.h" />
+    <ClInclude Include="..\..\editor\src\backend\vulkan\image_factory_vulkan.h" />
+    <ClInclude Include="..\..\editor\src\backend\vulkan\ui_renderer_vulkan.h" />
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_app.h" />
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_graphics.h" />
     <ClInclude Include="..\..\editor\src\common.h" />
     <ClInclude Include="..\..\editor\src\editor\actions\add_action.h" />
     <ClInclude Include="..\..\editor\src\editor\actions\add_clip_action.h" />
@@ -168,7 +169,6 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\editor\texture_packer.h" />
     <ClInclude Include="..\..\editor\src\editor\utils.h" />
     <ClInclude Include="..\..\editor\src\events\event.h" />
-    <ClInclude Include="..\..\editor\src\iapp.h" />
     <ClInclude Include="..\..\editor\src\imgui-filebrowser\imfilebrowser.h" />
     <ClInclude Include="..\..\editor\src\layers\layer.h" />
     <ClInclude Include="..\..\editor\src\layers\layer_stack.h" />
@@ -186,22 +186,22 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\external\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_app.cpp" />
-    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_event_factory.cpp" />
-    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_font.cpp" />
-    <ClCompile Include="..\..\editor\src\backends\sdl\SDL_FontCache.c">
+    <ClCompile Include="..\..\editor\src\backend\sdl\sdl_app.cpp" />
+    <ClCompile Include="..\..\editor\src\backend\sdl\sdl_events.cpp" />
+    <ClCompile Include="..\..\editor\src\backend\sdl\sdl_font.cpp" />
+    <ClCompile Include="..\..\editor\src\backend\sdl\SDL_FontCache.c">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
     </ClCompile>
-    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_font_factory.cpp" />
-    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_graphics.cpp" />
-    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_image.cpp" />
-    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_image_factory.cpp" />
-    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_ui_renderer.cpp" />
-    <ClCompile Include="..\..\editor\src\backends\vulkan\font_factory_vulkan.cpp" />
-    <ClCompile Include="..\..\editor\src\backends\vulkan\image_factory_vulkan.cpp" />
-    <ClCompile Include="..\..\editor\src\backends\vulkan\ui_renderer_vulkan.cpp" />
-    <ClCompile Include="..\..\editor\src\backends\vulkan\vulkan_app.cpp" />
-    <ClCompile Include="..\..\editor\src\backends\vulkan\vulkan_graphics.cpp" />
+    <ClCompile Include="..\..\editor\src\backend\sdl\sdl_font_factory.cpp" />
+    <ClCompile Include="..\..\editor\src\backend\sdl\sdl_graphics.cpp" />
+    <ClCompile Include="..\..\editor\src\backend\sdl\sdl_image.cpp" />
+    <ClCompile Include="..\..\editor\src\backend\sdl\sdl_image_factory.cpp" />
+    <ClCompile Include="..\..\editor\src\backend\sdl\sdl_ui_renderer.cpp" />
+    <ClCompile Include="..\..\editor\src\backend\vulkan\font_factory_vulkan.cpp" />
+    <ClCompile Include="..\..\editor\src\backend\vulkan\image_factory_vulkan.cpp" />
+    <ClCompile Include="..\..\editor\src\backend\vulkan\ui_renderer_vulkan.cpp" />
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_app.cpp" />
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_graphics.cpp" />
     <ClCompile Include="..\..\editor\src\editor\actions\add_action.cpp" />
     <ClCompile Include="..\..\editor\src\editor\actions\add_clip_action.cpp" />
     <ClCompile Include="..\..\editor\src\editor\actions\add_event_action.cpp" />

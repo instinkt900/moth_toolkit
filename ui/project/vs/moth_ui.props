@@ -11,6 +11,7 @@
     <FMT_DIR>D:\Development\moth_ui\external\fmt\build\installed</FMT_DIR>
     <GLFW_DIR>D:\Development\moth_ui\external\glfw\build\installed</GLFW_DIR>
     <VULKAN_DIR>C:\VulkanSDK\1.2.170.0</VULKAN_DIR>
+    <SPDLOG_DIR>D:\Development\moth_ui\external\spdlog\build\installed</SPDLOG_DIR>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
@@ -41,6 +42,9 @@
     </BuildMacro>
     <BuildMacro Include="VULKAN_DIR">
       <Value>$(VULKAN_DIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="SPDLOG_DIR">
+      <Value>$(SPDLOG_DIR)</Value>
     </BuildMacro>
   </ItemGroup>
 </Project>

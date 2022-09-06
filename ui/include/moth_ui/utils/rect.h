@@ -85,6 +85,20 @@ namespace moth_ui {
     }
 
     template <typename T>
+    inline Rect<T>& operator*=(Rect<T>& a, Vector<T, 2> const& b) {
+        a.topLeft *= b;
+        a.bottomRight *= b;
+        return a;
+    }
+
+    template <typename T>
+    inline Rect<T>& operator/=(Rect<T>& a, Vector<T, 2> const& b) {
+        a.topLeft /= b;
+        a.bottomRight /= b;
+        return a;
+    }
+
+    template <typename T>
     inline Rect<T> operator+(Rect<T> const& rect, T other) {
         auto ret = rect;
         ret += other;
@@ -107,6 +121,34 @@ namespace moth_ui {
 
     template <typename T>
     inline Rect<T> operator/(Rect<T> const& rect, T other) {
+        auto ret = rect;
+        ret /= other;
+        return ret;
+    }
+
+    template <typename T>
+    inline Rect<T> operator+(Rect<T> const& rect, Vector<T, 2> const& other) {
+        auto ret = rect;
+        ret += other;
+        return ret;
+    }
+
+    template <typename T>
+    inline Rect<T> operator-(Rect<T> const& rect, Vector<T, 2> const& other) {
+        auto ret = rect;
+        ret -= other;
+        return ret;
+    }
+
+    template <typename T>
+    inline Rect<T> operator*(Rect<T> const& rect, Vector<T, 2> const& other) {
+        auto ret = rect;
+        ret *= other;
+        return ret;
+    }
+
+    template <typename T>
+    inline Rect<T> operator/(Rect<T> const& rect, Vector<T, 2> const& other) {
         auto ret = rect;
         ret /= other;
         return ret;

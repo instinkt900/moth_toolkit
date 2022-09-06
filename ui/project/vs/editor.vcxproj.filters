@@ -34,6 +34,9 @@
     <Filter Include="src\backend\vulkan">
       <UniqueIdentifier>{e28f6f9d-bf5a-4952-937d-51329f5f371a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="murmurhash">
+      <UniqueIdentifier>{3c94d92e-6ce6-4e39-b922-360edb8e9e0f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\editor\src\common.h">
@@ -252,7 +255,7 @@
     <ClInclude Include="..\..\editor\src\backend\vulkan\font_factory_vulkan.h">
       <Filter>src\backend\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\editor\src\backend\vulkan\image_factory_vulkan.h">
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_image_factory.h">
       <Filter>src\backend\vulkan</Filter>
     </ClInclude>
     <ClInclude Include="..\..\editor\src\backend\vulkan\ui_renderer_vulkan.h">
@@ -262,6 +265,48 @@
       <Filter>src\backend\vulkan</Filter>
     </ClInclude>
     <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_graphics.h">
+      <Filter>src\backend\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_subimage.h">
+      <Filter>src\backend\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\stb_image.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_image.h">
+      <Filter>src\backend\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_context.h">
+      <Filter>src\backend\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_utils.h">
+      <Filter>src\backend\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\external\murmurhash.c\murmurhash.h">
+      <Filter>murmurhash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_shader.h">
+      <Filter>src\backend\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_pipeline.h">
+      <Filter>src\backend\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_renderpass.h">
+      <Filter>src\backend\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_buffer.h">
+      <Filter>src\backend\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_command_buffer.h">
+      <Filter>src\backend\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_framebuffer.h">
+      <Filter>src\backend\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_fence.h">
+      <Filter>src\backend\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_swapchain.h">
       <Filter>src\backend\vulkan</Filter>
     </ClInclude>
   </ItemGroup>
@@ -440,7 +485,7 @@
     <ClCompile Include="..\..\editor\src\backend\vulkan\font_factory_vulkan.cpp">
       <Filter>src\backend\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\editor\src\backend\vulkan\image_factory_vulkan.cpp">
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_image_factory.cpp">
       <Filter>src\backend\vulkan</Filter>
     </ClCompile>
     <ClCompile Include="..\..\editor\src\backend\vulkan\ui_renderer_vulkan.cpp">
@@ -450,6 +495,45 @@
       <Filter>src\backend\vulkan</Filter>
     </ClCompile>
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_graphics.cpp">
+      <Filter>src\backend\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_subimage.cpp">
+      <Filter>src\backend\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_vma.cpp">
+      <Filter>src\backend\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_image.cpp">
+      <Filter>src\backend\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_context.cpp">
+      <Filter>src\backend\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\external\murmurhash.c\murmurhash.c">
+      <Filter>murmurhash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_shader.cpp">
+      <Filter>src\backend\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_pipeline.cpp">
+      <Filter>src\backend\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_renderpass.cpp">
+      <Filter>src\backend\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_buffer.cpp">
+      <Filter>src\backend\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_command_buffer.cpp">
+      <Filter>src\backend\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_framebuffer.cpp">
+      <Filter>src\backend\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_fence.cpp">
+      <Filter>src\backend\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_swapchain.cpp">
       <Filter>src\backend\vulkan</Filter>
     </ClCompile>
   </ItemGroup>

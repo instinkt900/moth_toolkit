@@ -37,6 +37,9 @@
     <Filter Include="murmurhash">
       <UniqueIdentifier>{3c94d92e-6ce6-4e39-b922-360edb8e9e0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\backend\vulkan\shaders">
+      <UniqueIdentifier>{c11a4049-aa7b-446b-b2bd-73a837664af0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\editor\src\common.h">
@@ -536,5 +539,19 @@
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_swapchain.cpp">
       <Filter>src\backend\vulkan</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\editor\src\backend\vulkan\shaders\drawing_shader.frag">
+      <Filter>src\backend\vulkan\shaders</Filter>
+    </None>
+    <None Include="..\..\editor\src\backend\vulkan\shaders\drawing_shader.vert">
+      <Filter>src\backend\vulkan\shaders</Filter>
+    </None>
+    <None Include="..\..\editor\src\backend\vulkan\shaders\image_shader.frag">
+      <Filter>src\backend\vulkan\shaders</Filter>
+    </None>
+    <None Include="..\..\editor\src\backend\vulkan\shaders\image_shader.vert">
+      <Filter>src\backend\vulkan\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -129,7 +129,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_fence.h" />
     <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_framebuffer.h" />
     <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_image_factory.h" />
-    <ClInclude Include="..\..\editor\src\backend\vulkan\ui_renderer_vulkan.h" />
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_ui_renderer.h" />
     <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_app.h" />
     <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_graphics.h" />
     <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_subimage.h" />
@@ -218,7 +218,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_fence.cpp" />
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_framebuffer.cpp" />
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_image_factory.cpp" />
-    <ClCompile Include="..\..\editor\src\backend\vulkan\ui_renderer_vulkan.cpp" />
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_ui_renderer.cpp" />
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_app.cpp" />
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_graphics.cpp" />
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_subimage.cpp" />

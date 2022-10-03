@@ -258,7 +258,7 @@
     <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_image_factory.h">
       <Filter>src\backend\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\editor\src\backend\vulkan\ui_renderer_vulkan.h">
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_ui_renderer.h">
       <Filter>src\backend\vulkan</Filter>
     </ClInclude>
     <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_app.h">
@@ -488,7 +488,7 @@
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_image_factory.cpp">
       <Filter>src\backend\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\editor\src\backend\vulkan\ui_renderer_vulkan.cpp">
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_ui_renderer.cpp">
       <Filter>src\backend\vulkan</Filter>
     </ClCompile>
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_app.cpp">

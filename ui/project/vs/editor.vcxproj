@@ -61,7 +61,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NA_CONSOLE;_ITERATOR_DEBUG_LEVEL=0;_CRT_SECURE_NO_WARNINGS;IMGUI_DEFINE_MATH_OPERATORS;JSON_HAS_FILESYSTEM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\editor\src;..\..\external\murmurhash.c;..\..\external\imgui;..\..\include;$(SDL_DIR)\include;$(SDLIMAGE_DIR)\include;$(SDLTTF_DIR)\include;$(MAGICENUM_DIR)\include;$(NLOHMANN_DIR)\include;$(FMT_DIR)\include;$(RANGEV3_DIR)\include;$(GLFW_DIR)\include;$(VULKAN_DIR)\Include;$(SPDLOG_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\editor\src;..\..\external\murmurhash.c;..\..\external\imgui;..\..\include;$(SDL_DIR)\include;$(SDLIMAGE_DIR)\include;$(SDLTTF_DIR)\include;$(MAGICENUM_DIR)\include;$(NLOHMANN_DIR)\include;$(FMT_DIR)\include;$(RANGEV3_DIR)\include;$(GLFW_DIR)\include;$(VULKAN_DIR)\Include;$(SPDLOG_DIR)\include;$(FREETYPE_DIR)\include\freetype2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -70,8 +70,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SDL_DIR)\lib\x64;$(SDLIMAGE_DIR)\lib\x64;$(SDLTTF_DIR)\lib\x64;$(FMT_DIR)\lib;$(GLFW_DIR)\lib;$(VULKAN_DIR)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;fmt.lib;glfw3.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SDL_DIR)\lib\x64;$(SDLIMAGE_DIR)\lib\x64;$(SDLTTF_DIR)\lib\x64;$(FMT_DIR)\lib;$(GLFW_DIR)\lib;$(VULKAN_DIR)\Lib;$(FREETYPE_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;fmt.lib;glfw3.lib;vulkan-1.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
@@ -122,6 +122,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\backend\sdl\sdl_utils.h" />
     <ClInclude Include="..\..\editor\src\backend\sdl\smart_sdl.h" />
     <ClInclude Include="..\..\editor\src\backend\vulkan\font_factory_vulkan.h" />
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_font.h" />
     <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_swapchain.h" />
     <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_buffer.h" />
     <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_command_buffer.h" />
@@ -216,6 +217,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_command_buffer.cpp" />
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_context.cpp" />
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_fence.cpp" />
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_font.cpp" />
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_framebuffer.cpp" />
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_image_factory.cpp" />
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_ui_renderer.cpp" />

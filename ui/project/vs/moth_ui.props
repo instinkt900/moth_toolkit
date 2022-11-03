@@ -12,6 +12,7 @@
     <GLFW_DIR>D:\Development\moth_ui\external\glfw\build\installed</GLFW_DIR>
     <VULKAN_DIR>C:\VulkanSDK\1.3.216.0</VULKAN_DIR>
     <SPDLOG_DIR>D:\Development\moth_ui\external\spdlog\build\installed</SPDLOG_DIR>
+    <FREETYPE_DIR>D:\Development\moth_ui_externals\freetype-2.12.1-win64</FREETYPE_DIR>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
@@ -45,6 +46,9 @@
     </BuildMacro>
     <BuildMacro Include="SPDLOG_DIR">
       <Value>$(SPDLOG_DIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="FREETYPE_DIR">
+      <Value>$(FREETYPE_DIR)</Value>
     </BuildMacro>
   </ItemGroup>
 </Project>

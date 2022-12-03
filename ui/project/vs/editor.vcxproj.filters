@@ -327,6 +327,9 @@
     <ClInclude Include="..\..\editor\src\backend\vulkan\font\outline.h">
       <Filter>src\backend\vulkan\font</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\sdl\sdl_ttf_shim.h">
+      <Filter>src\backend\sdl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\editor\src\main.cpp">
@@ -562,6 +565,9 @@
     </ClCompile>
     <ClCompile Include="..\..\editor\src\backend\vulkan\font\outline.c">
       <Filter>src\backend\vulkan\font</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\sdl\sdl_ttf_shim.c">
+      <Filter>src\backend\sdl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

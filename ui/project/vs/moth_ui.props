@@ -10,7 +10,7 @@
     <RANGEV3_DIR>e:\Development\moth_ui\external\range-v3</RANGEV3_DIR>
     <FMT_DIR>e:\Development\moth_ui\external\fmt\build\installed</FMT_DIR>
     <GLFW_DIR>e:\Development\moth_ui\external\glfw\build\installed</GLFW_DIR>
-    <VULKAN_DIR>C:\VulkanSDK\1.3.231.1</VULKAN_DIR>
+    <VULKAN_DIR>C:\VulkanSDK\1.3.250.1</VULKAN_DIR>
     <SPDLOG_DIR>e:\Development\moth_ui\external\spdlog\build\installed</SPDLOG_DIR>
     <FREETYPE_DIR>E:\Development\moth_ui\external\freetype\build\installed</FREETYPE_DIR>
   </PropertyGroup>

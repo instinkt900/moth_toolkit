@@ -190,6 +190,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\layers\layer.h" />
     <ClInclude Include="..\..\editor\src\layers\layer_stack.h" />
     <ClInclude Include="..\..\editor\src\stb_image.h" />
+    <ClInclude Include="..\..\editor\src\stb_image_write.h" />
     <ClInclude Include="..\..\editor\src\stb_rect_pack.h" />
     <ClInclude Include="..\..\editor\src\utils.h" />
     <ClInclude Include="..\..\external\imgui\backends\imgui_impl_glfw.h" />

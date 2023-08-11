@@ -330,6 +330,9 @@
     <ClInclude Include="..\..\editor\src\backend\sdl\sdl_ttf_shim.h">
       <Filter>src\backend\sdl</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\editor\src\stb_image_write.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\editor\src\main.cpp">

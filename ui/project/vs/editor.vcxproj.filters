@@ -324,6 +324,9 @@
     <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_font_cache.h">
       <Filter>src\backend\vulkan</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_events.h">
+      <Filter>src\backend\vulkan</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\editor\src\main.cpp">
@@ -558,6 +561,9 @@
       <Filter>src\backend\sdl</Filter>
     </ClCompile>
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_font_cache.cpp">
+      <Filter>src\backend\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_events.cpp">
       <Filter>src\backend\vulkan</Filter>
     </ClCompile>
   </ItemGroup>

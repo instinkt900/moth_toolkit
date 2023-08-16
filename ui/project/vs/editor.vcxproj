@@ -122,9 +122,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\backend\sdl\sdl_ui_renderer.h" />
     <ClInclude Include="..\..\editor\src\backend\sdl\sdl_utils.h" />
     <ClInclude Include="..\..\editor\src\backend\sdl\smart_sdl.h" />
-    <ClInclude Include="..\..\editor\src\backend\vulkan\font\geometry.h" />
-    <ClInclude Include="..\..\editor\src\backend\vulkan\font\linmath.h" />
-    <ClInclude Include="..\..\editor\src\backend\vulkan\font\outline.h" />
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_font_cache.h" />
     <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_font_factory.h" />
     <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_font.h" />
     <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_swapchain.h" />
@@ -218,12 +216,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClCompile Include="..\..\editor\src\backend\sdl\sdl_image_factory.cpp" />
     <ClCompile Include="..\..\editor\src\backend\sdl\sdl_ttf_shim.c" />
     <ClCompile Include="..\..\editor\src\backend\sdl\sdl_ui_renderer.cpp" />
-    <ClCompile Include="..\..\editor\src\backend\vulkan\font\geometry.c">
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\backend\vulkan\font\outline.c">
-      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_font_cache.cpp" />
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_font_factory.cpp" />
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_buffer.cpp" />
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_command_buffer.cpp" />
@@ -298,7 +291,6 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\editor\src\backend\vulkan\font\LICENSE" />
     <None Include="..\..\editor\src\backend\vulkan\shaders\drawing_shader.frag" />
     <None Include="..\..\editor\src\backend\vulkan\shaders\drawing_shader.vert" />
     <None Include="..\..\editor\src\backend\vulkan\shaders\image_shader.frag" />

@@ -40,9 +40,6 @@
     <Filter Include="src\backend\vulkan\shaders">
       <UniqueIdentifier>{c11a4049-aa7b-446b-b2bd-73a837664af0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\backend\vulkan\font">
-      <UniqueIdentifier>{b6c74200-2745-4c4f-b5fa-412f6f5dae0c}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\editor\src\common.h">
@@ -318,20 +315,14 @@
     <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_font_factory.h">
       <Filter>src\backend\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\editor\src\backend\vulkan\font\geometry.h">
-      <Filter>src\backend\vulkan\font</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\backend\vulkan\font\linmath.h">
-      <Filter>src\backend\vulkan\font</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\backend\vulkan\font\outline.h">
-      <Filter>src\backend\vulkan\font</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\editor\src\backend\sdl\sdl_ttf_shim.h">
       <Filter>src\backend\sdl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\editor\src\stb_image_write.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\backend\vulkan\vulkan_font_cache.h">
+      <Filter>src\backend\vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -563,14 +554,11 @@
     <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_font.cpp">
       <Filter>src\backend\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\editor\src\backend\vulkan\font\geometry.c">
-      <Filter>src\backend\vulkan\font</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\backend\vulkan\font\outline.c">
-      <Filter>src\backend\vulkan\font</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\editor\src\backend\sdl\sdl_ttf_shim.c">
       <Filter>src\backend\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\backend\vulkan\vulkan_font_cache.cpp">
+      <Filter>src\backend\vulkan</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -585,9 +573,6 @@
     </None>
     <None Include="..\..\editor\src\backend\vulkan\shaders\image_shader.vert">
       <Filter>src\backend\vulkan\shaders</Filter>
-    </None>
-    <None Include="..\..\editor\src\backend\vulkan\font\LICENSE">
-      <Filter>src\backend\vulkan\font</Filter>
     </None>
   </ItemGroup>
 </Project>

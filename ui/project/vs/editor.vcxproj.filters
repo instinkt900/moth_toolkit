@@ -237,8 +237,8 @@
     <ClInclude Include="..\..\editor\src\iapp.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\editor\src\backends\backend_utils.h">
-      <Filter>src\backends</Filter>
+    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_graphics.h">
+      <Filter>src\backends\sdl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -407,7 +407,7 @@
     <ClCompile Include="..\..\editor\src\backends\sdl\sdl_imgui.cpp">
       <Filter>src\backends\sdl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_utils.cpp">
+    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_graphics.cpp">
       <Filter>src\backends\sdl</Filter>
     </ClCompile>
   </ItemGroup>

@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -109,12 +109,12 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\editor\src\backends\backend_imgui.h" />
-    <ClInclude Include="..\..\editor\src\backends\backend_utils.h" />
     <ClInclude Include="..\..\editor\src\backends\sdl\sdl_app.h" />
     <ClInclude Include="..\..\editor\src\backends\sdl\sdl_event_factory.h" />
     <ClInclude Include="..\..\editor\src\backends\sdl\sdl_font.h" />
     <ClInclude Include="..\..\editor\src\backends\sdl\SDL_FontCache.h" />
     <ClInclude Include="..\..\editor\src\backends\sdl\sdl_font_factory.h" />
+    <ClInclude Include="..\..\editor\src\backends\sdl\sdl_graphics.h" />
     <ClInclude Include="..\..\editor\src\backends\sdl\sdl_image.h" />
     <ClInclude Include="..\..\editor\src\backends\sdl\sdl_image_factory.h" />
     <ClInclude Include="..\..\editor\src\backends\sdl\sdl_ui_renderer.h" />
@@ -186,11 +186,11 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
     </ClCompile>
     <ClCompile Include="..\..\editor\src\backends\sdl\sdl_font_factory.cpp" />
+    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_graphics.cpp" />
     <ClCompile Include="..\..\editor\src\backends\sdl\sdl_image.cpp" />
     <ClCompile Include="..\..\editor\src\backends\sdl\sdl_image_factory.cpp" />
     <ClCompile Include="..\..\editor\src\backends\sdl\sdl_imgui.cpp" />
     <ClCompile Include="..\..\editor\src\backends\sdl\sdl_ui_renderer.cpp" />
-    <ClCompile Include="..\..\editor\src\backends\sdl\sdl_utils.cpp" />
     <ClCompile Include="..\..\editor\src\editor\actions\add_action.cpp" />
     <ClCompile Include="..\..\editor\src\editor\actions\add_clip_action.cpp" />
     <ClCompile Include="..\..\editor\src\editor\actions\add_event_action.cpp" />

@@ -14,3 +14,4 @@ imgui.ini
 /lib/win/x64
 /project/vs/editor/Release
 /editor/editor.json
+CMakeUserPresets.json

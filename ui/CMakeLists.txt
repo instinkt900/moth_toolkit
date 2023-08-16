@@ -10,9 +10,6 @@ add_compile_definitions(_CRT_SECURE_NO_WARNINGS _ITERATOR_DEBUG_LEVEL=0)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MD")
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
-
 set(SOURCES ${SOURCES}
 	src/layout/layout.cpp
 	src/layout/layout_cache.cpp
@@ -35,8 +32,17 @@ set(SOURCES ${SOURCES}
 	src/node_text.cpp
 )
 
+find_package(nlohmann_json REQUIRED)
+find_package(fmt REQUIRED)
+find_package(magic_enum REQUIRED)
+find_package(range-v3 REQUIRED)
+
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 target_include_directories(${PROJECT_NAME} PRIVATE src)
+target_link_libraries(${PROJECT_NAME} nlohmann_json::nlohmann_json)
+target_link_libraries(${PROJECT_NAME} fmt::fmt)
+target_link_libraries(${PROJECT_NAME} magic_enum::magic_enum)
+target_link_libraries(${PROJECT_NAME} range-v3::range-v3)
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/W3 /WX")

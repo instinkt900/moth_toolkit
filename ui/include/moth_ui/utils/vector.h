@@ -2,6 +2,8 @@
 
 #include <array>
 
+#pragma pack(push, 1)
+
 namespace moth_ui {
     template <class T, int Dim>
     class VectorData {
@@ -54,7 +56,6 @@ namespace moth_ui {
         using VectorData<T, Dim>::data;
 
         Vector() = default;
-        virtual ~Vector() = default;
 
         template <class... Scalars, std::enable_if_t<Dim >= 2 && std::conjunction_v<std::is_convertible<Scalars, T>...> && sizeof...(Scalars) == Dim, bool> = true>
         Vector(Scalars... scalars) {
@@ -178,3 +179,5 @@ namespace moth_ui {
     using FloatVec2 = Vector<float, 2>;
     using IntVec2 = Vector<int, 2>;
 }
+
+#pragma pack(pop)

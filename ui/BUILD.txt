@@ -1,0 +1,8 @@
+Building notes.
+
+Update vs props to point to the correct paths of deps
+Build external fmt..
+	mkdir build; cd build
+	cmake .. -DCMAKE_INSTALL_PREFIX=installed
+	cmake --build . --config Release --target install
+Build external spdlog the same way

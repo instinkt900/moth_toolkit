@@ -19,7 +19,7 @@ namespace moth_ui {
         void SetText(std::string const& text) { m_text = text; }
 
     protected:
-        std::unique_ptr<IFont> m_font;
+        std::shared_ptr<IFont> m_font;
         std::string m_text;
         TextHorizAlignment m_horizontalAlignment;
         TextVertAlignment m_verticalAlignment;

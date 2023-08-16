@@ -5,10 +5,14 @@
     <SDL_DIR>E:\Development\SDL2-2.24.2</SDL_DIR>
     <SDLIMAGE_DIR>E:\Development\SDL2_image-2.6.2</SDLIMAGE_DIR>
     <SDLTTF_DIR>E:\Development\SDL2_ttf-2.20.1</SDLTTF_DIR>
-    <NLOHMANN_DIR>E:\Development\moth_ui\external\json</NLOHMANN_DIR>
-    <MAGICENUM_DIR>E:\Development\moth_ui\external\magic_enum</MAGICENUM_DIR>
-    <RANGEV3_DIR>E:\Development\moth_ui\external\range-v3</RANGEV3_DIR>
-    <FMT_DIR>E:\Development\moth_ui\external\fmt</FMT_DIR>
+    <NLOHMANN_DIR>e:\Development\moth_ui\external\json</NLOHMANN_DIR>
+    <MAGICENUM_DIR>e:\Development\moth_ui\external\magic_enum</MAGICENUM_DIR>
+    <RANGEV3_DIR>e:\Development\moth_ui\external\range-v3</RANGEV3_DIR>
+    <FMT_DIR>e:\Development\moth_ui\external\fmt\build\installed</FMT_DIR>
+    <GLFW_DIR>e:\Development\moth_ui\external\glfw\build\installed</GLFW_DIR>
+    <VULKAN_DIR>C:\VulkanSDK\1.3.250.1</VULKAN_DIR>
+    <SPDLOG_DIR>e:\Development\moth_ui\external\spdlog\build\installed</SPDLOG_DIR>
+    <FREETYPE_DIR>E:\Development\moth_ui\external\freetype\build\installed</FREETYPE_DIR>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
@@ -33,6 +37,18 @@
     </BuildMacro>
     <BuildMacro Include="FMT_DIR">
       <Value>$(FMT_DIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="GLFW_DIR">
+      <Value>$(GLFW_DIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="VULKAN_DIR">
+      <Value>$(VULKAN_DIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="SPDLOG_DIR">
+      <Value>$(SPDLOG_DIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="FREETYPE_DIR">
+      <Value>$(FREETYPE_DIR)</Value>
     </BuildMacro>
   </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@
 
 namespace moth_ui {
     class IImage;
+    class ITarget;
     class IFont;
 
     class Event;

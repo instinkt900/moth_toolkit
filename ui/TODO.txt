@@ -15,12 +15,13 @@ Updates to animation events...
 Remove events track from nodes.
 When setting an animation on group. Have a ClipController or something that handles the start/events/end events
 
+Make clip rects more intuitive. ie. clipping things below/above, not just the whole layout
+
 
 Features
 --------
 flipbook animation?
 texture packing.
-Add color customisation to editor colors.
 allow multiple panels. specifically for asset panels.
 Prebuilt rendering backends. SDL, OpenGL, Vulkan, DirectX?
 binary versions of layouts.

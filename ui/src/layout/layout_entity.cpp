@@ -5,6 +5,7 @@
 #include "moth_ui/layout/layout_entity_image.h"
 #include "moth_ui/layout/layout_entity_rect.h"
 #include "moth_ui/layout/layout_entity_ref.h"
+#include "moth_ui/layout/layout_entity_clip.h"
 #include "moth_ui/node.h"
 
 namespace moth_ui {
@@ -18,6 +19,8 @@ namespace moth_ui {
             return std::make_unique<LayoutEntityRect>(nullptr);
         case LayoutEntityType::Ref:
             return std::make_unique<LayoutEntityRef>(nullptr);
+        case LayoutEntityType::Clip:
+            return std::make_unique<LayoutEntityClip>(nullptr);
         default:
             assert(false && "unknown entity type");
             return nullptr;

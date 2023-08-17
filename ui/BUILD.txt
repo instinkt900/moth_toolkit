@@ -6,3 +6,14 @@ Build external fmt..
 	cmake .. -DCMAKE_INSTALL_PREFIX=installed
 	cmake --build . --config Release --target install
 Build external spdlog the same way
+
+Build editor...
+
+cd editor
+mkdir build
+cd build
+conan install .. --output-folder=. --build=missing
+cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
+cmake --build . --config Release
+
+copy fonts and shaders

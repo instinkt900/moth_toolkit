@@ -24,19 +24,8 @@ jobs:
     - name: Create default profile
       run: conan profile detect --force
 
-    - run: echo "PATH=$(conan profile path default)" >> $GITHUB_OUTPUT
-      id: conan-profile-path
-
-    - name: Find and Replace
-      uses: jacobtomlinson/gha-find-replace@v3
-      with:
-        find: "compiler.cppstd=14"
-        replace: "compiler.cppstd=17"
-        regex: false
-        include: ${{ steps.conan-profile-path.outputs.PATH }}
-
     - name: Install dependencies
-      run: conan install editor/ --output-folder=${{github.workspace}}/build --build=missing
+      run: conan install -s compiler.cppstd=17 editor/ --output-folder=${{github.workspace}}/build --build=missing
 
     - name: Configure CMake
       run: cmake ${{github.workspace}}/build -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_POLICY_DEFAULT_CMP0091=NEW

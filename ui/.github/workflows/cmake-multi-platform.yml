@@ -28,7 +28,7 @@ jobs:
       run: conan install -s compiler.cppstd=17 editor/ --output-folder=${{github.workspace}}/build --build=missing
 
     - name: Configure CMake
-      run: cmake ${{github.workspace}}/build -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
+      run: cmake ${{github.workspace}} -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/build/conan_toolchain.cmake -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
 
     - name: Build
       # Build your program with the given configuration

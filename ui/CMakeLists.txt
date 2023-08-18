@@ -10,6 +10,57 @@ add_compile_definitions(_CRT_SECURE_NO_WARNINGS _ITERATOR_DEBUG_LEVEL=0)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MD")
 
+set(PUBLIC_HEADERS
+	include/moth_ui/animation_clip.h
+	include/moth_ui/animation_controller.h
+	include/moth_ui/animation_track.h
+	include/moth_ui/blend_mode.h
+	include/moth_ui/clip_controller.h
+	include/moth_ui/context.h
+	include/moth_ui/events/event.h
+	include/moth_ui/events/event_animation.h
+	include/moth_ui/events/event_key.h
+	include/moth_ui/events/event_mouse.h
+	include/moth_ui/event_dispatch.h
+	include/moth_ui/event_listener.h
+	include/moth_ui/group.h
+	include/moth_ui/ifont.h
+	include/moth_ui/ifont_factory.h
+	include/moth_ui/iimage.h
+	include/moth_ui/iimage_factory.h
+	include/moth_ui/image_scale_type.h
+	include/moth_ui/irenderer.h
+	include/moth_ui/itarget.h
+	include/moth_ui/layout/layout.h
+	include/moth_ui/layout/layout_cache.h
+	include/moth_ui/layout/layout_entity.h
+	include/moth_ui/layout/layout_entity_clip.h
+	include/moth_ui/layout/layout_entity_group.h
+	include/moth_ui/layout/layout_entity_image.h
+	include/moth_ui/layout/layout_entity_rect.h
+	include/moth_ui/layout/layout_entity_ref.h
+	include/moth_ui/layout/layout_entity_text.h
+	include/moth_ui/layout/layout_entity_type.h
+	include/moth_ui/layout/layout_rect.h
+	include/moth_ui/node.h
+	include/moth_ui/node_clip.h
+	include/moth_ui/node_factory.h
+	include/moth_ui/node_image.h
+	include/moth_ui/node_rect.h
+	include/moth_ui/node_text.h
+	include/moth_ui/text_alignment.h
+	include/moth_ui/ui_fwd.h
+	include/moth_ui/utils/color.h
+	include/moth_ui/utils/interp.h
+	include/moth_ui/utils/math_utils.h
+	include/moth_ui/utils/rect.h
+	include/moth_ui/utils/rect_serialization.h
+	include/moth_ui/utils/serialize_utils.h
+	include/moth_ui/utils/vector.h
+	include/moth_ui/utils/vector_serialization.h
+	include/moth_ui/widget.h
+)
+
 set(SOURCES ${SOURCES}
 	src/layout/layout.cpp
 	src/layout/layout_cache.cpp
@@ -46,3 +97,10 @@ target_link_libraries(${PROJECT_NAME} magic_enum::magic_enum)
 target_link_libraries(${PROJECT_NAME} range-v3::range-v3)
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/W3 /WX")
+
+install(TARGETS ${PROJECT_NAME} DESTINATION lib)
+install(DIRECTORY "include/" # source directory
+        DESTINATION "include" # target directory
+        FILES_MATCHING # install only matched files
+        PATTERN "*.h" # select header files
+)

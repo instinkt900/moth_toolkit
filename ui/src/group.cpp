@@ -60,17 +60,9 @@ namespace moth_ui {
         }
 
         child->SetParent(this);
-
-        if (auto const clipNode = std::dynamic_pointer_cast<NodeClip>(child)) {
-            m_clipRect = clipNode.get();
-        }
     }
 
     void Group::RemoveChild(std::shared_ptr<Node> child) {
-        if (child.get() == m_clipRect) {
-            m_clipRect = nullptr;
-        }
-
         auto it = ranges::find(m_children, child);
         if (std::end(m_children) != it) {
             (*it)->SetParent(nullptr);
@@ -131,17 +123,16 @@ namespace moth_ui {
     }
 
     void Group::DrawInternal() {
-        bool popClip = false;
-        if (m_clipRect && m_clipRect->IsVisible()) {
-            Context::GetCurrentContext()->GetRenderer().PushClip(m_clipRect->GetScreenRect());
-            popClip = true;
-        }
-
+        int clipRects = 0;
         for (auto&& child : m_children) {
+            if (auto const clipNode = std::dynamic_pointer_cast<NodeClip>(child)) {
+                Context::GetCurrentContext()->GetRenderer().PushClip(clipNode->GetScreenRect());
+                ++clipRects;
+            }
             child->Draw();
         }
 
-        if (popClip) {
+        while (clipRects--) {
             Context::GetCurrentContext()->GetRenderer().PopClip();
         }
     }

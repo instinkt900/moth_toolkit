@@ -14,6 +14,7 @@ namespace moth_ui {
         explicit LayoutEntity(LayoutRect const& initialBounds);
         explicit LayoutEntity(LayoutEntityGroup* parent);
         LayoutEntity(LayoutEntity const& other);
+	virtual ~LayoutEntity() {}
 
         enum class CloneType {
             Deep,

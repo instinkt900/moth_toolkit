@@ -18,8 +18,8 @@ namespace moth_ui {
         nlohmann::json Serialize(SerializeContext const& context) const override;
         bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
 
-        virtual nlohmann::json SerializeOverrides() const;
-        virtual void DeserializeOverrides(nlohmann::json const& overridesJson);
+        virtual nlohmann::json SerializeOverrides() const override;
+        virtual void DeserializeOverrides(nlohmann::json const& overridesJson) override;
 
         std::string m_fontName;
         int m_fontSize = 16;

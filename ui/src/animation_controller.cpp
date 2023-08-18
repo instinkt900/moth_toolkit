@@ -35,6 +35,8 @@ namespace {
             return node->GetColor().b;
         case AnimationTrack::Target::ColorAlpha:
             return node->GetColor().a;
+	case AnimationTrack::Target::Unknown:
+	    break;
         }
 
         // just a value dump for unknown targets

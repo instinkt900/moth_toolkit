@@ -1,6 +1,6 @@
 # Moth UI
 ![Windows Build Status](https://github.com/instinkt900/moth_ui/actions/workflows/cmake-build-lib-win.yml/badge.svg) 
-![Linux Build Status](https://github.com/instinkt900/moth_ui/actions/workflows/cmake-build-lib-linux.yml/badge.svg)
+![Linux Build Status](https://github.com/instinkt900/moth_ui/actions/workflows/cmake-build-lib-linux.yml/badge.svg)  
 A C++ Flash-like framework for building 2D UIs for graphical applications such as games and media. It supports basic keyframed animations and various mouse and keyboard events. Custom events can also be fired off back to a listening application during animations to handle synchronization between the UI and application.
 
 ### Building

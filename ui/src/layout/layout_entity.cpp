@@ -135,7 +135,6 @@ namespace moth_ui {
 
             if (json.contains("tracks")) {
                 auto const& tracksJson = json["tracks"];
-                auto const* animationClips = m_parent ? &m_parent->m_clips : nullptr;
                 for (auto&& trackJson : tracksJson) {
                     auto track = std::make_unique<AnimationTrack>(trackJson);
                     m_tracks.erase(track->GetTarget());

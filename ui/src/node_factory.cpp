@@ -51,7 +51,8 @@ namespace moth_ui {
         case LayoutEntityType::Ref:
         case LayoutEntityType::Layout:
             return Create(std::static_pointer_cast<LayoutEntityGroup>(entity));
+	default:
+	    return entity->Instantiate();
         }
-        return entity->Instantiate();
     }
 }

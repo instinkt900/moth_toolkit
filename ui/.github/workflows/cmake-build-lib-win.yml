@@ -1,4 +1,4 @@
-name: CMake
+name: Build Lib Windows
 
 on:
   workflow_dispatch:
@@ -29,32 +29,6 @@ jobs:
     - name: Configure CMake
       working-directory: ${{github.workspace}}/build
       run: cmake .. -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/build/conan_toolchain.cmake -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
-
-    - name: Build
-      working-directory: ${{github.workspace}}/build
-      run: cmake --build . --config ${{env.BUILD_TYPE}}
-      
-  build-linux:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    
-    - name: Get Conan
-      uses: turtlebrowser/get-conan@v1.0
-      
-    - name: Create default profile
-      run: conan profile detect --force
-
-    - name: Create build dir
-      run: mkdir -p ${{github.workspace}}/build
-
-    - name: Install dependencies
-      working-directory: ${{github.workspace}}/build
-      run: conan install -s compiler.cppstd=17 .. --output-folder=. --build=missing
-
-    - name: Configure CMake
-      working-directory: ${{github.workspace}}/build
-      run: cmake .. -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/build/conan_toolchain.cmake -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
 
     - name: Build
       working-directory: ${{github.workspace}}/build

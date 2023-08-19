@@ -1,4 +1,4 @@
-#include "sdl_ttf_shim.h"
+#include "sdl/sdl_ttf_shim.h"
 #include <windows.h>
 
 PFNTTFINITPROC TTF_Init_Shim = NULL;

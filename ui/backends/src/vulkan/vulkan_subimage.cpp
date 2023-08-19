@@ -1,6 +1,6 @@
 #include "common.h"
-#include "vulkan_subimage.h"
-#include "vulkan_graphics.h"
+#include "vulkan/vulkan_subimage.h"
+#include "vulkan/vulkan_graphics.h"
 
 namespace backend::vulkan {
     Graphics* SubImage::s_graphicsContext = nullptr;

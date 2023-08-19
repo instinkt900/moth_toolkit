@@ -1,6 +1,6 @@
 #include "common.h"
-#include "vulkan_context.h"
-#include "vulkan_utils.h"
+#include "vulkan/vulkan_context.h"
+#include "vulkan/vulkan_utils.h"
 
 namespace {
     std::vector<char const*> validationLayers = {

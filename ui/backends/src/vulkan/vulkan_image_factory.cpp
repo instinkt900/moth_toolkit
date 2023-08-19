@@ -1,7 +1,7 @@
 #include "common.h"
-#include "vulkan_image_factory.h"
+#include "vulkan/vulkan_image_factory.h"
 #include "moth_ui/utils/rect_serialization.h"
-#include "vulkan_subimage.h"
+#include "vulkan/vulkan_subimage.h"
 
 namespace backend::vulkan {
     ImageFactory::ImageFactory(Context& context, Graphics& graphics)

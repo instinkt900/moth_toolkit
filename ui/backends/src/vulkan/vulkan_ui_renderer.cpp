@@ -1,7 +1,7 @@
 #include "common.h"
 #include "vulkan/vulkan_ui_renderer.h"
-#include "vulkan_graphics.h"
-#include "vulkan_font.h"
+#include "vulkan/vulkan_graphics.h"
+#include "vulkan/vulkan_font.h"
 
 namespace backend::vulkan {
     UIRenderer::UIRenderer(Graphics& graphics)

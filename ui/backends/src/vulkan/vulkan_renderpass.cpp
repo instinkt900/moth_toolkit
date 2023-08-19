@@ -1,7 +1,7 @@
 #include "common.h"
-#include "vulkan_renderpass.h"
+#include "vulkan/vulkan_renderpass.h"
 
-#include "vulkan_utils.h"
+#include "vulkan/vulkan_utils.h"
 
 namespace backend::vulkan {
     RenderPass::RenderPass(uint32_t hash, VkDevice device, VkRenderPass renderPass)

@@ -1,5 +1,5 @@
 #include "common.h"
-#include "sdl_events.h"
+#include "sdl/sdl_events.h"
 
 #include "moth_ui/events/event_key.h"
 #include "moth_ui/events/event_mouse.h"

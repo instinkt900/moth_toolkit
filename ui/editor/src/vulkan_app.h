@@ -8,9 +8,9 @@
 #include "moth_ui/ifont_factory.h"
 #include "moth_ui/irenderer.h"
 
-#include "vulkan_context.h"
-#include "vulkan_graphics.h"
-#include "vulkan_swapchain.h"
+#include "vulkan/vulkan_context.h"
+#include "vulkan/vulkan_graphics.h"
+#include "vulkan/vulkan_swapchain.h"
 
 namespace backend::vulkan {
     class Application : public IApplication, public moth_ui::EventListener {
@@ -54,8 +54,10 @@ namespace backend::vulkan {
 
         std::unique_ptr<LayerStack> m_layerStack;
 
+        std::string m_imguiSettingsPath;
         std::filesystem::path m_persistentFilePath;
         nlohmann::json m_persistentState;
+        static char const* const IMGUI_FILE;
         static char const* const PERSISTENCE_FILE;
 
         std::unique_ptr<moth_ui::IImageFactory> m_imageFactory;

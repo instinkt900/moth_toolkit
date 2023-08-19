@@ -1,5 +1,5 @@
 #include "common.h"
-#include "vulkan_font_cache.h"
+#include "vulkan/vulkan_font_cache.h"
 
 namespace backend::vulkan {
     FontCache::FontCache(Context& context, Graphics& graphics)
@@ -22,6 +22,10 @@ namespace backend::vulkan {
         }
 
         return fontSizeIt->second;
+    }
+    
+    void FontCache::Clear() {
+        m_fonts.clear();
     }
 
     std::shared_ptr<moth_ui::IFont> FontCache::LoadFont(std::string const& path, int size) {

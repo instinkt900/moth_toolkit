@@ -1,5 +1,5 @@
 #include "common.h"
-#include "vulkan_pipeline.h"
+#include "vulkan/vulkan_pipeline.h"
 
 namespace backend::vulkan {
     Pipeline::Pipeline(uint32_t hash, VkDevice device, VkPipeline pipeline, std::shared_ptr<Shader> shader)

@@ -1,5 +1,5 @@
 #include "common.h"
-#include "sdl_image.h"
+#include "sdl/sdl_image.h"
 
 namespace backend::sdl {
     Image::Image(TextureRef texture)

@@ -252,6 +252,96 @@
     <ClInclude Include="..\..\backends\include\sdl\sdl_application.h">
       <Filter>backends\include\sdl</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_app.h">
+      <Filter>backends\src\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_buffer.h">
+      <Filter>backends\src\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_command_buffer.h">
+      <Filter>backends\src\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_context.h">
+      <Filter>backends\src\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_events.h">
+      <Filter>backends\src\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_fence.h">
+      <Filter>backends\src\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_font.h">
+      <Filter>backends\src\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_font_cache.h">
+      <Filter>backends\src\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_font_factory.h">
+      <Filter>backends\src\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_framebuffer.h">
+      <Filter>backends\src\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_graphics.h">
+      <Filter>backends\src\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_image.h">
+      <Filter>backends\src\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_image_factory.h">
+      <Filter>backends\src\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_pipeline.h">
+      <Filter>backends\src\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_renderpass.h">
+      <Filter>backends\src\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_shader.h">
+      <Filter>backends\src\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_subimage.h">
+      <Filter>backends\src\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_swapchain.h">
+      <Filter>backends\src\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_utils.h">
+      <Filter>backends\src\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\sdl\sdl_app.h">
+      <Filter>backends\src\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\sdl\sdl_events.h">
+      <Filter>backends\src\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\sdl\sdl_font.h">
+      <Filter>backends\src\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\sdl\sdl_font_factory.h">
+      <Filter>backends\src\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\sdl\SDL_FontCache.h">
+      <Filter>backends\src\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\sdl\sdl_graphics.h">
+      <Filter>backends\src\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\sdl\sdl_image.h">
+      <Filter>backends\src\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\sdl\sdl_image_factory.h">
+      <Filter>backends\src\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\sdl\sdl_ttf_shim.h">
+      <Filter>backends\src\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\sdl\sdl_utils.h">
+      <Filter>backends\src\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\src\sdl\smart_sdl.h">
+      <Filter>backends\src\sdl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\editor\src\main.cpp">

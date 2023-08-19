@@ -114,6 +114,36 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\backends\include\sdl\sdl_ui_renderer.h" />
     <ClInclude Include="..\..\backends\include\vulkan\vulkan_application.h" />
     <ClInclude Include="..\..\backends\include\vulkan\vulkan_ui_renderer.h" />
+    <ClInclude Include="..\..\backends\src\sdl\sdl_app.h" />
+    <ClInclude Include="..\..\backends\src\sdl\sdl_events.h" />
+    <ClInclude Include="..\..\backends\src\sdl\sdl_font.h" />
+    <ClInclude Include="..\..\backends\src\sdl\SDL_FontCache.h" />
+    <ClInclude Include="..\..\backends\src\sdl\sdl_font_factory.h" />
+    <ClInclude Include="..\..\backends\src\sdl\sdl_graphics.h" />
+    <ClInclude Include="..\..\backends\src\sdl\sdl_image.h" />
+    <ClInclude Include="..\..\backends\src\sdl\sdl_image_factory.h" />
+    <ClInclude Include="..\..\backends\src\sdl\sdl_ttf_shim.h" />
+    <ClInclude Include="..\..\backends\src\sdl\sdl_utils.h" />
+    <ClInclude Include="..\..\backends\src\sdl\smart_sdl.h" />
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_app.h" />
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_buffer.h" />
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_command_buffer.h" />
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_context.h" />
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_events.h" />
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_fence.h" />
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_font.h" />
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_font_cache.h" />
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_font_factory.h" />
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_framebuffer.h" />
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_graphics.h" />
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_image.h" />
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_image_factory.h" />
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_pipeline.h" />
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_renderpass.h" />
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_shader.h" />
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_subimage.h" />
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_swapchain.h" />
+    <ClInclude Include="..\..\backends\src\vulkan\vulkan_utils.h" />
     <ClInclude Include="..\..\editor\src\common.h" />
     <ClInclude Include="..\..\editor\src\editor\actions\add_action.h" />
     <ClInclude Include="..\..\editor\src\editor\actions\add_clip_action.h" />
@@ -208,7 +238,9 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClCompile Include="..\..\backends\src\vulkan\vulkan_subimage.cpp" />
     <ClCompile Include="..\..\backends\src\vulkan\vulkan_swapchain.cpp" />
     <ClCompile Include="..\..\backends\src\vulkan\vulkan_ui_renderer.cpp" />
-    <ClCompile Include="..\..\backends\src\vulkan\vulkan_vma.cpp" />
+    <ClCompile Include="..\..\backends\src\vulkan\vulkan_vma.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+    </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\actions\add_action.cpp" />
     <ClCompile Include="..\..\editor\src\editor\actions\add_clip_action.cpp" />
     <ClCompile Include="..\..\editor\src\editor\actions\add_event_action.cpp" />

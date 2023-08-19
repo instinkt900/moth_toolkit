@@ -1,7 +1,6 @@
 #pragma once
 
 #include "moth_ui/irenderer.h"
-
 #include <SDL.h>
 
 namespace backend::sdl {

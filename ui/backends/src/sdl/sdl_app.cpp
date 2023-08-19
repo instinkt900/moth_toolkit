@@ -5,10 +5,10 @@
 #include "editor/actions/editor_action.h"
 #include "editor/panels/editor_panel.h"
 
+#include "sdl/sdl_ui_renderer.h"
 #include "sdl_events.h"
 #include "sdl_image_factory.h"
 #include "sdl_font_factory.h"
-#include "sdl_ui_renderer.h"
 #include "sdl_graphics.h"
 
 #include "moth_ui/context.h"
@@ -20,6 +20,10 @@
 
 namespace backend::sdl {
     char const* const Application::PERSISTENCE_FILE = "editor.json";
+
+    std::unique_ptr<IApplication> CreateApplication() {
+        return std::make_unique<Application>();
+    }
 
     Application::Application()
         : m_windowWidth(INIT_WINDOW_WIDTH)

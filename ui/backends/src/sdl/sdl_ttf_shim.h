@@ -10,7 +10,7 @@ typedef int (*PFNTTFINITPROC)(void);
 extern PFNTTFINITPROC TTF_Init_Shim;
 #define TTF_Init TTF_Init_Shim
 
-typedef TTF_Font* (*PFNTTFOPENFONTRWPROC)(const char*, int);
+typedef TTF_Font* (*PFNTTFOPENFONTRWPROC)(const char*, int, int);
 extern PFNTTFOPENFONTRWPROC TTF_OpenFontRW_Shim;
 #define TTF_OpenFontRW TTF_OpenFontRW_Shim
 

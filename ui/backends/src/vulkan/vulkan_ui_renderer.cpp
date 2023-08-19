@@ -1,5 +1,6 @@
 #include "common.h"
-#include "vulkan_ui_renderer.h"
+#include "vulkan/vulkan_ui_renderer.h"
+#include "vulkan_graphics.h"
 #include "vulkan_font.h"
 
 namespace backend::vulkan {

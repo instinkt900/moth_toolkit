@@ -1,9 +1,9 @@
 #pragma once
 
 #include "moth_ui/irenderer.h"
-#include "vulkan_graphics.h"
 
 namespace backend::vulkan {
+    class Graphics;
     class UIRenderer : public moth_ui::IRenderer {
     public:
         UIRenderer(Graphics& graphics);

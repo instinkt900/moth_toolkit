@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../igraphics_context.h"
+#include "igraphics_context.h"
 #include <SDL.h>
 
 namespace backend::sdl {

@@ -9,6 +9,7 @@ namespace backend::vulkan {
         ~FontCache();
 
         std::shared_ptr<moth_ui::IFont> GetFont(std::string const& path, int size);
+        void Clear();
 
     private:
         std::shared_ptr<moth_ui::IFont> LoadFont(std::string const& path, int size);

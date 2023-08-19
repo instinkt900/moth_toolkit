@@ -5,11 +5,15 @@
 namespace backend::vulkan {
     FontFactory::FontFactory(Context& context, Graphics& graphics)
         : m_fontCache(context, graphics) {
-        m_fontPaths["Pilot Command"] = std::filesystem::current_path() / "pilotcommand.ttf";
-        m_fontPaths["Daniel Davis"] = std::filesystem::current_path() / "Daniel Davis.ttf";
-        m_fontPaths["Game of Squids"] = std::filesystem::current_path() / "Game Of Squids.ttf";
-        m_fontPaths["Southern Aire"] = std::filesystem::current_path() / "SouthernAire_Personal_Use_Only.ttf";
-        m_fontPaths["28 Days Later"] = std::filesystem::current_path() / "28 Days Later.ttf";
+    }
+
+    void FontFactory::AddFont(char const* name, std::filesystem::path const& path) {
+        m_fontPaths[name] = path;
+    }
+
+    void FontFactory::ClearFonts() {
+        m_fontPaths.clear();
+        m_fontCache.Clear();
     }
 
     std::shared_ptr<moth_ui::IFont> FontFactory::GetDefaultFont(int size) {

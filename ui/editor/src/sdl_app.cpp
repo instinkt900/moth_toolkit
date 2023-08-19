@@ -6,10 +6,10 @@
 #include "editor/panels/editor_panel.h"
 
 #include "sdl/sdl_ui_renderer.h"
-#include "sdl_events.h"
-#include "sdl_image_factory.h"
-#include "sdl_font_factory.h"
-#include "sdl_graphics.h"
+#include "sdl/sdl_events.h"
+#include "sdl/sdl_image_factory.h"
+#include "sdl/sdl_font_factory.h"
+#include "sdl/sdl_graphics.h"
 
 #include "moth_ui/context.h"
 #include "moth_ui/event_dispatch.h"

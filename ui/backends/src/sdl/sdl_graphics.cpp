@@ -1,7 +1,7 @@
 #include "common.h"
-#include "sdl_graphics.h"
-#include "sdl_image.h"
-#include "sdl_utils.h"
+#include "sdl/sdl_graphics.h"
+#include "sdl/sdl_image.h"
+#include "sdl/sdl_utils.h"
 
 namespace backend::sdl {
     SDLGraphics::SDLGraphics(SDL_Renderer* renderer)

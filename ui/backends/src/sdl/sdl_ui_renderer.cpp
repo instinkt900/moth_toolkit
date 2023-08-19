@@ -1,8 +1,8 @@
 #include "common.h"
 #include "sdl/sdl_ui_renderer.h"
-#include "sdl_image.h"
-#include "sdl_font.h"
-#include "sdl_utils.h"
+#include "sdl/sdl_image.h"
+#include "sdl/sdl_font.h"
+#include "sdl/sdl_utils.h"
 
 namespace backend::sdl {
     UIRenderer::UIRenderer(SDL_Renderer& renderer)

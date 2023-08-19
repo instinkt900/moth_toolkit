@@ -1,7 +1,7 @@
 #include "common.h"
-#include "vulkan_image.h"
-#include "vulkan_command_buffer.h"
-#include "vulkan_utils.h"
+#include "vulkan/vulkan_image.h"
+#include "vulkan/vulkan_command_buffer.h"
+#include "vulkan/vulkan_utils.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"

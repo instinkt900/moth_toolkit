@@ -1,6 +1,6 @@
 #include "common.h"
-#include "sdl_image_factory.h"
-#include "sdl_image.h"
+#include "sdl/sdl_image_factory.h"
+#include "sdl/sdl_image.h"
 #include "moth_ui/utils/rect_serialization.h"
 
 namespace backend::sdl {

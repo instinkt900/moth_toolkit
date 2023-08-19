@@ -1,8 +1,8 @@
 #include "common.h"
-#include "vulkan_graphics.h"
-#include "vulkan_command_buffer.h"
-#include "vulkan_subimage.h"
-#include "vulkan_font.h"
+#include "vulkan/vulkan_graphics.h"
+#include "vulkan/vulkan_command_buffer.h"
+#include "vulkan/vulkan_subimage.h"
+#include "vulkan/vulkan_font.h"
 
 namespace {
     bool readFile(std::string const& filename, std::vector<char>& outBuffer) {

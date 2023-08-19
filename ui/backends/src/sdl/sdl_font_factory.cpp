@@ -1,6 +1,6 @@
 #include "common.h"
-#include "sdl_font_factory.h"
-#include "sdl_font.h"
+#include "sdl/sdl_font_factory.h"
+#include "sdl/sdl_font.h"
 
 namespace backend::sdl {
     FontFactory::FontFactory(SDL_Renderer& renderer)

@@ -1,7 +1,7 @@
 #include "common.h"
-#include "vulkan_framebuffer.h"
-#include "vulkan_utils.h"
-#include "vulkan_command_buffer.h"
+#include "vulkan/vulkan_framebuffer.h"
+#include "vulkan/vulkan_utils.h"
+#include "vulkan/vulkan_command_buffer.h"
 
 namespace backend::vulkan {
     Framebuffer::Framebuffer(Context& context, uint32_t width, uint32_t height, VkImage image, VkImageView view, VkFormat format, VkRenderPass renderPass, uint32_t swapchainIndex)

@@ -1,6 +1,6 @@
 #include "common.h"
-#include "vulkan_font_factory.h"
-#include "vulkan_font.h"
+#include "vulkan/vulkan_font_factory.h"
+#include "vulkan/vulkan_font.h"
 
 namespace backend::vulkan {
     FontFactory::FontFactory(Context& context, Graphics& graphics)

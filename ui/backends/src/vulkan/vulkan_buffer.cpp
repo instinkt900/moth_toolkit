@@ -1,6 +1,6 @@
 #include "common.h"
-#include "vulkan_buffer.h"
-#include "vulkan_utils.h"
+#include "vulkan/vulkan_buffer.h"
+#include "vulkan/vulkan_utils.h"
 
 namespace backend::vulkan {
     Buffer::Buffer(Context& context, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)

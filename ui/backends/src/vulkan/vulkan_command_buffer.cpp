@@ -1,6 +1,6 @@
 #include "common.h"
-#include "vulkan_command_buffer.h"
-#include "vulkan_utils.h"
+#include "vulkan/vulkan_command_buffer.h"
+#include "vulkan/vulkan_utils.h"
 
 namespace backend::vulkan {
     CommandBuffer::CommandBuffer(Context& context)

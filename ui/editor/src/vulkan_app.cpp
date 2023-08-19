@@ -6,10 +6,10 @@
 #include "editor/panels/editor_panel.h"
 
 #include "vulkan/vulkan_ui_renderer.h"
-#include "vulkan_image_factory.h"
-#include "vulkan_font_factory.h"
-#include "vulkan_graphics.h"
-#include "vulkan_events.h"
+#include "vulkan/vulkan_image_factory.h"
+#include "vulkan/vulkan_font_factory.h"
+#include "vulkan/vulkan_graphics.h"
+#include "vulkan/vulkan_events.h"
 
 #include "moth_ui/context.h"
 #include "moth_ui/event_dispatch.h"

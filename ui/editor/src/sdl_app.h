@@ -3,16 +3,14 @@
 #include "iapplication.h"
 #include "layers/layer_stack.h"
 #include "events/event.h"
-
 #include "moth_ui/iimage_factory.h"
 #include "moth_ui/ifont_factory.h"
 #include "moth_ui/irenderer.h"
+//#include "sdl/sdl_graphics.h"
 
-#include "vulkan_context.h"
-#include "vulkan_graphics.h"
-#include "vulkan_swapchain.h"
+#include <SDL.h>
 
-namespace backend::vulkan {
+namespace backend::sdl {
     class Application : public IApplication, public moth_ui::EventListener {
     public:
         Application();
@@ -40,20 +38,20 @@ namespace backend::vulkan {
         static int constexpr INIT_WINDOW_WIDTH = 1280;
         static int constexpr INIT_WINDOW_HEIGHT = 960;
 
-        moth_ui::IntVec2 m_windowPos = { -1, -1 };
         int m_windowWidth = 0;
         int m_windowHeight = 0;
-        bool m_windowMaximized = false;
 
         bool m_running = false;
-        bool m_paused = false;
-        std::chrono::milliseconds m_updateTicks;
-        std::chrono::time_point<std::chrono::steady_clock> m_lastUpdateTicks;
+        uint32_t m_lastUpdateTicks;
 
+        SDL_Window* m_window = nullptr;
+        SDL_Renderer* m_renderer = nullptr;
+        std::unique_ptr<backend::IGraphicsContext> m_graphics;
         moth_ui::IntVec2 m_gameWindowPos;
 
         std::unique_ptr<LayerStack> m_layerStack;
 
+        std::filesystem::path m_originalCwd;
         std::filesystem::path m_persistentFilePath;
         nlohmann::json m_persistentState;
         static char const* const PERSISTENCE_FILE;
@@ -62,20 +60,7 @@ namespace backend::vulkan {
         std::unique_ptr<moth_ui::IFontFactory> m_fontFactory;
         std::unique_ptr<moth_ui::IRenderer> m_uiRenderer;
 
-        std::unique_ptr<Graphics> m_graphics;
-
-        GLFWwindow* m_glfwWindow = nullptr;
-
-        std::unique_ptr<Context> m_context;
-        bool m_vkSwapChainrebuild = false;
-
         bool OnWindowSizeEvent(EventWindowSize const& event);
         bool OnQuitEvent(EventQuit const& event);
-
-        VkSurfaceKHR m_customVkSurface;
-
-        void ImGuiInit();
-
-        void OnResize();
     };
 }

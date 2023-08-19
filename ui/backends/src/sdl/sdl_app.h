@@ -1,12 +1,12 @@
 #pragma once
 
-#include "backend/iapplication.h"
+#include "iapplication.h"
 #include "layers/layer_stack.h"
 #include "events/event.h"
 #include "moth_ui/iimage_factory.h"
 #include "moth_ui/ifont_factory.h"
 #include "moth_ui/irenderer.h"
-#include "sdl_graphics.h"
+#include "../../src/sdl/sdl_graphics.h"
 
 #include <SDL.h>
 

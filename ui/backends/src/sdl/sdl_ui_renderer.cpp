@@ -1,5 +1,5 @@
 #include "common.h"
-#include "sdl_ui_renderer.h"
+#include "sdl/sdl_ui_renderer.h"
 #include "sdl_image.h"
 #include "sdl_font.h"
 #include "sdl_utils.h"

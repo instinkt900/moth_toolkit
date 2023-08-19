@@ -5,9 +5,9 @@
 #include "editor/actions/editor_action.h"
 #include "editor/panels/editor_panel.h"
 
+#include "vulkan/vulkan_ui_renderer.h"
 #include "vulkan_image_factory.h"
 #include "vulkan_font_factory.h"
-#include "vulkan_ui_renderer.h"
 #include "vulkan_graphics.h"
 #include "vulkan_events.h"
 
@@ -21,6 +21,10 @@
 
 namespace backend::vulkan {
     char const* const Application::PERSISTENCE_FILE = "editor.json";
+
+    std::unique_ptr<IApplication> CreateApplication() {
+        return std::make_unique<Application>();
+    }
 
     void checkVkResult(VkResult err) {
         CHECK_VK_RESULT(err);

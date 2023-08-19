@@ -1,6 +1,6 @@
 #pragma once
 
-#include "backend/iapplication.h"
+#include "iapplication.h"
 #include "layers/layer_stack.h"
 #include "events/event.h"
 
@@ -9,12 +9,6 @@
 #include "moth_ui/irenderer.h"
 
 #include "vulkan_context.h"
-//#define GLFW_INCLUDE_VULKAN
-//#include <GLFW/glfw3.h>
-//#include <vulkan/vulkan.hpp>
-//#include <backends/imgui_impl_glfw.h>
-//#include <backends/imgui_impl_vulkan.h>
-
 #include "vulkan_graphics.h"
 #include "vulkan_swapchain.h"
 

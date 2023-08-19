@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../igraphics_context.h"
+#include "igraphics_context.h"
 #include "vulkan_image.h"
 #include "vulkan_context.h"
 #include "vulkan_utils.h"

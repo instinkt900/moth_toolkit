@@ -14,7 +14,8 @@ namespace moth_ui {
         virtual std::filesystem::path GetCurrentProjectPath() const = 0;
         virtual void ClearFonts() = 0;
         virtual std::shared_ptr<IFont> GetDefaultFont(int size) = 0;
-        virtual std::vector<std::string> GetFontNameList() = 0;
+        virtual std::vector<std::string> GetFontNameList() const = 0;
         virtual std::shared_ptr<IFont> GetFont(char const* name, int size) = 0;
+        virtual std::filesystem::path GetFontPath(char const* name) const = 0;
     };
 }

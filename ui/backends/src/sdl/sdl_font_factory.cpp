@@ -67,7 +67,7 @@ namespace backend::sdl {
         m_fontPaths.clear();
     }
 
-    std::vector<std::string> FontFactory::GetFontNameList() {
+    std::vector<std::string> FontFactory::GetFontNameList() const {
         std::vector<std::string> nameList;
         for (auto& [fontName, fontPath] : m_fontPaths) {
             nameList.push_back(fontName);
@@ -83,5 +83,14 @@ namespace backend::sdl {
         }
         SDL_Color defaultColor{ 0x00, 0x00, 0x00, 0xFF };
         return std::make_unique<Font>(CreateCachedFontRef(&m_renderer, it->second.string().c_str(), size, defaultColor, TTF_STYLE_NORMAL));
+    }
+
+    std::filesystem::path FontFactory::GetFontPath(char const* name) const {
+        assert(!m_fontPaths.empty() && "No known fonts.");
+        auto const it = m_fontPaths.find(name);
+        if (std::end(m_fontPaths) == it) {
+            return "";
+        }
+        return it->second;
     }
 }

@@ -68,7 +68,7 @@ namespace backend::vulkan {
         return GetFont(m_fontPaths.begin()->first.c_str(), size);
     }
 
-    std::vector<std::string> FontFactory::GetFontNameList() {
+    std::vector<std::string> FontFactory::GetFontNameList() const {
         std::vector<std::string> nameList;
         for (auto& [fontName, fontPath] : m_fontPaths) {
             nameList.push_back(fontName);
@@ -83,5 +83,14 @@ namespace backend::vulkan {
             return GetDefaultFont(size);
         }
         return m_fontCache.GetFont(it->second.string().c_str(), size);
+    }
+
+    std::filesystem::path FontFactory::GetFontPath(char const* name) const {
+        assert(!m_fontPaths.empty() && "No known fonts.");
+        auto const it = m_fontPaths.find(name);
+        if (std::end(m_fontPaths) == it) {
+            return "";
+        }
+        return it->second;
     }
 }

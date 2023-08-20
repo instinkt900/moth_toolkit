@@ -20,8 +20,9 @@ namespace backend::vulkan {
         void ClearFonts() override;
 
         std::shared_ptr<moth_ui::IFont> GetDefaultFont(int size) override;
-        std::vector<std::string> GetFontNameList() override;
+        std::vector<std::string> GetFontNameList() const override;
         std::shared_ptr<moth_ui::IFont> GetFont(char const* name, int size) override;
+        std::filesystem::path GetFontPath(char const* name) const override;
 
     private:
         std::map<std::string, std::filesystem::path> m_fontPaths;

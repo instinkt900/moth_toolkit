@@ -38,7 +38,7 @@ namespace moth_ui {
             , m_value(value) {}
 
         int m_frame = 0;
-        KeyframeValue m_value;
+        KeyframeValue m_value = 0;
         InterpType m_interpType = InterpType::Linear;
 
         friend void to_json(nlohmann::json& j, Keyframe const& keyframe) {

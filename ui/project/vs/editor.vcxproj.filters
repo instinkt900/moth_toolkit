@@ -336,6 +336,9 @@
     <ClInclude Include="..\..\backends\include\sdl\sdl_ttf_shim.h">
       <Filter>backends\include\sdl</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_fonts.h">
+      <Filter>src\editor\panels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\editor\src\main.cpp">
@@ -574,6 +577,9 @@
     </ClCompile>
     <ClCompile Include="..\..\editor\src\vulkan_app.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_fonts.cpp">
+      <Filter>src\editor\panels</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

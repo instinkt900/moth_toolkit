@@ -175,6 +175,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_config.h" />
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_elements.h" />
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_asset_list.h" />
+    <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_fonts.h" />
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_preview.h" />
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_properties.h" />
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_undo_stack.h" />
@@ -266,6 +267,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_config.cpp" />
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_elements.cpp" />
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_asset_list.cpp" />
+    <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_fonts.cpp" />
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_preview.cpp" />
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_properties.cpp" />
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_undo_stack.cpp" />

@@ -81,6 +81,9 @@
     <ClCompile Include="..\..\src\node_factory.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\font_factory.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\common.h">
@@ -228,6 +231,9 @@
       <Filter>include\moth_ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\moth_ui\itarget.h">
+      <Filter>include\moth_ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\moth_ui\font_factory.h">
       <Filter>include\moth_ui</Filter>
     </ClInclude>
   </ItemGroup>

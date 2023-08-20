@@ -13,6 +13,7 @@ if (MSVC)
 else()
 
 endif()
+add_compile_definitions(JSON_HAS_FILESYSTEM)
 
 set(PUBLIC_HEADERS
 	include/moth_ui/animation_clip.h
@@ -29,7 +30,7 @@ set(PUBLIC_HEADERS
 	include/moth_ui/event_listener.h
 	include/moth_ui/group.h
 	include/moth_ui/ifont.h
-	include/moth_ui/ifont_factory.h
+	include/moth_ui/font_factory.h
 	include/moth_ui/iimage.h
 	include/moth_ui/iimage_factory.h
 	include/moth_ui/image_scale_type.h
@@ -78,6 +79,7 @@ set(SOURCES ${SOURCES}
 	src/animation_controller.cpp
 	src/animation_track.cpp
 	src/context.cpp
+	src/font_factory.cpp
 	src/group.cpp
 	src/node.cpp
 	src/node_clip.cpp

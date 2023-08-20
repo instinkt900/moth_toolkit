@@ -61,7 +61,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CONSOLE;_CRT_SECURE_NO_WARNINGS;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CONSOLE;_CRT_SECURE_NO_WARNINGS;_ITERATOR_DEBUG_LEVEL=0;JSON_HAS_FILESYSTEM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>..\..\src;..\..\include;$(MAGICENUM_DIR)\include;$(NLOHMANN_DIR)\include;$(FMT_DIR)\include;$(RANGEV3_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -96,6 +96,7 @@
     <ClCompile Include="..\..\src\animation_controller.cpp" />
     <ClCompile Include="..\..\src\animation_track.cpp" />
     <ClCompile Include="..\..\src\context.cpp" />
+    <ClCompile Include="..\..\src\font_factory.cpp" />
     <ClCompile Include="..\..\src\group.cpp" />
     <ClCompile Include="..\..\src\layout\layout.cpp" />
     <ClCompile Include="..\..\src\layout\layout_cache.cpp" />
@@ -126,6 +127,7 @@
     <ClInclude Include="..\..\include\moth_ui\events\event_mouse.h" />
     <ClInclude Include="..\..\include\moth_ui\event_dispatch.h" />
     <ClInclude Include="..\..\include\moth_ui\event_listener.h" />
+    <ClInclude Include="..\..\include\moth_ui\font_factory.h" />
     <ClInclude Include="..\..\include\moth_ui\group.h" />
     <ClInclude Include="..\..\include\moth_ui\ifont.h" />
     <ClInclude Include="..\..\include\moth_ui\ifont_factory.h" />

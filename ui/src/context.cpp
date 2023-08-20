@@ -5,7 +5,7 @@ namespace moth_ui {
     std::shared_ptr<Context> Context::s_currentContext;
 
     Context::Context(IImageFactory* imageFactory,
-                     IFontFactory* fontFactory,
+                     FontFactory* fontFactory,
                      IRenderer* renderer)
         : m_imageFactory(imageFactory)
         , m_fontFactory(fontFactory)

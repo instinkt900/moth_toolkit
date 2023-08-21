@@ -359,7 +359,7 @@ namespace backend::vulkan {
 
             for (uint32_t w = 0; w < line.wordCount; ++w) {
                 auto& word = words[wordIndex];
-                for (int i = 0; i < word.size(); ++i) {
+                for (size_t i = 0; i < word.size(); ++i) {
                     SubmitCharacter(word[i], charPos);
                 }
                 if (w < (words.size() - 1)) {

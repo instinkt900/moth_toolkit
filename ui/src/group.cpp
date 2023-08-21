@@ -52,7 +52,7 @@ namespace moth_ui {
     }
 
     void Group::AddChild(std::shared_ptr<Node> child, size_t index) {
-        if (index != -1) {
+        if (index != static_cast<size_t>(-1)) {
             auto it = std::begin(m_children) + index;
             m_children.insert(it, child);
         } else {

@@ -29,7 +29,7 @@ namespace backend::sdl {
             nlohmann::json json;
             try {
                 ifile >> json;
-            } catch (std::exception e) {
+            } catch (std::exception&) {
                 return false;
             }
 

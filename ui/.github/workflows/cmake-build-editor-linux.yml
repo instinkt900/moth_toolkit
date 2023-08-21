@@ -1,4 +1,4 @@
-name: Build Lib Linux
+name: Build Editor Linux
 
 on:
   workflow_dispatch:
@@ -9,32 +9,34 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  build-linux:
+  build-editor-linux:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    
+      with:
+        submodules: recursive
+
     - name: Get Conan
       uses: turtlebrowser/get-conan@v1.0
-      
+
     - name: Create default profile
       run: conan profile detect --force
 
-    - name: Install conan profiles
+    - name: Install project profiles
       run: conan config install conan_config
 
     - name: Create build dir
-      run: mkdir -p ${{github.workspace}}/build
+      run: mkdir -p ${{github.workspace}}/editor/build
 
     - name: Install dependencies
-      working-directory: ${{github.workspace}}/build
+      working-directory: ${{github.workspace}}/editor/build
       run: conan install .. --output-folder=. --build=missing --profile linux_profile
 
     - name: Configure CMake
-      working-directory: ${{github.workspace}}/build
-      run: cmake .. -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/build/conan_toolchain.cmake -DCMAKE_POLICY_DEFAULT_CMP0091=NEW -DCMAKE_CXX_COMPILER=clang
+      working-directory: ${{github.workspace}}/editor/build
+      run:  cmake .. -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/editor/build/conan_toolchain.cmake -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
 
     - name: Build
-      working-directory: ${{github.workspace}}/build
+      working-directory: ${{github.workspace}}/editor/build
       run: cmake --build . --config ${{env.BUILD_TYPE}} -j 4
       

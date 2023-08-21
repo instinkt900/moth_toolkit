@@ -71,7 +71,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SDL_DIR)\lib\x64;$(SDLIMAGE_DIR)\lib\x64;$(SDLTTF_DIR)\lib\x64;$(FMT_DIR)\lib;$(GLFW_DIR)\lib;$(VULKAN_DIR)\Lib;$(FREETYPE_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetype.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;fmt.lib;glfw3.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetype.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;fmt.lib;glfw3.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
@@ -116,7 +116,6 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\backends\include\sdl\sdl_graphics.h" />
     <ClInclude Include="..\..\backends\include\sdl\sdl_image.h" />
     <ClInclude Include="..\..\backends\include\sdl\sdl_image_factory.h" />
-    <ClInclude Include="..\..\backends\include\sdl\sdl_ttf_shim.h" />
     <ClInclude Include="..\..\backends\include\sdl\sdl_ui_renderer.h" />
     <ClInclude Include="..\..\backends\include\sdl\sdl_utils.h" />
     <ClInclude Include="..\..\backends\include\sdl\smart_sdl.h" />
@@ -215,7 +214,6 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClCompile Include="..\..\backends\src\sdl\sdl_graphics.cpp" />
     <ClCompile Include="..\..\backends\src\sdl\sdl_image.cpp" />
     <ClCompile Include="..\..\backends\src\sdl\sdl_image_factory.cpp" />
-    <ClCompile Include="..\..\backends\src\sdl\sdl_ttf_shim.c" />
     <ClCompile Include="..\..\backends\src\sdl\sdl_ui_renderer.cpp" />
     <ClCompile Include="..\..\backends\src\vulkan\vulkan_buffer.cpp" />
     <ClCompile Include="..\..\backends\src\vulkan\vulkan_command_buffer.cpp" />

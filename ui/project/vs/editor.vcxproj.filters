@@ -333,9 +333,6 @@
     <ClInclude Include="..\..\editor\src\vulkan_app.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\backends\include\sdl\sdl_ttf_shim.h">
-      <Filter>backends\include\sdl</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_fonts.h">
       <Filter>src\editor\panels</Filter>
     </ClInclude>
@@ -489,9 +486,6 @@
       <Filter>murmurhash</Filter>
     </ClCompile>
     <ClCompile Include="..\..\backends\src\sdl\SDL_FontCache.c">
-      <Filter>backends\src\sdl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\backends\src\sdl\sdl_ttf_shim.c">
       <Filter>backends\src\sdl</Filter>
     </ClCompile>
     <ClCompile Include="..\..\backends\src\sdl\sdl_events.cpp">

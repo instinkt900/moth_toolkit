@@ -1,9 +1,5 @@
 #include "common.h"
-#include "vulkan_app.h"
-#include "editor/editor_layer.h"
-#include "editor/texture_packer.h"
-#include "editor/actions/editor_action.h"
-#include "editor/panels/editor_panel.h"
+#include "vulkan/vulkan_app.h"
 
 #include "vulkan/vulkan_ui_renderer.h"
 #include "vulkan/vulkan_image_factory.h"
@@ -12,93 +8,37 @@
 #include "vulkan/vulkan_events.h"
 
 #include "moth_ui/context.h"
-#include "moth_ui/event_dispatch.h"
-#include "moth_ui/node_factory.h"
 
-#include <iostream>
-
-#include <glm/glm.hpp>
-
-namespace backend::vulkan {
-    char const* const Application::IMGUI_FILE = "imgui.ini";
-    char const* const Application::PERSISTENCE_FILE = "editor.json";
-
-    std::unique_ptr<IApplication> CreateApplication() {
-        return std::make_unique<Application>();
-    }
-
+namespace {
     void checkVkResult(VkResult err) {
         CHECK_VK_RESULT(err);
     }
+}
 
-    Application::Application()
-        : m_windowWidth(INIT_WINDOW_WIDTH)
-        , m_windowHeight(INIT_WINDOW_HEIGHT) {
-        m_updateTicks = std::chrono::milliseconds(1000 / 60);
-
-        m_imguiSettingsPath = (std::filesystem::current_path() / IMGUI_FILE).string();
-        m_persistentFilePath = std::filesystem::current_path() / PERSISTENCE_FILE;
-        std::ifstream persistenceFile(m_persistentFilePath.string());
-        if (persistenceFile.is_open()) {
-            try {
-                persistenceFile >> m_persistentState;
-            } catch (std::exception&) {
-            }
-
-            if (!m_persistentState.is_null()) {
-                m_windowPos = m_persistentState.value("window_pos", m_windowPos);
-                m_windowWidth = m_persistentState.value("window_width", m_windowWidth);
-                m_windowHeight = m_persistentState.value("window_height", m_windowHeight);
-                m_windowMaximized = m_persistentState.value("window_maximized", m_windowMaximized);
-            }
-        }
+namespace backend::vulkan {
+    Application::Application() {
     }
 
     Application::~Application() {
-        std::ofstream ofile(m_persistentFilePath.string());
-        if (ofile.is_open()) {
-            m_persistentState["current_path"] = std::filesystem::current_path().string();
-            m_persistentState["window_pos"] = m_windowPos;
-            m_persistentState["window_width"] = m_windowWidth;
-            m_persistentState["window_height"] = m_windowHeight;
-            m_persistentState["window_maximized"] = m_windowMaximized;
-            ofile << m_persistentState;
+    }
+
+    void Application::UpdateWindow() {
+        glfwPollEvents();
+
+        if (glfwWindowShouldClose(m_glfwWindow)) {
+            OnEvent(EventRequestQuit());
+        }
+
+        if (m_vkSwapChainrebuild) {
+            int width, height;
+            glfwGetFramebufferSize(m_glfwWindow, &width, &height);
+            if (width > 0 && height > 0) {
+                assert(false && "TODO");
+            }
         }
     }
 
-    int Application::Run() {
-        if (!Initialise()) {
-            return 1;
-        }
-
-        m_running = true;
-        m_lastUpdateTicks = std::chrono::steady_clock::now();
-
-        while (m_running) {
-            glfwPollEvents();
-
-            if (glfwWindowShouldClose(m_glfwWindow)) {
-                OnEvent(EventRequestQuit());
-            }
-
-            if (m_vkSwapChainrebuild) {
-                int width, height;
-                glfwGetFramebufferSize(m_glfwWindow, &width, &height);
-                if (width > 0 && height > 0) {
-                    assert(false && "TODO");
-                }
-            }
-
-            Update();
-            Draw();
-        }
-
-        Shutdown();
-
-        return 0;
-    }
-
-    bool Application::Initialise() {
+    bool Application::CreateWindow() {
         if (!glfwInit()) {
             return false;
         }
@@ -155,54 +95,23 @@ namespace backend::vulkan {
         glfwGetFramebufferSize(m_glfwWindow, &width, &height);
 
         m_graphics = std::make_unique<Graphics>(*m_context, m_customVkSurface, m_windowWidth, m_windowHeight);
-        m_imageFactory = std::make_unique<ImageFactory>(*m_context, static_cast<Graphics&>(*m_graphics));
-        m_fontFactory = std::make_unique<FontFactory>(*m_context, *m_graphics);
-        m_uiRenderer = std::make_unique<UIRenderer>(*m_graphics);
+        m_vulkanGraphics = static_cast<Graphics*>(m_graphics.get());
+        m_imageFactory = std::make_unique<ImageFactory>(*m_context, static_cast<Graphics&>(*m_vulkanGraphics));
+        m_fontFactory = std::make_unique<FontFactory>(*m_context, *m_vulkanGraphics);
+        m_uiRenderer = std::make_unique<UIRenderer>(*m_vulkanGraphics);
         auto uiContext = std::make_shared<moth_ui::Context>(m_imageFactory.get(), m_fontFactory.get(), m_uiRenderer.get());
         moth_ui::Context::SetCurrentContext(uiContext);
 
-        SubImage::s_graphicsContext = m_graphics.get();
+        SubImage::s_graphicsContext = m_vulkanGraphics;
 
         ImGuiInit();
-
-        if (m_persistentState.contains("current_path")) {
-            std::string const currentPath = m_persistentState["current_path"];
-            try {
-                std::filesystem::current_path(currentPath);
-            } catch (std::exception&) {
-                // ...
-            }
-        }
-
-        m_layerStack = std::make_unique<LayerStack>(m_windowWidth, m_windowHeight, m_windowWidth, m_windowHeight);
-        m_layerStack->SetEventListener(this);
-        m_layerStack->PushLayer(std::make_unique<EditorLayer>());
+        SetupLayers();
 
         return true;
     }
 
-    bool Application::OnEvent(moth_ui::Event const& event) {
-        moth_ui::EventDispatch dispatch(event);
-        dispatch.Dispatch(this, &Application::OnWindowSizeEvent);
-        dispatch.Dispatch(this, &Application::OnQuitEvent);
-        dispatch.Dispatch(m_layerStack.get());
-        return dispatch.GetHandled();
-    }
-
     void Application::SetWindowTitle(std::string const& title) {
         glfwSetWindowTitle(m_glfwWindow, title.c_str());
-    }
-
-    void Application::Update() {
-        auto const nowTicks = std::chrono::steady_clock::now();
-        auto deltaTicks = std::chrono::duration_cast<std::chrono::milliseconds>(nowTicks - m_lastUpdateTicks);
-        while (deltaTicks > m_updateTicks) {
-            if (!m_paused) {
-                m_layerStack->Update(static_cast<uint32_t>(m_updateTicks.count()));
-            }
-            m_lastUpdateTicks += m_updateTicks;
-            deltaTicks -= m_updateTicks;
-        }
     }
 
     void Application::Draw() {
@@ -210,7 +119,7 @@ namespace backend::vulkan {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        m_graphics->Begin();
+        m_vulkanGraphics->Begin();
         m_layerStack->Draw();
         ImGui::Render();
         if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
@@ -218,12 +127,12 @@ namespace backend::vulkan {
             ImGui::RenderPlatformWindowsDefault();
         }
         if (ImDrawData* drawData = ImGui::GetDrawData()) {
-            ImGui_ImplVulkan_RenderDrawData(drawData, m_graphics->GetCurrentCommandBuffer()->GetVkCommandBuffer());
+            ImGui_ImplVulkan_RenderDrawData(drawData, m_vulkanGraphics->GetCurrentCommandBuffer()->GetVkCommandBuffer());
         }
-        m_graphics->End();
+        m_vulkanGraphics->End();
     }
 
-    void Application::Shutdown() {
+    void Application::DestroyWindow() {
         vkDeviceWaitIdle(m_context->m_vkDevice);
         m_layerStack.reset(); // force layers to cleanup before we destroy all the devices.
         m_uiRenderer.reset();
@@ -238,18 +147,6 @@ namespace backend::vulkan {
         glfwDestroyWindow(m_glfwWindow);
         glfwTerminate();
         m_context.reset();
-    }
-
-    bool Application::OnWindowSizeEvent(EventWindowSize const& event) {
-        m_windowWidth = event.GetWidth();
-        m_windowHeight = event.GetHeight();
-        m_layerStack->SetWindowSize({ m_windowWidth, m_windowHeight });
-        return true;
-    }
-
-    bool Application::OnQuitEvent(EventQuit const& event) {
-        m_running = false;
-        return true;
     }
 
     void Application::ImGuiInit() {
@@ -274,12 +171,12 @@ namespace backend::vulkan {
         initInfo.Queue = m_context->m_vkQueue;
         initInfo.DescriptorPool = m_context->m_vkDescriptorPool;
         initInfo.Subpass = 0;
-        initInfo.MinImageCount = m_graphics->GetSwapchain().GetImageCount();
-        initInfo.ImageCount = m_graphics->GetSwapchain().GetImageCount();
+        initInfo.MinImageCount = m_vulkanGraphics->GetSwapchain().GetImageCount();
+        initInfo.ImageCount = m_vulkanGraphics->GetSwapchain().GetImageCount();
         initInfo.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
         initInfo.Allocator = nullptr;
         initInfo.CheckVkResultFn = checkVkResult;
-        ImGui_ImplVulkan_Init(&initInfo, m_graphics->GetRenderPass().GetRenderPass());
+        ImGui_ImplVulkan_Init(&initInfo, m_vulkanGraphics->GetRenderPass().GetRenderPass());
 
         // create the font texture
         {
@@ -293,6 +190,6 @@ namespace backend::vulkan {
     }
 
     void Application::OnResize() {
-        m_graphics->OnResize(m_customVkSurface, m_windowWidth, m_windowHeight);
+        m_vulkanGraphics->OnResize(m_customVkSurface, m_windowWidth, m_windowHeight);
     }
 }

@@ -324,17 +324,20 @@
     <ClInclude Include="..\..\backends\include\sdl\smart_sdl.h">
       <Filter>backends\include\sdl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\editor\src\iapplication.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\sdl_app.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\vulkan_app.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_fonts.h">
       <Filter>src\editor\panels</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\include\application.h">
+      <Filter>backends\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\include\sdl\sdl_app.h">
+      <Filter>backends\include\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\backends\include\vulkan\vulkan_app.h">
+      <Filter>backends\include\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\editor\src\editor_application.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -566,14 +569,20 @@
     <ClCompile Include="..\..\backends\src\vulkan\vulkan_vma.cpp">
       <Filter>backends\src\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\editor\src\sdl_app.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\vulkan_app.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_fonts.cpp">
       <Filter>src\editor\panels</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\backends\src\application.cpp">
+      <Filter>backends\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\backends\src\sdl\sdl_app.cpp">
+      <Filter>backends\src\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\backends\src\vulkan\vulkan_app.cpp">
+      <Filter>backends\src\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\editor\src\editor_application.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

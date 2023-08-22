@@ -108,7 +108,9 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\backends\include\application.h" />
     <ClInclude Include="..\..\backends\include\igraphics_context.h" />
+    <ClInclude Include="..\..\backends\include\sdl\sdl_app.h" />
     <ClInclude Include="..\..\backends\include\sdl\sdl_events.h" />
     <ClInclude Include="..\..\backends\include\sdl\sdl_font.h" />
     <ClInclude Include="..\..\backends\include\sdl\SDL_FontCache.h" />
@@ -119,6 +121,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\backends\include\sdl\sdl_ui_renderer.h" />
     <ClInclude Include="..\..\backends\include\sdl\sdl_utils.h" />
     <ClInclude Include="..\..\backends\include\sdl\smart_sdl.h" />
+    <ClInclude Include="..\..\backends\include\vulkan\vulkan_app.h" />
     <ClInclude Include="..\..\backends\include\vulkan\vulkan_buffer.h" />
     <ClInclude Include="..\..\backends\include\vulkan\vulkan_command_buffer.h" />
     <ClInclude Include="..\..\backends\include\vulkan\vulkan_context.h" />
@@ -139,6 +142,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\backends\include\vulkan\vulkan_ui_renderer.h" />
     <ClInclude Include="..\..\backends\include\vulkan\vulkan_utils.h" />
     <ClInclude Include="..\..\editor\src\common.h" />
+    <ClInclude Include="..\..\editor\src\editor_application.h" />
     <ClInclude Include="..\..\editor\src\editor\actions\add_action.h" />
     <ClInclude Include="..\..\editor\src\editor\actions\add_clip_action.h" />
     <ClInclude Include="..\..\editor\src\editor\actions\add_event_action.h" />
@@ -182,16 +186,13 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\editor\texture_packer.h" />
     <ClInclude Include="..\..\editor\src\editor\utils.h" />
     <ClInclude Include="..\..\editor\src\events\event.h" />
-    <ClInclude Include="..\..\editor\src\iapplication.h" />
     <ClInclude Include="..\..\editor\src\imgui-filebrowser\imfilebrowser.h" />
     <ClInclude Include="..\..\editor\src\layers\layer.h" />
     <ClInclude Include="..\..\editor\src\layers\layer_stack.h" />
-    <ClInclude Include="..\..\editor\src\sdl_app.h" />
     <ClInclude Include="..\..\editor\src\stb_image.h" />
     <ClInclude Include="..\..\editor\src\stb_image_write.h" />
     <ClInclude Include="..\..\editor\src\stb_rect_pack.h" />
     <ClInclude Include="..\..\editor\src\utils.h" />
-    <ClInclude Include="..\..\editor\src\vulkan_app.h" />
     <ClInclude Include="..\..\external\imgui\backends\imgui_impl_glfw.h" />
     <ClInclude Include="..\..\external\imgui\backends\imgui_impl_sdl.h" />
     <ClInclude Include="..\..\external\imgui\backends\imgui_impl_sdlrenderer.h" />
@@ -205,6 +206,8 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\external\murmurhash.c\murmurhash.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\backends\src\application.cpp" />
+    <ClCompile Include="..\..\backends\src\sdl\sdl_app.cpp" />
     <ClCompile Include="..\..\backends\src\sdl\sdl_events.cpp" />
     <ClCompile Include="..\..\backends\src\sdl\sdl_font.cpp" />
     <ClCompile Include="..\..\backends\src\sdl\SDL_FontCache.c">
@@ -215,6 +218,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClCompile Include="..\..\backends\src\sdl\sdl_image.cpp" />
     <ClCompile Include="..\..\backends\src\sdl\sdl_image_factory.cpp" />
     <ClCompile Include="..\..\backends\src\sdl\sdl_ui_renderer.cpp" />
+    <ClCompile Include="..\..\backends\src\vulkan\vulkan_app.cpp" />
     <ClCompile Include="..\..\backends\src\vulkan\vulkan_buffer.cpp" />
     <ClCompile Include="..\..\backends\src\vulkan\vulkan_command_buffer.cpp" />
     <ClCompile Include="..\..\backends\src\vulkan\vulkan_context.cpp" />
@@ -271,11 +275,10 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_undo_stack.cpp" />
     <ClCompile Include="..\..\editor\src\editor\properties_elements.cpp" />
     <ClCompile Include="..\..\editor\src\editor\texture_packer.cpp" />
+    <ClCompile Include="..\..\editor\src\editor_application.cpp" />
     <ClCompile Include="..\..\editor\src\layers\layer.cpp" />
     <ClCompile Include="..\..\editor\src\layers\layer_stack.cpp" />
     <ClCompile Include="..\..\editor\src\main.cpp" />
-    <ClCompile Include="..\..\editor\src\sdl_app.cpp" />
-    <ClCompile Include="..\..\editor\src\vulkan_app.cpp" />
     <ClCompile Include="..\..\external\imgui\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="..\..\external\imgui\backends\imgui_impl_sdl.cpp" />
     <ClCompile Include="..\..\external\imgui\backends\imgui_impl_sdlrenderer.cpp" />

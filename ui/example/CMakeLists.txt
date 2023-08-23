@@ -13,7 +13,6 @@ if (MSVC)
 else()
 endif()
 
-add_subdirectory(.. moth_ui)
 add_subdirectory(../backends moth_ui_backends)
 
 include_directories(../backends/include)
@@ -36,8 +35,7 @@ set(SOURCES ${SOURCES}
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE src)
-target_link_libraries(${PROJECT_NAME} moth_ui)
-target_link_libraries(${PROJECT_NAME} moth_ui_backends ${CONAN_LIBS})
+target_link_libraries(${PROJECT_NAME} moth_ui_backends)
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 if (MSVC)
 	set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/ignore:4099")

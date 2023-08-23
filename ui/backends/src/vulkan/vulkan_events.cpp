@@ -215,6 +215,19 @@ namespace {
             return moth_ui::Key::Unknown;
         }
     }
+
+    moth_ui::MouseButton FromGLFWButton(int button) {
+        switch (button) {
+        case GLFW_MOUSE_BUTTON_LEFT:
+            return moth_ui::MouseButton::Left;
+        case GLFW_MOUSE_BUTTON_MIDDLE:
+            return moth_ui::MouseButton::Middle;
+        case GLFW_MOUSE_BUTTON_RIGHT:
+            return moth_ui::MouseButton::Right;
+        default:
+            return moth_ui::MouseButton::Unknown;
+        }
+    }
 }
 
 namespace backend::vulkan {
@@ -228,5 +241,14 @@ namespace backend::vulkan {
         if ((mods & GLFW_MOD_CONTROL) != 0)
             keyMods |= moth_ui::KeyMod_LeftCtrl;
         return std::make_unique<moth_ui::EventKey>(keyAction, FromGLFWKey(key), keyMods);
+    }
+
+    std::unique_ptr<moth_ui::Event> FromGLFW(int button, int action, int mods, moth_ui::IntVec2 const& pos) {
+        if (action == GLFW_PRESS) {
+            return std::make_unique<moth_ui::EventMouseDown>(FromGLFWButton(button), pos);
+        } else if (action == GLFW_RELEASE) {
+            return std::make_unique<moth_ui::EventMouseUp>(FromGLFWButton(button), pos);
+        }
+        return nullptr;
     }
 }

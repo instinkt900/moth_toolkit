@@ -8,6 +8,7 @@
 #include "vulkan/vulkan_events.h"
 
 #include "moth_ui/context.h"
+#include "moth_ui/events/event_mouse.h"
 
 namespace {
     void checkVkResult(VkResult err) {
@@ -73,6 +74,8 @@ namespace backend::vulkan {
                 app->m_windowHeight = height;
             }
             app->OnResize();
+            const auto translatedEvent = std::make_unique<EventWindowSize>(width, height);
+            app->OnEvent(*translatedEvent);
         });
 
         glfwSetKeyCallback(m_glfwWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -82,9 +85,25 @@ namespace backend::vulkan {
             }
         });
 
-        if (m_windowMaximized) {
-            glfwMaximizeWindow(m_glfwWindow);
-        }
+        glfwSetCursorPosCallback(m_glfwWindow, [](GLFWwindow* window, double xpos, double ypos) {
+            Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+            auto const newMousePos = moth_ui::FloatVec2{ xpos, ypos };
+            moth_ui::FloatVec2 mouseDelta{ 0, 0 };
+            if (app->m_haveMousePos) {
+                mouseDelta = newMousePos - app->m_lastMousePos;
+            }
+            app->m_lastMousePos = newMousePos;
+            app->m_haveMousePos = true;
+            auto const translatedEvent = std::make_unique<moth_ui::EventMouseMove>(static_cast<moth_ui::IntVec2>(app->m_lastMousePos), static_cast<moth_ui::FloatVec2>(mouseDelta));
+            app->OnEvent(*translatedEvent);
+        });
+
+        glfwSetMouseButtonCallback(m_glfwWindow, [](GLFWwindow* window, int button, int action, int mods) {
+            Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+            if (auto const translatedEvent = FromGLFW(button, action, mods, static_cast<moth_ui::IntVec2>(app->m_lastMousePos))) {
+                app->OnEvent(*translatedEvent);
+            }
+        });
 
         m_context = std::make_unique<Context>();
 
@@ -107,6 +126,10 @@ namespace backend::vulkan {
 
         ImGuiInit();
         SetupLayers();
+
+        if (m_windowMaximized) {
+            glfwMaximizeWindow(m_glfwWindow);
+        }
 
         return true;
     }
@@ -192,6 +215,8 @@ namespace backend::vulkan {
     }
 
     void Application::OnResize() {
-        m_vulkanGraphics->OnResize(m_customVkSurface, m_windowWidth, m_windowHeight);
+        if (m_vulkanGraphics) {
+            m_vulkanGraphics->OnResize(m_customVkSurface, m_windowWidth, m_windowHeight);
+        }
     }
 }

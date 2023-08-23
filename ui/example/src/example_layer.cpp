@@ -25,9 +25,17 @@ void ExampleLayer::Update(uint32_t ticks) {
 }
 
 void ExampleLayer::Draw() {
+    moth_ui::IntVec2 const currentSize{ GetWidth(), GetHeight() };
+    if (m_lastDrawnSize != currentSize) {
+        moth_ui::IntRect displayRect;
+        displayRect.topLeft = { 0, 0 };
+        displayRect.bottomRight = currentSize;
+        m_root->SetScreenRect(displayRect);
+    }
     if (m_root) {
         m_root->Draw();
     }
+    m_lastDrawnSize = currentSize;
 }
 
 void ExampleLayer::OnAddedToStack(moth_ui::LayerStack* stack) {

@@ -45,6 +45,9 @@
     <ClCompile Include="..\..\example\src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\example\src\ui_button.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\external\imgui\backends\imgui_impl_glfw.h">
@@ -81,6 +84,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\example\src\example_layer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\example\src\ui_button.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

@@ -140,6 +140,7 @@
     <ClCompile Include="..\..\example\src\example_application.cpp" />
     <ClCompile Include="..\..\example\src\example_layer.cpp" />
     <ClCompile Include="..\..\example\src\main.cpp" />
+    <ClCompile Include="..\..\example\src\ui_button.cpp" />
     <ClCompile Include="..\..\external\imgui\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="..\..\external\imgui\backends\imgui_impl_sdl.cpp" />
     <ClCompile Include="..\..\external\imgui\backends\imgui_impl_sdlrenderer.cpp" />
@@ -153,6 +154,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\example\src\example_application.h" />
     <ClInclude Include="..\..\example\src\example_layer.h" />
+    <ClInclude Include="..\..\example\src\ui_button.h" />
     <ClInclude Include="..\..\external\imgui\backends\imgui_impl_glfw.h" />
     <ClInclude Include="..\..\external\imgui\backends\imgui_impl_sdl.h" />
     <ClInclude Include="..\..\external\imgui\backends\imgui_impl_sdlrenderer.h" />

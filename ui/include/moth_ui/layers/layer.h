@@ -21,7 +21,7 @@ namespace moth_ui {
         int GetWidth() const;
         int GetHeight() const;
 
-        virtual bool UseRenderSize() const { return true; }
+        virtual bool UseRenderSize() const { return false; }
 
     protected:
         LayerStack* m_layerStack = nullptr;

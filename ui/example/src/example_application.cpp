@@ -8,7 +8,7 @@
 #include <fstream>
 
 char const* const ExampleApplication::IMGUI_FILE = "imgui.ini";
-char const* const ExampleApplication::PERSISTENCE_FILE = "editor.json";
+char const* const ExampleApplication::PERSISTENCE_FILE = "example.json";
 ExampleApplication* g_App;
 
 ExampleApplication::ExampleApplication()

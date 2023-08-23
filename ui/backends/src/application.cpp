@@ -53,9 +53,7 @@ namespace backend {
     }
 
     bool Application::OnWindowSizeEvent(EventWindowSize const& event) {
-        m_windowWidth = event.GetWidth();
-        m_windowHeight = event.GetHeight();
-        m_layerStack->SetWindowSize({ m_windowWidth, m_windowHeight });
+        m_layerStack->SetWindowSize({ event.GetWidth(), event.GetHeight() });
         return true;
     }
 

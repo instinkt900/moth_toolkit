@@ -22,6 +22,7 @@ public:
 
 protected:
     std::shared_ptr<moth_ui::Group> m_root;
+    moth_ui::IntVec2 m_lastDrawnSize;
 
     bool OnRequestQuitEvent(EventRequestQuit const& event);
 };

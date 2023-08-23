@@ -13,7 +13,8 @@ if (MSVC)
 else()
 endif()
 
-include_directories(../include)
+add_subdirectory(.. moth_ui)
+
 include_directories(../external/imgui)
 include_directories(../external/murmurhash.c)
 
@@ -112,6 +113,7 @@ else()
 endif()
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 target_include_directories(${PROJECT_NAME} PRIVATE src)
+target_link_libraries(${PROJECT_NAME} moth_ui)
 target_link_libraries(${PROJECT_NAME} fmt::fmt)
 target_link_libraries(${PROJECT_NAME} freetype)
 target_link_libraries(${PROJECT_NAME} glfw)

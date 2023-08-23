@@ -6,10 +6,12 @@
 #include "vulkan/vulkan_graphics.h"
 #include "vulkan/vulkan_swapchain.h"
 
+#include <GLFW/glfw3.h>
+
 namespace backend::vulkan {
     class Application : public backend::Application {
     public:
-        Application();
+        Application(std::string const& applicationTitle);
         virtual ~Application();
 
         void SetWindowTitle(std::string const& title) override;

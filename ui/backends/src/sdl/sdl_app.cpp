@@ -13,7 +13,8 @@
 #include <backends/imgui_impl_sdlrenderer.h>
 
 namespace backend::sdl {
-    Application::Application() {
+    Application::Application(std::string const& applicationTitle)
+        : backend::Application(applicationTitle) {
     }
 
     Application::~Application() {
@@ -37,7 +38,7 @@ namespace backend::sdl {
             return false;
         }
 
-        if (nullptr == (m_window = SDL_CreateWindow("UI Tool", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_windowWidth, m_windowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE))) {
+        if (nullptr == (m_window = SDL_CreateWindow(m_applicationTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_windowWidth, m_windowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE))) {
             return false;
         }
 
@@ -75,7 +76,8 @@ namespace backend::sdl {
     }
 
     void Application::SetWindowTitle(std::string const& title) {
-        SDL_SetWindowTitle(m_window, title.c_str());
+        m_applicationTitle = title;
+        SDL_SetWindowTitle(m_window, m_applicationTitle.c_str());
     }
 
     void Application::Draw() {

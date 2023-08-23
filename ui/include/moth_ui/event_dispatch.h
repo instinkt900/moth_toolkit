@@ -3,6 +3,8 @@
 #include "moth_ui/events/event.h"
 #include "moth_ui/event_listener.h"
 
+#include <functional>
+
 namespace moth_ui {
     class EventDispatch {
     public:

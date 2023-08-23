@@ -16,7 +16,8 @@ namespace {
 }
 
 namespace backend::vulkan {
-    Application::Application() {
+    Application::Application(std::string const& applicationTitle)
+        : backend::Application(applicationTitle) {
     }
 
     Application::~Application() {
@@ -48,7 +49,7 @@ namespace backend::vulkan {
         }
 
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        m_glfwWindow = glfwCreateWindow(m_windowWidth, m_windowHeight, "UI Tool", nullptr, nullptr);
+        m_glfwWindow = glfwCreateWindow(m_windowWidth, m_windowHeight, m_applicationTitle.c_str(), nullptr, nullptr);
         glfwSetWindowUserPointer(m_glfwWindow, this);
 
         if (m_windowPos.x != -1 && m_windowPos.y != -1) {
@@ -111,7 +112,8 @@ namespace backend::vulkan {
     }
 
     void Application::SetWindowTitle(std::string const& title) {
-        glfwSetWindowTitle(m_glfwWindow, title.c_str());
+        m_applicationTitle = title;
+        glfwSetWindowTitle(m_glfwWindow, m_applicationTitle.c_str());
     }
 
     void Application::Draw() {

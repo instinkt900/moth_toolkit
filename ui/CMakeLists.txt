@@ -28,14 +28,16 @@ set(PUBLIC_HEADERS
 	include/moth_ui/events/event_mouse.h
 	include/moth_ui/event_dispatch.h
 	include/moth_ui/event_listener.h
+	include/moth_ui/font_factory.h
 	include/moth_ui/group.h
 	include/moth_ui/ifont.h
-	include/moth_ui/font_factory.h
 	include/moth_ui/iimage.h
 	include/moth_ui/iimage_factory.h
 	include/moth_ui/image_scale_type.h
 	include/moth_ui/irenderer.h
 	include/moth_ui/itarget.h
+	include/moth_ui/layers/layer.h
+	include/moth_ui/layers/layer_stack.h
 	include/moth_ui/layout/layout.h
 	include/moth_ui/layout/layout_cache.h
 	include/moth_ui/layout/layout_entity.h
@@ -67,6 +69,13 @@ set(PUBLIC_HEADERS
 )
 
 set(SOURCES ${SOURCES}
+	src/animation_controller.cpp
+	src/animation_track.cpp
+	src/context.cpp
+	src/font_factory.cpp
+	src/group.cpp
+	src/layers/layer.cpp
+	src/layers/layer_stack.cpp
 	src/layout/layout.cpp
 	src/layout/layout_cache.cpp
 	src/layout/layout_entity.cpp
@@ -76,11 +85,6 @@ set(SOURCES ${SOURCES}
 	src/layout/layout_entity_rect.cpp
 	src/layout/layout_entity_ref.cpp
 	src/layout/layout_entity_text.cpp
-	src/animation_controller.cpp
-	src/animation_track.cpp
-	src/context.cpp
-	src/font_factory.cpp
-	src/group.cpp
 	src/node.cpp
 	src/node_clip.cpp
 	src/node_factory.cpp

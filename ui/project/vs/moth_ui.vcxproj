@@ -98,6 +98,8 @@
     <ClCompile Include="..\..\src\context.cpp" />
     <ClCompile Include="..\..\src\font_factory.cpp" />
     <ClCompile Include="..\..\src\group.cpp" />
+    <ClCompile Include="..\..\src\layers\layer.cpp" />
+    <ClCompile Include="..\..\src\layers\layer_stack.cpp" />
     <ClCompile Include="..\..\src\layout\layout.cpp" />
     <ClCompile Include="..\..\src\layout\layout_cache.cpp" />
     <ClCompile Include="..\..\src\layout\layout_entity.cpp" />
@@ -136,6 +138,8 @@
     <ClInclude Include="..\..\include\moth_ui\image_scale_type.h" />
     <ClInclude Include="..\..\include\moth_ui\irenderer.h" />
     <ClInclude Include="..\..\include\moth_ui\itarget.h" />
+    <ClInclude Include="..\..\include\moth_ui\layers\layer.h" />
+    <ClInclude Include="..\..\include\moth_ui\layers\layer_stack.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout_cache.h" />
     <ClInclude Include="..\..\include\moth_ui\layout\layout_entity.h" />

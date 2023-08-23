@@ -2,11 +2,15 @@
 
 #include "vulkan/vulkan_app.h"
 #include "sdl/sdl_app.h"
-#include "events/event.h"
+
+#include <memory>
+#include <vector>
+
+#include <nlohmann/json.hpp>
 
 #define USE_VULKAN
 
-class EditorApplication
+class ExampleApplication
 #if defined(USE_SDL)
     : public backend::sdl::Application
 #elif defined(USE_VULKAN)
@@ -14,8 +18,8 @@ class EditorApplication
 #endif
 {
 public:
-    EditorApplication();
-    virtual ~EditorApplication();
+    ExampleApplication();
+    virtual ~ExampleApplication();
 
     nlohmann::json& GetPersistentState() { return m_persistentState; }
 
@@ -28,4 +32,4 @@ private:
     static char const* const PERSISTENCE_FILE;
 };
 
-extern EditorApplication* g_App;
+extern ExampleApplication* g_App;

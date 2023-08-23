@@ -4,8 +4,9 @@
 #include "moth_ui/event_dispatch.h"
 
 namespace backend {
-    Application::Application()
-        : m_windowWidth(INIT_WINDOW_WIDTH)
+    Application::Application(std::string const& applicationTitle)
+        : m_applicationTitle(applicationTitle)
+        , m_windowWidth(INIT_WINDOW_WIDTH)
         , m_windowHeight(INIT_WINDOW_HEIGHT) {
         m_updateTicks = std::chrono::milliseconds(1000 / 60);
     }
@@ -62,4 +63,5 @@ namespace backend {
         m_running = false;
         return true;
     }
+
 }

@@ -7,7 +7,7 @@
 namespace backend::sdl {
     class Application : public backend::Application {
     public:
-        Application();
+        Application(std::string const& applicationTitle);
         virtual ~Application();
 
         void SetWindowTitle(std::string const& title) override;

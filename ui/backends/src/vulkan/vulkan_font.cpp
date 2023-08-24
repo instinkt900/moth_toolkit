@@ -10,10 +10,10 @@
     {                       \
         FT_Error err = (r); \
         assert(!err);       \
-	_unused(err);       \
+        _unused(err);       \
     }                       \
     while (0)               \
-    ;
+        ;
 
 namespace {
     int NextPowerOf2(int value) {
@@ -240,45 +240,99 @@ namespace backend::vulkan {
     int Font::GetGlyphIndex(int charCode) const {
         auto const it = m_charCodeToIndex.find(charCode);
         if (std::end(m_charCodeToIndex) == it) {
-            return 0;
+            return -1;
         }
         return it->second;
     }
 
     moth_ui::IntVec2 Font::GetGlyphSize(int charCode) const {
         int const gi = GetGlyphIndex(charCode);
+        if (gi == -1) {
+            return {};
+        }
         return m_glyphInfo[gi].Advance;
+    }
+
+    int32_t Font::GetGlyphWidth(int charCode) const {
+        return GetGlyphSize(charCode).x;
     }
 
     int32_t Font::GetStringWidth(std::string_view const& str) const {
         int32_t width = 0;
         for (auto& c : str) {
-            auto glyphIndex = m_charCodeToIndex.at(c);
-            auto const& glyphInfo = m_glyphInfo[glyphIndex];
-            width += glyphInfo.Advance.x;
+            width += GetGlyphWidth(c);
         }
         return width;
     }
 
     int32_t Font::GetColumnHeight(std::string const& str, int32_t width) const {
-        int32_t runningHeight = m_lineHeight;
-        // go word by word until we hit the limits
-        auto words = split_str(str);
-        int32_t runningWidth = 0;
+        auto const lines = WrapString(str, width);
+        return static_cast<int32_t>(m_lineHeight * lines.size());
+    }
 
-        int32_t lineWordIndex = 0;
-        for (auto& word : words) {
-            int32_t wordWidth = GetStringWidth(word);
-            if (lineWordIndex > 0 && (runningWidth + wordWidth) > width) {
-                lineWordIndex = 0;
-                runningWidth = 0;
-                runningHeight += m_lineHeight;
-            } else {
-                ++lineWordIndex;
-                runningWidth += wordWidth;
+    std::vector<Font::LineDesc> Font::WrapString(std::string const& str, int32_t width) const {
+        std::vector<Font::LineDesc> lines;
+
+        int32_t runningLineWidth = 0;
+        int32_t lastBreakWidth = 0;
+
+        char const* currentLineStart = str.c_str();
+        char const* nextLineStartCandidate = currentLineStart;
+
+        auto const SubmitNewLine = [this, &lines](char const* lineStart, size_t lineLength) {
+            // strip preceeding whitespace
+            while (lineLength > 0) {
+                if (!std::isspace(*lineStart)) {
+                    break;
+                }
+                ++lineStart;
+                --lineLength;
             }
+
+            // strip trailing whitespace
+            while (lineLength > 0) {
+                if (!std::isspace(lineStart[lineLength - 1])) {
+                    break;
+                }
+                --lineLength;
+            }
+
+            // if theres anything left, add it to the list
+            if (lineLength > 0) {
+                std::string_view const view{lineStart, lineLength};
+                int32_t const lineWidth = GetStringWidth(view);
+                lines.emplace_back(LineDesc{ lineWidth, view });
+            }
+        };
+
+        char const* ptr = nullptr;
+        for (ptr = str.c_str(); *ptr != 0; ++ptr) {
+            char const c = *ptr;
+            int32_t const charWidth = GetGlyphWidth(c);
+            bool const isWhiteSpace = std::isspace(c);
+            bool const wantsBreak = (runningLineWidth + charWidth) > width;
+            bool const mustBreak = (c == '\n');
+            size_t const currentLineLength = ptr - currentLineStart;
+
+            if (currentLineLength > 0 && isWhiteSpace) {
+                nextLineStartCandidate = ptr + 1; // +1 to skip this breakable whitespace
+                lastBreakWidth = runningLineWidth;
+            }
+
+            size_t const brokenLineLength = nextLineStartCandidate - currentLineStart;
+            if ((wantsBreak || mustBreak) && brokenLineLength > 0) {
+                SubmitNewLine(currentLineStart, brokenLineLength);
+                currentLineStart = nextLineStartCandidate;
+                runningLineWidth -= lastBreakWidth;
+                lastBreakWidth = runningLineWidth;
+            }
+
+            runningLineWidth += charWidth;
         }
 
-        return runningHeight;
+        size_t const currentLineLength = ptr - currentLineStart;
+        SubmitNewLine(currentLineStart, currentLineLength);
+
+        return lines;
     }
 }

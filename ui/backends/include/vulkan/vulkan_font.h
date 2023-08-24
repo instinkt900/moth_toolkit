@@ -10,14 +10,21 @@ namespace backend::vulkan {
         static std::shared_ptr<Font> Load(char const* path, int size, Context& context, Graphics& graphics);
         virtual ~Font();
 
-        int GetGlyphIndex(int charCode) const;
-        moth_ui::IntVec2 GetGlyphSize(int charCode) const;
-
         VkDescriptorSet GetVKDescriptorSet() const { return m_vkDescriptorSet; }
 
         int32_t GetLineHeight() const { return m_lineHeight; }
+
+        int GetGlyphIndex(int charCode) const;
+        moth_ui::IntVec2 GetGlyphSize(int charCode) const;
+        int32_t GetGlyphWidth(int charCode) const;
         int32_t GetStringWidth(std::string_view const& str) const;
         int32_t GetColumnHeight(std::string const& str, int32_t width) const;
+
+        struct LineDesc {
+            int32_t lineWidth;
+            std::string_view text;
+        };
+        std::vector<LineDesc> WrapString(std::string const& str, int32_t width) const;
 
     private:
         Font(FT_Face face, int size, Context& context, Graphics& graphics);

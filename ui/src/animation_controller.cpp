@@ -77,8 +77,9 @@ namespace moth_ui {
     void AnimationClipController::SetClip(AnimationClip* clip) {
         m_clip = clip;
         if (m_clip) {
+            m_frame = static_cast<float>(m_clip->m_startFrame);
             for (auto& child : m_group->GetChildren()) {
-                child->GetAnimationController().SetFrame(static_cast<float>(m_clip->m_startFrame));
+                child->GetAnimationController().SetFrame(m_frame);
             }
             m_group->SendEvent(EventAnimationStarted(m_group, m_clip->m_name), Node::EventDirection::Up);
         }

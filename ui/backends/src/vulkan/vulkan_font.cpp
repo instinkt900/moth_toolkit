@@ -240,7 +240,7 @@ namespace backend::vulkan {
     int Font::GetGlyphIndex(int charCode) const {
         auto const it = m_charCodeToIndex.find(charCode);
         if (std::end(m_charCodeToIndex) == it) {
-            return -1; // hmm
+            return -1;
         }
         return it->second;
     }
@@ -277,26 +277,52 @@ namespace backend::vulkan {
         int32_t lastBreakWidth = 0;
 
         char const* currentLineStart = str.c_str();
-        char const* lastBreak = currentLineStart;
+        char const* nextLineStartCandidate = currentLineStart;
+
+        auto const SubmitNewLine = [this, &lines](char const* lineStart, size_t lineLength) {
+            // strip preceeding whitespace
+            while (lineLength > 0) {
+                if (!std::isspace(*lineStart)) {
+                    break;
+                }
+                ++lineStart;
+                --lineLength;
+            }
+
+            // strip trailing whitespace
+            while (lineLength > 0) {
+                if (!std::isspace(lineStart[lineLength - 1])) {
+                    break;
+                }
+                --lineLength;
+            }
+
+            // if theres anything left, add it to the list
+            if (lineLength > 0) {
+                std::string_view const view{lineStart, lineLength};
+                int32_t const lineWidth = GetStringWidth(view);
+                lines.emplace_back(LineDesc{ lineWidth, view });
+            }
+        };
 
         char const* ptr = nullptr;
         for (ptr = str.c_str(); *ptr != 0; ++ptr) {
             char const c = *ptr;
             int32_t const charWidth = GetGlyphWidth(c);
-            bool const breakable = std::isspace(c);
+            bool const isWhiteSpace = std::isspace(c);
             bool const wantsBreak = (runningLineWidth + charWidth) > width;
             bool const mustBreak = (c == '\n');
             size_t const currentLineLength = ptr - currentLineStart;
 
-            if (currentLineLength > 0 && breakable) {
-                lastBreak = ptr + 1;
+            if (currentLineLength > 0 && isWhiteSpace) {
+                nextLineStartCandidate = ptr + 1; // +1 to skip this breakable whitespace
                 lastBreakWidth = runningLineWidth;
             }
 
-            size_t const brokenLineLength = lastBreak - currentLineStart;
+            size_t const brokenLineLength = nextLineStartCandidate - currentLineStart;
             if ((wantsBreak || mustBreak) && brokenLineLength > 0) {
-                lines.emplace_back(LineDesc{ lastBreakWidth, std::string_view(currentLineStart, brokenLineLength) });
-                currentLineStart = lastBreak;
+                SubmitNewLine(currentLineStart, brokenLineLength);
+                currentLineStart = nextLineStartCandidate;
                 runningLineWidth -= lastBreakWidth;
                 lastBreakWidth = runningLineWidth;
             }
@@ -305,9 +331,7 @@ namespace backend::vulkan {
         }
 
         size_t const currentLineLength = ptr - currentLineStart;
-        if (currentLineLength > 0) {
-            lines.emplace_back(LineDesc{ runningLineWidth, std::string_view(currentLineStart, ptr - currentLineStart) });
-        }
+        SubmitNewLine(currentLineStart, currentLineLength);
 
         return lines;
     }

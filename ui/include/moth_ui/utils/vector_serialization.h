@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vector.h"
+#include <nlohmann/json.hpp>
 
 namespace moth_ui {
     template <typename T>

@@ -10,9 +10,8 @@ if (MSVC)
 	add_compile_definitions(_CRT_SECURE_NO_WARNINGS _ITERATOR_DEBUG_LEVEL=0)
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MD")
-else()
-
 endif()
+
 add_compile_definitions(JSON_HAS_FILESYSTEM)
 
 set(PUBLIC_HEADERS
@@ -28,14 +27,16 @@ set(PUBLIC_HEADERS
 	include/moth_ui/events/event_mouse.h
 	include/moth_ui/event_dispatch.h
 	include/moth_ui/event_listener.h
+	include/moth_ui/font_factory.h
 	include/moth_ui/group.h
 	include/moth_ui/ifont.h
-	include/moth_ui/font_factory.h
 	include/moth_ui/iimage.h
 	include/moth_ui/iimage_factory.h
 	include/moth_ui/image_scale_type.h
 	include/moth_ui/irenderer.h
 	include/moth_ui/itarget.h
+	include/moth_ui/layers/layer.h
+	include/moth_ui/layers/layer_stack.h
 	include/moth_ui/layout/layout.h
 	include/moth_ui/layout/layout_cache.h
 	include/moth_ui/layout/layout_entity.h
@@ -67,6 +68,13 @@ set(PUBLIC_HEADERS
 )
 
 set(SOURCES ${SOURCES}
+	src/animation_controller.cpp
+	src/animation_track.cpp
+	src/context.cpp
+	src/font_factory.cpp
+	src/group.cpp
+	src/layers/layer.cpp
+	src/layers/layer_stack.cpp
 	src/layout/layout.cpp
 	src/layout/layout_cache.cpp
 	src/layout/layout_entity.cpp
@@ -76,11 +84,6 @@ set(SOURCES ${SOURCES}
 	src/layout/layout_entity_rect.cpp
 	src/layout/layout_entity_ref.cpp
 	src/layout/layout_entity_text.cpp
-	src/animation_controller.cpp
-	src/animation_track.cpp
-	src/context.cpp
-	src/font_factory.cpp
-	src/group.cpp
 	src/node.cpp
 	src/node_clip.cpp
 	src/node_factory.cpp
@@ -95,13 +98,14 @@ find_package(magic_enum REQUIRED)
 find_package(range-v3 REQUIRED)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
+set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 target_include_directories(${PROJECT_NAME} PRIVATE src)
 target_link_libraries(${PROJECT_NAME} nlohmann_json::nlohmann_json)
 target_link_libraries(${PROJECT_NAME} fmt::fmt)
 target_link_libraries(${PROJECT_NAME} magic_enum::magic_enum)
 target_link_libraries(${PROJECT_NAME} range-v3::range-v3)
-set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
+
 if (MSVC)
 	set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/W3 /WX")
 else()

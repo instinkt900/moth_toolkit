@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ifont.h"
+#include <map>
 
 namespace moth_ui {
     class FontFactory {

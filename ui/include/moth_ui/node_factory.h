@@ -1,6 +1,9 @@
 #pragma once
 
 #include "moth_ui/ui_fwd.h"
+#include <memory>
+#include <map>
+#include <filesystem>
 
 namespace moth_ui {
     class NodeFactory {

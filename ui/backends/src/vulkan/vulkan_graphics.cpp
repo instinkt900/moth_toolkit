@@ -320,7 +320,6 @@ namespace backend::vulkan {
 
         // render lines one by one
         moth_ui::FloatVec2 charPos = static_cast<moth_ui::FloatVec2>(pos);
-        uint32_t wordIndex = 0;
         for (auto& line : lines) {
             switch (horizontalAlignment) {
             case moth_ui::TextHorizAlignment::Left:

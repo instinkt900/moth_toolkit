@@ -87,7 +87,8 @@ namespace backend::vulkan {
 
         auto const destWidth = destRect.bottomRight.x - destRect.topLeft.x;
         auto const destHeight = destRect.bottomRight.y - destRect.topLeft.y;
-        auto const textHeight = vFont.GetColumnHeight(text, destWidth);
+        auto const lines = vFont.WrapString(text, destWidth);
+        auto const textHeight = lines.size() * vFont.GetLineHeight();// vFont.GetColumnHeight(text, destWidth);
 
         auto x = static_cast<float>(destRect.topLeft.x);
         switch (horizontalAlignment) {

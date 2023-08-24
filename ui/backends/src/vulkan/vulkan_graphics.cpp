@@ -315,31 +315,64 @@ namespace backend::vulkan {
             pos.x += gs.x;
         };
 
-        // split up into lines
-        auto const spaceWidth = vulkanFont.GetStringWidth(" ");
-        auto const words = split_str(text);
-        struct Line {
-            uint32_t fullWidth;
-            uint32_t wordCount;
-        };
-        std::vector<Line> lines;
-        uint32_t currentLineWidth = 0;
-        uint32_t currentWordCount = 0;
-        for (auto& word : words) {
-            auto const wordWidth = vulkanFont.GetStringWidth(word);
-            if (currentWordCount > 0) {
-                if ((currentLineWidth + wordWidth) > width) {
-                    lines.push_back({ currentLineWidth, currentWordCount });
-                    currentLineWidth = 0;
-                    currentWordCount = 0;
-                }
-                currentLineWidth += spaceWidth;
-            }
+        //// split up into lines
+        //auto const spaceWidth = vulkanFont.GetStringWidth(" ");
+        //auto const words = split_str(text);
+        //struct Line {
+        //    uint32_t fullWidth;
+        //    uint32_t wordCount;
+        //};
+        //std::vector<Line> lines;
+        //uint32_t currentLineWidth = 0;
+        //uint32_t currentWordCount = 0;
+        //for (auto& word : words) {
+        //    auto const wordWidth = vulkanFont.GetStringWidth(word);
+        //    if (currentWordCount > 0) {
+        //        if ((currentLineWidth + wordWidth) > width) {
+        //            lines.push_back({ currentLineWidth, currentWordCount });
+        //            currentLineWidth = 0;
+        //            currentWordCount = 0;
+        //        }
+        //        currentLineWidth += spaceWidth;
+        //    }
 
-            currentLineWidth += wordWidth;
-            ++currentWordCount;
-        }
-        lines.push_back({ currentLineWidth - spaceWidth, currentWordCount });
+        //    currentLineWidth += wordWidth;
+        //    ++currentWordCount;
+        //}
+        //lines.push_back({ currentLineWidth - spaceWidth, currentWordCount });
+
+        //// render lines one by one
+        //moth_ui::FloatVec2 charPos = static_cast<moth_ui::FloatVec2>(pos);
+        //uint32_t wordIndex = 0;
+        //for (auto& line : lines) {
+        //    switch (horizontalAlignment) {
+        //    case moth_ui::TextHorizAlignment::Left:
+        //        charPos.x = static_cast<float>(pos.x);
+        //        break;
+        //    case moth_ui::TextHorizAlignment::Center:
+        //        charPos.x = static_cast<float>(pos.x) - (line.fullWidth / 2.0f);
+        //        break;
+        //    case moth_ui::TextHorizAlignment::Right:
+        //        charPos.x = static_cast<float>(pos.x) - line.fullWidth;
+        //        break;
+        //    }
+
+        //    for (uint32_t w = 0; w < line.wordCount; ++w) {
+        //        auto& word = words[wordIndex];
+        //        for (size_t i = 0; i < word.size(); ++i) {
+        //            SubmitCharacter(word[i], charPos);
+        //        }
+        //        if (w < (words.size() - 1)) {
+        //            SubmitCharacter(' ', charPos);
+        //        }
+        //        ++wordIndex;
+        //    }
+
+        //    charPos.y += vulkanFont.GetLineHeight();
+        //}
+
+        auto const lines = vulkanFont.WrapString(text, width);
+
 
         // render lines one by one
         moth_ui::FloatVec2 charPos = static_cast<moth_ui::FloatVec2>(pos);
@@ -350,22 +383,15 @@ namespace backend::vulkan {
                 charPos.x = static_cast<float>(pos.x);
                 break;
             case moth_ui::TextHorizAlignment::Center:
-                charPos.x = static_cast<float>(pos.x) - (line.fullWidth / 2.0f);
+                charPos.x = static_cast<float>(pos.x) - (line.lineWidth / 2.0f);
                 break;
             case moth_ui::TextHorizAlignment::Right:
-                charPos.x = static_cast<float>(pos.x) - line.fullWidth;
+                charPos.x = static_cast<float>(pos.x) - line.lineWidth;
                 break;
             }
 
-            for (uint32_t w = 0; w < line.wordCount; ++w) {
-                auto& word = words[wordIndex];
-                for (size_t i = 0; i < word.size(); ++i) {
-                    SubmitCharacter(word[i], charPos);
-                }
-                if (w < (words.size() - 1)) {
-                    SubmitCharacter(' ', charPos);
-                }
-                ++wordIndex;
+            for (auto& c : line.text) {
+                SubmitCharacter(c, charPos);
             }
 
             charPos.y += vulkanFont.GetLineHeight();

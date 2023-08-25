@@ -1,6 +1,7 @@
 #pragma once
 
 #include "moth_ui/utils/vector.h"
+#include "moth_ui/blend_mode.h"
 #include <algorithm>
 #include <cmath>
 
@@ -77,5 +78,48 @@ namespace moth_ui {
         uint32_t const b = static_cast<uint32_t>(std::round(limitedColor.b * 255));
         uint32_t const a = static_cast<uint32_t>(std::round(limitedColor.a * 255));
         return (a << 24) | (b << 16) | (g << 8) | r;
+    }
+
+    inline Color Blend(Color const& srcColor, Color const& dstColor, BlendMode blend) {
+        moth_ui::Color srcColorFactor, dstColorFactor;
+        float srcAlphaFactor, dstAlphaFactor;
+        switch (blend) {
+        default:
+        case moth_ui::BlendMode::Replace:
+            srcColorFactor = { 1.0f, 1.0f, 1.0f, 0.0f };
+            dstColorFactor = { 0.0f, 0.0f, 0.0f, 0.0f };
+            srcAlphaFactor = 1.0f;
+            dstAlphaFactor = 0.0f;
+            break;
+        case moth_ui::BlendMode::Add:
+            srcColorFactor = { srcColor.a, srcColor.a, srcColor.a, 0.0f };
+            dstColorFactor = { 1.0f, 1.0f, 1.0f, 1.0f };
+            srcAlphaFactor = 0.0f;
+            dstAlphaFactor = 1.0f;
+            break;
+        case moth_ui::BlendMode::Alpha:
+            srcColorFactor = { srcColor.a, srcColor.a, srcColor.a, 0 };
+            dstColorFactor = { 1.0f - srcColor.a, 1.0f - srcColor.a, 1.0f - srcColor.a, 0.0f };
+            srcAlphaFactor = 1.0f;
+            dstAlphaFactor = 1.0f - srcColor.a;
+            break;
+        case moth_ui::BlendMode::Modulate:
+            srcColorFactor = { 0.0f, 0.0f, 0.0f, 0.0f };
+            dstColorFactor = srcColor;
+            srcAlphaFactor = 0.0f;
+            dstAlphaFactor = 1.0f;
+            break;
+        case moth_ui::BlendMode::Multiply:
+            srcColorFactor = dstColor;
+            dstColorFactor = { 1.0f - srcColor.a, 1.0f - srcColor.a, 1.0f - srcColor.a, 0.0f };
+            srcAlphaFactor = dstColor.a;
+            dstAlphaFactor = 1.0f - srcColor.a;
+            break;
+
+        }
+        float const finalAlpha = (srcColor.a * srcAlphaFactor) + (dstColor.a * dstAlphaFactor);
+        moth_ui::Color finalColor = (srcColor * srcColorFactor) + (dstColor * dstColorFactor);
+        finalColor.a = finalAlpha;
+        return finalColor;
     }
 }

@@ -6,6 +6,8 @@
 namespace backend::vulkan {
     UIRenderer::UIRenderer(Graphics& graphics)
         : m_graphics(graphics) {
+        m_drawColor.push({ 1.0f, 1.0f, 1.0f, 1.0f });
+        m_blendMode.push(moth_ui::BlendMode::Replace);
     }
 
     void UIRenderer::PushBlendMode(moth_ui::BlendMode mode) {
@@ -19,7 +21,8 @@ namespace backend::vulkan {
     }
 
     void UIRenderer::PushColor(moth_ui::Color const& color) {
-        m_drawColor.push(color);
+        auto const modColor = m_drawColor.top() * color;
+        m_drawColor.push(modColor);
     }
 
     void UIRenderer::PopColor() {

@@ -25,3 +25,9 @@
 [submodule "external/murmurhash.c"]
 	path = external/murmurhash.c
 	url = https://github.com/jwerle/murmurhash.c.git
+[submodule "external/harfbuzz"]
+	path = external/harfbuzz
+	url = https://github.com/harfbuzz/harfbuzz.git
+[submodule "external/harfbuzz-icu-freetype"]
+	path = external/harfbuzz-icu-freetype
+	url = https://github.com/tangrams/harfbuzz-icu-freetype.git

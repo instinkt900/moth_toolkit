@@ -452,13 +452,13 @@ namespace backend::vulkan {
         switch (mode) {
         default:
         case moth_ui::BlendMode::Replace:
-            currentBlend.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+            currentBlend.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT;
             currentBlend.blendEnable = VK_FALSE;
-            currentBlend.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-            currentBlend.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+            currentBlend.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+            currentBlend.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
             currentBlend.colorBlendOp = VK_BLEND_OP_ADD;
             currentBlend.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-            currentBlend.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+            currentBlend.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
             currentBlend.alphaBlendOp = VK_BLEND_OP_ADD;
             break;
         case moth_ui::BlendMode::Add:

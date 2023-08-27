@@ -113,6 +113,8 @@ namespace backend::vulkan {
 
         std::vector<int> charcodes;
 
+        static int const BorderPixels = 1;
+
         // first we iterate through all the glyphs in the fontData. measuring them and preparing
         // the rects for the stb packer
         FT_ULong charcode;
@@ -121,8 +123,8 @@ namespace backend::vulkan {
         while (gindex != 0) {
             FT_CHECK(FT_Load_Glyph(face, gindex, FT_LOAD_DEFAULT));
 
-            const int glyphWidth = face->glyph->bitmap.width;
-            const int glyphHeight = face->glyph->bitmap.rows;
+            const int glyphWidth = face->glyph->bitmap.width + BorderPixels * 2;
+            const int glyphHeight = face->glyph->bitmap.rows + BorderPixels * 2;
 
             minGlyphWidth = std::min(minGlyphWidth, glyphWidth);
             minGlyphHeight = std::min(minGlyphHeight, glyphHeight);
@@ -165,17 +167,30 @@ namespace backend::vulkan {
             FT_GlyphSlot glyphSlot = face->glyph;
             FT_CHECK(FT_Load_Glyph(face, rect.id, FT_LOAD_RENDER));
             int const glyphStride = face->glyph->bitmap.pitch;
-            int const glyphPosX = rect.x;
-            int const glyphPosY = rect.y;
-            int const glyphWidth = rect.w;
-            int const glyphHeight = rect.h;
-            for (int y = 0; y < glyphHeight; ++y) {
-                for (int x = 0; x < glyphWidth; ++x) {
-                    unsigned char alpha = face->glyph->bitmap.buffer[x + y * glyphStride];
-                    packData[((glyphPosX + x) * 4) + ((glyphPosY + y) * dataStride) + 0] = alpha;
-                    packData[((glyphPosX + x) * 4) + ((glyphPosY + y) * dataStride) + 1] = alpha;
-                    packData[((glyphPosX + x) * 4) + ((glyphPosY + y) * dataStride) + 2] = alpha;
-                    packData[((glyphPosX + x) * 4) + ((glyphPosY + y) * dataStride) + 3] = alpha;
+            int const glyphPosX = rect.x + BorderPixels;
+            int const glyphPosY = rect.y + BorderPixels;
+            int const glyphWidth = rect.w - BorderPixels * 2;
+            int const glyphHeight = rect.h - BorderPixels * 2;
+            int const targetPosX = rect.x;
+            int const targetPosY = rect.y;
+            int const targetWidth = rect.w;
+            int const targetHeight = rect.h;
+            for (int y = 0; y < targetHeight; ++y) {
+                for (int x = 0; x < targetWidth; ++x) {
+                    int const gx = x - BorderPixels;
+                    int const gy = y - BorderPixels;
+                    int const dataIdx = ((targetPosX + x) * 4) + ((targetPosY + y) * dataStride);
+                    // everything is full white
+                    packData[dataIdx + 0] = 0xFF;
+                    packData[dataIdx + 1] = 0xFF;
+                    packData[dataIdx + 2] = 0xFF;
+                    if (gx >= 0 && gx < glyphWidth && gy >= 0 && gy < glyphHeight) {
+                        // glyph pixels
+                        packData[dataIdx + 3] = face->glyph->bitmap.buffer[gx + gy * glyphStride];
+                    } else {
+                        // border pixels
+                        packData[dataIdx + 3] = 0x0;
+                    }
                 }
             }
 
@@ -191,6 +206,8 @@ namespace backend::vulkan {
             m_charCodeToIndex.insert(std::make_pair(glyphCode, glyphIndex));
             m_codepointToIndex.insert(std::make_pair(rect.id, glyphIndex));
         }
+
+        //stbi_write_png("test.png", packDim.x, packDim.y, 4, packData.data(), packDim.x * 4);
 
         m_glyphAtlas = Image::FromRGBA(context, packDim.x, packDim.y, packData.data());
         m_lineHeight = face->size->metrics.height / 64;

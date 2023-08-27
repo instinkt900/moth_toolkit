@@ -16,7 +16,7 @@ add_subdirectory(.. moth_ui)
 
 include_directories(../external/imgui)
 include_directories(../external/murmurhash.c)
-include_directories(../external/harfbuzz-icu-freetype/harfbuzz)
+include_directories(../external/harfbuzz-icu-freetype/harfbuzz/src)
 
 set(PUBLIC_HEADERS
 	include/application.h

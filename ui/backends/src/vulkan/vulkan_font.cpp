@@ -315,12 +315,6 @@ namespace backend::vulkan {
     std::vector<Font::LineDesc> Font::WrapString(std::string const& str, int32_t width) const {
         std::vector<Font::LineDesc> lines;
 
-        int32_t runningLineWidth = 0;
-        int32_t lastBreakWidth = 0;
-
-        char const* currentLineStart = str.c_str();
-        char const* nextLineStartCandidate = currentLineStart;
-
         auto const SubmitNewLine = [this, &lines](char const* lineStart, size_t lineLength) {
             // strip preceeding whitespace
             while (lineLength > 0) {
@@ -367,7 +361,6 @@ namespace backend::vulkan {
         for (auto& candidateLine : candidateLines) {
             size_t beginIdx = 0;
             size_t lastBreakIdx = 0;
-            int32_t lastBreakWidth = 0;
             size_t i = 0;
             for (/* empty */; i < candidateLine.length(); ++i) {
                 if (std::isspace(candidateLine[i])) {
@@ -376,20 +369,18 @@ namespace backend::vulkan {
                         // adding this word puts us over the limit
                         if ((lastBreakIdx - beginIdx) > 0) {
                             // the last break position was not the start of the line
-                            lines.push_back({ lastBreakWidth, { candidateLine.data() + beginIdx, lastBreakIdx - beginIdx } });
+                            SubmitNewLine(candidateLine.data() + beginIdx, lastBreakIdx - beginIdx);
                             beginIdx = lastBreakIdx + 1;
                             i = beginIdx - 1; // to account for the inc at the end of the loop
                         } else {
                             // the last break position was the line start itself (the word is longer than width)
-                            lines.push_back({ thisLineWidth, { candidateLine.data() + beginIdx, i - beginIdx } });
+                            SubmitNewLine(candidateLine.data() + beginIdx, i - beginIdx);
                             beginIdx = i + 1;
                         }
                         lastBreakIdx = beginIdx;
-                        lastBreakWidth = 0;
                     } else {
                         // if we didnt go over width, just remember the position and width here
                         lastBreakIdx = i;
-                        lastBreakWidth = thisLineWidth;
                     }
                 }
             }
@@ -402,45 +393,17 @@ namespace backend::vulkan {
                     // adding this word puts us over the limit
                     if ((lastBreakIdx - beginIdx) > 0) {
                         // the last break position was not the start of the line
-                        lines.push_back({ lastBreakWidth, { candidateLine.data() + beginIdx, lastBreakIdx - beginIdx } });
-                        lines.push_back({ lastBreakWidth, { candidateLine.data() + lastBreakIdx + 1, i - (lastBreakIdx + 1) } });
+                        SubmitNewLine(candidateLine.data() + beginIdx, lastBreakIdx - beginIdx);
+                        SubmitNewLine(candidateLine.data() + lastBreakIdx + 1, i - (lastBreakIdx + 1));
                     } else {
                         // the last break position was the line start itself (the word is longer than width)
-                        lines.push_back({ thisLineWidth, { candidateLine.data() + beginIdx, i - beginIdx } });
+                        SubmitNewLine(candidateLine.data() + beginIdx, i - beginIdx);
                     }
                 } else {
-                    lines.push_back({ thisLineWidth, lastView });
+                    SubmitNewLine(lastView.data(), lastView.length());
                 }
             }
         }
-
-        //char const* ptr = nullptr;
-        //for (ptr = str.c_str(); *ptr != 0; ++ptr) {
-        //    char const c = *ptr;
-        //    int32_t const charWidth = GetGlyphInfo(GetGlyphIndex(c)).Advance.x;
-        //    bool const isWhiteSpace = std::isspace(c);
-        //    bool const wantsBreak = (runningLineWidth + charWidth) > width;
-        //    bool const mustBreak = (c == '\n');
-        //    size_t const currentLineLength = ptr - currentLineStart;
-
-        //    if (currentLineLength > 0 && isWhiteSpace) {
-        //        nextLineStartCandidate = ptr + 1; // +1 to skip this breakable whitespace
-        //        lastBreakWidth = runningLineWidth;
-        //    }
-
-        //    size_t const brokenLineLength = nextLineStartCandidate - currentLineStart;
-        //    if ((wantsBreak || mustBreak) && brokenLineLength > 0) {
-        //        SubmitNewLine(currentLineStart, brokenLineLength);
-        //        currentLineStart = nextLineStartCandidate;
-        //        runningLineWidth -= lastBreakWidth;
-        //        lastBreakWidth = runningLineWidth;
-        //    }
-
-        //    runningLineWidth += charWidth;
-        //}
-
-        //size_t const currentLineLength = ptr - currentLineStart;
-        //SubmitNewLine(currentLineStart, currentLineLength);
 
         return lines;
     }

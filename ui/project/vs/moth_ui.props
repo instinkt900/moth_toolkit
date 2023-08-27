@@ -13,9 +13,14 @@
     <VULKAN_DIR>C:\VulkanSDK\1.3.250.1</VULKAN_DIR>
     <SPDLOG_DIR>e:\Development\moth_ui\external\spdlog\build\installed</SPDLOG_DIR>
     <FREETYPE_DIR>E:\Development\moth_ui\external\freetype\build\installed</FREETYPE_DIR>
+    <HARFBUZZ_DIR>E:\Development\moth_ui\external\harfbuzz-icu-freetype</HARFBUZZ_DIR>
   </PropertyGroup>
   <PropertyGroup />
-  <ItemDefinitionGroup />
+  <ItemDefinitionGroup>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <BuildMacro Include="SDL_DIR">
       <Value>$(SDL_DIR)</Value>
@@ -49,6 +54,9 @@
     </BuildMacro>
     <BuildMacro Include="FREETYPE_DIR">
       <Value>$(FREETYPE_DIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="HARFBUZZ_DIR">
+      <Value>$(HARFBUZZ_DIR)</Value>
     </BuildMacro>
   </ItemGroup>
 </Project>

@@ -9,6 +9,7 @@ out gl_PerVertex
 struct GlyphInfo
 {
     uvec2 glyph_size;
+    uvec2 unused;
     vec4 uv;
 };
 

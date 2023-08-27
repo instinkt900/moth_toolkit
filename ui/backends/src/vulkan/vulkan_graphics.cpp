@@ -4,6 +4,9 @@
 #include "vulkan/vulkan_subimage.h"
 #include "vulkan/vulkan_font.h"
 
+#include "hb.h"
+#include "hb-ft.h"
+
 namespace {
     bool readFile(std::string const& filename, std::vector<char>& outBuffer) {
         std::ifstream file(filename, std::ios::ate | std::ios::binary);
@@ -145,11 +148,11 @@ namespace backend::vulkan {
         context->m_currentBlendMode = mode;
     }
 
-    //void Graphics::SetBlendMode(std::shared_ptr<moth_ui::IImage> target, EBlendMode mode) {
-    //}
+    // void Graphics::SetBlendMode(std::shared_ptr<moth_ui::IImage> target, EBlendMode mode) {
+    // }
 
-    //void Graphics::SetColorMod(std::shared_ptr<moth_ui::IImage> target, moth_ui::Color const& color) {
-    //}
+    // void Graphics::SetColorMod(std::shared_ptr<moth_ui::IImage> target, moth_ui::Color const& color) {
+    // }
 
     void Graphics::SetColor(moth_ui::Color const& color) {
         auto context = m_contextStack.top();
@@ -299,28 +302,26 @@ namespace backend::vulkan {
         FontGlyphInstance* glyphInstances = static_cast<FontGlyphInstance*>(context->m_fontInstanceStagingBuffer->Map());
 
         // use this to actually submit characters at a position
-        auto SubmitCharacter = [&](char c, moth_ui::FloatVec2& pos) {
+        auto SubmitCharacter = [&](uint32_t glyphIndex, moth_ui::FloatVec2 const& pos) {
             if (context->m_glyphCount >= 1024)
                 return;
 
-            int const gi = vulkanFont.GetGlyphIndex(c);
-            moth_ui::IntVec2 const gs = vulkanFont.GetGlyphSize(c);
             FontGlyphInstance* inst = &glyphInstances[context->m_glyphCount];
-
             inst->pos = pos;
-            inst->glyphIndex = gi;
+            inst->glyphIndex = glyphIndex;
             inst->color = context->m_currentColor;
 
             context->m_glyphCount++;
-            pos.x += gs.x;
         };
 
         auto const lines = vulkanFont.WrapString(text, width);
-
+        auto const lineHeight = vulkanFont.GetLineHeight();
 
         // render lines one by one
         moth_ui::FloatVec2 charPos = static_cast<moth_ui::FloatVec2>(pos);
         for (auto& line : lines) {
+            auto const shapeInfo = vulkanFont.ShapeString(line.text);
+
             switch (horizontalAlignment) {
             case moth_ui::TextHorizAlignment::Left:
                 charPos.x = static_cast<float>(pos.x);
@@ -333,8 +334,10 @@ namespace backend::vulkan {
                 break;
             }
 
-            for (auto& c : line.text) {
-                SubmitCharacter(c, charPos);
+            for (auto const& info : shapeInfo) {
+                auto const bearing = vulkanFont.GetGlyphBearing(info.glyphIndex);
+                SubmitCharacter(info.glyphIndex, { charPos.x + bearing.x + info.offset.x, charPos.y + lineHeight + info.offset.y - bearing.y });
+                charPos.x += info.advance.x;
             }
 
             charPos.y += vulkanFont.GetLineHeight();
@@ -553,10 +556,10 @@ namespace backend::vulkan {
             dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
             m_rtRenderPass = RenderPassBuilder(m_context.m_vkDevice)
-                               .AddAttachment(colorAttachment)
-                               .AddSubpass(subpass)
-                               .AddDependency(dependency)
-                               .Build();
+                                 .AddAttachment(colorAttachment)
+                                 .AddSubpass(subpass)
+                                 .AddDependency(dependency)
+                                 .Build();
         }
     }
 

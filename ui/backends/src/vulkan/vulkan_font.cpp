@@ -5,6 +5,8 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
+#include "hb-ft.h"
+
 #define _unused(x) ((void)(x))
 #define FT_CHECK(r)         \
     {                       \
@@ -94,8 +96,11 @@ namespace backend::vulkan {
         return std::shared_ptr<Font>(new Font(face, size, context, graphics));
     }
 
-    Font::Font(FT_Face face, int size, Context& context, Graphics& graphics) {
+    Font::Font(FT_Face face, int size, Context& context, Graphics& graphics)
+        : m_ftFace(face) {
         FT_CHECK(FT_Set_Pixel_Sizes(face, 0, size));
+
+        m_hbFont = hb_ft_font_create(m_ftFace, nullptr);
 
         std::vector<stbrp_rect> stbRects;
         int minGlyphWidth, maxGlyphWidth;
@@ -132,6 +137,9 @@ namespace backend::vulkan {
             r.h = glyphHeight;
 
             stbRects.push_back(r);
+
+            m_glyphBearings.push_back({ face->glyph->metrics.horiBearingX / 64, face->glyph->metrics.horiBearingY / 64 });
+
             // want to store a list of charcodes in index order so we can
             // map charcode to rect.id/glyph index later
             charcodes.push_back(charcode);
@@ -172,28 +180,30 @@ namespace backend::vulkan {
             }
 
             // store info
-            int const glyphIndex = static_cast<int>(m_glyphInfo.size());
+            int const glyphIndex = static_cast<int>(m_shaderInfos.size());
             int const glyphCode = charcodes[glyphIndex];
             moth_ui::FloatVec2 const pos0(static_cast<float>(glyphPosX), static_cast<float>(glyphPosY));
             moth_ui::FloatVec2 const pos1(static_cast<float>(glyphPosX + glyphWidth), static_cast<float>(glyphPosY + glyphHeight));
             moth_ui::FloatVec2 const uv0 = pos0 / texSize;
             moth_ui::FloatVec2 const uv1 = pos1 / texSize;
             // https://stackoverflow.com/questions/66265216/how-is-freetype-calculating-advance
-            m_glyphInfo.push_back({ { glyphWidth, glyphHeight }, { glyphSlot->advance.x / 64, glyphSlot->advance.y / 64 }, uv0, uv1 });
+            m_shaderInfos.push_back({ { glyphWidth, glyphHeight }, { glyphSlot->advance.x / 64, glyphSlot->advance.y / 64 }, uv0, uv1 });
             m_charCodeToIndex.insert(std::make_pair(glyphCode, glyphIndex));
+            m_codepointToIndex.insert(std::make_pair(rect.id, glyphIndex));
         }
 
         m_glyphAtlas = Image::FromRGBA(context, packDim.x, packDim.y, packData.data());
         m_lineHeight = face->size->metrics.height / 64;
+        m_ascent = face->size->metrics.ascender / 64;
 
-        int const dataSize = static_cast<int>(m_glyphInfo.size() * sizeof(GlyphInfo));
-        m_storageBuffer = std::make_unique<Buffer>(context, dataSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        int const dataSize = static_cast<int>(m_shaderInfos.size() * sizeof(ShaderInfo));
+        m_glyphInfosBuffer = std::make_unique<Buffer>(context, dataSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
         std::unique_ptr<Buffer> staging = std::make_unique<Buffer>(context, dataSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
         unsigned char* stagingPtr = static_cast<unsigned char*>(staging->Map());
-        memcpy(stagingPtr, m_glyphInfo.data(), dataSize);
+        memcpy(stagingPtr, m_shaderInfos.data(), dataSize);
         staging->Unmap();
-        m_storageBuffer->Copy(*staging);
+        m_glyphInfosBuffer->Copy(*staging);
 
         Shader& fontShader = graphics.GetFontShader();
 
@@ -205,9 +215,9 @@ namespace backend::vulkan {
         CHECK_VK_RESULT(vkAllocateDescriptorSets(context.m_vkDevice, &alloc_info, &m_vkDescriptorSet));
 
         VkDescriptorBufferInfo glyph_info[1] = {};
-        glyph_info[0].buffer = m_storageBuffer->GetVKBuffer();
+        glyph_info[0].buffer = m_glyphInfosBuffer->GetVKBuffer();
         glyph_info[0].offset = 0;
-        glyph_info[0].range = m_glyphInfo.size() * sizeof(GlyphInfo);
+        glyph_info[0].range = m_shaderInfos.size() * sizeof(ShaderInfo);
 
         VkDescriptorImageInfo desc_image[1] = {};
         desc_image[0].sampler = m_glyphAtlas->GetVkSampler();
@@ -235,6 +245,8 @@ namespace backend::vulkan {
     }
 
     Font::~Font() {
+        hb_font_destroy(m_hbFont);
+        hb_buffer_destroy(m_hbBuffer);
     }
 
     int Font::GetGlyphIndex(int charCode) const {
@@ -245,23 +257,23 @@ namespace backend::vulkan {
         return it->second;
     }
 
-    moth_ui::IntVec2 Font::GetGlyphSize(int charCode) const {
-        int const gi = GetGlyphIndex(charCode);
-        if (gi == -1) {
-            return {};
-        }
-        return m_glyphInfo[gi].Advance;
+    moth_ui::IntVec2 const& Font::GetGlyphSize(int glyphIndex) const {
+        return m_shaderInfos.at(glyphIndex).Size;
     }
 
-    int32_t Font::GetGlyphWidth(int charCode) const {
-        return GetGlyphSize(charCode).x;
+    moth_ui::IntVec2 const& Font::GetGlyphBearing(int glyphIndex) const {
+        return m_glyphBearings.at(glyphIndex);
     }
 
     int32_t Font::GetStringWidth(std::string_view const& str) const {
         int32_t width = 0;
-        for (auto& c : str) {
-            width += GetGlyphWidth(c);
+
+        auto const shapedInfo = ShapeString(str);
+
+        for (auto const& info : shapedInfo) {
+            width += info.advance.x;
         }
+
         return width;
     }
 
@@ -270,14 +282,38 @@ namespace backend::vulkan {
         return static_cast<int32_t>(m_lineHeight * lines.size());
     }
 
+    std::vector<Font::ShapedInfo> Font::ShapeString(std::string_view const& str) const {
+        if (m_hbBuffer == nullptr) {
+            m_hbBuffer = hb_buffer_create();
+        } else {
+            hb_buffer_clear_contents(m_hbBuffer);
+        }
+
+        hb_buffer_set_direction(m_hbBuffer, HB_DIRECTION_LTR);
+        hb_buffer_set_script(m_hbBuffer, HB_SCRIPT_LATIN);
+        hb_buffer_set_language(m_hbBuffer, hb_language_from_string("en", -1));
+        hb_buffer_guess_segment_properties(m_hbBuffer);
+
+        hb_buffer_add_utf8(m_hbBuffer, str.data(), static_cast<int>(str.length()), 0, -1);
+        hb_shape(m_hbFont, m_hbBuffer, nullptr, 0);
+
+        uint32_t glyphCount;
+        hb_glyph_info_t* outGlyphInfo = hb_buffer_get_glyph_infos(m_hbBuffer, &glyphCount);
+        hb_glyph_position_t* outGlyphPos = hb_buffer_get_glyph_positions(m_hbBuffer, &glyphCount);
+
+        std::vector<Font::ShapedInfo> result;
+
+        for (uint32_t i = 0; i < glyphCount; ++i) {
+            result.push_back({ m_codepointToIndex.at(outGlyphInfo[i].codepoint),
+                               { outGlyphPos[i].x_advance / 64, outGlyphPos[i].y_advance / 64 },
+                               { outGlyphPos[i].x_offset / 64, outGlyphPos[i].y_offset / 64 } });
+        }
+
+        return result;
+    }
+
     std::vector<Font::LineDesc> Font::WrapString(std::string const& str, int32_t width) const {
         std::vector<Font::LineDesc> lines;
-
-        int32_t runningLineWidth = 0;
-        int32_t lastBreakWidth = 0;
-
-        char const* currentLineStart = str.c_str();
-        char const* nextLineStartCandidate = currentLineStart;
 
         auto const SubmitNewLine = [this, &lines](char const* lineStart, size_t lineLength) {
             // strip preceeding whitespace
@@ -299,39 +335,75 @@ namespace backend::vulkan {
 
             // if theres anything left, add it to the list
             if (lineLength > 0) {
-                std::string_view const view{lineStart, lineLength};
+                std::string_view const view{ lineStart, lineLength };
                 int32_t const lineWidth = GetStringWidth(view);
                 lines.emplace_back(LineDesc{ lineWidth, view });
             }
         };
 
-        char const* ptr = nullptr;
-        for (ptr = str.c_str(); *ptr != 0; ++ptr) {
-            char const c = *ptr;
-            int32_t const charWidth = GetGlyphWidth(c);
-            bool const isWhiteSpace = std::isspace(c);
-            bool const wantsBreak = (runningLineWidth + charWidth) > width;
-            bool const mustBreak = (c == '\n');
-            size_t const currentLineLength = ptr - currentLineStart;
-
-            if (currentLineLength > 0 && isWhiteSpace) {
-                nextLineStartCandidate = ptr + 1; // +1 to skip this breakable whitespace
-                lastBreakWidth = runningLineWidth;
+        // first break up using newlines already in the string
+        std::vector<std::string_view> candidateLines;
+        char const* lineStart = str.c_str();
+        char const* ptr = lineStart;
+        for (/* empty */; *ptr != 0; ++ptr) {
+            size_t const curLineLength = ptr - lineStart;
+            if (*ptr == '\n' && curLineLength > 0) {
+                candidateLines.push_back({ lineStart, curLineLength });
+                lineStart = ptr + 1;
             }
-
-            size_t const brokenLineLength = nextLineStartCandidate - currentLineStart;
-            if ((wantsBreak || mustBreak) && brokenLineLength > 0) {
-                SubmitNewLine(currentLineStart, brokenLineLength);
-                currentLineStart = nextLineStartCandidate;
-                runningLineWidth -= lastBreakWidth;
-                lastBreakWidth = runningLineWidth;
-            }
-
-            runningLineWidth += charWidth;
+        }
+        size_t const lastLineLength = ptr - lineStart;
+        if (lastLineLength > 0) {
+            candidateLines.push_back({ lineStart, lastLineLength });
         }
 
-        size_t const currentLineLength = ptr - currentLineStart;
-        SubmitNewLine(currentLineStart, currentLineLength);
+        // now wrap lines to the given width
+        for (auto& candidateLine : candidateLines) {
+            size_t beginIdx = 0;
+            size_t lastBreakIdx = 0;
+            size_t i = 0;
+            for (/* empty */; i < candidateLine.length(); ++i) {
+                if (std::isspace(candidateLine[i])) {
+                    int32_t const thisLineWidth = GetStringWidth({ candidateLine.data() + beginIdx, i - beginIdx });
+                    if (thisLineWidth > width) {
+                        // adding this word puts us over the limit
+                        if ((lastBreakIdx - beginIdx) > 0) {
+                            // the last break position was not the start of the line
+                            SubmitNewLine(candidateLine.data() + beginIdx, lastBreakIdx - beginIdx);
+                            beginIdx = lastBreakIdx + 1;
+                            i = beginIdx - 1; // to account for the inc at the end of the loop
+                        } else {
+                            // the last break position was the line start itself (the word is longer than width)
+                            SubmitNewLine(candidateLine.data() + beginIdx, i - beginIdx);
+                            beginIdx = i + 1;
+                        }
+                        lastBreakIdx = beginIdx;
+                    } else {
+                        // if we didnt go over width, just remember the position and width here
+                        lastBreakIdx = i;
+                    }
+                }
+            }
+
+            // check if we have left over text
+            if ((i - beginIdx) > 0) {
+                std::string_view const lastView{ candidateLine.data() + beginIdx, i - beginIdx };
+                int32_t const thisLineWidth = GetStringWidth(lastView);
+                if (thisLineWidth > width) {
+                    // adding this word puts us over the limit
+                    if ((lastBreakIdx - beginIdx) > 0) {
+                        // the last break position was not the start of the line
+                        SubmitNewLine(candidateLine.data() + beginIdx, lastBreakIdx - beginIdx);
+                        SubmitNewLine(candidateLine.data() + lastBreakIdx + 1, i - (lastBreakIdx + 1));
+                    } else {
+                        // the last break position was the line start itself (the word is longer than width)
+                        SubmitNewLine(candidateLine.data() + beginIdx, i - beginIdx);
+                    }
+                } else {
+                    SubmitNewLine(lastView.data(), lastView.length());
+                }
+            }
+        }
 
         return lines;
     }

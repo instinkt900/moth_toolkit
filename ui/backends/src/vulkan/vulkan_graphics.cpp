@@ -294,7 +294,7 @@ namespace backend::vulkan {
         SubmitVertices(vertices, 2, ETopologyType::Lines);
     }
 
-    void Graphics::DrawText(std::string const& text, moth_ui::IFont& font, moth_ui::TextHorizAlignment horizontalAlignment, moth_ui::IntVec2 const& pos, uint32_t width) {
+    void Graphics::DrawText(std::string const& text, moth_ui::IFont& font, moth_ui::TextHorizAlignment horizontalAlignment, moth_ui::TextVertAlignment verticalAlignment, moth_ui::IntRect const& destRect) {
         auto context = m_contextStack.top();
         Font& vulkanFont = static_cast<Font&>(font);
 
@@ -314,33 +314,48 @@ namespace backend::vulkan {
             context->m_glyphCount++;
         };
 
-        auto const lines = vulkanFont.WrapString(text, width);
-        auto const lineHeight = vulkanFont.GetLineHeight();
+        auto const lines = vulkanFont.WrapString(text, destRect.w());
+        auto const singleLineHeight = vulkanFont.GetLineHeight();
+        auto const singleLineDescent = vulkanFont.GetDescent();
+        auto const linesHeight = static_cast<int32_t>(lines.size() * singleLineHeight);
+
+        moth_ui::FloatVec2 charPos = static_cast<moth_ui::FloatVec2>(destRect.topLeft);
+
+        switch (verticalAlignment) {
+        case moth_ui::TextVertAlignment::Top:
+            break;
+        case moth_ui::TextVertAlignment::Middle:
+            charPos.y += (destRect.h() - linesHeight) / 2.0f;
+            break;
+        case moth_ui::TextVertAlignment::Bottom:
+            charPos.y += destRect.h() - linesHeight;
+            break;
+        }
 
         // render lines one by one
-        moth_ui::FloatVec2 charPos = static_cast<moth_ui::FloatVec2>(pos);
+
         for (auto& line : lines) {
             auto const shapeInfo = vulkanFont.ShapeString(line.text);
 
             switch (horizontalAlignment) {
             case moth_ui::TextHorizAlignment::Left:
-                charPos.x = static_cast<float>(pos.x);
+                charPos.x = static_cast<float>(destRect.topLeft.x);
                 break;
             case moth_ui::TextHorizAlignment::Center:
-                charPos.x = static_cast<float>(pos.x) - (line.lineWidth / 2.0f);
+                charPos.x = static_cast<float>(destRect.topLeft.x) + ((destRect.w() - line.lineWidth) / 2.0f);
                 break;
             case moth_ui::TextHorizAlignment::Right:
-                charPos.x = static_cast<float>(pos.x) - line.lineWidth;
+                charPos.x = static_cast<float>(destRect.bottomRight.x) - line.lineWidth;
                 break;
             }
 
             for (auto const& info : shapeInfo) {
                 auto const bearing = vulkanFont.GetGlyphBearing(info.glyphIndex);
-                SubmitCharacter(info.glyphIndex, { charPos.x + bearing.x + info.offset.x, charPos.y + lineHeight + info.offset.y - bearing.y });
+                SubmitCharacter(info.glyphIndex, { charPos.x + bearing.x + info.offset.x, charPos.y + singleLineHeight + singleLineDescent - bearing.y + info.offset.y });
                 charPos.x += info.advance.x;
             }
 
-            charPos.y += vulkanFont.GetLineHeight();
+            charPos.y += singleLineHeight;
         }
 
         context->m_fontInstanceStagingBuffer->Unmap();

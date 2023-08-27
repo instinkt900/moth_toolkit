@@ -195,6 +195,8 @@ namespace backend::vulkan {
         m_glyphAtlas = Image::FromRGBA(context, packDim.x, packDim.y, packData.data());
         m_lineHeight = face->size->metrics.height / 64;
         m_ascent = face->size->metrics.ascender / 64;
+        m_descent = face->size->metrics.descender / 64;
+        m_underline = FT_MulFix(face->underline_position, face->size->metrics.y_scale) / 64;
 
         int const dataSize = static_cast<int>(m_shaderInfos.size() * sizeof(ShaderInfo));
         m_glyphInfosBuffer = std::make_unique<Buffer>(context, dataSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
@@ -371,7 +373,7 @@ namespace backend::vulkan {
                             // the last break position was not the start of the line
                             SubmitNewLine(candidateLine.data() + beginIdx, lastBreakIdx - beginIdx);
                             beginIdx = lastBreakIdx + 1;
-                            i = beginIdx - 1; // to account for the inc at the end of the loop
+                            i = lastBreakIdx; // backtrack to the last break
                         } else {
                             // the last break position was the line start itself (the word is longer than width)
                             SubmitNewLine(candidateLine.data() + beginIdx, i - beginIdx);

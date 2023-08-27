@@ -302,12 +302,12 @@ namespace backend::vulkan {
         FontGlyphInstance* glyphInstances = static_cast<FontGlyphInstance*>(context->m_fontInstanceStagingBuffer->Map());
 
         // use this to actually submit characters at a position
-        auto SubmitCharacter = [&](uint32_t glyphIndex, moth_ui::IntVec2 const& pos) {
+        auto SubmitCharacter = [&](uint32_t glyphIndex, moth_ui::FloatVec2 const& pos) {
             if (context->m_glyphCount >= 1024)
                 return;
 
             FontGlyphInstance* inst = &glyphInstances[context->m_glyphCount];
-            inst->pos = static_cast<moth_ui::FloatVec2>(pos);
+            inst->pos = pos;
             inst->glyphIndex = glyphIndex;
             inst->color = context->m_currentColor;
 
@@ -335,8 +335,7 @@ namespace backend::vulkan {
             }
 
             for (auto const& info : shapeInfo) {
-                auto const& bearing = vulkanFont.GetGlyphBearing(info.glyphIndex);
-                auto const& size = vulkanFont.GetGlyphSize(info.glyphIndex);
+                auto const bearing = vulkanFont.GetGlyphBearing(info.glyphIndex);
                 SubmitCharacter(info.glyphIndex, { charPos.x + bearing.x + info.offset.x, charPos.y + lineHeight + info.offset.y - bearing.y });
                 charPos.x += info.advance.x;
             }

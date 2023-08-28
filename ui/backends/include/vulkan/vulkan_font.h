@@ -14,6 +14,8 @@ namespace backend::vulkan {
 
         int32_t GetLineHeight() const { return m_lineHeight; }
         int32_t GetAscent() const { return m_ascent; }
+        int32_t GetDescent() const { return m_descent; }
+        int32_t GetUnderline() const { return m_underline; }
 
         int GetGlyphIndex(int charCode) const;
 
@@ -57,6 +59,8 @@ namespace backend::vulkan {
         // global font measurements
         int32_t m_lineHeight;
         int32_t m_ascent;
+        int32_t m_descent;
+        int32_t m_underline;
 
         struct ShaderInfo {
             moth_ui::IntVec2 Size;

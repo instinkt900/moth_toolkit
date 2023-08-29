@@ -96,11 +96,10 @@ namespace backend::vulkan {
         return std::shared_ptr<Font>(new Font(face, size, context, graphics));
     }
 
-    Font::Font(FT_Face face, int size, Context& context, Graphics& graphics)
-        : m_ftFace(face) {
+    Font::Font(FT_Face face, int size, Context& context, Graphics& graphics) {
         FT_CHECK(FT_Set_Pixel_Sizes(face, 0, size));
 
-        m_hbFont = hb_ft_font_create(m_ftFace, nullptr);
+        m_hbFont = hb_ft_font_create(face, nullptr);
 
         std::vector<stbrp_rect> stbRects;
         int minGlyphWidth, maxGlyphWidth;
@@ -140,7 +139,7 @@ namespace backend::vulkan {
 
             stbRects.push_back(r);
 
-            m_glyphBearings.push_back({ face->glyph->metrics.horiBearingX / 64, face->glyph->metrics.horiBearingY / 64 });
+            m_glyphBearings.push_back({ face->glyph->metrics.horiBearingX / 64, -face->glyph->metrics.horiBearingY / 64 }); // -ve y so we can use it as an offset
 
             // want to store a list of charcodes in index order so we can
             // map charcode to rect.id/glyph index later
@@ -151,7 +150,7 @@ namespace backend::vulkan {
 
         // now we use the stb packer to optimally pack them in an arrangement
         std::vector<stbrp_node> stbNodes(fullWidth * 2);
-        auto const packDim = FindOptimalDimensions(stbNodes, stbRects, { 1, 1 }, { fullWidth, fullHeight });
+        auto const packDim = FindOptimalDimensions(stbNodes, stbRects, { 1024, 1024 }, { fullWidth, fullHeight });
         stbrp_context stbContext;
         stbrp_init_target(&stbContext, packDim.x, packDim.y, stbNodes.data(), static_cast<int>(stbNodes.size()));
         stbrp_pack_rects(&stbContext, stbRects.data(), static_cast<int>(stbRects.size()));
@@ -203,8 +202,7 @@ namespace backend::vulkan {
             moth_ui::FloatVec2 const uv1 = pos1 / texSize;
             // https://stackoverflow.com/questions/66265216/how-is-freetype-calculating-advance
             m_shaderInfos.push_back({ { glyphWidth, glyphHeight }, { glyphSlot->advance.x / 64, glyphSlot->advance.y / 64 }, uv0, uv1 });
-            m_charCodeToIndex.insert(std::make_pair(glyphCode, glyphIndex));
-            m_codepointToIndex.insert(std::make_pair(rect.id, glyphIndex));
+            m_codepointToAtlasIndex.insert(std::make_pair(rect.id, glyphIndex));
         }
 
         //stbi_write_png("test.png", packDim.x, packDim.y, 4, packData.data(), packDim.x * 4);
@@ -268,18 +266,6 @@ namespace backend::vulkan {
         hb_buffer_destroy(m_hbBuffer);
     }
 
-    int Font::GetGlyphIndex(int charCode) const {
-        auto const it = m_charCodeToIndex.find(charCode);
-        if (std::end(m_charCodeToIndex) == it) {
-            return -1;
-        }
-        return it->second;
-    }
-
-    moth_ui::IntVec2 const& Font::GetGlyphSize(int glyphIndex) const {
-        return m_shaderInfos.at(glyphIndex).Size;
-    }
-
     moth_ui::IntVec2 const& Font::GetGlyphBearing(int glyphIndex) const {
         return m_glyphBearings.at(glyphIndex);
     }
@@ -323,7 +309,7 @@ namespace backend::vulkan {
         std::vector<Font::ShapedInfo> result;
 
         for (uint32_t i = 0; i < glyphCount; ++i) {
-            result.push_back({ m_codepointToIndex.at(outGlyphInfo[i].codepoint),
+            result.push_back({ CodepointToIndex(outGlyphInfo[i].codepoint),
                                { outGlyphPos[i].x_advance / 64, outGlyphPos[i].y_advance / 64 },
                                { outGlyphPos[i].x_offset / 64, outGlyphPos[i].y_offset / 64 } });
         }
@@ -425,5 +411,13 @@ namespace backend::vulkan {
         }
 
         return lines;
+    }
+    
+    int Font::CodepointToIndex(int codepoint) const {
+        auto const it = m_codepointToAtlasIndex.find(codepoint);
+        if (std::end(m_codepointToAtlasIndex) == it) {
+            return -1;
+        }
+        return it->second;
     }
 }

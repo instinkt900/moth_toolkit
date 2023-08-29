@@ -17,16 +17,13 @@ namespace backend::vulkan {
         int32_t GetDescent() const { return m_descent; }
         int32_t GetUnderline() const { return m_underline; }
 
-        int GetGlyphIndex(int charCode) const;
-
-        moth_ui::IntVec2 const& GetGlyphSize(int glyphIndex) const;
         moth_ui::IntVec2 const& GetGlyphBearing(int glyphIndex) const;
 
         int32_t GetStringWidth(std::string_view const& str) const;
         int32_t GetColumnHeight(std::string const& str, int32_t width) const;
 
         struct ShapedInfo {
-            uint32_t glyphIndex;
+            int glyphIndex;
             moth_ui::IntVec2 advance;
             moth_ui::IntVec2 offset;
         };
@@ -43,8 +40,7 @@ namespace backend::vulkan {
     private:
         Font(FT_Face face, int size, Context& context, Graphics& graphics);
 
-        // the freetype face object
-        FT_Face m_ftFace;
+        int CodepointToIndex(int codepoint) const;
 
         // harfbuzz stuff. this should probably be wrapped
         hb_font_t* m_hbFont = nullptr;
@@ -52,9 +48,6 @@ namespace backend::vulkan {
 
         // texture containing all glyphs
         std::unique_ptr<Image> m_glyphAtlas;
-
-        // for mapping char code to glyph index
-        std::map<int, int> m_charCodeToIndex;
 
         // global font measurements
         int32_t m_lineHeight;
@@ -69,12 +62,11 @@ namespace backend::vulkan {
             moth_ui::FloatVec2 UV1;
         };
 
-        std::vector<moth_ui::IntVec2> m_glyphBearings;  // glyph bearing values
-        std::vector<ShaderInfo> m_shaderInfos;          // glyph info specifically for the shader
+        std::map<int, uint32_t> m_codepointToAtlasIndex;    //
+        std::vector<moth_ui::IntVec2> m_glyphBearings;      // glyph bearing values
+        std::vector<ShaderInfo> m_shaderInfos;              // glyph info specifically for the shader
 
         VkDescriptorSet m_vkDescriptorSet;
-        std::unique_ptr<Buffer> m_glyphInfosBuffer;     // the buffer that stores the glyph infos
-
-        std::map<int, uint32_t> m_codepointToIndex;
+        std::unique_ptr<Buffer> m_glyphInfosBuffer; // the buffer that stores the glyph infos
     };
 }

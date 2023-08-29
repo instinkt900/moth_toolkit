@@ -110,8 +110,6 @@ namespace backend::vulkan {
         minGlyphWidth = minGlyphHeight = std::numeric_limits<int>::max();
         maxGlyphWidth = maxGlyphHeight = 0;
 
-        std::vector<int> charcodes;
-
         static int const BorderPixels = 1;
 
         // first we iterate through all the glyphs in the fontData. measuring them and preparing
@@ -140,10 +138,6 @@ namespace backend::vulkan {
             stbRects.push_back(r);
 
             m_glyphBearings.push_back({ face->glyph->metrics.horiBearingX / 64, -face->glyph->metrics.horiBearingY / 64 }); // -ve y so we can use it as an offset
-
-            // want to store a list of charcodes in index order so we can
-            // map charcode to rect.id/glyph index later
-            charcodes.push_back(charcode);
 
             charcode = FT_Get_Next_Char(face, charcode, &gindex);
         }
@@ -195,7 +189,6 @@ namespace backend::vulkan {
 
             // store info
             int const glyphIndex = static_cast<int>(m_shaderInfos.size());
-            int const glyphCode = charcodes[glyphIndex];
             moth_ui::FloatVec2 const pos0(static_cast<float>(glyphPosX), static_cast<float>(glyphPosY));
             moth_ui::FloatVec2 const pos1(static_cast<float>(glyphPosX + glyphWidth), static_cast<float>(glyphPosY + glyphHeight));
             moth_ui::FloatVec2 const uv0 = pos0 / texSize;

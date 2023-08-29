@@ -319,43 +319,49 @@ namespace backend::vulkan {
         auto const singleLineDescent = vulkanFont.GetDescent();
         auto const linesHeight = static_cast<int32_t>(lines.size() * singleLineHeight);
 
-        moth_ui::FloatVec2 charPos = static_cast<moth_ui::FloatVec2>(destRect.topLeft);
+        moth_ui::FloatVec2 penPos = static_cast<moth_ui::FloatVec2>(destRect.topLeft);
 
         switch (verticalAlignment) {
         case moth_ui::TextVertAlignment::Top:
             break;
         case moth_ui::TextVertAlignment::Middle:
-            charPos.y += (destRect.h() - linesHeight) / 2.0f;
+            penPos.y += (destRect.h() - linesHeight) / 2.0f;
             break;
         case moth_ui::TextVertAlignment::Bottom:
-            charPos.y += destRect.h() - linesHeight;
+            penPos.y += destRect.h() - linesHeight;
             break;
         }
 
-        // render lines one by one
+        // move down to the bottom of the line, minus the descent value (so the descent of the glyphs dont extend past the whole line)
+        penPos.y += singleLineHeight + singleLineDescent;
 
+        // render lines one by one
         for (auto& line : lines) {
             auto const shapeInfo = vulkanFont.ShapeString(line.text);
 
             switch (horizontalAlignment) {
             case moth_ui::TextHorizAlignment::Left:
-                charPos.x = static_cast<float>(destRect.topLeft.x);
+                penPos.x = static_cast<float>(destRect.topLeft.x);
                 break;
             case moth_ui::TextHorizAlignment::Center:
-                charPos.x = static_cast<float>(destRect.topLeft.x) + ((destRect.w() - line.lineWidth) / 2.0f);
+                penPos.x = static_cast<float>(destRect.topLeft.x) + ((destRect.w() - line.lineWidth) / 2.0f);
                 break;
             case moth_ui::TextHorizAlignment::Right:
-                charPos.x = static_cast<float>(destRect.bottomRight.x) - line.lineWidth;
+                penPos.x = static_cast<float>(destRect.bottomRight.x) - line.lineWidth;
                 break;
             }
-
+            
             for (auto const& info : shapeInfo) {
-                auto const bearing = vulkanFont.GetGlyphBearing(info.glyphIndex);
-                SubmitCharacter(info.glyphIndex, { charPos.x + bearing.x + info.offset.x, charPos.y + singleLineHeight + singleLineDescent - bearing.y + info.offset.y });
-                charPos.x += info.advance.x;
+                if (info.glyphIndex >= 0) {
+                    auto const bearing = static_cast<moth_ui::FloatVec2>(vulkanFont.GetGlyphBearing(info.glyphIndex));
+                    auto const offset = static_cast<moth_ui::FloatVec2>(info.offset);
+                    auto const glyphPos = penPos + bearing + offset;
+                    SubmitCharacter(info.glyphIndex, glyphPos);
+                }
+                penPos.x += info.advance.x;
             }
-
-            charPos.y += singleLineHeight;
+            
+            penPos.y += singleLineHeight;
         }
 
         context->m_fontInstanceStagingBuffer->Unmap();

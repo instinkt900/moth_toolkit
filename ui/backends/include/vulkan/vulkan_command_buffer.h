@@ -21,6 +21,8 @@ namespace backend::vulkan {
 
         void TransitionImageLayout(Image& image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
         void CopyBufferToImage(Image& image, Buffer& buffer);
+        void CopyImageToBuffer(Buffer& buffer, Image& image);
+        void CopyImageToImage(Image& srcImage, Image& dstImage);
 
         void BeginRenderPass(RenderPass& renderPass, Framebuffer& frameBuffer);
         void EndRenderPass();

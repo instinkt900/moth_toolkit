@@ -10,7 +10,7 @@ namespace backend::vulkan {
         static std::unique_ptr<Image> FromRGBA(Context& context, int width, int height, unsigned char const* pixels);
         Image(Context& context);
         Image(Context& context, VkImage image, VkImageView view, VkExtent2D extent, VkFormat format, bool owning = true);
-        Image(Context& context, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, bool owning = true);
+        Image(Context& context, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties = 0, bool owning = true);
         ~Image();
 
         uint32_t GetId() const { return m_id; }
@@ -18,9 +18,12 @@ namespace backend::vulkan {
         VkImage GetVkImage() const { return m_vkImage; }
         VkExtent2D GetVkExtent() const { return m_vkExtent; }
         VkFormat GetVkFormat() const { return m_vkFormat; }
-        VkImageView GetVkView() const { return m_vkView; }
-        VkSampler GetVkSampler() const { return m_vkSampler; }
+        VkImageView GetVkView();
+        VkSampler GetVkSampler();
         VkDescriptorSet GetDescriptorSet();
+
+        void* Map();
+        void Unmap();
 
         Image(Image const&) = delete;
         Image& operator=(Image const&) = delete;
@@ -39,7 +42,7 @@ namespace backend::vulkan {
 
         bool m_owningImage = true;
 
-        void CreateResource(VkImageTiling tiling, VkImageUsageFlags usage);
+        void CreateResource(VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties);
         void CreateView();
         void CreateDefaultSampler();
     };

@@ -78,15 +78,15 @@ namespace backend::vulkan {
         , m_owningImage(owning) {
     }
 
-    Image::Image(Context& context, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, bool owning)
+    Image::Image(Context& context, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, bool owning)
         : m_id(NextTextureId++)
         , m_context(context)
         , m_vkExtent{ width, height }
         , m_vkFormat(format)
         , m_owningImage(owning) {
-        CreateResource(tiling, usage);
-        CreateView();
-        CreateDefaultSampler();
+        CreateResource(tiling, usage, properties);
+        //CreateView();
+        //CreateDefaultSampler();
     }
 
     Image::~Image() {
@@ -102,6 +102,19 @@ namespace backend::vulkan {
         }
     }
 
+    VkImageView Image::GetVkView() {
+        if (m_vkView == VK_NULL_HANDLE) {
+            CreateView();
+        }
+        return m_vkView;
+    }
+    VkSampler Image::GetVkSampler() {
+        if (m_vkSampler == VK_NULL_HANDLE) {
+            CreateDefaultSampler();
+        }
+        return m_vkSampler;
+    }
+
     VkDescriptorSet Image::GetDescriptorSet() {
         if (m_vkDescriptorSet == VK_NULL_HANDLE) {
             m_vkDescriptorSet = ImGui_ImplVulkan_AddTexture(m_vkSampler, m_vkView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -109,7 +122,17 @@ namespace backend::vulkan {
         return m_vkDescriptorSet;
     }
 
-    void Image::CreateResource(VkImageTiling tiling, VkImageUsageFlags usage) {
+    void* Image::Map() {
+        void* data;
+        vmaMapMemory(m_context.m_vmaAllocator, m_vmaAllocation, &data);
+        return data;
+    }
+
+    void Image::Unmap() {
+        vmaUnmapMemory(m_context.m_vmaAllocator, m_vmaAllocation);
+    }
+
+    void Image::CreateResource(VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties) {
         VkImageCreateInfo info{};
         info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
         info.imageType = VK_IMAGE_TYPE_2D;
@@ -126,6 +149,10 @@ namespace backend::vulkan {
 
         VmaAllocationCreateInfo allocInfo{};
         allocInfo.usage = VMA_MEMORY_USAGE_AUTO;
+        allocInfo.requiredFlags = properties;
+        if (properties & (VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)) {
+            allocInfo.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
+        }
         CHECK_VK_RESULT(vmaCreateImage(m_context.m_vmaAllocator, &info, &allocInfo, &m_vkImage, &m_vmaAllocation, nullptr));
     }
 

@@ -7,6 +7,8 @@
 #include "hb.h"
 #include "hb-ft.h"
 
+#include "stb_image_write.h"
+
 namespace {
     bool readFile(std::string const& filename, std::vector<char>& outBuffer) {
         std::ifstream file(filename, std::ios::ate | std::ios::binary);
@@ -216,6 +218,47 @@ namespace backend::vulkan {
     }
 
     void Graphics::DrawToPNG(std::filesystem::path const& path) {
+        FlushCommands();
+
+        auto& context = m_context;
+        auto drawContext = m_contextStack.top();
+
+        auto const targetFormat = VK_FORMAT_R8G8B8A8_UNORM;
+        auto targetImage = std::make_unique<Image>(context, drawContext->m_logicalExtent.width, drawContext->m_logicalExtent.height, targetFormat, VK_IMAGE_TILING_LINEAR, VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+        auto renderedSubImage = static_cast<SubImage*>(drawContext->m_target->GetImage());
+        auto srcImage = renderedSubImage->m_texture;
+        auto srcFormat = srcImage->GetVkFormat();
+
+        auto commandBuffer = std::make_unique<CommandBuffer>(context);
+        commandBuffer->BeginRecord();
+        commandBuffer->TransitionImageLayout(*srcImage, srcFormat, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+        commandBuffer->TransitionImageLayout(*targetImage, targetFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+        commandBuffer->CopyImageToImage(*srcImage, *targetImage);
+        commandBuffer->TransitionImageLayout(*targetImage, targetFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_GENERAL);
+        commandBuffer->TransitionImageLayout(*srcImage, srcFormat, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        commandBuffer->SubmitAndWait();
+
+        // swizzle BGRA to RGBA
+        // theres probably a way to do this on the gpu?
+        auto const targetWidth = drawContext->m_logicalExtent.width;
+        auto const targetHeight = drawContext->m_logicalExtent.height;
+        uint8_t* data = static_cast<uint8_t*>(targetImage->Map());
+        std::vector<uint8_t> dataCopy;
+        dataCopy.resize(targetWidth * targetHeight * 4);
+        uint8_t* dst = dataCopy.data();
+        for (size_t j = 0; j < dataCopy.size(); j += 4) {
+            dst[j + 0] = data[j + 2];
+            dst[j + 1] = data[j + 1];
+            dst[j + 2] = data[j + 0];
+            dst[j + 3] = data[j + 3];
+        }
+
+        stbi_write_png(path.string().c_str(), targetWidth, targetHeight, 4, dst, targetWidth * 4);
+
+        targetImage->Unmap();
+
+         m_contextStack.pop();
     }
 
     void Graphics::DrawRectF(moth_ui::FloatRect const& rect) {
@@ -350,7 +393,7 @@ namespace backend::vulkan {
                 penPos.x = static_cast<float>(destRect.bottomRight.x) - line.lineWidth;
                 break;
             }
-            
+
             for (auto const& info : shapeInfo) {
                 if (info.glyphIndex >= 0) {
                     auto const bearing = static_cast<moth_ui::FloatVec2>(vulkanFont.GetGlyphBearing(info.glyphIndex));
@@ -360,7 +403,7 @@ namespace backend::vulkan {
                 }
                 penPos.x += info.advance.x;
             }
-            
+
             penPos.y += singleLineHeight;
         }
 
@@ -404,7 +447,7 @@ namespace backend::vulkan {
     }
 
     std::unique_ptr<moth_ui::ITarget> Graphics::CreateTarget(int width, int height) {
-        return std::make_unique<Framebuffer>(m_context, width, height, VK_FORMAT_B8G8R8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, m_rtRenderPass->GetRenderPass());
+        return std::make_unique<Framebuffer>(m_context, width, height, VK_FORMAT_B8G8R8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT, m_rtRenderPass->GetRenderPass());
     }
 
     bool Graphics::IsRenderTarget() const {

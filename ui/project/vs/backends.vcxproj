@@ -95,6 +95,9 @@
     <ClInclude Include="..\..\backends\include\sdl\sdl_ui_renderer.h" />
     <ClInclude Include="..\..\backends\include\sdl\sdl_utils.h" />
     <ClInclude Include="..\..\backends\include\sdl\smart_sdl.h" />
+    <ClInclude Include="..\..\backends\include\stb_image.h" />
+    <ClInclude Include="..\..\backends\include\stb_image_write.h" />
+    <ClInclude Include="..\..\backends\include\stb_rect_pack.h" />
     <ClInclude Include="..\..\backends\include\vulkan\vulkan_app.h" />
     <ClInclude Include="..\..\backends\include\vulkan\vulkan_buffer.h" />
     <ClInclude Include="..\..\backends\include\vulkan\vulkan_command_buffer.h" />
@@ -116,9 +119,6 @@
     <ClInclude Include="..\..\backends\include\vulkan\vulkan_ui_renderer.h" />
     <ClInclude Include="..\..\backends\include\vulkan\vulkan_utils.h" />
     <ClInclude Include="..\..\backends\src\common.h" />
-    <ClInclude Include="..\..\backends\src\stb_image.h" />
-    <ClInclude Include="..\..\backends\src\stb_image_write.h" />
-    <ClInclude Include="..\..\backends\src\stb_rect_pack.h" />
     <ClInclude Include="..\..\backends\src\utils.h" />
     <ClInclude Include="..\..\external\murmurhash.c\murmurhash.h" />
   </ItemGroup>
@@ -136,6 +136,8 @@
     <ClCompile Include="..\..\backends\src\sdl\sdl_image.cpp" />
     <ClCompile Include="..\..\backends\src\sdl\sdl_image_factory.cpp" />
     <ClCompile Include="..\..\backends\src\sdl\sdl_ui_renderer.cpp" />
+    <ClCompile Include="..\..\backends\src\stb_image.cpp" />
+    <ClCompile Include="..\..\backends\src\stb_image_write.cpp" />
     <ClCompile Include="..\..\backends\src\stb_rect_pack.cpp" />
     <ClCompile Include="..\..\backends\src\vulkan\vulkan_app.cpp" />
     <ClCompile Include="..\..\backends\src\vulkan\vulkan_buffer.cpp" />

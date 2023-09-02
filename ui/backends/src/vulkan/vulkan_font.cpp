@@ -2,10 +2,9 @@
 #include "vulkan/vulkan_font.h"
 #include "stb_rect_pack.h"
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
-
 #include "hb-ft.h"
+
+#include "stb_image_write.h"
 
 #define _unused(x) ((void)(x))
 #define FT_CHECK(r)         \

@@ -22,6 +22,9 @@ set(PUBLIC_HEADERS
 	include/application.h
 	include/events/event.h
 	include/igraphics_context.h
+	include/stb_image.h
+	include/stb_image_write.h
+	include/stb_rect_pack.h
 	include/sdl/sdl_app.h
 	include/sdl/sdl_events.h
 	include/sdl/sdl_font.h
@@ -58,6 +61,9 @@ set(PUBLIC_HEADERS
 set(SOURCES ${SOURCES}
 	../external/murmurhash.c/murmurhash.c
 	src/application.cpp
+	src/stb_image.cpp
+	src/stb_image_write.cpp
+	src/stb_rect_pack.cpp
 	src/sdl/sdl_app.cpp
 	src/sdl/sdl_events.cpp
 	src/sdl/sdl_font.cpp

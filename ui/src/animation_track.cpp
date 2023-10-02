@@ -30,7 +30,7 @@ namespace moth_ui {
     Keyframe& AnimationTrack::GetOrCreateKeyframe(int frameNo) {
         // find the frame or the first iterator after where it would be
         auto keyframeIt = ranges::find_if(m_keyframes, [&](auto const& kf) { return kf->m_frame >= frameNo; });
-        if (std::end(m_keyframes) != keyframeIt) {
+        if (std::end(m_keyframes) != keyframeIt && (*keyframeIt)->m_frame == frameNo) {
             // found an existing frame
             return *(*keyframeIt);
         }

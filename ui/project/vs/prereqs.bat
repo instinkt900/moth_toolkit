@@ -34,3 +34,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 cd ..\..
 
 popd
+
+if not exist "moth_ui.props" (
+	xcopy moth_ui.props.example moth_ui.props /y
+)

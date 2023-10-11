@@ -55,7 +55,7 @@
       <PreprocessorDefinitions>NA_CONSOLE;_ITERATOR_DEBUG_LEVEL=0;_CRT_SECURE_NO_WARNINGS;IMGUI_DEFINE_MATH_OPERATORS;JSON_HAS_FILESYSTEM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>..\..\backends\include;..\..\backends\src;..\..\external\murmurhash.c;..\..\external\imgui;..\..\include;$(SDL_DIR)\include;$(SDLIMAGE_DIR)\include;$(SDLTTF_DIR)\include;$(MAGICENUM_DIR)\include;$(NLOHMANN_DIR)\include;$(FMT_DIR)\include;$(RANGEV3_DIR)\include;$(GLFW_DIR)\include;$(VULKAN_DIR)\Include;$(VULKAN_DIR)\Include\vma;$(SPDLOG_DIR)\include;$(FREETYPE_DIR)\include\freetype2;$(HARFBUZZ_DIR)\harfbuzz\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\backends\include;..\..\backends\src;..\..\external\murmurhash.c;..\..\external\imgui;..\..\include;..\..\external\magic_enum\include;..\..\external\json\include;..\..\external\range-v3\include;$(HARFBUZZ_DIR)\harfbuzz\src;$(FMT_DIR)\include;$(SPDLOG_DIR)\include;$(FREETYPE_DIR)\include\freetype2;$(GLFW_DIR)\include;$(SDL_DIR)\include;$(SDLIMAGE_DIR)\include;$(SDLTTF_DIR)\include;$(VULKAN_DIR)\Include;$(VULKAN_DIR)\Include\vma;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>

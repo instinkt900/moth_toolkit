@@ -82,7 +82,7 @@ namespace backend::vulkan {
         return *this;
     }
 
-    ShaderBuilder& ShaderBuilder::AddStage(VkShaderStageFlagBits stageFlags, std::string const& entryPoint, char const* byteCode, size_t codeSize) {
+    ShaderBuilder& ShaderBuilder::AddStage(VkShaderStageFlagBits stageFlags, std::string const& entryPoint, unsigned char const* byteCode, size_t codeSize) {
         Stage stage;
         stage.m_stageFlags = stageFlags;
         stage.m_entryPoint = entryPoint;

@@ -94,6 +94,7 @@ set(SOURCES ${SOURCES}
 	src/vulkan/vulkan_swapchain.cpp
 	src/vulkan/vulkan_ui_renderer.cpp
 	src/vulkan/vulkan_vma.cpp
+	src/vulkan/shaders/vulkan_shaders.cpp
 )
 
 find_package(fmt REQUIRED)

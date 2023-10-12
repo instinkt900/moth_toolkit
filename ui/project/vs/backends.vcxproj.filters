@@ -25,6 +25,9 @@
     <Filter Include="murmurhash">
       <UniqueIdentifier>{ff0ae188-9379-4cda-af0e-399e7a9344f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\vulkan\shaders">
+      <UniqueIdentifier>{40726d16-f49e-4778-8347-45a45fb777ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\backends\include\application.h">
@@ -147,6 +150,9 @@
     <ClInclude Include="..\..\backends\include\stb_rect_pack.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\backends\src\vulkan\shaders\vulkan_shaders.h">
+      <Filter>src\vulkan\shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\backends\src\application.cpp">
@@ -250,6 +256,9 @@
     </ClCompile>
     <ClCompile Include="..\..\backends\src\stb_image_write.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\backends\src\vulkan\shaders\vulkan_shaders.cpp">
+      <Filter>src\vulkan\shaders</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

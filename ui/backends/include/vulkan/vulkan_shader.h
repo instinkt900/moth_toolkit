@@ -31,7 +31,7 @@ namespace backend::vulkan {
         ShaderBuilder(VkDevice device, VkDescriptorPool descriptorPool);
         ShaderBuilder& AddPushConstant(VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size);
         ShaderBuilder& AddBinding(uint32_t binding, VkDescriptorType type, uint32_t count, VkShaderStageFlags flags);
-        ShaderBuilder& AddStage(VkShaderStageFlagBits stageFlags, std::string const& entryPoint, char const* byteCode, size_t codeSize);
+        ShaderBuilder& AddStage(VkShaderStageFlagBits stageFlags, std::string const& entryPoint, unsigned char const* byteCode, size_t codeSize);
         std::unique_ptr<Shader> Build();
 
     private:

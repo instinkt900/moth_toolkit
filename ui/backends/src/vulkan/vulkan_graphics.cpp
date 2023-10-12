@@ -11,24 +11,6 @@
 #include "stb_image_write.h"
 
 namespace {
-    bool readFile(std::string const& filename, std::vector<char>& outBuffer) {
-        std::ifstream file(filename, std::ios::ate | std::ios::binary);
-
-        if (!file.is_open()) {
-            spdlog::error("Failed to readFile {}", filename);
-            return false;
-        }
-
-        size_t const fileSize = static_cast<size_t>(file.tellg());
-        outBuffer.resize(fileSize);
-
-        file.seekg(0);
-        file.read(outBuffer.data(), fileSize);
-        file.close();
-
-        return true;
-    }
-
     VkVertexInputBindingDescription getVertexBindingDescription() {
         VkVertexInputBindingDescription vertexBindingDesc{};
 

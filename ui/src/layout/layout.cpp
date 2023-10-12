@@ -45,6 +45,7 @@ namespace moth_ui {
             childJsons.push_back(child->Serialize(context));
         }
         j["children"] = childJsons;
+        j["extra_data"] = m_extraData;
         return j;
     }
 
@@ -78,6 +79,8 @@ namespace moth_ui {
                         }
                     }
                 }
+
+                m_extraData = json.value("extra_data", nlohmann::json());
 
                 success = true;
             }

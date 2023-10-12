@@ -19,6 +19,7 @@ namespace moth_ui {
         bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
 
         std::filesystem::path const& GetLoadedPath() const { return m_loadedPath; }
+        nlohmann::json& GetExtraData() { return m_extraData; }
 
         enum class LoadResult {
             Success,
@@ -36,5 +37,6 @@ namespace moth_ui {
 
     private:
         std::filesystem::path m_loadedPath;
+        nlohmann::json m_extraData; // extra metadata for editor and other tools
     };
 }

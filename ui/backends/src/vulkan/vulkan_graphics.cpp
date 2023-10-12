@@ -3,6 +3,7 @@
 #include "vulkan/vulkan_command_buffer.h"
 #include "vulkan/vulkan_subimage.h"
 #include "vulkan/vulkan_font.h"
+#include "vulkan/shaders/vulkan_shaders.h"
 
 #include "hb.h"
 #include "hb-ft.h"
@@ -10,24 +11,6 @@
 #include "stb_image_write.h"
 
 namespace {
-    bool readFile(std::string const& filename, std::vector<char>& outBuffer) {
-        std::ifstream file(filename, std::ios::ate | std::ios::binary);
-
-        if (!file.is_open()) {
-            spdlog::error("Failed to readFile {}", filename);
-            return false;
-        }
-
-        size_t const fileSize = static_cast<size_t>(file.tellg());
-        outBuffer.resize(fileSize);
-
-        file.seekg(0);
-        file.read(outBuffer.data(), fileSize);
-        file.close();
-
-        return true;
-    }
-
     VkVertexInputBindingDescription getVertexBindingDescription() {
         VkVertexInputBindingDescription vertexBindingDesc{};
 
@@ -628,33 +611,20 @@ namespace backend::vulkan {
     }
 
     void Graphics::CreateShaders() {
-        {
-            std::vector<char> vertShaderCode;
-            std::vector<char> fragShaderCode;
-            readFile("resources/drawing_vert.spv", vertShaderCode);
-            readFile("resources/drawing_frag.spv", fragShaderCode);
+        m_drawingShader = ShaderBuilder(m_context.m_vkDevice, m_context.m_vkDescriptorPool)
+                              .AddPushConstant(VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(PushConstants))
+                              .AddBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
+                              .AddStage(VK_SHADER_STAGE_VERTEX_BIT, "main", drawing_shader_vert_spv, drawing_shader_vert_spv_len)
+                              .AddStage(VK_SHADER_STAGE_FRAGMENT_BIT, "main", drawing_shader_frag_spv, drawing_shader_frag_spv_len)
+                              .Build();
 
-            m_drawingShader = ShaderBuilder(m_context.m_vkDevice, m_context.m_vkDescriptorPool)
-                                  .AddPushConstant(VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(PushConstants))
-                                  .AddBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
-                                  .AddStage(VK_SHADER_STAGE_VERTEX_BIT, "main", vertShaderCode.data(), vertShaderCode.size())
-                                  .AddStage(VK_SHADER_STAGE_FRAGMENT_BIT, "main", fragShaderCode.data(), fragShaderCode.size())
-                                  .Build();
-        }
-        {
-            std::vector<char> vertShaderCode;
-            std::vector<char> fragShaderCode;
-            readFile("resources/font_vert.spv", vertShaderCode);
-            readFile("resources/font_frag.spv", fragShaderCode);
-
-            m_fontShader = ShaderBuilder(m_context.m_vkDevice, m_context.m_vkDescriptorPool)
-                               .AddPushConstant(VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(PushConstants))
-                               .AddBinding(0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT)
-                               .AddBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
-                               .AddStage(VK_SHADER_STAGE_VERTEX_BIT, "main", vertShaderCode.data(), vertShaderCode.size())
-                               .AddStage(VK_SHADER_STAGE_FRAGMENT_BIT, "main", fragShaderCode.data(), fragShaderCode.size())
-                               .Build();
-        }
+        m_fontShader = ShaderBuilder(m_context.m_vkDevice, m_context.m_vkDescriptorPool)
+                           .AddPushConstant(VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(PushConstants))
+                           .AddBinding(0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT)
+                           .AddBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT)
+                           .AddStage(VK_SHADER_STAGE_VERTEX_BIT, "main", font_vert_spv, font_vert_spv_len)
+                           .AddStage(VK_SHADER_STAGE_FRAGMENT_BIT, "main", font_frag_spv, font_frag_spv_len)
+                           .Build();
     }
 
     void Graphics::CreateDefaultImage() {

@@ -292,6 +292,6 @@ namespace moth_ui {
     template <typename T>
     T Interp(T a, T b, float t, InterpType type) {
         auto const interpFunc = InterpFuncs.at(type);
-        return a + (b - a) * interpFunc(t);
+        return (t == 0.0f) ? a : (t == 1.0f) ? b : (a + (b - a) * interpFunc(t));
     }
 }

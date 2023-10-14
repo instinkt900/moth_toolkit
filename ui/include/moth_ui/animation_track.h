@@ -125,6 +125,7 @@ namespace moth_ui {
         };
 
         AnimationTrack() = default;
+        AnimationTrack(AnimationTrack const& other);
         explicit AnimationTrack(Target target);
         AnimationTrack(Target target, float initialValue);
         explicit AnimationTrack(nlohmann::json const& json);

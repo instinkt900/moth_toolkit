@@ -4,13 +4,20 @@
 #include "moth_ui/utils/math_utils.h"
 
 namespace moth_ui {
-    AnimationTrack::AnimationTrack(Target target, float initialValue)
-        : m_target(target) {
-        m_keyframes.push_back(std::make_unique<Keyframe>( 0, initialValue ));
+    AnimationTrack::AnimationTrack(AnimationTrack const& other)
+        : m_target(other.m_target) {
+        for (auto&& keyframe : other.m_keyframes) {
+            m_keyframes.push_back(std::make_shared<Keyframe>(*keyframe));
+        }
     }
 
     AnimationTrack::AnimationTrack(Target target)
         : m_target(target) {
+    }
+
+    AnimationTrack::AnimationTrack(Target target, float initialValue)
+        : m_target(target) {
+        m_keyframes.push_back(std::make_unique<Keyframe>(0, initialValue));
     }
 
     AnimationTrack::AnimationTrack(nlohmann::json const& json) {

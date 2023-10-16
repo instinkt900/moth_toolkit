@@ -3,9 +3,17 @@
 #include "moth_ui/event_dispatch.h"
 #include "moth_ui/node_factory.h"
 #include "moth_ui/group.h"
+#include "ui_button.h"
 
 ExampleLayer::ExampleLayer(std::filesystem::path const& layoutPath) {
     LoadLayout(layoutPath);
+
+    m_root->SetAnimation("ready");
+    if (auto startButton = m_root->FindChild<UIButton>("button")) {
+        startButton->SetClickAction([&]() {
+            m_root->SetAnimation("transition_out");
+        });
+    }
 }
 
 bool ExampleLayer::OnEvent(moth_ui::Event const& event) {
@@ -55,6 +63,25 @@ void ExampleLayer::OnRemovedFromStack() {
 
 void ExampleLayer::LoadLayout(std::filesystem::path const& path) {
     m_root = moth_ui::NodeFactory::Get().Create(path, GetWidth(), GetHeight());
+    m_root->SetEventHandler([this](moth_ui::Node*, moth_ui::Event const& event) { return OnUIEvent(event); });
+}
+
+bool ExampleLayer::OnUIEvent(moth_ui::Event const& event) {
+    moth_ui::EventDispatch dispatch(event);
+    dispatch.Dispatch(this, &ExampleLayer::OnAnimationStopped);
+    return dispatch.GetHandled();
+}
+
+bool ExampleLayer::OnAnimationStopped(moth_ui::EventAnimationStopped const& event) {
+    if (event.GetClipName() == "ready") {
+        m_root->SetAnimation("idle");
+        return true;
+    } else if (event.GetClipName() == "transition_out") {
+        LoadLayout("assets/layouts/demo.mothui");
+        m_root->SetAnimation("transition_in");
+        return true;
+    }
+    return false;
 }
 
 bool ExampleLayer::OnRequestQuitEvent(EventRequestQuit const& event) {

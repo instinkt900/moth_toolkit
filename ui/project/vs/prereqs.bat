@@ -19,6 +19,13 @@ cmake .. && cmake --build . --config Release && cmake --install . --config Relea
 if %errorlevel% neq 0 exit /b %errorlevel%
 cd ..\..
 
+rmdir glfw\build /s /q
+mkdir glfw\build
+cd glfw\build
+cmake .. && cmake --build . --config Release && cmake --install . --config Release --prefix=installed
+if %errorlevel% neq 0 exit /b %errorlevel%
+cd ..\..
+
 rmdir harfbuzz-icu-freetype\build /s /q
 mkdir harfbuzz-icu-freetype\build
 cd harfbuzz-icu-freetype\build

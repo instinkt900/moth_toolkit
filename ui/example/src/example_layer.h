@@ -1,6 +1,7 @@
 #pragma once
 
 #include "moth_ui/layers/layer.h"
+#include "moth_ui/events/event_animation.h"
 #include "events/event.h"
 
 #include <filesystem>
@@ -9,7 +10,7 @@ class ExampleLayer : public moth_ui::Layer {
 public:
     ExampleLayer(std::filesystem::path const& layoutPath);
     virtual ~ExampleLayer() = default;
-
+    
     bool OnEvent(moth_ui::Event const& event) override;
     void Update(uint32_t ticks) override;
     void Draw() override;
@@ -24,5 +25,7 @@ protected:
     std::shared_ptr<moth_ui::Group> m_root;
     moth_ui::IntVec2 m_lastDrawnSize;
 
+    bool OnUIEvent(moth_ui::Event const& event);
+    bool OnAnimationStopped(moth_ui::EventAnimationStopped const& event);
     bool OnRequestQuitEvent(EventRequestQuit const& event);
 };

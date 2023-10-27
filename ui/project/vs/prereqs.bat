@@ -36,5 +36,5 @@ cd ..\..
 popd
 
 if not exist "moth_ui.props" (
-	xcopy moth_ui.props.example moth_ui.props /y
+	echo f | xcopy moth_ui.props.example moth_ui.props /y
 )

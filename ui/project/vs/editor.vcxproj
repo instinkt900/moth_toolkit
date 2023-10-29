@@ -135,9 +135,7 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\editor\editor_layer.h" />
     <ClInclude Include="..\..\editor\src\editor\element_utils.h" />
     <ClInclude Include="..\..\editor\src\editor\imgui_ext.h" />
-    <ClInclude Include="..\..\editor\src\editor\imgui_ext_focus.h" />
     <ClInclude Include="..\..\editor\src\editor\imgui_ext_inspect.h" />
-    <ClInclude Include="..\..\editor\src\editor\keyframe_context.h" />
     <ClInclude Include="..\..\editor\src\editor\offset_bounds_handle.h" />
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel.h" />
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_animation.h" />
@@ -194,7 +192,6 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClCompile Include="..\..\editor\src\editor\editor_layer.cpp" />
     <ClCompile Include="..\..\editor\src\editor\editor_layer_stack.cpp" />
     <ClCompile Include="..\..\editor\src\editor\imgui_ext.cpp" />
-    <ClCompile Include="..\..\editor\src\editor\imgui_ext_focus.cpp" />
     <ClCompile Include="..\..\editor\src\editor\offset_bounds_handle.cpp" />
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel.cpp" />
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_animation.cpp" />

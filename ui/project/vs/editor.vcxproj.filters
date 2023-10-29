@@ -39,9 +39,6 @@
     <ClInclude Include="..\..\editor\src\editor\editor_layer.h">
       <Filter>src\editor</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\editor\src\editor\keyframe_context.h">
-      <Filter>src\editor</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\offset_bounds_handle.h">
       <Filter>src\editor</Filter>
     </ClInclude>
@@ -157,9 +154,6 @@
       <Filter>src\editor\actions</Filter>
     </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\imgui_ext.h">
-      <Filter>src\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\editor\imgui_ext_focus.h">
       <Filter>src\editor</Filter>
     </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\imgui_ext_inspect.h">
@@ -321,9 +315,6 @@
       <Filter>src\editor\actions</Filter>
     </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\imgui_ext.cpp">
-      <Filter>src\editor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\editor\src\editor\imgui_ext_focus.cpp">
       <Filter>src\editor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\editor\src\editor\panels\editor_panel_config.cpp">

@@ -17,6 +17,7 @@ namespace moth_ui {
         }
 
         void SetText(std::string const& text) { m_text = text; }
+        std::string const& GetText() const { return m_text; }
 
     protected:
         std::shared_ptr<IFont> m_font;

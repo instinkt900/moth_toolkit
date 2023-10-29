@@ -42,6 +42,14 @@ namespace moth_ui {
         return r;
     }
 
+    inline bool operator==(LayoutRect const& a, LayoutRect const& b) {
+        return a.anchor == b.anchor && a.offset == b.offset;
+    }
+
+    inline bool operator!=(LayoutRect const& a, LayoutRect const& b) {
+        return !(a == b);
+    }
+
     inline void to_json(nlohmann::json& j, LayoutRect const& rect) {
         j = nlohmann::json{ { "anchor", rect.anchor }, { "offset", rect.offset } };
     }

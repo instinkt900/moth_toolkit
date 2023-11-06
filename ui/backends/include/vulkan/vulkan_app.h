@@ -26,7 +26,6 @@ namespace backend::vulkan {
         Graphics* m_vulkanGraphics = nullptr;
         GLFWwindow* m_glfwWindow = nullptr;
         std::unique_ptr<Context> m_context;
-        bool m_vkSwapChainrebuild = false;
         VkSurfaceKHR m_customVkSurface = VK_NULL_HANDLE;
         moth_ui::FloatVec2 m_lastMousePos;
         bool m_haveMousePos = false;

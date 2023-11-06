@@ -25,7 +25,9 @@ namespace backend {
         while (m_running) {
             UpdateWindow();
             Update();
-            Draw();
+            if (m_windowWidth > 0 && m_windowHeight > 0) {
+                Draw();
+            }
         }
 
         DestroyWindow();

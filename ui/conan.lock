@@ -1,0 +1,11 @@
+{
+    "version": "0.5",
+    "requires": [
+        "range-v3/0.12.0#4c05d91d7b40e6b91b44b5345ac64408%1689218196.637",
+        "nlohmann_json/3.11.2#a35423bb6e1eb8f931423557e282c7ed%1666619820.488",
+        "magic_enum/0.7.3#5ce256aed32be42d9c69062bc394c2e9%1684927736.637",
+        "fmt/10.0.0#65edbe601c09b4cee8ed9bb2d8d109e8%1692421582.516"
+    ],
+    "build_requires": [],
+    "python_requires": []
+}

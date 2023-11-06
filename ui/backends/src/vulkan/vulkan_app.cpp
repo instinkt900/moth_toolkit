@@ -31,13 +31,7 @@ namespace backend::vulkan {
             OnEvent(EventRequestQuit());
         }
 
-        if (m_vkSwapChainrebuild) {
-            int width, height;
-            glfwGetFramebufferSize(m_glfwWindow, &width, &height);
-            if (width > 0 && height > 0) {
-                assert(false && "TODO");
-            }
-        }
+        m_windowMaximized = glfwGetWindowAttrib(m_glfwWindow, GLFW_MAXIMIZED) == GLFW_TRUE;
     }
 
     bool Application::CreateWindow() {
@@ -215,7 +209,7 @@ namespace backend::vulkan {
     }
 
     void Application::OnResize() {
-        if (m_vulkanGraphics) {
+        if (m_vulkanGraphics && m_windowWidth > 0 && m_windowHeight > 0) {
             m_vulkanGraphics->OnResize(m_customVkSurface, m_windowWidth, m_windowHeight);
         }
     }

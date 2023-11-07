@@ -34,6 +34,7 @@ namespace moth_ui {
 
         static int const Version = 1;
         static std::string const Extension;
+        static std::string const FullExtension;
 
     private:
         std::filesystem::path m_loadedPath;

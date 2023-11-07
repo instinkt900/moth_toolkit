@@ -6,7 +6,8 @@
 #include "moth_ui/context.h"
 
 namespace moth_ui {
-    std::string const Layout::Extension(".mothui");
+    std::string const Layout::Extension("mothui");
+    std::string const Layout::FullExtension("." + Extension);
 
     std::unique_ptr<LayoutEntity> LoadEntity(nlohmann::json const& json, LayoutEntityGroup* parent, LayoutEntity::SerializeContext const& context) {
         LayoutEntityType type = json.value("type", LayoutEntityType::Unknown);

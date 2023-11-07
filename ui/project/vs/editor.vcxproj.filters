@@ -19,9 +19,6 @@
     <Filter Include="src\editor\panels">
       <UniqueIdentifier>{ebf4b8cd-a6bd-4530-94b3-725bc66e263e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\imgui-filebrowser">
-      <UniqueIdentifier>{c2aa9ecf-2119-45e3-8a96-9b4508a930b4}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\editor\src\common.h">
@@ -137,9 +134,6 @@
     </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\content_list.h">
       <Filter>src\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\editor\src\imgui-filebrowser\imfilebrowser.h">
-      <Filter>src\imgui-filebrowser</Filter>
     </ClInclude>
     <ClInclude Include="..\..\editor\src\editor\panels\editor_panel_canvas.h">
       <Filter>src\editor\panels</Filter>

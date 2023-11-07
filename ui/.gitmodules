@@ -31,5 +31,6 @@
 [submodule "external/harfbuzz-icu-freetype"]
 	path = external/harfbuzz-icu-freetype
 	url = https://github.com/tangrams/harfbuzz-icu-freetype.git
-[submodule "external"]
-	url = https://github.com/instinkt900/harfbuzz-icu-freetype.git
+[submodule "external/nativefiledialog"]
+	path = external/nativefiledialog
+	url = https://github.com/instinkt900/nativefiledialog.git

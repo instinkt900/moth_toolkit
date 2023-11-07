@@ -61,7 +61,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NA_CONSOLE;_ITERATOR_DEBUG_LEVEL=0;_CRT_SECURE_NO_WARNINGS;IMGUI_DEFINE_MATH_OPERATORS;JSON_HAS_FILESYSTEM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\backends\include;..\..\editor\src;..\..\external\murmurhash.c;..\..\external\imgui;..\..\include;..\..\external\magic_enum\include;..\..\external\json\include;..\..\external\range-v3\include;$(HARFBUZZ_DIR)\harfbuzz\src;$(FMT_DIR)\include;$(FREETYPE_DIR)\include\freetype2;$(SPDLOG_DIR)\include;$(GLFW_DIR)\include;$(SDL_DIR)\include;$(SDLIMAGE_DIR)\include;$(SDLTTF_DIR)\include;$(VULKAN_DIR)\Include;$(VULKAN_DIR)\Include\vma;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\backends\include;..\..\editor\src;..\..\external\murmurhash.c;..\..\external\imgui;..\..\include;..\..\external\magic_enum\include;..\..\external\json\include;..\..\external\range-v3\include;..\..\external\nativefiledialog\src\include;$(HARFBUZZ_DIR)\harfbuzz\src;$(FMT_DIR)\include;$(FREETYPE_DIR)\include\freetype2;$(SPDLOG_DIR)\include;$(GLFW_DIR)\include;$(SDL_DIR)\include;$(SDLIMAGE_DIR)\include;$(SDLTTF_DIR)\include;$(VULKAN_DIR)\Include;$(VULKAN_DIR)\Include\vma;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -152,7 +152,6 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClInclude Include="..\..\editor\src\editor\texture_packer.h" />
     <ClInclude Include="..\..\editor\src\editor\utils.h" />
     <ClInclude Include="..\..\editor\src\events\event.h" />
-    <ClInclude Include="..\..\editor\src\imgui-filebrowser\imfilebrowser.h" />
     <ClInclude Include="..\..\editor\src\stb_image.h" />
     <ClInclude Include="..\..\editor\src\stb_image_write.h" />
     <ClInclude Include="..\..\editor\src\stb_rect_pack.h" />
@@ -219,6 +218,9 @@ xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
     <ClCompile Include="..\..\external\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\external\nativefiledialog\build\vs2010\nfd.vcxproj">
+      <Project>{5d94880b-c99d-887c-5219-9f7cbe21947c}</Project>
+    </ProjectReference>
     <ProjectReference Include="backends.vcxproj">
       <Project>{0dcc22d5-8b63-419d-96d2-3fcab419d49c}</Project>
     </ProjectReference>

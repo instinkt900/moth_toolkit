@@ -16,6 +16,9 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Install GTK
+      run: apt-get install libgtk-3-dev
+
     - name: Get Conan
       uses: turtlebrowser/get-conan@v1.0
 

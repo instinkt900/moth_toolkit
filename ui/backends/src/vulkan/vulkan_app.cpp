@@ -28,6 +28,7 @@ namespace backend::vulkan {
         glfwPollEvents();
 
         if (glfwWindowShouldClose(m_glfwWindow)) {
+            glfwSetWindowShouldClose(m_glfwWindow, 0);
             OnEvent(EventRequestQuit());
         }
 

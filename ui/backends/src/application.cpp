@@ -3,15 +3,34 @@
 
 #include "moth_ui/event_dispatch.h"
 
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/sinks/basic_file_sink.h"
+
 namespace backend {
     Application::Application(std::string const& applicationTitle)
         : m_applicationTitle(applicationTitle)
         , m_windowWidth(INIT_WINDOW_WIDTH)
         , m_windowHeight(INIT_WINDOW_HEIGHT) {
         m_updateTicks = std::chrono::milliseconds(1000 / 60);
+
+        // setup logging
+        auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+        console_sink->set_level(spdlog::level::warn);
+        console_sink->set_pattern(fmt::format("[{}] [%^%l%$] %v", applicationTitle));
+
+        auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("editor.log", false);
+        file_sink->set_level(spdlog::level::trace);
+        file_sink->set_pattern("[%Y-%m-%d %T.%e] [%l] %v");
+
+        spdlog::logger logger("multi_sink", {console_sink, file_sink});
+        logger.set_level(spdlog::level::debug);
+        spdlog::set_default_logger(std::make_shared<spdlog::logger>(logger));
+
+        spdlog::info("Log started.");
     }
 
     Application::~Application() {
+        spdlog::info("Log ended.");
     }
 
     int Application::Run() {

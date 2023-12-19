@@ -26,17 +26,14 @@ jobs:
     - name: Install conan profiles
       run: conan config install conan_config
 
-    - name: Create build dir
-      run: mkdir -p ${{github.workspace}}/editor/build
-
     - name: Install dependencies
-      working-directory: ${{github.workspace}}/editor/build
-      run: conan install .. --output-folder=. --build=missing --profile windows_profile
+      working-directory: ${{github.workspace}}/editor
+      run: conan install . --build=missing --profile windows_profile
 
     - name: Configure CMake
-      working-directory: ${{github.workspace}}/editor/build
-      run: cmake .. -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/editor/build/conan_toolchain.cmake -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
+      working-directory: ${{github.workspace}}/editor
+      run: cmake --profile conan-default
 
     - name: Build
-      working-directory: ${{github.workspace}}/editor/build
-      run: cmake --build . --config ${{env.BUILD_TYPE}} -j 4
+      working-directory: ${{github.workspace}}/editor
+      run: cmake --build build --config ${{env.BUILD_TYPE}} -j 4

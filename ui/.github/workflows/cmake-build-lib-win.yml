@@ -28,9 +28,13 @@ jobs:
       working-directory: ${{github.workspace}}
       run: conan install . --build=missing --profile windows_profile
 
+    - name: Setup Environment
+      working-directory: ${{github.workspace}}/build/generators
+      run: conanbuild.bat
+
     - name: Configure CMake
       working-directory: ${{github.workspace}}
-      run: cmake --profile conan-default
+      run: cmake --preset conan-default
 
     - name: Build
       working-directory: ${{github.workspace}}

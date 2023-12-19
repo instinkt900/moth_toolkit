@@ -29,7 +29,7 @@ jobs:
 
     - name: Configure CMake
       working-directory: ${{github.workspace}}
-      run: cmake --profile conan-default
+      run: cmake --preset conan-default
 
     - name: Build
       working-directory: ${{github.workspace}}

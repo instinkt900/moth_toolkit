@@ -2,15 +2,11 @@ cmake_minimum_required(VERSION 3.10)
 
 project(moth_ui VERSION 1.0 DESCRIPTION "A C++ game UI library")
 
+message("Building with CMake version: ${CMAKE_VERSION}")
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
-
-if (MSVC)
-	add_compile_definitions(_CRT_SECURE_NO_WARNINGS _ITERATOR_DEBUG_LEVEL=0)
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MD")
-endif()
 
 add_compile_definitions(JSON_HAS_FILESYSTEM)
 

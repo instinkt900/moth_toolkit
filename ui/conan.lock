@@ -6,6 +6,8 @@
         "magic_enum/0.7.3#5ce256aed32be42d9c69062bc394c2e9%1684927736.637",
         "fmt/10.0.0#65edbe601c09b4cee8ed9bb2d8d109e8%1692421582.516"
     ],
-    "build_requires": [],
+    "build_requires": [
+        "cmake/3.27.9"
+    ],
     "python_requires": []
 }

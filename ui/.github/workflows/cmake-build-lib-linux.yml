@@ -37,5 +37,5 @@ jobs:
 
     - name: Build
       working-directory: ${{github.workspace}}
-      run: cmake --build build --config ${{env.BUILD_TYPE}} -j 4
+      run: cmake --build build/${{env.BUILD_TYPE}} -j 4
       

@@ -32,7 +32,7 @@ jobs:
 
     - name: Setup Environment
       working-directory: ${{github.workspace}}/editor
-      run: ./generators/conanbuild.bat
+      run: ./build/generators/conanbuild.bat
 
     - name: Configure CMake
       working-directory: ${{github.workspace}}/editor

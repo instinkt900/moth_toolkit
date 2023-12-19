@@ -32,9 +32,13 @@ jobs:
       working-directory: ${{github.workspace}}/editor
       run: conan install . --build=missing --profile linux_profile
 
+    - name: Setup Environment
+      working-directory: ${{github.workspace}}/editor
+      run: source ./build/${{env.BUILD_TYPE}}/generators/conanbuild.sh
+
     - name: Configure CMake
       working-directory: ${{github.workspace}}/editor
-      run:  cmake --preset conan-default
+      run:  cmake --preset conan-release
 
     - name: Build
       working-directory: ${{github.workspace}}/editor

@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 
 project(moth_ui_backends VERSION 1.0 DESCRIPTION "Rendering backends for Moth UI")
 
+message("Building with CMake version: ${CMAKE_VERSION}")
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")

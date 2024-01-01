@@ -20,24 +20,23 @@ jobs:
     - name: Get Conan
       uses: turtlebrowser/get-conan@v1.0
       
-    - name: Create default profile
-      run: conan profile detect --force
-
-    - name: Install conan profiles
-      run: conan config install conan_config
-
-    - name: Install dependencies
+    - name: Conan setup and install dependencies
       working-directory: ${{github.workspace}}/editor
-      run: conan install . --build=missing --profile windows_profile
-
-    - name: Setup Environment
-      working-directory: ${{github.workspace}}/editor
-      run: ./build/generators/conanbuild.bat
+      run: |
+        conan profile detect --force
+        conan config install ../conan_config
+        conan install . --build=missing --profile windows_profile
+        conan install . --build=missing --profile windows_profile -s build_type=Debug
+        ./build/generators/conanbuild.bat
 
     - name: Configure CMake
       working-directory: ${{github.workspace}}/editor
       run: cmake --preset conan-default
 
-    - name: Build
+    - name: Build Release
       working-directory: ${{github.workspace}}/editor
-      run: cmake --build build --config ${{env.BUILD_TYPE}} -j 4
+      run: cmake --build --preset conan-release -j
+
+    - name: Build Debug
+      working-directory: ${{github.workspace}}/editor
+      run: cmake --build --preset conan-debug -j

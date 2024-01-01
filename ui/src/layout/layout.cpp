@@ -6,6 +6,7 @@
 #include "moth_ui/context.h"
 
 namespace moth_ui {
+    int const Layout::Version = 1;
     std::string const Layout::Extension("mothui");
     std::string const Layout::FullExtension("." + Extension);
 

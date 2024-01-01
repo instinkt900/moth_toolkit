@@ -31,13 +31,17 @@ jobs:
         conan install . --build=missing --profile linux_profile -s build_type=Debug
         source ./build/${{env.BUILD_TYPE}}/generators/conanbuild.sh
 
-    - name: Configure CMake
+    - name: Configure CMake for release
       working-directory: ${{github.workspace}}/editor
-      run:  cmake --preset conan-default
+      run:  cmake --preset conan-release
 
     - name: Build Release
       working-directory: ${{github.workspace}}/editor
       run: cmake --build --preset conan-release -j
+
+    - name: Configure CMake Debug
+      working-directory: ${{github.workspace}}/editor
+      run:  cmake --preset conan-debug
 
     - name: Build Debug
       working-directory: ${{github.workspace}}/editor

@@ -25,11 +25,14 @@ jobs:
         conan install . --build=missing --profile linux_profile -s build_type=Debug
         source ./build/${{env.BUILD_TYPE}}/generators/conanbuild.sh
 
-    - name: Configure CMake
-      run: cmake --preset conan-default
+    - name: Configure CMake for release
+      run: cmake --preset conan-release
 
     - name: Build Release
       run: cmake --build --preset conan-release -j
+
+    - name: Configure CMake for debug
+      run: cmake --preset conan-debug
 
     - name: Build Debug
       run: cmake --build --preset conan-debug -j

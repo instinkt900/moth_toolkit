@@ -19,7 +19,6 @@ jobs:
       uses: turtlebrowser/get-conan@v1.0
 
     - name: Conan setup and install dependencies
-      working-directory: ${{github.workspace}}/editor
       run: |
         conan profile detect --force
         conan config install conan_config

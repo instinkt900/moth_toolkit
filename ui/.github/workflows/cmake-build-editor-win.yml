@@ -24,7 +24,7 @@ jobs:
       working-directory: ${{github.workspace}}/editor
       run: |
         conan profile detect --force
-        conan config install conan_config
+        conan config install ../conan_config
         conan install . --build=missing --profile windows_profile
         conan install . --build=missing --profile windows_profile -s build_type=Debug
         ./build/generators/conanbuild.bat

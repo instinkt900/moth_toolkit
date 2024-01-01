@@ -26,7 +26,7 @@ jobs:
       working-directory: ${{github.workspace}}/editor
       run: |
         conan profile detect --force
-        conan config install conan_config
+        conan config install ../conan_config
         conan install . --build=missing --profile linux_profile
         conan install . --build=missing --profile linux_profile -s build_type=Debug
         source ./build/${{env.BUILD_TYPE}}/generators/conanbuild.sh

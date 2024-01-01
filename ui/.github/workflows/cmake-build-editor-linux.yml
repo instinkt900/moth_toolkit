@@ -33,7 +33,7 @@ jobs:
 
     - name: Configure CMake
       working-directory: ${{github.workspace}}/editor
-      run:  cmake --preset conan-release
+      run:  cmake --preset conan-default
 
     - name: Build Release
       working-directory: ${{github.workspace}}/editor

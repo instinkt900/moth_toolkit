@@ -27,13 +27,10 @@ jobs:
         ./build/generators/conanbuild.bat
       
     - name: Configure CMake
-      working-directory: ${{github.workspace}}
       run: cmake --preset conan-default
 
     - name: Build Release
-      working-directory: ${{github.workspace}}
       run: cmake --build --preset conan-release -j
 
     - name: Build Debug
-      working-directory: ${{github.workspace}}
       run: cmake --build --preset conan-debug -j

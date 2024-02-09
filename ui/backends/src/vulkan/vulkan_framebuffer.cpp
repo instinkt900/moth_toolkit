@@ -23,9 +23,7 @@ namespace backend::vulkan {
     }
 
     Framebuffer::Framebuffer(Context& context, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkRenderPass renderPass)
-        : m_context(context)
-        , m_imageAvailableSemaphore(VK_NULL_HANDLE)
-        , m_renderFinishedSemaphore(VK_NULL_HANDLE) {
+        : m_context(context) {
         m_commandBuffer = std::make_unique<CommandBuffer>(context);
         m_fence = std::make_unique<Fence>(context);
 

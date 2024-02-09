@@ -38,8 +38,8 @@ namespace backend::vulkan {
         std::unique_ptr<SubImage> m_image;
 
         std::unique_ptr<Fence> m_fence;
-        VkSemaphore m_imageAvailableSemaphore;
-        VkSemaphore m_renderFinishedSemaphore;
+        VkSemaphore m_imageAvailableSemaphore = VK_NULL_HANDLE;
+        VkSemaphore m_renderFinishedSemaphore = VK_NULL_HANDLE;
 
         uint32_t m_swapchainIndex = 0;
 

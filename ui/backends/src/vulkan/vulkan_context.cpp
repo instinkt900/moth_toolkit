@@ -87,6 +87,7 @@ namespace backend::vulkan {
 
         // create instance
         {
+            VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
             VkInstanceCreateInfo createInfo{};
             createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 
@@ -122,7 +123,6 @@ namespace backend::vulkan {
                     createInfo.ppEnabledLayerNames = validationLayers.data();
                 }
 
-                VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
                 populateDebugMessengerCreateInfo(debugCreateInfo);
                 createInfo.pNext = &debugCreateInfo;
             }

@@ -31,7 +31,7 @@ namespace backend::vulkan {
         const VkFormat requestSurfaceImageFormat[] = { VK_FORMAT_B8G8R8A8_UNORM, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_B8G8R8_UNORM, VK_FORMAT_R8G8B8_UNORM };
         const VkColorSpaceKHR requestSurfaceColorSpace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
         VkSurfaceFormatKHR surfaceFormat = Context::selectSurfaceFormat(m_context.m_vkPhysicalDevice, surface, requestSurfaceImageFormat, 4, requestSurfaceColorSpace);
-        VkPresentModeKHR presentModes[] = { VK_PRESENT_MODE_MAILBOX_KHR, VK_PRESENT_MODE_IMMEDIATE_KHR, VK_PRESENT_MODE_FIFO_KHR };
+        VkPresentModeKHR presentModes[] = { VK_PRESENT_MODE_MAILBOX_KHR, /*VK_PRESENT_MODE_IMMEDIATE_KHR, */VK_PRESENT_MODE_FIFO_KHR };
         VkPresentModeKHR presentMode = Context::selectPresentMode(m_context.m_vkPhysicalDevice, surface, presentModes, 3);
         VkSwapchainCreateInfoKHR createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -85,7 +85,7 @@ namespace backend::vulkan {
 
     Framebuffer* Swapchain::GetNextFramebuffer() {
         uint32_t imageIndex;
-        VkResult result = vkAcquireNextImageKHR(m_context.m_vkDevice, m_vkSwapchain, UINT64_MAX, m_framebuffers[m_currentFrame]->GetAvailableSemaphore(), VK_NULL_HANDLE, &imageIndex);
+        VkResult result = vkAcquireNextImageKHR(m_context.m_vkDevice, m_vkSwapchain, 9999999, m_framebuffers[m_currentFrame]->GetAvailableSemaphore(), VK_NULL_HANDLE, &imageIndex);
         if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
             return nullptr;
         }

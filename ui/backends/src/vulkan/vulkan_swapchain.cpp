@@ -85,7 +85,7 @@ namespace backend::vulkan {
 
     Framebuffer* Swapchain::GetNextFramebuffer() {
         uint32_t imageIndex;
-        VkResult result = vkAcquireNextImageKHR(m_context.m_vkDevice, m_vkSwapchain, 9999999, m_framebuffers[m_currentFrame]->GetAvailableSemaphore(), VK_NULL_HANDLE, &imageIndex);
+        VkResult result = vkAcquireNextImageKHR(m_context.m_vkDevice, m_vkSwapchain, UINT64_MAX, m_framebuffers[m_currentFrame]->GetAvailableSemaphore(), VK_NULL_HANDLE, &imageIndex);
         if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
             return nullptr;
         }

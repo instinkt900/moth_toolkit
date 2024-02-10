@@ -5,6 +5,11 @@
 		}
 	],
 	"settings": {
-		"cmake.sourceDirectory": ["${workspaceFolder}", "${workspaceFolder}/backends", "${workspaceFolder}/editor"]
+		"cmake.sourceDirectory": [
+			"${workspaceFolder}",
+			"${workspaceFolder}/backends",
+			"${workspaceFolder}/editor"
+		],
+		"dotnet.defaultSolution": "disable"
 	}
 }

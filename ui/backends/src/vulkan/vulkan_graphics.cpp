@@ -5,8 +5,8 @@
 #include "vulkan/vulkan_font.h"
 #include "vulkan/shaders/vulkan_shaders.h"
 
-#include "hb.h"
-#include "hb-ft.h"
+#include "harfbuzz/hb.h"
+#include "harfbuzz/hb-ft.h"
 
 #include "stb_image_write.h"
 

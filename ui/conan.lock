@@ -7,7 +7,7 @@
         "fmt/10.0.0#65edbe601c09b4cee8ed9bb2d8d109e8%1692421582.516"
     ],
     "build_requires": [
-        "cmake/3.27.9"
+        "cmake/3.27.9#e255e9c6cc3ac4856c44ad84476ec434%1701609437.645"
     ],
     "python_requires": []
 }

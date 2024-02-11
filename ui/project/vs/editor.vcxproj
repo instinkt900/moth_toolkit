@@ -61,7 +61,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NA_CONSOLE;_ITERATOR_DEBUG_LEVEL=0;_CRT_SECURE_NO_WARNINGS;IMGUI_DEFINE_MATH_OPERATORS;JSON_HAS_FILESYSTEM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\backends\include;..\..\editor\src;..\..\external\murmurhash.c;..\..\external\imgui;..\..\include;..\..\external\magic_enum\include;..\..\external\json\include;..\..\external\range-v3\include;..\..\external\nativefiledialog\src\include;$(HARFBUZZ_DIR)\harfbuzz\src;$(FMT_DIR)\include;$(FREETYPE_DIR)\include\freetype2;$(SPDLOG_DIR)\include;$(GLFW_DIR)\include;$(SDL_DIR)\include;$(SDLIMAGE_DIR)\include;$(SDLTTF_DIR)\include;$(VULKAN_DIR)\Include;$(VULKAN_DIR)\Include\vma;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\backends\include;..\..\editor\src;..\..\external\murmurhash.c;..\..\external\imgui;..\..\include;..\..\external\magic_enum\include;..\..\external\json\include;..\..\external\range-v3\include;..\..\external\nativefiledialog\src\include;$(HARFBUZZ_DIR)\include;$(FMT_DIR)\include;$(FREETYPE_DIR)\include\freetype2;$(SPDLOG_DIR)\include;$(GLFW_DIR)\include;$(SDL_DIR)\include;$(SDLIMAGE_DIR)\include;$(SDLTTF_DIR)\include;$(VULKAN_DIR)\Include;$(VULKAN_DIR)\Include\vma;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -70,7 +70,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(HARFBUZZ_DIR)\build\Release;$(SDL_DIR)\lib\x64;$(SDLIMAGE_DIR)\lib\x64;$(SDLTTF_DIR)\lib\x64;$(FMT_DIR)\lib;$(GLFW_DIR)\lib;$(VULKAN_DIR)\Lib;$(FREETYPE_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(HARFBUZZ_DIR)\lib;$(SDL_DIR)\lib\x64;$(SDLIMAGE_DIR)\lib\x64;$(SDLTTF_DIR)\lib\x64;$(FMT_DIR)\lib;$(GLFW_DIR)\lib;$(VULKAN_DIR)\Lib;$(FREETYPE_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>freetype.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;fmt.lib;glfw3.lib;vulkan-1.lib;harfbuzz.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>

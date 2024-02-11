@@ -13,18 +13,19 @@ namespace backend {
         , m_windowHeight(INIT_WINDOW_HEIGHT) {
         m_updateTicks = std::chrono::milliseconds(1000 / 60);
 
-        // setup logging
-        auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-        console_sink->set_level(spdlog::level::warn);
-        console_sink->set_pattern(fmt::format("[{}] [%^%l%$] %v", applicationTitle));
+        // this should be handled more generically
+        // // setup logging
+        // auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+        // console_sink->set_level(spdlog::level::warn);
+        // console_sink->set_pattern(fmt::format("[{}] [%^%l%$] %v", applicationTitle));
 
-        auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("editor.log", false);
-        file_sink->set_level(spdlog::level::trace);
-        file_sink->set_pattern("[%Y-%m-%d %T.%e] [%l] %v");
+        // auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("editor.log", false);
+        // file_sink->set_level(spdlog::level::trace);
+        // file_sink->set_pattern("[%Y-%m-%d %T.%e] [%l] %v");
 
-        spdlog::logger logger("multi_sink", {console_sink, file_sink});
-        logger.set_level(spdlog::level::debug);
-        spdlog::set_default_logger(std::make_shared<spdlog::logger>(logger));
+        // spdlog::logger logger("multi_sink", {console_sink, file_sink});
+        // logger.set_level(spdlog::level::debug);
+        // spdlog::set_default_logger(std::make_shared<spdlog::logger>(logger));
 
         spdlog::info("Log started.");
     }

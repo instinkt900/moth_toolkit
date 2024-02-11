@@ -11,14 +11,14 @@ A C++ Flash-like framework for building 2D UIs for graphical applications such a
 
 #### Conan
 
-The easiest way to build is by using Conan and CMake.
+The easiest way to build is by using Conan and CMake. You can refer to either Conan docs or even the github workflows on this project to get the exact commands, but basically the flow for building release on Windows is as follows...
 ```
-mkdir build && cd build
-conan install .. --output-folder=. --build=missing
-cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
-cmake --build . --config Release
-cmake --install . --config Release --prefix=install_path
+conan install . --build=missing -s build_type=Release [--profile <profile>]
+cmake --preset conan-default
+cmake --build --preset conan-release
+cmake --install build --config Release --prefix=<install_path>
 ```
+The exact commands vary with Linux and Windows but it should be easy to figure out what needs to change.
 This should build the library and copy the headers into `install_path` which can be consumed like any other C++ library.
 
 #### Visual Studio
@@ -31,14 +31,13 @@ The Visual Studio solution is provided in the `projects/vs` path. It includes mo
 
 #### Conan
 
-You can build the editor using Conan and CMake using the following commands...
+Building the editor is the same workflow as the library itself, only from the editor folder.
 ```
 cd editor
-mkdir build && cd build
-conan install .. --output-folder=. --build=missing
-cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
-cmake --build . --config Release
-cmake --install . --config Release --prefix=install_path
+conan install . --build=missing -s build_type=Release [--profile <profile>]
+cmake --preset conan-default
+cmake --build --preset conan-release
+cmake --install build --config Release --prefix=<install_path>
 ```
 Like with the library build this should install the editor in the given `install_path` folder.
 

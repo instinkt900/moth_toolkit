@@ -109,7 +109,10 @@ find_package(SDL2_ttf REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(Vulkan REQUIRED)
 find_package(vulkan-memory-allocator REQUIRED)
-#find_package(harfbuzz REQUIRED)
+
+if (WIN32)
+	find_package(harfbuzz REQUIRED)
+endif()
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
@@ -128,7 +131,10 @@ target_link_libraries(${PROJECT_NAME} SDL2_ttf::SDL2_ttf-static)
 target_link_libraries(${PROJECT_NAME} spdlog::spdlog)
 target_link_libraries(${PROJECT_NAME} Vulkan::Vulkan)
 target_link_libraries(${PROJECT_NAME} vulkan-memory-allocator::vulkan-memory-allocator)
-#target_link_libraries(${PROJECT_NAME} harfbuzz::harfbuzz)
+
+if (WIN32)
+	target_link_libraries(${PROJECT_NAME} harfbuzz::harfbuzz)
+endif()
 
 if (MSVC)
 	set_source_files_properties(src/sdl/SDL_FontCache.c PROPERTIES COMPILE_FLAGS "/W0")

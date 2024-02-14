@@ -7,7 +7,6 @@ message("Building with CMake version: ${CMAKE_VERSION}")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
-#set(CMAKE_VERBOSE_MAKEFILE on)
 
 if (MSVC)
 	add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
@@ -111,6 +110,10 @@ find_package(Vulkan REQUIRED)
 find_package(vulkan-memory-allocator REQUIRED)
 
 if (WIN32)
+	# including this on linux causes weird linker issues somewhere in glib
+	# it's included in libgtk anyway thanks to nfd which is included in
+	# the editor. this will probably still be an issue if this is used
+	# in anything not using nfd
 	find_package(harfbuzz REQUIRED)
 endif()
 

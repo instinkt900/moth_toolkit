@@ -38,7 +38,7 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="moth_ui.props" />
+    <Import Project="..\..\editor\build\generators\conandeps.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -52,11 +52,11 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NA_CONSOLE;_ITERATOR_DEBUG_LEVEL=0;_CRT_SECURE_NO_WARNINGS;IMGUI_DEFINE_MATH_OPERATORS;JSON_HAS_FILESYSTEM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>..\..\backends\include;..\..\backends\src;..\..\external\murmurhash.c;..\..\external\imgui;..\..\include;..\..\external\magic_enum\include;..\..\external\json\include;..\..\external\range-v3\include;$(HARFBUZZ_DIR)\include;$(FMT_DIR)\include;$(SPDLOG_DIR)\include;$(FREETYPE_DIR)\include\freetype2;$(GLFW_DIR)\include;$(SDL_DIR)\include;$(SDLIMAGE_DIR)\include;$(SDLTTF_DIR)\include;$(VULKAN_DIR)\Include;$(VULKAN_DIR)\Include\vma;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalIncludeDirectories>..\..\backends\include;..\..\backends\src;..\..\include;..\..\external\imgui;..\..\external\murmurhash.c;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>

@@ -2,7 +2,7 @@
 #include "vulkan/vulkan_font.h"
 #include "stb_rect_pack.h"
 
-#include "hb-ft.h"
+#include "harfbuzz/hb-ft.h"
 
 #include "stb_image_write.h"
 

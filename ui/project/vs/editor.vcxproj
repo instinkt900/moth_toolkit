@@ -38,7 +38,7 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="moth_ui.props" />
+    <Import Project="..\..\editor\build\generators\conandeps.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -59,26 +59,24 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NA_CONSOLE;_ITERATOR_DEBUG_LEVEL=0;_CRT_SECURE_NO_WARNINGS;IMGUI_DEFINE_MATH_OPERATORS;JSON_HAS_FILESYSTEM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;IMGUI_DEFINE_MATH_OPERATORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\backends\include;..\..\editor\src;..\..\external\murmurhash.c;..\..\external\imgui;..\..\include;..\..\external\magic_enum\include;..\..\external\json\include;..\..\external\range-v3\include;..\..\external\nativefiledialog\src\include;$(HARFBUZZ_DIR)\harfbuzz\src;$(FMT_DIR)\include;$(FREETYPE_DIR)\include\freetype2;$(SPDLOG_DIR)\include;$(GLFW_DIR)\include;$(SDL_DIR)\include;$(SDLIMAGE_DIR)\include;$(SDLTTF_DIR)\include;$(VULKAN_DIR)\Include;$(VULKAN_DIR)\Include\vma;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\backends\include;..\..\editor\src;..\..\external\murmurhash.c;..\..\external\imgui;..\..\include;..\..\external\nativefiledialog\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(HARFBUZZ_DIR)\build\Release;$(SDL_DIR)\lib\x64;$(SDLIMAGE_DIR)\lib\x64;$(SDLTTF_DIR)\lib\x64;$(FMT_DIR)\lib;$(GLFW_DIR)\lib;$(VULKAN_DIR)\Lib;$(FREETYPE_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetype.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;fmt.lib;glfw3.lib;vulkan-1.lib;harfbuzz.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y $(SDL_DIR)\lib\x64\SDL2.dll $(OutDirFullPath)
-xcopy /y $(SDLIMAGE_DIR)\lib\x64\*.dll $(OutDirFullPath)
-xcopy /y $(SDLTTF_DIR)\lib\x64\*.dll $(OutDirFullPath)
-</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

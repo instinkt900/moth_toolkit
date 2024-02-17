@@ -5,9 +5,6 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
-  BUILD_TYPE: Release
-
 jobs:
   build-linux:
     runs-on: ubuntu-latest
@@ -23,7 +20,7 @@ jobs:
         conan config install conan_config
         conan install . --build=missing --profile linux_profile
         conan install . --build=missing --profile linux_profile -s build_type=Debug
-        source ./build/${{env.BUILD_TYPE}}/generators/conanbuild.sh
+        source ./build/Release/generators/conanbuild.sh
 
     - name: Configure CMake for release
       run: cmake --preset conan-release

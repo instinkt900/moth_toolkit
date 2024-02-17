@@ -16,7 +16,6 @@ add_subdirectory(.. moth_ui)
 
 include_directories(../external/imgui)
 include_directories(../external/murmurhash.c)
-include_directories(../external/harfbuzz-icu-freetype/harfbuzz/src)
 
 set(PUBLIC_HEADERS
 	include/application.h
@@ -98,7 +97,7 @@ set(SOURCES ${SOURCES}
 )
 
 find_package(fmt REQUIRED)
-find_package(freetype REQUIRED)
+find_package(Freetype REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(magic_enum REQUIRED)
 find_package(nlohmann_json REQUIRED)
@@ -110,13 +109,21 @@ find_package(spdlog REQUIRED)
 find_package(Vulkan REQUIRED)
 find_package(vulkan-memory-allocator REQUIRED)
 
+if (WIN32)
+	# including this on linux causes weird linker issues somewhere in glib
+	# it's included in libgtk anyway thanks to nfd which is included in
+	# the editor. this will probably still be an issue if this is used
+	# in anything not using nfd
+	find_package(harfbuzz REQUIRED)
+endif()
+
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 target_include_directories(${PROJECT_NAME} PRIVATE src)
 target_link_libraries(${PROJECT_NAME} moth_ui)
 target_link_libraries(${PROJECT_NAME} fmt::fmt)
-target_link_libraries(${PROJECT_NAME} freetype)
+target_link_libraries(${PROJECT_NAME} Freetype::Freetype)
 target_link_libraries(${PROJECT_NAME} glfw)
 target_link_libraries(${PROJECT_NAME} magic_enum::magic_enum)
 target_link_libraries(${PROJECT_NAME} nlohmann_json::nlohmann_json)
@@ -127,6 +134,10 @@ target_link_libraries(${PROJECT_NAME} SDL2_ttf::SDL2_ttf-static)
 target_link_libraries(${PROJECT_NAME} spdlog::spdlog)
 target_link_libraries(${PROJECT_NAME} Vulkan::Vulkan)
 target_link_libraries(${PROJECT_NAME} vulkan-memory-allocator::vulkan-memory-allocator)
+
+if (WIN32)
+	target_link_libraries(${PROJECT_NAME} harfbuzz::harfbuzz)
+endif()
 
 if (MSVC)
 	set_source_files_properties(src/sdl/SDL_FontCache.c PROPERTIES COMPILE_FLAGS "/W0")

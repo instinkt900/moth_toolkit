@@ -4,9 +4,6 @@ on:
   workflow_dispatch:
   pull_request:
     branches: [ main ]
-    
-env:
-  BUILD_TYPE: Release
 
 jobs:
   build-win:

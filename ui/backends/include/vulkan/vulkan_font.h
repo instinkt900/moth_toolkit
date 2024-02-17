@@ -4,7 +4,7 @@
 #include "vulkan_buffer.h"
 #include "vulkan_graphics.h"
 
-#include "hb.h"
+#include "harfbuzz/hb.h"
 
 namespace backend::vulkan {
     class Font : public moth_ui::IFont {

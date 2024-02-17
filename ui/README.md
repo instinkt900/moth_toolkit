@@ -25,4 +25,4 @@ This should build the library and copy the headers into `install_path` which can
 
 The Visual Studio solution is provided in the `projects/vs` path. It includes moth_ui, the backends, and the editor. Check the editor building section for the full setup.
 
-## [Editor](https://github.com/instinkt900/moth_ui/tree/main/editor)
+## [Editor](editor)

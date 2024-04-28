@@ -1,11 +1,12 @@
 from conan import ConanFile
-from conan.tools.cmake import cmake_layout
+from conan.tools.cmake import cmake_layout, CMake, CMakeToolchain
 
 class MothUI(ConanFile):
     name = "moth_ui"
     version = "0.1"
     settings = "os", "compiler", "build_type", "arch"
     generators = "CMakeToolchain", "CMakeDeps"
+    exports_sources = "CMakeLists.txt", "include/*", "src/*"
 
     def requirements(self):
         self.requires("nlohmann_json/3.11.2")
@@ -18,3 +19,17 @@ class MothUI(ConanFile):
 
     def layout(self):
         cmake_layout(self)
+
+    def build(self):
+        cmake = CMake(self)
+        cmake.configure()
+        cmake.build()
+
+    def package(self):
+        cmake = CMake(self)
+        cmake.install()
+
+    def package_info(self):
+        self.cpp_info.libs = ["moth_ui"]
+        self.cpp_info.libdirs = ["lib"]
+        self.cpp_info.includedirs = ["include"]

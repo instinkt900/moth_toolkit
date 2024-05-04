@@ -20,6 +20,6 @@ namespace moth_ui {
         static bool s_widgetIsRegistered_;
     };
 
-    template <typename T, typename BaseType = Group>
+    template <typename T, typename BaseType>
     bool Widget<T, BaseType>::s_widgetIsRegistered_ = Widget<T, BaseType>::SelfRegister();
 }

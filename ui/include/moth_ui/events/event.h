@@ -11,7 +11,9 @@ namespace moth_ui {
         EVENTTYPE_ANIMATION_STARTED,
         EVENTTYPE_ANIMATION_STOPPED,
 
-        EVENTTYPE_USER,
+        EVENTTYPE_USER0 = 1000,
+        EVENTTYPE_USER1 = 2000,
+        EVENTTYPE_USER2 = 3000,
     };
 
     class Event {
@@ -27,7 +29,7 @@ namespace moth_ui {
         int m_type;
     };
 
-    template<typename T>
+    template <typename T>
     T const* event_cast(Event const& event) {
         if (event.GetType() == T::GetStaticType()) {
             return static_cast<T const*>(&event);

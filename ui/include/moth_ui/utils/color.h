@@ -4,6 +4,7 @@
 #include "moth_ui/blend_mode.h"
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 
 namespace moth_ui {
     using Color = Vector<float, 4>;

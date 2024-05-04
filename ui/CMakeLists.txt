@@ -7,6 +7,7 @@ message("Building with CMake version: ${CMAKE_VERSION}")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(PUBLIC_HEADERS
 	include/moth_ui/animation_clip.h
@@ -102,6 +103,7 @@ target_link_libraries(${PROJECT_NAME} range-v3::range-v3)
 
 if (MSVC)
 	set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/W3 /WX")
+    add_compile_definitions(_SILENCE_ALL_MS_EXT_DEPRECATION_WARNINGS)
 else()
 	set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-Werror -Wall")
 endif()

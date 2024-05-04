@@ -3,7 +3,7 @@
 #include "moth_ui/events/event.h"
 
 enum EventType : int {
-    EVENTTYPE_RENDERDEVICERESET = moth_ui::EventType::EVENTTYPE_USER,
+    EVENTTYPE_RENDERDEVICERESET = moth_ui::EventType::EVENTTYPE_USER0,
     EVENTTYPE_RENDERTARGETRESET,
     EVENTTYPE_WINDOWSIZE,
     EVENTTYPE_REQUEST_QUIT,

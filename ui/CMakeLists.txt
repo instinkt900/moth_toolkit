@@ -103,6 +103,7 @@ target_link_libraries(${PROJECT_NAME} range-v3::range-v3)
 
 if (MSVC)
 	set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/W3 /WX")
+    add_compile_definitions(_SILENCE_ALL_MS_EXT_DEPRECATION_WARNINGS)
 else()
 	set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-Werror -Wall")
 endif()

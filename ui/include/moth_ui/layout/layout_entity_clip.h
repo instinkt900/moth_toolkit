@@ -12,6 +12,6 @@ namespace moth_ui {
 
         LayoutEntityType GetType() const override { return LayoutEntityType::Clip; }
 
-        std::unique_ptr<Node> Instantiate() override;
+        std::unique_ptr<Node> Instantiate(Context& context) override;
     };
 }

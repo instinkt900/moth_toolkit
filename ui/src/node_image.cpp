@@ -5,11 +5,12 @@
 #include "moth_ui/context.h"
 
 namespace moth_ui {
-    NodeImage::NodeImage() {
+    NodeImage::NodeImage(Context& context)
+        : Node(context) {
     }
 
-    NodeImage::NodeImage(std::shared_ptr<LayoutEntityImage> layoutEntity)
-        : Node(layoutEntity) {
+    NodeImage::NodeImage(Context& context, std::shared_ptr<LayoutEntityImage> layoutEntity)
+        : Node(context, layoutEntity) {
         ReloadEntityPrivate();
     }
 
@@ -21,7 +22,7 @@ namespace moth_ui {
     }
 
     void NodeImage::Load(std::filesystem::path const& path) {
-        m_image = Context::GetCurrentContext()->GetImageFactory().GetImage(path);
+        m_image = m_context.GetImageFactory().GetImage(path);
         if (m_image && IsZero(m_sourceRect)) {
             auto const imageDimensions = m_image->GetDimensions();
             m_sourceRect.bottomRight.x = imageDimensions.x;
@@ -37,7 +38,7 @@ namespace moth_ui {
 
     void NodeImage::DrawInternal() {
         if (m_image) {
-            auto& renderer = Context::GetCurrentContext()->GetRenderer();
+            auto& renderer = m_context.GetRenderer();
             if (m_imageScaleType == ImageScaleType::NineSlice) {
                 for (int horizSliceIdx = 0; horizSliceIdx < 3; ++horizSliceIdx) {
                     for (int vertSliceIdx = 0; vertSliceIdx < 3; ++vertSliceIdx) {

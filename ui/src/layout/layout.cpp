@@ -30,8 +30,8 @@ namespace moth_ui {
         return std::make_shared<Layout>(*this);
     }
 
-    std::unique_ptr<Node> Layout::Instantiate() {
-        return std::make_unique<Group>(std::static_pointer_cast<Layout>(shared_from_this()));
+    std::unique_ptr<Node> Layout::Instantiate(Context& context) {
+        return std::make_unique<Group>(context, std::static_pointer_cast<Layout>(shared_from_this()));
     }
 
     nlohmann::json Layout::Serialize(SerializeContext const& context) const {

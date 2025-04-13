@@ -1,7 +1,7 @@
 #pragma once
 
-#include "rect.h"
-#include "vector_serialization.h"
+#include "moth_ui/utils/rect.h"
+#include "moth_ui/utils/vector_serialization.h"
 
 namespace moth_ui {
     template <typename T>

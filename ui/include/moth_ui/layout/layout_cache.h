@@ -2,6 +2,10 @@
 
 #include "moth_ui/ui_fwd.h"
 
+#include <memory>
+#include <string>
+#include <map>
+
 namespace moth_ui {
     class LayoutCache {
     public:

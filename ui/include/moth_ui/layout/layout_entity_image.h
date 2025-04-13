@@ -5,6 +5,8 @@
 #include "moth_ui/utils/rect.h"
 #include "moth_ui/layout/layout_rect.h"
 
+#include <nlohmann/json_fwd.hpp>
+
 namespace moth_ui {
     class LayoutEntityImage : public LayoutEntity {
     public:
@@ -16,7 +18,7 @@ namespace moth_ui {
 
         LayoutEntityType GetType() const override { return LayoutEntityType::Image; }
 
-        std::unique_ptr<Node> Instantiate() override;
+        std::unique_ptr<Node> Instantiate(Context& context) override;
 
         nlohmann::json Serialize(SerializeContext const& context) const override;
         bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;

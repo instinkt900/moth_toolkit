@@ -1,6 +1,7 @@
 #pragma once
 
 #include "application.h"
+#include "moth_ui/context.h"
 
 #include <SDL.h>
 
@@ -17,6 +18,8 @@ namespace backend::sdl {
         void DestroyWindow() override;
         void UpdateWindow() override;
         void Draw() override;
+
+        std::shared_ptr<moth_ui::Context> m_uiContext;
 
     private:
         SDL_Window* m_window = nullptr;

@@ -2,6 +2,7 @@
 
 #include "application.h"
 
+#include "moth_ui/context.h"
 #include "vulkan/vulkan_context.h"
 #include "vulkan/vulkan_graphics.h"
 #include "vulkan/vulkan_swapchain.h"
@@ -21,6 +22,8 @@ namespace backend::vulkan {
         void DestroyWindow() override;
         void UpdateWindow() override;
         void Draw() override;
+
+        std::shared_ptr<moth_ui::Context> m_uiContext;
 
     private:
         Graphics* m_vulkanGraphics = nullptr;

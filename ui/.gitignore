@@ -24,3 +24,5 @@
 /project/vs/moth_ui_tests/Intermediate
 /tests/build
 CMakeUserPresets.json
+.venv/
+editor/.venv/

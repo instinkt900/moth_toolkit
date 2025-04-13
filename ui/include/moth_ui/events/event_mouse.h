@@ -1,7 +1,9 @@
 #pragma once
 
-#include "event.h"
+#include "moth_ui/events/event.h"
 #include "moth_ui/utils/vector.h"
+
+#include <memory>
 
 namespace moth_ui {
     enum class MouseButton {

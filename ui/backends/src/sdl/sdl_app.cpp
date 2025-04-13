@@ -67,8 +67,7 @@ namespace backend::sdl {
         m_imageFactory = std::make_unique<ImageFactory>(*m_renderer);
         m_fontFactory = std::make_unique<FontFactory>(*m_renderer);
         m_uiRenderer = std::make_unique<UIRenderer>(*m_renderer);
-        auto uiContext = std::make_shared<moth_ui::Context>(m_imageFactory.get(), m_fontFactory.get(), m_uiRenderer.get());
-        moth_ui::Context::SetCurrentContext(uiContext);
+        m_uiContext = std::make_shared<moth_ui::Context>(m_imageFactory.get(), m_fontFactory.get(), m_uiRenderer.get());
 
         SetupLayers();
 

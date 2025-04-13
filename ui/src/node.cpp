@@ -6,11 +6,13 @@
 #include "moth_ui/context.h"
 
 namespace moth_ui {
-    Node::Node() {
+    Node::Node(Context& context)
+        : m_context(context) {
     }
 
-    Node::Node(std::shared_ptr<LayoutEntity> layoutEntity)
-        : m_layout(layoutEntity) {
+    Node::Node(Context& context, std::shared_ptr<LayoutEntity> layoutEntity)
+        : m_context(context)
+        , m_layout(layoutEntity) {
         ReloadEntityInternal();
     }
 
@@ -57,7 +59,7 @@ namespace moth_ui {
             return;
         }
 
-        auto& renderer = Context::GetCurrentContext()->GetRenderer();
+        auto& renderer = m_context.GetRenderer();
         renderer.PushBlendMode(m_blend);
         renderer.PushColor(m_color);
         DrawInternal();

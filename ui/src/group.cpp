@@ -9,11 +9,12 @@
 #include "moth_ui/events/event_animation.h"
 
 namespace moth_ui {
-    Group::Group() {
+    Group::Group(Context& context)
+        : Node(context) {
     }
 
-    Group::Group(std::shared_ptr<LayoutEntityGroup> layoutEntityGroup)
-        : Node(layoutEntityGroup) {
+    Group::Group(Context& context, std::shared_ptr<LayoutEntityGroup> layoutEntityGroup)
+        : Node(context, layoutEntityGroup) {
         ReloadEntityPrivate();
     }
 
@@ -126,14 +127,14 @@ namespace moth_ui {
         int clipRects = 0;
         for (auto&& child : m_children) {
             if (auto const clipNode = std::dynamic_pointer_cast<NodeClip>(child)) {
-                Context::GetCurrentContext()->GetRenderer().PushClip(clipNode->GetScreenRect());
+                m_context.GetRenderer().PushClip(clipNode->GetScreenRect());
                 ++clipRects;
             }
             child->Draw();
         }
 
         while (clipRects--) {
-            Context::GetCurrentContext()->GetRenderer().PopClip();
+            m_context.GetRenderer().PopClip();
         }
     }
 
@@ -142,7 +143,7 @@ namespace moth_ui {
         m_children.clear();
         auto& nodeFactory = NodeFactory::Get();
         for (auto&& childEntity : layoutEntity->m_children) {
-            AddChild(nodeFactory.Create(childEntity));
+            AddChild(nodeFactory.Create(m_context, childEntity));
         }
         UpdateChildBounds();
         m_animationClipController = std::make_unique<AnimationClipController>(this);

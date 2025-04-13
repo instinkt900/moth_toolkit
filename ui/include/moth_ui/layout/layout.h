@@ -1,5 +1,6 @@
 #pragma once
 
+#include "moth_ui/context.h"
 #include "moth_ui/ui_fwd.h"
 #include "moth_ui/layout/layout_entity_group.h"
 
@@ -13,7 +14,7 @@ namespace moth_ui {
 
         LayoutEntityType GetType() const override { return LayoutEntityType::Layout; }
 
-        std::unique_ptr<Node> Instantiate() override;
+        std::unique_ptr<Node> Instantiate(Context& context) override;
 
         nlohmann::json Serialize(SerializeContext const& context) const override;
         bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;

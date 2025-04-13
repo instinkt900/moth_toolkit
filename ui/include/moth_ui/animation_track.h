@@ -1,7 +1,13 @@
 #pragma once
 
-#include <variant>
 #include "moth_ui/utils/interp.h"
+
+#include <nlohmann/json_fwd.hpp>
+
+#include <variant>
+#include <string>
+#include <array>
+#include <functional>
 
 namespace nlohmann {
     template <>

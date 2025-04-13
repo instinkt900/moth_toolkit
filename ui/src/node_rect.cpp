@@ -4,11 +4,12 @@
 #include "moth_ui/context.h"
 
 namespace moth_ui {
-    NodeRect::NodeRect() {
+    NodeRect::NodeRect(Context& context)
+        : Node(context) {
     }
 
-    NodeRect::NodeRect(std::shared_ptr<LayoutEntityRect> layoutEntity)
-        : Node(layoutEntity) {
+    NodeRect::NodeRect(Context& context, std::shared_ptr<LayoutEntityRect> layoutEntity)
+        : Node(context, layoutEntity) {
         ReloadEntityPrivate();
     }
 
@@ -22,9 +23,9 @@ namespace moth_ui {
 
     void NodeRect::DrawInternal() {
         if (m_filled) {
-            Context::GetCurrentContext()->GetRenderer().RenderFilledRect(m_screenRect);
+            m_context.GetRenderer().RenderFilledRect(m_screenRect);
         } else {
-            Context::GetCurrentContext()->GetRenderer().RenderRect(m_screenRect);
+            m_context.GetRenderer().RenderRect(m_screenRect);
         }
     }
 

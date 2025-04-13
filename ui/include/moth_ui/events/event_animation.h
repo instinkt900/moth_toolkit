@@ -1,8 +1,10 @@
 #pragma once
 
-#include "event.h"
+#include "moth_ui/events/event.h"
 #include "moth_ui/node.h"
-#include "moth_ui/animation_track.h"
+
+#include <memory>
+#include <string>
 
 namespace moth_ui {
     class EventAnimation : public Event {

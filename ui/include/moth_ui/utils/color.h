@@ -2,6 +2,7 @@
 
 #include "moth_ui/utils/vector.h"
 #include "moth_ui/blend_mode.h"
+
 #include <algorithm>
 #include <cmath>
 #include <cstdint>

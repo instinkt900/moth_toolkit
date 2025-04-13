@@ -1,13 +1,13 @@
 #pragma once
 
-#include "node.h"
-#include "animation_controller.h"
+#include "moth_ui/node.h"
+#include "moth_ui/animation_controller.h"
 
 namespace moth_ui {
     class Group : public Node {
     public:
-        Group();
-        Group(std::shared_ptr<LayoutEntityGroup> layoutEntityGroup);
+        Group(Context& context);
+        Group(Context& context, std::shared_ptr<LayoutEntityGroup> layoutEntityGroup);
         virtual ~Group();
 
         bool SendEventDown(Event const& event) override;

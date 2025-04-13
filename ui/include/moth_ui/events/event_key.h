@@ -2,6 +2,8 @@
 
 #include "event.h"
 
+#include <memory>
+
 namespace moth_ui {
     enum class KeyAction {
         Down,

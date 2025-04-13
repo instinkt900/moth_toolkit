@@ -1,5 +1,8 @@
 #pragma once
 
+#include <memory>
+#include <nlohmann/json_fwd.hpp>
+
 namespace nlohmann {
     //template <class T>
     //void from_json(const nlohmann::json& j, std::shared_ptr<T>& v) {

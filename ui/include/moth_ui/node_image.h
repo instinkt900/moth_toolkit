@@ -1,13 +1,15 @@
 #pragma once
 
-#include "node.h"
-#include "image_scale_type.h"
+#include "moth_ui/node.h"
+#include "moth_ui/image_scale_type.h"
+
+#include <memory>
 
 namespace moth_ui {
     class NodeImage : public Node {
     public:
-        NodeImage();
-        NodeImage(std::shared_ptr<LayoutEntityImage> layoutEntity);
+        NodeImage(Context& context);
+        NodeImage(Context& context, std::shared_ptr<LayoutEntityImage> layoutEntity);
         virtual ~NodeImage();
 
         void UpdateChildBounds() override;

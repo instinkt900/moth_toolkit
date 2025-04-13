@@ -2,11 +2,11 @@
 #include "moth_ui/font_factory.h"
 
 namespace moth_ui {
-    void FontFactory::AddFont(char const* name, std::filesystem::path const& path) {
+    void FontFactory::AddFont(std::string const& name, std::filesystem::path const& path) {
         m_fontPaths[name] = path;
     }
 
-    void FontFactory::RemoveFont(char const* name) {
+    void FontFactory::RemoveFont(std::string const& name) {
         m_fontPaths.erase(name);
     }
 
@@ -27,7 +27,7 @@ namespace moth_ui {
             json.at("fonts").get_to(relativeList);
 
             for (auto& [name, relPath] : relativeList) {
-                AddFont(name.c_str(), std::filesystem::absolute(rootPath / relPath));
+                AddFont(name, std::filesystem::absolute(rootPath / relPath));
             }
         }
 
@@ -59,7 +59,7 @@ namespace moth_ui {
     }
 
     std::shared_ptr<moth_ui::IFont> FontFactory::GetDefaultFont(int size) {
-        return GetFont(m_fontPaths.begin()->first.c_str(), size);
+        return GetFont(m_fontPaths.begin()->first, size);
     }
 
     std::vector<std::string> FontFactory::GetFontNameList() const {
@@ -70,7 +70,7 @@ namespace moth_ui {
         return nameList;
     }
 
-    std::filesystem::path FontFactory::GetFontPath(char const* name) const {
+    std::filesystem::path FontFactory::GetFontPath(std::string const& name) const {
         assert(!m_fontPaths.empty() && "No known fonts.");
         auto const it = m_fontPaths.find(name);
         if (std::end(m_fontPaths) == it) {

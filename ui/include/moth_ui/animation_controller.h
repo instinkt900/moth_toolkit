@@ -3,6 +3,9 @@
 #include "moth_ui/animation_track.h"
 #include "moth_ui/ui_fwd.h"
 
+#include <vector>
+#include <memory>
+
 namespace moth_ui {
     class AnimationTrackController {
     public:

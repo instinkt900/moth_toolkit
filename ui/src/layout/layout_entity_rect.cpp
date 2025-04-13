@@ -15,8 +15,8 @@ namespace moth_ui {
         return std::make_shared<LayoutEntityRect>(*this);
     }
 
-    std::unique_ptr<Node> LayoutEntityRect::Instantiate() {
-        return std::make_unique<NodeRect>(std::static_pointer_cast<LayoutEntityRect>(shared_from_this()));
+    std::unique_ptr<Node> LayoutEntityRect::Instantiate(Context& context) {
+        return std::make_unique<NodeRect>(context, std::static_pointer_cast<LayoutEntityRect>(shared_from_this()));
     }
 
     nlohmann::json LayoutEntityRect::Serialize(SerializeContext const& context) const {

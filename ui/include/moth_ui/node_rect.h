@@ -1,12 +1,14 @@
 #pragma once
 
-#include "node.h"
+#include "moth_ui/node.h"
+
+#include <memory>
 
 namespace moth_ui {
     class NodeRect : public Node {
     public:
-        NodeRect();
-        NodeRect(std::shared_ptr<LayoutEntityRect> layoutEntity);
+        NodeRect(Context& context);
+        NodeRect(Context& context, std::shared_ptr<LayoutEntityRect> layoutEntity);
         virtual ~NodeRect();
 
     protected:

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 #undef M_PI
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -269,9 +271,9 @@ namespace moth_ui {
         { InterpType::QuartIn, easeQuartIn },
         { InterpType::QuartOut, easeQuartOut },
         { InterpType::QuartInOut, easeQuartInOut },
-        { InterpType::QuintIn, easeQuartIn },
-        { InterpType::QuintOut, easeQuartOut },
-        { InterpType::QuintInOut, easeQuartInOut },
+        { InterpType::QuintIn, easeQuintIn },
+        { InterpType::QuintOut, easeQuintOut },
+        { InterpType::QuintInOut, easeQuintInOut },
         { InterpType::ExpoIn, easeExpoIn },
         { InterpType::ExpoOut, easeExpoOut },
         { InterpType::ExpoInOut, easeExpoInOut },

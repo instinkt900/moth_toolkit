@@ -114,8 +114,7 @@ namespace backend::vulkan {
         m_imageFactory = std::make_unique<ImageFactory>(*m_context, static_cast<Graphics&>(*m_vulkanGraphics));
         m_fontFactory = std::make_unique<FontFactory>(*m_context, *m_vulkanGraphics);
         m_uiRenderer = std::make_unique<UIRenderer>(*m_vulkanGraphics);
-        auto uiContext = std::make_shared<moth_ui::Context>(m_imageFactory.get(), m_fontFactory.get(), m_uiRenderer.get());
-        moth_ui::Context::SetCurrentContext(uiContext);
+        m_uiContext = std::make_shared<moth_ui::Context>(m_imageFactory.get(), m_fontFactory.get(), m_uiRenderer.get());
 
         SubImage::s_graphicsContext = m_vulkanGraphics;
 

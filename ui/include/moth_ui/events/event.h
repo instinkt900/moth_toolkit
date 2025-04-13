@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory> 
+
 namespace moth_ui {
     enum EventType : int {
         EVENTTYPE_KEY,

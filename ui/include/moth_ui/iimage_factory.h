@@ -1,6 +1,9 @@
 #pragma once
 
-#include "iimage.h"
+#include "moth_ui/iimage.h"
+
+#include <filesystem>
+#include <memory>
 
 namespace moth_ui {
     class IImageFactory {

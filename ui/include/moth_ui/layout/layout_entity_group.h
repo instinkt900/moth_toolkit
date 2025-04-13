@@ -3,6 +3,8 @@
 #include "moth_ui/layout/layout_entity.h"
 #include "moth_ui/animation_clip.h"
 
+#include <nlohmann/json_fwd.hpp>
+
 namespace moth_ui {
     class LayoutEntityGroup : public LayoutEntity {
     public:

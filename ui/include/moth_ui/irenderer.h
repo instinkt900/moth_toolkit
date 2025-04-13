@@ -8,6 +8,8 @@
 #include "moth_ui/text_alignment.h"
 #include "moth_ui/image_scale_type.h"
 
+#include <string>
+
 namespace moth_ui {
     class IRenderer {
     public:

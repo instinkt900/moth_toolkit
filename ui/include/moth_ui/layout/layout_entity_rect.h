@@ -1,8 +1,8 @@
 #pragma once
 
 #include "moth_ui/layout/layout_entity.h"
-#include "moth_ui/image_scale_type.h"
-#include "moth_ui/utils/rect.h"
+
+#include <nlohmann/json_fwd.hpp>
 
 namespace moth_ui {
     class LayoutEntityRect : public LayoutEntity {
@@ -14,7 +14,7 @@ namespace moth_ui {
 
         LayoutEntityType GetType() const override { return LayoutEntityType::Rect; }
 
-        std::unique_ptr<Node> Instantiate() override;
+        std::unique_ptr<Node> Instantiate(Context& context) override;
 
         nlohmann::json Serialize(SerializeContext const& context) const override;
         bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;

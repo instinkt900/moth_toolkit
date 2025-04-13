@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <nlohmann/json.hpp>
+
 namespace moth_ui {
     struct AnimationClip {
         AnimationClip() = default;

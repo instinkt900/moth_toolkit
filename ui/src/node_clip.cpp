@@ -3,11 +3,12 @@
 #include "moth_ui/layout/layout_entity_clip.h"
 
 namespace moth_ui {
-    NodeClip::NodeClip() {
+    NodeClip::NodeClip(Context& context)
+        : Node(context) {
     }
 
-    NodeClip::NodeClip(std::shared_ptr<LayoutEntityClip> layoutEntity)
-        : Node(layoutEntity) {
+    NodeClip::NodeClip(Context& context, std::shared_ptr<LayoutEntityClip> layoutEntity)
+        : Node(context, layoutEntity) {
     }
 
     NodeClip::~NodeClip() {

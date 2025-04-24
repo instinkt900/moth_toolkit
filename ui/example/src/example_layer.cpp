@@ -29,8 +29,9 @@ bool ExampleLayer::OnEvent(moth_ui::Event const& event) {
 }
 
 void ExampleLayer::Update(uint32_t ticks) {
-    if (m_root) {
-        m_root->Update(ticks);
+    auto rootCopy = m_root;
+    if (rootCopy) {
+        rootCopy->Update(ticks);
     }
 }
 

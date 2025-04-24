@@ -1,9 +1,3 @@
-[submodule "external/imgui"]
-	path = external/imgui
-	url = https://github.com/ocornut/imgui.git
-[submodule "external/murmurhash.c"]
-	path = external/murmurhash.c
-	url = https://github.com/jwerle/murmurhash.c.git
 [submodule "external/nativefiledialog"]
 	path = external/nativefiledialog
 	url = https://github.com/instinkt900/nativefiledialog.git

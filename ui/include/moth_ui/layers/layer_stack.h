@@ -2,6 +2,7 @@
 
 #include "moth_ui/event_listener.h"
 #include "moth_ui/utils/vector.h"
+#include "moth_ui/irenderer.h"
 
 #include <memory>
 #include <vector>
@@ -11,17 +12,17 @@ namespace moth_ui {
 
     class LayerStack : public EventListener {
     public:
-        LayerStack(int renderWidth, int renderHeight, int windowWidth, int windowHeight);
-        virtual ~LayerStack();
+        LayerStack(IRenderer& renderer, int renderWidth, int renderHeight, int windowWidth, int windowHeight);
+        ~LayerStack();
 
         void PushLayer(std::unique_ptr<Layer>&& layer);
         std::unique_ptr<Layer> PopLayer();
         void RemoveLayer(Layer* layer);
 
-        virtual bool OnEvent(Event const& event) override;
-        virtual void Update(uint32_t ticks);
-        virtual void Draw();
-        virtual void DebugDraw();
+        bool OnEvent(Event const& event) override;
+        void Update(uint32_t ticks);
+        void Draw();
+        void DebugDraw();
 
         void SetWindowSize(IntVec2 const& dimensions);
         void SetRenderSize(IntVec2 const& dimensions);
@@ -34,9 +35,8 @@ namespace moth_ui {
         void SetEventListener(EventListener* listener) { m_eventListener = listener; }
         void BroadcastEvent(Event const& event);
 
-    protected:
-        virtual void SetLayerLogicalSize(IntVec2 const& size);
-
+    private:
+        IRenderer& m_renderer;
         std::vector<std::unique_ptr<Layer>> m_layers;
         EventListener* m_eventListener = nullptr;
 

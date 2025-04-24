@@ -27,5 +27,7 @@ namespace moth_ui {
         virtual void RenderFilledRect(IntRect const& rect) = 0;
         virtual void RenderImage(IImage& image, IntRect const& sourceRect, IntRect const& destRect, ImageScaleType scaleType, float scale) = 0;
         virtual void RenderText(std::string const& text, IFont& font, TextHorizAlignment horizontalAlignment, TextVertAlignment verticalAlignment, IntRect const& destRect) = 0;
+
+        virtual void SetRendererLogicalSize(moth_ui::IntVec2 const& size) = 0;
     };
 }

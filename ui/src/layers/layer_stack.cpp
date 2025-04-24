@@ -3,8 +3,9 @@
 #include "moth_ui/layers/layer.h"
 
 namespace moth_ui {
-    LayerStack::LayerStack(int renderWidth, int renderHeight, int windowWidth, int windowHeight)
-        : m_renderWidth(renderWidth)
+    LayerStack::LayerStack(IRenderer& renderer, int renderWidth, int renderHeight, int windowWidth, int windowHeight)
+        : m_renderer(renderer)
+        , m_renderWidth(renderWidth)
         , m_renderHeight(renderHeight)
         , m_windowWidth(windowWidth)
         , m_windowHeight(windowHeight) {
@@ -53,9 +54,9 @@ namespace moth_ui {
     void LayerStack::Draw() {
         for (auto&& layer : m_layers) {
             if (layer->UseRenderSize()) {
-                SetLayerLogicalSize(IntVec2{ m_renderWidth, m_renderHeight });
+                m_renderer.SetRendererLogicalSize(IntVec2{ m_renderWidth, m_renderHeight });
             } else {
-                SetLayerLogicalSize(IntVec2{ m_windowWidth, m_windowHeight });
+                m_renderer.SetRendererLogicalSize(IntVec2{ m_windowWidth, m_windowHeight });
             }
             layer->Draw();
         }
@@ -78,8 +79,5 @@ namespace moth_ui {
         if (m_eventListener) {
             m_eventListener->OnEvent(event);
         }
-    }
-
-    void LayerStack::SetLayerLogicalSize(IntVec2 const& size) {
     }
 }

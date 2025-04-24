@@ -24,8 +24,11 @@ jobs:
       run: |
         conan profile detect --force
         conan config install ../conan_config
+        conan remote add artifactory http://artifactory.matthewcotton.net/artifactory/api/conan/conan-local
+        conan remote login artifactory ci -p ${{ secrets.ARTIFACTS_TOKEN }}
         conan install . --build=missing --profile linux_profile
         conan install . --build=missing --profile linux_profile -s build_type=Debug
+        conan upload "*" -r=artifactory -c
         source ./build/Release/generators/conanbuild.sh
 
     - name: Configure CMake for release

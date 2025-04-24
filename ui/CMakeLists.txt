@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(moth_ui VERSION 1.0 DESCRIPTION "A C++ game UI library")
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/version.txt" VERSION_STR)
+string(STRIP "${VERSION_STR}" PROJECT_VERSION)
+
+project(moth_ui VERSION ${PROJECT_VERSION} DESCRIPTION "A C++ game UI library")
 
 message("Building with CMake version: ${CMAKE_VERSION}")
 
@@ -103,7 +106,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC range-v3::range-v3)
 
 if (MSVC)
 	set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/W3 /WX")
-    add_compile_definitions(_SILENCE_ALL_MS_EXT_DEPRECATION_WARNINGS)
+	target_compile_definitions(${PROJECT_NAME} PRIVATE _SILENCE_ALL_MS_EXT_DEPRECATION_WARNINGS)
 else()
 	set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-Werror -Wall")
 endif()

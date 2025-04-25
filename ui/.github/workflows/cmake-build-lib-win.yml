@@ -3,7 +3,7 @@ name: Build Lib Windows
 on:
   workflow_dispatch:
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build-win:
@@ -18,7 +18,7 @@ jobs:
     - name: Conan setup and install dependencies
       run: |
         conan profile detect --force
-        conan config install conan_config
+        conan config install conan
         conan install . --build=missing --profile windows_profile
         conan install . --build=missing --profile windows_profile -s build_type=Debug
         ./build/generators/conanbuild.bat

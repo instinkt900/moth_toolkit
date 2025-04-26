@@ -24,7 +24,7 @@ jobs:
 
     - name: Build package and upload
       run: |
-        conan create . --profile conan/profiles/${{ matrix.os }}_profile --build=missing -o moth_ui/*:Shared=${{ matrix.library_type == 'shared' && 'True' || 'False' }}
+        conan create . --profile conan/profiles/${{ matrix.os }}_profile --build=missing -o moth_ui/*:shared=${{ matrix.library_type == 'shared' && 'True' || 'False' }}
         conan remote add artifactory https://artifactory.matthewcotton.net/artifactory/api/conan/conan-local
         conan remote login artifactory ci -p ${{ secrets.ARTIFACTS_TOKEN }}
         conan upload moth_ui --confirm --remote artifactory

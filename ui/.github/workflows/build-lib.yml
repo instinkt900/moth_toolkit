@@ -24,4 +24,4 @@ jobs:
 
     - name: Build package
       run: |
-        conan create . --profile conan/profiles/${{ matrix.os }}_profile --build=missing -s build_type=${{ matrix.build_type }} -o moth_ui/*:Shared=${{ matrix.library_type == 'shared' && 'True' || 'False' }}
+        conan create . --profile conan/profiles/${{ matrix.os }}_profile --build=missing -s build_type=${{ matrix.build_type }} -o moth_ui/*:shared=${{ matrix.library_type == 'shared' && 'True' || 'False' }}

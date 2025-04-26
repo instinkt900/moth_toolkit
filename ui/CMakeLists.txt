@@ -95,7 +95,7 @@ find_package(fmt REQUIRED)
 find_package(magic_enum REQUIRED)
 find_package(range-v3 REQUIRED)
 
-add_library(${PROJECT_NAME} STATIC ${SOURCES})
+add_library(${PROJECT_NAME} ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 target_include_directories(${PROJECT_NAME} PRIVATE src)
@@ -106,14 +106,21 @@ target_link_libraries(${PROJECT_NAME} PUBLIC range-v3::range-v3)
 
 if (MSVC)
 	set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/W3 /WX")
-	target_compile_definitions(${PROJECT_NAME} PRIVATE _SILENCE_ALL_MS_EXT_DEPRECATION_WARNINGS)
+	target_compile_definitions(${PROJECT_NAME} PRIVATE _SILENCE_ALL_MS_EXT_DEPRECATION_WARNINGS MOTH_UI_BUILD)
+	if (BUILD_SHARED_LIBS)
+		target_compile_definitions(${PROJECT_NAME} PRIVATE MOTH_UI_BUILD_SHARED)
+	endif()
 else()
 	set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-Werror -Wall")
 endif()
 
-install(TARGETS ${PROJECT_NAME} DESTINATION lib)
-install(DIRECTORY "include/" # source directory
-        DESTINATION "include" # target directory
-        FILES_MATCHING # install only matched files
-        PATTERN "*.h" # select header files
+install(TARGETS ${PROJECT_NAME}
+	RUNTIME DESTINATION bin
+	LIBRARY DESTINATION lib
+	ARCHIVE DESTINATION lib
+	INCLUDES DESTINATION include
+)
+install(DIRECTORY "include/"
+	DESTINATION "include"
+	FILES_MATCHING PATTERN "*.h"
 )

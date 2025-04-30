@@ -8,11 +8,15 @@ on:
 jobs:
   build-and-upload:
     if: github.repository == 'instinkt900/moth_ui'
-    runs-on: ${{ matrix.os == 'windows' && 'windows-latest' || 'ubuntu-latest' }}
+    runs-on: ${{ matrix.runs_on }}
     strategy:
       matrix:
         os: [windows, linux]
-        library_type: [shared, static]
+        include:
+          - os: windows
+            runs_on: windows-latest
+          - os: linux
+            runs_on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
@@ -24,7 +28,7 @@ jobs:
 
     - name: Build package and upload
       run: |
-        conan create . --profile conan/profiles/${{ matrix.os }}_profile --build=missing -o moth_ui/*:shared=${{ matrix.library_type == 'shared' && 'True' || 'False' }}
+        conan create . --profile conan/profiles/${{ matrix.os }}_profile --build=missing
         conan remote add artifactory https://artifactory.matthewcotton.net/artifactory/api/conan/conan-local
         conan remote login artifactory ci -p ${{ secrets.ARTIFACTS_TOKEN }}
         conan upload moth_ui --confirm --remote artifactory

@@ -10,9 +10,7 @@ class MothUI(ConanFile):
     description = "A UI library and toolkit for games."
 
     settings = "os", "compiler", "build_type", "arch"
-    options = { "shared": [True, False], "fPIC": [True, False] }
-    default_options = { "shared": False, "fPIC": True }
-    package_type = "library"
+    package_type = "static-library"
 
     exports_sources = "CMakeLists.txt", "version.txt", "include/*", "src/*"
 
@@ -27,10 +25,6 @@ class MothUI(ConanFile):
 
     def build_requirements(self):
         self.tool_requires("cmake/[>=3.27.0]")
-
-    def config_options(self):
-        if self.settings.os == "Windows":
-            del self.options.fPIC
 
     def layout(self):
         cmake_layout(self)

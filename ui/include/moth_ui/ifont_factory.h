@@ -1,6 +1,5 @@
 #pragma once
 
-#include "moth_ui/moth_ui.h"
 #include "moth_ui/ifont.h"
 
 #include <filesystem>
@@ -8,7 +7,7 @@
 #include <memory>
 
 namespace moth_ui {
-    class MOTH_UI_API IFontFactory {
+    class IFontFactory {
     public:
         virtual ~IFontFactory() = default;
 

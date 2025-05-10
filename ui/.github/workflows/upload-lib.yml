@@ -36,7 +36,7 @@ jobs:
     - name: Fetch package version
       id: get-version
       run: |
-        echo "version=$(conan inspect . | grep version: | sed \"s/version: //g\" -)" >> $GITHUB_OUTPUT
+        echo "version=$(conan inspect . | grep '^version:' | sed 's/version: //')" >> $GITHUB_OUTPUT
 
     - uses: rickstaa/action-create-tag@v1
       with:

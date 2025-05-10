@@ -9,6 +9,7 @@
 namespace moth_ui {
     class IFontFactory {
     public:
+        IFontFactory() = default;
         IFontFactory(IFontFactory const&) = default;
         IFontFactory(IFontFactory&&) = default;
         IFontFactory& operator=(IFontFactory const&) = default;

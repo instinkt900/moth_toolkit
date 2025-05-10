@@ -11,6 +11,7 @@ namespace moth_ui {
     class LayerStack : public EventListener {
     public:
         LayerStack(IRenderer& renderer, int renderWidth, int renderHeight, int windowWidth, int windowHeight);
+        ~LayerStack() override;
 
         void PushLayer(std::unique_ptr<Layer>&& layer);
         std::unique_ptr<Layer> PopLayer();
@@ -36,7 +37,6 @@ namespace moth_ui {
         LayerStack(LayerStack&&) = delete;
         LayerStack& operator=(LayerStack const&) = delete;
         LayerStack& operator=(LayerStack&&) = delete;
-        ~LayerStack() override = default;
 
     private:
         IRenderer& m_renderer;

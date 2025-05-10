@@ -12,6 +12,8 @@ namespace moth_ui {
         , m_windowHeight(windowHeight) {
     }
 
+    LayerStack::~LayerStack() = default;
+
     void LayerStack::PushLayer(std::unique_ptr<Layer>&& layer) {
         m_layers.push_back(std::move(layer));
         m_layers.back()->OnAddedToStack(this);

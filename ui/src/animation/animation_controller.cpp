@@ -52,6 +52,8 @@ namespace moth_ui {
         }
     }
 
+    AnimationController::~AnimationController() = default;
+
     void AnimationController::SetFrame(float frame) {
         // update each tracks time
         for (auto&& track : m_trackControllers) {

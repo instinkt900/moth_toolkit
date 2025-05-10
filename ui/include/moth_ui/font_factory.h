@@ -10,6 +10,7 @@
 namespace moth_ui {
     class FontFactory : public IFontFactory {
     public:
+        FontFactory() = default;
         FontFactory(FontFactory const&) = default;
         FontFactory(FontFactory&&) = default;
         FontFactory& operator=(FontFactory const&) = default;

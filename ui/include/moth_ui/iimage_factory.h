@@ -8,6 +8,7 @@
 namespace moth_ui {
     class IImageFactory {
     public:
+        IImageFactory() = default;
         IImageFactory(IImageFactory const&) = default;
         IImageFactory(IImageFactory&&) = default;
         IImageFactory& operator=(IImageFactory const&) = default;

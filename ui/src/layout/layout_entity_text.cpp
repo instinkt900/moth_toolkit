@@ -1,6 +1,6 @@
 #include "common.h"
 #include "moth_ui/layout/layout_entity_text.h"
-#include "moth_ui/node_text.h"
+#include "moth_ui/nodes/node_text.h"
 
 namespace moth_ui {
     LayoutEntityText::LayoutEntityText(LayoutRect const& initialBounds)
@@ -37,7 +37,7 @@ namespace moth_ui {
 
         if (success) {
             m_fontName = json.value("fontName", "");
-            m_fontSize = json.value("fontSize", 10);
+            m_fontSize = json.value("fontSize", DefaultFontSize);
             m_text = json.value("text", "");
             m_horizontalAlignment = json.value("horizontalAlignment", TextHorizAlignment::Left);
             m_verticalAlignment = json.value("verticalAlignment", TextVertAlignment::Top);

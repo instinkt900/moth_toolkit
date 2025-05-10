@@ -1,7 +1,9 @@
 #pragma once
 
+#include "moth_ui/graphics/blend_mode.h"
 #include "moth_ui/utils/vector.h"
-#include "moth_ui/blend_mode.h"
+
+#include <math.h>
 
 #include <algorithm>
 #include <cmath>
@@ -83,8 +85,10 @@ namespace moth_ui {
     }
 
     inline Color Blend(Color const& srcColor, Color const& dstColor, BlendMode blend) {
-        moth_ui::Color srcColorFactor, dstColorFactor;
-        float srcAlphaFactor, dstAlphaFactor;
+        moth_ui::Color srcColorFactor;
+        moth_ui::Color dstColorFactor;
+        float srcAlphaFactor = NAN;
+        float dstAlphaFactor = NAN;
         switch (blend) {
         default:
         case moth_ui::BlendMode::Replace:

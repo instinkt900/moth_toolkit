@@ -6,7 +6,7 @@
 #include "moth_ui/layout/layout_entity_rect.h"
 #include "moth_ui/layout/layout_entity_ref.h"
 #include "moth_ui/layout/layout_entity_clip.h"
-#include "moth_ui/node.h"
+#include "moth_ui/animation/keyframe.h"
 
 namespace moth_ui {
     std::unique_ptr<LayoutEntity> CreateLayoutEntity(LayoutEntityType type) {
@@ -38,7 +38,20 @@ namespace moth_ui {
 
     LayoutEntity::LayoutEntity(LayoutEntity const& other)
         : m_id(other.m_id)
+        , m_class(other.m_class)
         , m_parent(nullptr)
+        , m_visible(other.m_visible)
+        , m_blend(other.m_blend) {
+        if (other.m_hardReference) {
+            m_hardReference = other.m_hardReference->Clone(CloneType::Shallow);
+        }
+        for (auto&& [target, track] : other.m_tracks) {
+            m_tracks.insert(std::pair<AnimationTrack::Target, std::unique_ptr<AnimationTrack>>(target, std::make_unique<AnimationTrack>(*track)));
+        }
+    }
+
+    LayoutEntity::LayoutEntity(LayoutEntity&& other) noexcept
+        : m_id(other.m_id)
         , m_visible(other.m_visible)
         , m_blend(other.m_blend) {
         if (other.m_hardReference) {

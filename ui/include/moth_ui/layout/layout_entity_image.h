@@ -1,9 +1,9 @@
 #pragma once
 
+#include "moth_ui/graphics/image_scale_type.h"
 #include "moth_ui/layout/layout_entity.h"
-#include "moth_ui/image_scale_type.h"
-#include "moth_ui/utils/rect.h"
 #include "moth_ui/layout/layout_rect.h"
+#include "moth_ui/utils/rect.h"
 
 #include <nlohmann/json_fwd.hpp>
 
@@ -29,7 +29,14 @@ namespace moth_ui {
         float m_imageScale = 1.0f;
 
         // 9slice only
-        IntRect m_sourceBorders = { { 15, 15 }, { 15, 15 } };
+        static int constexpr DefaultBorderSize = 15;
+        IntRect m_sourceBorders = { { DefaultBorderSize, DefaultBorderSize }, { DefaultBorderSize, DefaultBorderSize } };
         LayoutRect m_targetBorders = MakeDefaultLayoutRect();
+
+        LayoutEntityImage(LayoutEntityImage const& other) = default;
+        LayoutEntityImage(LayoutEntityImage&& other) = default;
+        LayoutEntityImage& operator=(LayoutEntityImage const&) = default;
+        LayoutEntityImage& operator=(LayoutEntityImage&&) = default;
+        ~LayoutEntityImage() override = default;
     };
 }

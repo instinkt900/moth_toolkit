@@ -1,6 +1,7 @@
 #include "common.h"
 #include "moth_ui/layers/layer_stack.h"
 #include "moth_ui/layers/layer.h"
+#include "moth_ui/graphics/irenderer.h"
 
 namespace moth_ui {
     LayerStack::LayerStack(IRenderer& renderer, int renderWidth, int renderHeight, int windowWidth, int windowHeight)
@@ -9,9 +10,6 @@ namespace moth_ui {
         , m_renderHeight(renderHeight)
         , m_windowWidth(windowWidth)
         , m_windowHeight(windowHeight) {
-    }
-
-    LayerStack::~LayerStack() {
     }
 
     void LayerStack::PushLayer(std::unique_ptr<Layer>&& layer) {

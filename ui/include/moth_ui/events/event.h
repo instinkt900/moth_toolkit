@@ -4,14 +4,14 @@
 
 namespace moth_ui {
     enum EventType : int {
-        EVENTTYPE_KEY,
-        EVENTTYPE_MOUSE_DOWN,
-        EVENTTYPE_MOUSE_UP,
-        EVENTTYPE_MOUSE_MOVE,
-        EVENTTYPE_MOUSE_WHEEL,
-        EVENTTYPE_ANIMATION,
-        EVENTTYPE_ANIMATION_STARTED,
-        EVENTTYPE_ANIMATION_STOPPED,
+        EVENTTYPE_KEY = 0,
+        EVENTTYPE_MOUSE_DOWN = 1,
+        EVENTTYPE_MOUSE_UP = 2,
+        EVENTTYPE_MOUSE_MOVE = 3,
+        EVENTTYPE_MOUSE_WHEEL = 4,
+        EVENTTYPE_ANIMATION = 5,
+        EVENTTYPE_ANIMATION_STARTED = 6,
+        EVENTTYPE_ANIMATION_STOPPED = 7,
 
         EVENTTYPE_USER0 = 1000,
         EVENTTYPE_USER1 = 2000,
@@ -22,7 +22,12 @@ namespace moth_ui {
     public:
         Event(int type)
             : m_type(type) {}
-        virtual ~Event() {}
+
+        Event(Event const&) = default;
+        Event(Event&&) = default;
+        Event& operator=(Event const&) = default;
+        Event& operator=(Event&&) = default;
+        virtual ~Event() = default;
 
         int GetType() const { return m_type; }
         virtual std::unique_ptr<Event> Clone() const = 0;

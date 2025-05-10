@@ -1,5 +1,5 @@
 #include "common.h"
-#include "moth_ui/node_rect.h"
+#include "moth_ui/nodes/node_rect.h"
 #include "moth_ui/layout/layout_entity_rect.h"
 #include "moth_ui/context.h"
 
@@ -11,9 +11,6 @@ namespace moth_ui {
     NodeRect::NodeRect(Context& context, std::shared_ptr<LayoutEntityRect> layoutEntity)
         : Node(context, layoutEntity) {
         ReloadEntityPrivate();
-    }
-
-    NodeRect::~NodeRect() {
     }
 
     void NodeRect::ReloadEntityInternal() {

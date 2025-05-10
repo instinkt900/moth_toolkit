@@ -1,7 +1,7 @@
 #pragma once
 
-#include "moth_ui/node.h"
-#include "moth_ui/text_alignment.h"
+#include "moth_ui/graphics/text_alignment.h"
+#include "moth_ui/nodes/node.h"
 
 #include <memory>
 #include <string>
@@ -11,7 +11,11 @@ namespace moth_ui {
     public:
         NodeText(Context& context);
         NodeText(Context& context, std::shared_ptr<LayoutEntityText> layoutEntity);
-        virtual ~NodeText();
+        NodeText(NodeText const& other) = delete;
+        NodeText(NodeText&& other) = default;
+        NodeText& operator=(NodeText const&) = delete;
+        NodeText& operator=(NodeText&&) = delete;
+        ~NodeText() override = default;
 
         void Load(char const* fontName, int size);
 

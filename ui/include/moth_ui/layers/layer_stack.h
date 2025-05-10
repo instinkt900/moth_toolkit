@@ -1,19 +1,16 @@
 #pragma once
 
-#include "moth_ui/event_listener.h"
+#include "moth_ui/events/event_listener.h"
 #include "moth_ui/utils/vector.h"
-#include "moth_ui/irenderer.h"
+#include "moth_ui/ui_fwd.h"
 
 #include <memory>
 #include <vector>
 
 namespace moth_ui {
-    class Layer;
-
     class LayerStack : public EventListener {
     public:
         LayerStack(IRenderer& renderer, int renderWidth, int renderHeight, int windowWidth, int windowHeight);
-        ~LayerStack();
 
         void PushLayer(std::unique_ptr<Layer>&& layer);
         std::unique_ptr<Layer> PopLayer();
@@ -34,6 +31,12 @@ namespace moth_ui {
 
         void SetEventListener(EventListener* listener) { m_eventListener = listener; }
         void BroadcastEvent(Event const& event);
+
+        LayerStack(LayerStack const&) = delete;
+        LayerStack(LayerStack&&) = delete;
+        LayerStack& operator=(LayerStack const&) = delete;
+        LayerStack& operator=(LayerStack&&) = delete;
+        ~LayerStack() override = default;
 
     private:
         IRenderer& m_renderer;

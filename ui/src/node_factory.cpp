@@ -1,8 +1,8 @@
 #include "common.h"
 #include "moth_ui/node_factory.h"
 #include "moth_ui/layout/layout.h"
-#include "moth_ui/node.h"
-#include "moth_ui/group.h"
+#include "moth_ui/nodes/node.h"
+#include "moth_ui/nodes/group.h"
 
 namespace moth_ui {
     std::unique_ptr<NodeFactory> NodeFactory::s_instance;

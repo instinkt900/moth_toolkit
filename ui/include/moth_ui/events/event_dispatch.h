@@ -1,7 +1,7 @@
 #pragma once
 
 #include "moth_ui/events/event.h"
-#include "moth_ui/event_listener.h"
+#include "moth_ui/events/event_listener.h"
 
 #include <functional>
 
@@ -11,20 +11,28 @@ namespace moth_ui {
         EventDispatch(Event const& event)
             : m_event(event) {}
 
+        EventDispatch(EventDispatch const&) = delete;
+        EventDispatch(EventDispatch&&) = delete;
+        EventDispatch& operator=(EventDispatch const&) = delete;
+        EventDispatch& operator=(EventDispatch&&) = delete;
+        ~EventDispatch() = default;
+
         bool GetHandled() const { return m_handled; }
 
         void Dispatch(EventListener* listener) {
-            if (m_handled)
+            if (m_handled) {
                 return;
-            if (listener && listener->OnEvent(m_event)) {
+            }
+            if ((listener != nullptr) && listener->OnEvent(m_event)) {
                 m_handled = true;
             }
         }
 
         template <typename T, typename E>
         void Dispatch(T* obj, bool (T::*func)(E const& event)) {
-            if (m_handled)
+            if (m_handled) {
                 return;
+            }
             if (auto specificEvent = event_cast<E>(m_event)) {
                 if (std::invoke(func, obj, *specificEvent)) {
                     m_handled = true;

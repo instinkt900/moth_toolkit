@@ -1,8 +1,8 @@
 #include "common.h"
-#include "moth_ui/node.h"
+#include "moth_ui/nodes/node.h"
 #include "moth_ui/layout/layout_entity.h"
-#include "moth_ui/animation_controller.h"
-#include "moth_ui/group.h"
+#include "moth_ui/animation/animation_controller.h"
+#include "moth_ui/nodes/group.h"
 #include "moth_ui/context.h"
 
 namespace moth_ui {
@@ -10,13 +10,13 @@ namespace moth_ui {
         : m_context(context) {
     }
 
+    Node::~Node() = default;
+
     Node::Node(Context& context, std::shared_ptr<LayoutEntity> layoutEntity)
         : m_context(context)
         , m_layout(layoutEntity) {
+            // TODO: This needs rethinking.
         ReloadEntityInternal();
-    }
-
-    Node::~Node() {
     }
 
     bool Node::SendEvent(Event const& event, EventDirection direction) {

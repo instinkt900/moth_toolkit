@@ -20,5 +20,11 @@ namespace moth_ui {
         bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
 
         bool m_filled = true;
+
+        LayoutEntityRect(LayoutEntityRect const& other) = default;
+        LayoutEntityRect(LayoutEntityRect&& other) = default;
+        LayoutEntityRect& operator=(LayoutEntityRect const&) = default;
+        LayoutEntityRect& operator=(LayoutEntityRect&&) = default;
+        ~LayoutEntityRect() override = default;
     };
 }

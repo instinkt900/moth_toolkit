@@ -1,6 +1,6 @@
 #pragma once
 
-#include "moth_ui/node.h"
+#include "moth_ui/nodes/node.h"
 
 #include <memory>
 
@@ -9,7 +9,11 @@ namespace moth_ui {
     public:
         NodeRect(Context& context);
         NodeRect(Context& context, std::shared_ptr<LayoutEntityRect> layoutEntity);
-        virtual ~NodeRect();
+        NodeRect(NodeRect const& other) = delete;
+        NodeRect(NodeRect&& other) = default;
+        NodeRect& operator=(NodeRect const&) = delete;
+        NodeRect& operator=(NodeRect&&) = delete;
+        ~NodeRect() override = default;
 
     protected:
         bool m_filled = true;

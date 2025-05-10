@@ -1,14 +1,41 @@
 #include "common.h"
-#include "moth_ui/animation_track.h"
-#include "moth_ui/animation_clip.h"
-#include "moth_ui/utils/math_utils.h"
+#include "moth_ui/animation/animation_track.h"
+#include "moth_ui/animation/keyframe.h"
 
 namespace moth_ui {
+    void to_json(nlohmann::json& json, AnimationTrack const& track) {
+        json["target"] = track.m_target;
+        std::vector<Keyframe> keyframes;
+        for (auto const& keyframe : track.m_keyframes) {
+            keyframes.push_back(*keyframe);
+        }
+        json["keyframes"] = keyframes;
+    }
+
+    void from_json(nlohmann::json const& json, AnimationTrack& track) {
+        track.m_target = json.value("target", AnimationTrack::Target::Unknown);
+        auto keyframes = json.value("keyframes", std::vector<Keyframe>{});
+        track.m_keyframes.clear();
+        for (auto& keyframe : keyframes) {
+            track.m_keyframes.push_back(std::make_unique<Keyframe>(keyframe));
+        }
+    }
+
     AnimationTrack::AnimationTrack(AnimationTrack const& other)
         : m_target(other.m_target) {
         for (auto&& keyframe : other.m_keyframes) {
             m_keyframes.push_back(std::make_shared<Keyframe>(*keyframe));
         }
+    }
+
+    AnimationTrack& AnimationTrack::operator=(AnimationTrack const& other) {
+        if (this != &other) {
+            m_keyframes.clear();
+            for (auto&& keyframe : other.m_keyframes) {
+                m_keyframes.push_back(std::make_shared<Keyframe>(*keyframe));
+            }
+        }
+        return *this;
     }
 
     AnimationTrack::AnimationTrack(Target target)
@@ -26,7 +53,7 @@ namespace moth_ui {
     }
 
     Keyframe* AnimationTrack::GetKeyframe(int frameNo) {
-        auto keyframeIt = ranges::find_if(m_keyframes, [&](auto const& kf) { return kf->m_frame == frameNo; });
+        auto keyframeIt = ranges::find_if(m_keyframes, [&](auto const& keyf) { return keyf->m_frame == frameNo; });
         if (std::end(m_keyframes) != keyframeIt) {
             // found an existing frame
             return keyframeIt->get();
@@ -36,7 +63,7 @@ namespace moth_ui {
 
     Keyframe& AnimationTrack::GetOrCreateKeyframe(int frameNo) {
         // find the frame or the first iterator after where it would be
-        auto keyframeIt = ranges::find_if(m_keyframes, [&](auto const& kf) { return kf->m_frame >= frameNo; });
+        auto keyframeIt = ranges::find_if(m_keyframes, [&](auto const& keyf) { return keyf->m_frame >= frameNo; });
         if (std::end(m_keyframes) != keyframeIt && (*keyframeIt)->m_frame == frameNo) {
             // found an existing frame
             return *(*keyframeIt);
@@ -48,14 +75,14 @@ namespace moth_ui {
     }
 
     void AnimationTrack::DeleteKeyframe(int frameNo) {
-        auto keyframeIt = ranges::find_if(m_keyframes, [&](auto const& kf) { return kf->m_frame == frameNo; });
+        auto keyframeIt = ranges::find_if(m_keyframes, [&](auto const& keyf) { return keyf->m_frame == frameNo; });
         if (std::end(m_keyframes) != keyframeIt) {
             m_keyframes.erase(keyframeIt);
         }
     }
 
     void AnimationTrack::DeleteKeyframe(Keyframe* frame) {
-        auto keyframeIt = ranges::find_if(m_keyframes, [&](auto const& kf) { return kf.get() == frame; });
+        auto keyframeIt = ranges::find_if(m_keyframes, [&](auto const& keyf) { return keyf.get() == frame; });
         if (std::end(m_keyframes) != keyframeIt) {
             m_keyframes.erase(keyframeIt);
         }
@@ -63,7 +90,9 @@ namespace moth_ui {
 
     void AnimationTrack::ForKeyframesOverFrames(float startFrame, float endFrame, std::function<void(Keyframe const&)> const& callback) {
         for (auto& keyframe : m_keyframes) {
-            if (keyframe->m_frame > startFrame && keyframe->m_frame <= endFrame) {
+            int const startF = static_cast<int>(startFrame);
+            int const endF = static_cast<int>(endFrame);
+            if (keyframe->m_frame > startF && keyframe->m_frame <= endF) {
                 callback(*keyframe);
             }
         }
@@ -102,8 +131,8 @@ namespace moth_ui {
     }
 
     void AnimationTrack::SortKeyframes() {
-        ranges::sort(m_keyframes, [](auto const& a, auto const& b) {
-            return a->m_frame < b->m_frame;
+        ranges::sort(m_keyframes, [](auto const& kfa, auto const& kfb) {
+            return kfa->m_frame < kfb->m_frame;
         });
     }
 }

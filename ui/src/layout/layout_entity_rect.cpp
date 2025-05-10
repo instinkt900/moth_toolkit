@@ -1,6 +1,7 @@
 #include "common.h"
 #include "moth_ui/layout/layout_entity_rect.h"
-#include "moth_ui/node_rect.h"
+#include "moth_ui/nodes/node_rect.h"
+#include "moth_ui/animation/animation_controller.h"
 
 namespace moth_ui {
     LayoutEntityRect::LayoutEntityRect(LayoutRect const& initialBounds)

@@ -1,7 +1,8 @@
 #pragma once
 
+#include <magic_enum.hpp>
 #include <memory>
-#include <nlohmann/json_fwd.hpp>
+#include <nlohmann/json.hpp>
 
 namespace nlohmann {
     //template <class T>

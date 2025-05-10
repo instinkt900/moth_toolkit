@@ -3,12 +3,6 @@
 #include "moth_ui/layers/layer_stack.h"
 
 namespace moth_ui {
-    Layer::Layer() {
-    }
-
-    Layer::~Layer() {
-    }
-
     bool Layer::OnEvent(Event const& event) {
         return false;
     }

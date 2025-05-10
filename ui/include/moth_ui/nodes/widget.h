@@ -2,7 +2,7 @@
 
 #include "moth_ui/context.h"
 #include "moth_ui/node_factory.h"
-#include "moth_ui/group.h"
+#include "moth_ui/nodes/group.h"
 
 #include <memory>
 
@@ -14,6 +14,12 @@ namespace moth_ui {
             : BaseType(context, entity) {
             (void)s_widgetIsRegistered_;
         }
+
+        Widget(Widget const& other) = delete;
+        Widget(Widget&& other) = default;
+        Widget& operator=(Widget const&) = delete;
+        Widget& operator=(Widget&&) = delete;
+        ~Widget() override = default;
 
         static bool SelfRegister() {
             NodeFactory::Get().RegisterWidget(T::ClassName, [](Context& context, auto entity) -> std::unique_ptr<Group> { return std::make_unique<T>(context, entity); });

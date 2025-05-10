@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ifont_factory.h"
+#include "moth_ui/ifont_factory.h"
 
 #include <map>
 #include <string>
@@ -10,7 +10,11 @@
 namespace moth_ui {
     class FontFactory : public IFontFactory {
     public:
-        virtual ~FontFactory() = default;
+        FontFactory(FontFactory const&) = default;
+        FontFactory(FontFactory&&) = default;
+        FontFactory& operator=(FontFactory const&) = default;
+        FontFactory& operator=(FontFactory&&) = default;
+        ~FontFactory() override = default;
 
         void AddFont(std::string const& name, std::filesystem::path const& path) override;
         void RemoveFont(std::string const& name) override;

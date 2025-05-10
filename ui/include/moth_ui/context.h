@@ -1,8 +1,8 @@
 #pragma once
 
-#include "iimage_factory.h"
-#include "ifont_factory.h"
-#include "irenderer.h"
+#include "moth_ui/graphics/irenderer.h"
+#include "moth_ui/ifont_factory.h"
+#include "moth_ui/iimage_factory.h"
 
 #include <cassert>
 
@@ -13,6 +13,11 @@ namespace moth_ui {
                 IFontFactory* fontFactory,
                 IRenderer* renderer);
         ~Context() = default;
+
+        Context(Context const&) = default;
+        Context(Context&&) = default;
+        Context& operator=(Context const&) = default;
+        Context& operator=(Context&&) = default;
 
         IImageFactory& GetImageFactory() const {
             assert(m_imageFactory && "No image factory?");

@@ -19,7 +19,6 @@ namespace moth_ui {
             : Event(GetStaticType())
             , m_button(button)
             , m_position(position) {}
-        virtual ~EventMouseDown() {}
 
         static constexpr int GetStaticType() { return EVENTTYPE_MOUSE_DOWN; }
 
@@ -30,7 +29,13 @@ namespace moth_ui {
             return std::make_unique<EventMouseDown>(m_button, m_position);
         }
 
-    public:
+        EventMouseDown(EventMouseDown const&) = default;
+        EventMouseDown(EventMouseDown&&) = default;
+        EventMouseDown& operator=(EventMouseDown const&) = default;
+        EventMouseDown& operator=(EventMouseDown&&) = default;
+        ~EventMouseDown() override {}
+
+    private:
         MouseButton m_button;
         IntVec2 m_position;
     };
@@ -41,7 +46,6 @@ namespace moth_ui {
             : Event(GetStaticType())
             , m_button(button)
             , m_position(position) {}
-        virtual ~EventMouseUp() {}
 
         static constexpr int GetStaticType() { return EVENTTYPE_MOUSE_UP; }
 
@@ -52,7 +56,13 @@ namespace moth_ui {
             return std::make_unique<EventMouseUp>(m_button, m_position);
         }
 
-    public:
+        EventMouseUp(EventMouseUp const&) = default;
+        EventMouseUp(EventMouseUp&&) = default;
+        EventMouseUp& operator=(EventMouseUp const&) = default;
+        EventMouseUp& operator=(EventMouseUp&&) = default;
+        ~EventMouseUp() override {}
+
+    private:
         MouseButton m_button;
         IntVec2 m_position;
     };
@@ -63,7 +73,6 @@ namespace moth_ui {
             : Event(GetStaticType())
             , m_position(position)
             , m_delta(delta) {}
-        virtual ~EventMouseMove() {}
 
         static constexpr int GetStaticType() { return EVENTTYPE_MOUSE_MOVE; }
 
@@ -74,7 +83,13 @@ namespace moth_ui {
             return std::make_unique<EventMouseMove>(m_position, m_delta);
         }
 
-    public:
+        EventMouseMove(EventMouseMove const&) = default;
+        EventMouseMove(EventMouseMove&&) = default;
+        EventMouseMove& operator=(EventMouseMove const&) = default;
+        EventMouseMove& operator=(EventMouseMove&&) = default;
+        ~EventMouseMove() override {}
+
+    private:
         IntVec2 m_position;
         FloatVec2 m_delta;
     };
@@ -84,7 +99,6 @@ namespace moth_ui {
         EventMouseWheel(IntVec2 const& delta)
             : Event(GetStaticType())
             , m_delta(delta) {}
-        virtual ~EventMouseWheel() {}
 
         static constexpr int GetStaticType() { return EVENTTYPE_MOUSE_WHEEL; }
 
@@ -94,7 +108,13 @@ namespace moth_ui {
             return std::make_unique<EventMouseWheel>(m_delta);
         }
 
-    public:
+        EventMouseWheel(EventMouseWheel const&) = default;
+        EventMouseWheel(EventMouseWheel&&) = default;
+        EventMouseWheel& operator=(EventMouseWheel const&) = default;
+        EventMouseWheel& operator=(EventMouseWheel&&) = default;
+        ~EventMouseWheel() override {}
+
+    private:
         IntVec2 m_delta;
     };
 }

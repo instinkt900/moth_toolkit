@@ -1,14 +1,18 @@
 #pragma once
 
-#include "moth_ui/node.h"
-#include "moth_ui/animation_controller.h"
+#include "moth_ui/animation/animation_clip_controller.h"
+#include "moth_ui/nodes/node.h"
 
 namespace moth_ui {
     class Group : public Node {
     public:
         Group(Context& context);
         Group(Context& context, std::shared_ptr<LayoutEntityGroup> layoutEntityGroup);
-        virtual ~Group();
+        Group(Group const& other) = delete;
+        Group(Group&& other) = default;
+        Group& operator=(Group const&) = delete;
+        Group& operator=(Group&&) = delete;
+        ~Group() override = default;
 
         bool SendEventDown(Event const& event) override;
         void Update(uint32_t ticks) override;

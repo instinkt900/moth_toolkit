@@ -1,14 +1,12 @@
 #pragma once
 
-#include "moth_ui/context.h"
-#include "moth_ui/ui_fwd.h"
 #include "moth_ui/layout/layout_entity_group.h"
+#include "moth_ui/ui_fwd.h"
 
 namespace moth_ui {
     class Layout : public LayoutEntityGroup {
     public:
         Layout();
-        virtual ~Layout() = default;
 
         std::shared_ptr<LayoutEntity> Clone(CloneType cloneType) override;
 
@@ -36,6 +34,12 @@ namespace moth_ui {
         static int const Version;
         static std::string const Extension;
         static std::string const FullExtension;
+
+        Layout(Layout const&) = default;
+        Layout(Layout&&) = default;
+        Layout& operator=(Layout const&) = default;
+        Layout& operator=(Layout&&) = default;
+        ~Layout() override = default;
 
     private:
         std::filesystem::path m_loadedPath;

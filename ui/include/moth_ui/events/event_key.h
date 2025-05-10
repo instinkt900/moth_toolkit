@@ -157,7 +157,12 @@ namespace moth_ui {
             , m_action(action)
             , m_key(key)
             , m_mods(mods) {}
-        virtual ~EventKey() {}
+
+        EventKey(EventKey const&) = default;
+        EventKey(EventKey&&) = default;
+        EventKey& operator=(EventKey const&) = default;
+        EventKey& operator=(EventKey&&) = default;
+        ~EventKey() override = default;
 
         static constexpr int GetStaticType() { return EVENTTYPE_KEY; }
 

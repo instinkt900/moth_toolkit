@@ -1,11 +1,11 @@
 #pragma once
 
-#include "moth_ui/event_listener.h"
 #include "moth_ui/context.h"
-#include "moth_ui/utils/color.h"
-#include "moth_ui/blend_mode.h"
+#include "moth_ui/events/event_listener.h"
+#include "moth_ui/graphics/blend_mode.h"
 #include "moth_ui/layout/layout_rect.h"
 #include "moth_ui/ui_fwd.h"
+#include "moth_ui/utils/color.h"
 
 #include <memory>
 
@@ -14,7 +14,11 @@ namespace moth_ui {
     public:
         Node(Context& context);
         Node(Context& context, std::shared_ptr<LayoutEntity> layoutEntity);
-        virtual ~Node();
+        Node(Node const& other) = delete;
+        Node(Node&& other) = default;
+        Node& operator=(Node const&) = delete;
+        Node& operator=(Node&&) = delete;
+        ~Node() override;
 
         enum class EventDirection {
             Up,
@@ -24,7 +28,7 @@ namespace moth_ui {
         bool SendEventUp(Event const& event);
         virtual bool SendEventDown(Event const& event);
 
-        virtual bool OnEvent(Event const& event) override;
+        bool OnEvent(Event const& event) override;
         virtual void Update(uint32_t ticks);
         virtual void Draw();
 

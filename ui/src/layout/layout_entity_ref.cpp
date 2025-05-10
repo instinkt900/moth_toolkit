@@ -1,9 +1,8 @@
 #include "common.h"
 #include "moth_ui/layout/layout_entity_ref.h"
-#include "moth_ui/group.h"
+#include "moth_ui/nodes/group.h"
 #include "moth_ui/layout/layout.h"
-#include "moth_ui/animation_clip.h"
-#include "moth_ui/node_factory.h"
+#include "moth_ui/animation/animation_clip.h"
 
 namespace moth_ui {
     LayoutEntityRef::LayoutEntityRef(LayoutRect const& initialBounds, Layout const& layoutRef)

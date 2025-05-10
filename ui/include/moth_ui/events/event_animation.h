@@ -1,7 +1,7 @@
 #pragma once
 
+#include "moth_ui/ui_fwd.h"
 #include "moth_ui/events/event.h"
-#include "moth_ui/node.h"
 
 #include <memory>
 #include <string>
@@ -13,12 +13,17 @@ namespace moth_ui {
             : Event(GetStaticType())
             , m_node(node)
             , m_name(name) {}
-        virtual ~EventAnimation() {}
+
+        EventAnimation(EventAnimation const&) = default;
+        EventAnimation(EventAnimation&&) = default;
+        EventAnimation& operator=(EventAnimation const&) = default;
+        EventAnimation& operator=(EventAnimation&&) = default;
+        ~EventAnimation() override = default;
 
         static constexpr int GetStaticType() { return EVENTTYPE_ANIMATION; }
 
-        auto GetNode() const { return m_node; }
-        auto const& GetName() const { return m_name; }
+        Node* GetNode() const { return m_node; }
+        std::string const& GetName() const { return m_name; }
 
         std::unique_ptr<Event> Clone() const override {
             return std::make_unique<EventAnimation>(m_node, m_name);
@@ -35,12 +40,17 @@ namespace moth_ui {
             : Event(GetStaticType())
             , m_node(node)
             , m_clipName(clipName) {}
-        virtual ~EventAnimationStarted() {}
+
+        EventAnimationStarted(EventAnimationStarted const&) = default;
+        EventAnimationStarted(EventAnimationStarted&&) = default;
+        EventAnimationStarted& operator=(EventAnimationStarted const&) = default;
+        EventAnimationStarted& operator=(EventAnimationStarted&&) = default;
+        ~EventAnimationStarted() override = default;
 
         static constexpr int GetStaticType() { return EVENTTYPE_ANIMATION_STARTED; }
 
-        auto GetNode() const { return m_node; }
-        auto const& GetClipName() const { return m_clipName; }
+        Node* GetNode() const { return m_node; }
+        std::string const& GetClipName() const { return m_clipName; }
 
         std::unique_ptr<Event> Clone() const override {
             return std::make_unique<EventAnimationStarted>(m_node, m_clipName);
@@ -57,12 +67,17 @@ namespace moth_ui {
             : Event(GetStaticType())
             , m_node(node)
             , m_clipName(clipName) {}
-        virtual ~EventAnimationStopped() {}
+
+        EventAnimationStopped(EventAnimationStopped const&) = default;
+        EventAnimationStopped(EventAnimationStopped&&) = default;
+        EventAnimationStopped& operator=(EventAnimationStopped const&) = default;
+        EventAnimationStopped& operator=(EventAnimationStopped&&) = default;
+        ~EventAnimationStopped() override = default;
 
         static constexpr int GetStaticType() { return EVENTTYPE_ANIMATION_STOPPED; }
 
-        auto GetNode() const { return m_node; }
-        auto const& GetClipName() const { return m_clipName; }
+        Node* GetNode() const { return m_node; }
+        std::string const& GetClipName() const { return m_clipName; }
 
         std::unique_ptr<Event> Clone() const override {
             return std::make_unique<EventAnimationStopped>(m_node, m_clipName);

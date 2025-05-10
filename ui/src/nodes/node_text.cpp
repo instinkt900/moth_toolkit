@@ -1,20 +1,23 @@
 #include "common.h"
-#include "moth_ui/node_text.h"
+#include "moth_ui/nodes/node_text.h"
 #include "moth_ui/layout/layout_entity.h"
 #include "moth_ui/layout/layout_entity_text.h"
 #include "moth_ui/context.h"
 
 namespace moth_ui {
     NodeText::NodeText(Context& context)
-        : Node(context) {
+        : Node(context)
+        , m_horizontalAlignment(TextHorizAlignment::Left)
+        , m_verticalAlignment(TextVertAlignment::Top)
+        , m_dropShadow(false) {
     }
 
     NodeText::NodeText(Context& context, std::shared_ptr<LayoutEntityText> layoutEntity)
-        : Node(context, layoutEntity) {
+        : Node(context, layoutEntity)
+        , m_horizontalAlignment(TextHorizAlignment::Left)
+        , m_verticalAlignment(TextVertAlignment::Top)
+        , m_dropShadow(false) {
         ReloadEntityPrivate();
-    }
-
-    NodeText::~NodeText() {
     }
 
     void NodeText::Load(char const* fontName, int size) {

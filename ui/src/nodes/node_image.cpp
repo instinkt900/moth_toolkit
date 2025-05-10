@@ -1,5 +1,5 @@
 #include "common.h"
-#include "moth_ui/node_image.h"
+#include "moth_ui/nodes/node_image.h"
 #include "moth_ui/layout/layout_entity.h"
 #include "moth_ui/layout/layout_entity_image.h"
 #include "moth_ui/context.h"
@@ -12,9 +12,6 @@ namespace moth_ui {
     NodeImage::NodeImage(Context& context, std::shared_ptr<LayoutEntityImage> layoutEntity)
         : Node(context, layoutEntity) {
         ReloadEntityPrivate();
-    }
-
-    NodeImage::~NodeImage() {
     }
 
     void NodeImage::UpdateChildBounds() {

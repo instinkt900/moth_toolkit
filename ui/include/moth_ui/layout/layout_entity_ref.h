@@ -1,10 +1,9 @@
 #pragma once
 
-#include "moth_ui/ui_fwd.h"
 #include "moth_ui/layout/layout_entity_group.h"
+#include "moth_ui/ui_fwd.h"
 
 #include <nlohmann/json_fwd.hpp>
-
 #include <filesystem>
 
 namespace moth_ui {
@@ -23,6 +22,12 @@ namespace moth_ui {
         bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
 
         std::filesystem::path m_layoutPath;
+
+        LayoutEntityRef(LayoutEntityRef const& other) = default;
+        LayoutEntityRef(LayoutEntityRef&& other) = default;
+        LayoutEntityRef& operator=(LayoutEntityRef const&) = default;
+        LayoutEntityRef& operator=(LayoutEntityRef&&) = default;
+        ~LayoutEntityRef() override = default;
 
     private:
         void CopyLayout(Layout const& other);

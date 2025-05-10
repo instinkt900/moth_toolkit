@@ -10,6 +10,10 @@
 namespace moth_ui {
     class NodeFactory {
     public:
+        NodeFactory(NodeFactory const&) = default;
+        NodeFactory(NodeFactory&&) = default;
+        NodeFactory& operator=(NodeFactory const&) = default;
+        NodeFactory& operator=(NodeFactory&&) = default;
         virtual ~NodeFactory() = default;
 
         static NodeFactory& Get() {

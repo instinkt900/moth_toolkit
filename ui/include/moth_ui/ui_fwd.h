@@ -6,6 +6,7 @@ namespace moth_ui {
     class IFont;
 
     class Event;
+    class EventListener;
     
     class Node;
     class Group;
@@ -23,7 +24,7 @@ namespace moth_ui {
     class LayoutEntityClip;
     class LayoutEntity;
 
-    class Keyframe;
+    struct Keyframe;
     class AnimationEvent;
     class AnimationTrack;
     struct AnimationClip;
@@ -33,5 +34,12 @@ namespace moth_ui {
 
     struct LayoutRect;
 
+    class Layer;
+    class LayerStack;
+
     using KeyframeValue = float;
+
+    class IRenderer;
+
+    class Context;
 }

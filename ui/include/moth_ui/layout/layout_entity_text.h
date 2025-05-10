@@ -1,10 +1,9 @@
 #pragma once
 
+#include "moth_ui/graphics/text_alignment.h"
 #include "moth_ui/layout/layout_entity.h"
-#include "moth_ui/text_alignment.h"
 
 #include <nlohmann/json_fwd.hpp>
-
 #include <string>
 #include <memory>
 
@@ -23,16 +22,24 @@ namespace moth_ui {
         nlohmann::json Serialize(SerializeContext const& context) const override;
         bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
 
-        virtual nlohmann::json SerializeOverrides() const override;
-        virtual void DeserializeOverrides(nlohmann::json const& overridesJson) override;
+        nlohmann::json SerializeOverrides() const override;
+        void DeserializeOverrides(nlohmann::json const& overridesJson) override;
+
+        static int constexpr DefaultFontSize = 16;
 
         std::string m_fontName;
-        int m_fontSize = 16;
+        int m_fontSize = DefaultFontSize;
         std::string m_text = "Text Element";
         TextHorizAlignment m_horizontalAlignment = TextHorizAlignment::Left;
         TextVertAlignment m_verticalAlignment = TextVertAlignment::Top;
         bool m_dropShadow = false;
         IntVec2 m_dropShadowOffset{ 0, 0 };
         Color m_dropShadowColor = BasicColors::Black;
+
+        LayoutEntityText(LayoutEntityText const& other) = default;
+        LayoutEntityText(LayoutEntityText&& other) = default;
+        LayoutEntityText& operator=(LayoutEntityText const&) = default;
+        LayoutEntityText& operator=(LayoutEntityText&&) = default;
+        ~LayoutEntityText() override = default;
     };
 }

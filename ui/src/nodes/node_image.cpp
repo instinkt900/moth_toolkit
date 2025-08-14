@@ -65,7 +65,7 @@ namespace moth_ui {
             m_sourceSlices[2] = m_sourceRect.bottomRight - m_sourceBorders.bottomRight;
             m_sourceSlices[3] = m_sourceRect.bottomRight;
 
-            auto const screenDim = static_cast<FloatVec2>(m_screenRect.dim());
+            auto const screenDim = static_cast<FloatVec2>(m_screenRect.dimensions());
             m_targetSlices[0] = m_screenRect.topLeft;
             m_targetSlices[1] = m_screenRect.topLeft + static_cast<IntVec2>(screenDim * m_targetBorders.anchor.topLeft + m_targetBorders.offset.topLeft);
             m_targetSlices[2] = m_screenRect.topLeft + static_cast<IntVec2>(screenDim * m_targetBorders.anchor.bottomRight + m_targetBorders.offset.bottomRight);

@@ -8,11 +8,25 @@ namespace moth_ui {
         Vector<T, 2> topLeft;
         Vector<T, 2> bottomRight;
 
+        Rect()
+            : topLeft{}
+            , bottomRight{} {}
+
+        Rect(Vector<T, 2> const& tl, Vector<T, 2> const& br)
+            : topLeft(tl)
+            , bottomRight(br) {}
+
         T x() const { return topLeft.x; }
         T y() const { return topLeft.y; }
         T w() const { return bottomRight.x - topLeft.x; }
         T h() const { return bottomRight.y - topLeft.y; }
-        Vector<T, 2> dim() const { return bottomRight - topLeft; }
+
+        T left() const { return topLeft.x; }
+        T right() const { return bottomRight.x; }
+        T top() const { return topLeft.y; }
+        T bottom() const { return bottomRight.y; }
+
+        Vector<T, 2> dimensions() const { return bottomRight - topLeft; }
 
         // cast operator
         template <typename U>

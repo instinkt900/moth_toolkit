@@ -4,27 +4,34 @@
 #include <nlohmann/json.hpp>
 
 namespace moth_ui {
-    template <typename T>
-    inline void to_json(nlohmann::json& j, Vector<T, 2> const& vec) {
-        j = nlohmann::json{ { "x", vec.x }, { "y", vec.y } };
+    template <typename T, int Dim>
+    inline void to_json(nlohmann::json& j, Vector<T, Dim> const& vec) {
+        j = nlohmann::json::array();
+        for (int i = 0; i < Dim; ++i) {
+            j.push_back(vec.data[i]);
+        }
     }
 
-    template <typename T>
-    inline void from_json(nlohmann::json const& j, Vector<T, 2>& vec) {
-        j.at("x").get_to(vec.x);
-        j.at("y").get_to(vec.y);
-    }
-
-    template <typename T>
-    inline void to_json(nlohmann::json& j, Vector<T, 4> const& vec) {
-        j = nlohmann::json{ { "x", vec.x }, { "y", vec.y }, { "z", vec.z }, { "w", vec.w } };
-    }
-
-    template <typename T>
-    inline void from_json(nlohmann::json const& j, Vector<T, 4>& vec) {
-        j.at("x").get_to(vec.x);
-        j.at("y").get_to(vec.y);
-        j.at("z").get_to(vec.z);
-        j.at("w").get_to(vec.w);
+    template <typename T, int Dim>
+    inline void from_json(nlohmann::json const& j, Vector<T, Dim>& vec) {
+        // Preferred: array form [x, y, (z, w...)]
+        if (j.is_array()) {
+            if (j.size() != static_cast<std::size_t>(Dim)) {
+                throw std::runtime_error("Vector: expected JSON array of size " + std::to_string(Dim));
+            }
+            for (int i = 0; i < Dim; ++i) {
+                j.at(static_cast<std::size_t>(i)).get_to(vec.data[i]); // bounds-checked
+            }
+            return;
+        }
+        // Backward-compat: accept object form with x/y(/z/w) keys for up to 4D
+        if (j.is_object() && Dim <= 4) {
+            static constexpr const char* keys[4] = { "x", "y", "z", "w" };
+            for (int i = 0; i < Dim; ++i) {
+                j.at(keys[i]).get_to(vec.data[i]); // throws if key missing
+            }
+            return;
+        }
+        throw std::runtime_error("Vector: expected JSON array or {x,y[,z[,w]]} object");
     }
 }

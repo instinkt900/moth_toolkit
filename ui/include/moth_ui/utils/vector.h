@@ -146,6 +146,14 @@ namespace moth_ui {
             return ret;
         }
 
+        Vector<T, Dim> operator-() const {
+            auto ret = *this;
+            for (int i = 0; i < Dim; ++i) {
+                ret.data[i] = -ret.data[i];
+            }
+            return ret;
+        }
+
         template <typename U>
         Vector<T, Dim> operator*(U const& other) const {
             auto ret = *this;
@@ -174,6 +182,13 @@ namespace moth_ui {
     template <typename T, int Dim>
     inline bool operator!=(Vector<T, Dim> const& a, Vector<T, Dim> const& b) {
         return !(a == b);
+    }
+
+    template <typename T, int Dim>
+    inline Vector<T, Dim> operator*(T other, Vector<T, Dim> const& vec) {
+        auto ret = vec;
+        ret *= other;
+        return ret;
     }
 
     using FloatVec2 = Vector<float, 2>;

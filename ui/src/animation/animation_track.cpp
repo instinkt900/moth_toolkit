@@ -106,7 +106,7 @@ namespace moth_ui {
         auto secondKeyframeIt = firstKeyframeIt;
 
         // find the possible two keyframes bounding the current time
-        while (secondKeyframeIt != endKeyframeIt && (*secondKeyframeIt)->m_frame < frame) {
+        while (secondKeyframeIt != endKeyframeIt && static_cast<float>((*secondKeyframeIt)->m_frame) < frame) {
             firstKeyframeIt = secondKeyframeIt;
             ++secondKeyframeIt;
         }
@@ -115,7 +115,7 @@ namespace moth_ui {
             // did not find any frames
         } else if (endKeyframeIt != firstKeyframeIt && endKeyframeIt != secondKeyframeIt) {
             // found a start and end keyframe
-            float const deltaFrames = frame - (*firstKeyframeIt)->m_frame;
+            float const deltaFrames = frame - static_cast<float>((*firstKeyframeIt)->m_frame);
             float const totalFrames = static_cast<float>((*secondKeyframeIt)->m_frame - (*firstKeyframeIt)->m_frame);
             float const factor = totalFrames == 0.0f ? 0.0f : deltaFrames / totalFrames;
             float const startValue = (*firstKeyframeIt)->m_value;

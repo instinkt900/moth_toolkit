@@ -8,6 +8,12 @@
 #include <memory>
 
 namespace moth_ui {
+    /**
+     * @brief Partial implementation of IFontFactory that manages font path registration.
+     *
+     * Subclasses must implement GetFont() to create backend-specific IFont objects.
+     * All other IFontFactory methods are fully implemented here.
+     */
     class FontFactory : public IFontFactory {
     public:
         FontFactory() = default;
@@ -21,6 +27,7 @@ namespace moth_ui {
         void RemoveFont(std::string const& name) override;
         void LoadProject(std::filesystem::path const& path) override;
         void SaveProject(std::filesystem::path const& path) override;
+        /// @brief Returns the path of the most recently loaded project file.
         std::filesystem::path GetCurrentProjectPath() const override { return m_currentProjectPath; }
         void ClearFonts() override;
         std::shared_ptr<IFont> GetDefaultFont(int size) override;

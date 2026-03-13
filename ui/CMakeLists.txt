@@ -119,6 +119,17 @@ else()
 	set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-Werror -Wall")
 endif()
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR DEFINED ENV{CI})
+	find_program(CLANG_TIDY_EXE NAMES clang-tidy)
+	if(CLANG_TIDY_EXE)
+		set_target_properties(${PROJECT_NAME} PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_EXE}")
+	elseif(DEFINED ENV{CI})
+		message(FATAL_ERROR "clang-tidy not found but required in CI")
+	else()
+		message(STATUS "clang-tidy not found, skipping")
+	endif()
+endif()
+
 install(TARGETS ${PROJECT_NAME}
 	RUNTIME DESTINATION bin
 	LIBRARY DESTINATION lib

@@ -1,5 +1,6 @@
 #pragma once
 
+/// @brief Forward declarations for all major moth_ui types.
 namespace moth_ui {
     class IImage;
     class ITarget;
@@ -7,7 +8,7 @@ namespace moth_ui {
 
     class Event;
     class EventListener;
-    
+
     class Node;
     class Group;
     class NodeRect;
@@ -37,6 +38,7 @@ namespace moth_ui {
     class Layer;
     class LayerStack;
 
+    /// @brief Scalar type used to store keyframe values.
     using KeyframeValue = float;
 
     class IRenderer;

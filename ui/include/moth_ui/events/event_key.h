@@ -5,22 +5,24 @@
 #include <memory>
 
 namespace moth_ui {
+    /// @brief Whether a key event represents a press or release.
     enum class KeyAction {
-        Down,
-        Up
+        Down, ///< Key was pressed.
+        Up    ///< Key was released.
     };
 
-    static int constexpr KeyMod_LeftShift = 1 << 0;
-    static int constexpr KeyMod_RightShift = 1 << 1;
-    static int constexpr KeyMod_LeftCtrl = 1 << 2;
-    static int constexpr KeyMod_RightCtrl = 1 << 3;
-    static int constexpr KeyMod_LeftAlt = 1 << 4;
-    static int constexpr KeyMod_RightAlt = 1 << 5;
+    static int constexpr KeyMod_LeftShift  = 1 << 0; ///< Left Shift modifier.
+    static int constexpr KeyMod_RightShift = 1 << 1; ///< Right Shift modifier.
+    static int constexpr KeyMod_LeftCtrl   = 1 << 2; ///< Left Ctrl modifier.
+    static int constexpr KeyMod_RightCtrl  = 1 << 3; ///< Right Ctrl modifier.
+    static int constexpr KeyMod_LeftAlt    = 1 << 4; ///< Left Alt modifier.
+    static int constexpr KeyMod_RightAlt   = 1 << 5; ///< Right Alt modifier.
 
-    static int constexpr KeyMod_Shift = KeyMod_LeftShift | KeyMod_RightShift;
-    static int constexpr KeyMod_Ctrl = KeyMod_LeftCtrl | KeyMod_RightCtrl;
-    static int constexpr KeyMod_Alt = KeyMod_LeftAlt | KeyMod_RightAlt;
+    static int constexpr KeyMod_Shift = KeyMod_LeftShift | KeyMod_RightShift; ///< Either Shift key.
+    static int constexpr KeyMod_Ctrl  = KeyMod_LeftCtrl  | KeyMod_RightCtrl;  ///< Either Ctrl key.
+    static int constexpr KeyMod_Alt   = KeyMod_LeftAlt   | KeyMod_RightAlt;   ///< Either Alt key.
 
+    /// @brief Platform-independent key codes.
     enum class Key {
         Unknown,
 
@@ -150,8 +152,17 @@ namespace moth_ui {
         Ralt,
     };
 
+    /**
+     * @brief Event fired when a keyboard key is pressed or released.
+     */
     class EventKey : public Event {
     public:
+        /**
+         * @brief Constructs the event.
+         * @param action Whether the key was pressed or released.
+         * @param key    Which key was involved.
+         * @param mods   Bitmask of active modifier keys (KeyMod_* flags).
+         */
         EventKey(KeyAction action, Key key, int mods)
             : Event(GetStaticType())
             , m_action(action)
@@ -164,10 +175,16 @@ namespace moth_ui {
         EventKey& operator=(EventKey&&) = default;
         ~EventKey() override = default;
 
+        /// @brief Returns the static type code for EventKey.
         static constexpr int GetStaticType() { return EVENTTYPE_KEY; }
 
+        /// @brief Returns whether the key was pressed or released.
         KeyAction GetAction() const { return m_action; }
+
+        /// @brief Returns which key was involved.
         Key GetKey() const { return m_key; }
+
+        /// @brief Returns the active modifier-key bitmask.
         int GetMods() const { return m_mods; }
 
         std::unique_ptr<Event> Clone() const override {

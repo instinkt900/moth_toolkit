@@ -8,8 +8,9 @@ namespace moth_ui {
     std::ostream& operator<<(std::ostream& os, Vector<T, Dim> const& vector) {
         os << "Vector(";
         for (int i = 0; i < Dim; ++i) {
-            if (i > 0)
+            if (i > 0) {
                 os << ", ";
+            }
             os << vector.data[i];
         }
         os << ")";

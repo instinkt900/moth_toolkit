@@ -34,11 +34,13 @@ namespace {
             return node->GetColor().b;
         case AnimationTrack::Target::ColorAlpha:
             return node->GetColor().a;
+        case AnimationTrack::Target::Events:
         case AnimationTrack::Target::Unknown:
             break;
         }
 
         // just a value dump for unknown targets
+        assert(false && "AnimationController: unknown track target");
         static float dummy = 0;
         return dummy;
     }
@@ -47,8 +49,14 @@ namespace {
 namespace moth_ui {
     AnimationController::AnimationController(Node* node)
         : m_node(node) {
-        for (auto&& [target, track] : node->GetLayoutEntity()->m_tracks) {
-            m_trackControllers.push_back(std::make_unique<AnimationTrackController>(GetTargetReference(node, target), *track));
+        if (auto const layout = node->GetLayoutEntity()) {
+            for (auto&& [target, track] : layout->m_tracks) {
+                auto const& continuous = AnimationTrack::ContinuousTargets;
+                if (std::find(continuous.begin(), continuous.end(), target) == continuous.end()) {
+                    continue;
+                }
+                m_trackControllers.push_back(std::make_unique<AnimationTrackController>(GetTargetReference(node, target), *track));
+            }
         }
     }
 

@@ -6,6 +6,12 @@
 #include <memory>
 
 namespace moth_ui {
+    /**
+     * @brief Abstract factory interface for loading and caching images.
+     *
+     * Consumers of the UI library must provide a concrete implementation
+     * that loads images from the filesystem using the backend renderer.
+     */
     class IImageFactory {
     public:
         IImageFactory() = default;
@@ -15,8 +21,21 @@ namespace moth_ui {
         IImageFactory& operator=(IImageFactory&&) = default;
         virtual ~IImageFactory() = default;
 
+        /// @brief Discards all cached images, forcing subsequent loads from disk.
         virtual void FlushCache() = 0;
+
+        /**
+         * @brief Loads a texture atlas from a pack file.
+         * @param path Path to the texture pack descriptor file.
+         * @return @c true on success, @c false otherwise.
+         */
         virtual bool LoadTexturePack(std::filesystem::path const& path) = 0;
+
+        /**
+         * @brief Returns an image loaded from the given path.
+         * @param path Path to the image file.
+         * @return Newly created image, or @c nullptr on failure.
+         */
         virtual std::unique_ptr<IImage> GetImage(std::filesystem::path const& path) = 0;
     };
 }

@@ -10,21 +10,77 @@
 #include <string>
 
 namespace moth_ui {
+    /**
+     * @brief Abstract rendering interface that the UI system draws through.
+     *
+     * Backend implementations (SDL2, Vulkan, …) provide a concrete subclass.
+     * State is managed via a stack model: Push sets state, Pop restores it.
+     */
     class IRenderer {
     public:
+        /**
+         * @brief Pushes a blend mode onto the blend-mode stack.
+         * @param mode The blend mode to activate.
+         */
         virtual void PushBlendMode(BlendMode mode) = 0;
+
+        /// @brief Pops the top blend mode, restoring the previous one.
         virtual void PopBlendMode() = 0;
+
+        /**
+         * @brief Pushes a colour modulation value onto the colour stack.
+         * @param color The colour to multiply draw calls by.
+         */
         virtual void PushColor(Color const& color) = 0;
+
+        /// @brief Pops the top colour, restoring the previous one.
         virtual void PopColor() = 0;
 
+        /**
+         * @brief Pushes a clip rectangle; subsequent draws are clipped to it.
+         * @param rect The scissor rectangle in screen space.
+         */
         virtual void PushClip(IntRect const& rect) = 0;
+
+        /// @brief Pops the top clip rectangle, restoring the previous clip region.
         virtual void PopClip() = 0;
 
+        /**
+         * @brief Draws the outline of a rectangle using the current colour.
+         * @param rect Destination rectangle in screen space.
+         */
         virtual void RenderRect(IntRect const& rect) = 0;
+
+        /**
+         * @brief Draws a filled rectangle using the current colour.
+         * @param rect Destination rectangle in screen space.
+         */
         virtual void RenderFilledRect(IntRect const& rect) = 0;
+
+        /**
+         * @brief Draws a portion of an image into a destination rectangle.
+         * @param image      Source image to draw.
+         * @param sourceRect Region of the source image to sample.
+         * @param destRect   Destination rectangle in screen space.
+         * @param scaleType  How the image is scaled to fill @p destRect.
+         * @param scale      Uniform scale factor applied during tiled/nine-slice modes.
+         */
         virtual void RenderImage(IImage& image, IntRect const& sourceRect, IntRect const& destRect, ImageScaleType scaleType, float scale) = 0;
+
+        /**
+         * @brief Draws a UTF-8 string using the specified font and alignment.
+         * @param text                The string to render.
+         * @param font                Font to render the text with.
+         * @param horizontalAlignment Horizontal alignment within @p destRect.
+         * @param verticalAlignment   Vertical alignment within @p destRect.
+         * @param destRect            Bounding rectangle in screen space.
+         */
         virtual void RenderText(std::string const& text, IFont& font, TextHorizAlignment horizontalAlignment, TextVertAlignment verticalAlignment, IntRect const& destRect) = 0;
 
+        /**
+         * @brief Sets the logical (virtual) rendering resolution.
+         * @param size Width and height in logical pixels.
+         */
         virtual void SetRendererLogicalSize(moth_ui::IntVec2 const& size) = 0;
 
         IRenderer() = default;

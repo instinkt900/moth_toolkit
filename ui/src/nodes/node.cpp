@@ -8,6 +8,7 @@
 namespace moth_ui {
     Node::Node(Context& context)
         : m_context(context) {
+        m_animationController = std::make_unique<AnimationController>(this);
     }
 
     Node::~Node() = default;
@@ -15,14 +16,14 @@ namespace moth_ui {
     Node::Node(Context& context, std::shared_ptr<LayoutEntity> layoutEntity)
         : m_context(context)
         , m_layout(layoutEntity) {
-            // TODO: This needs rethinking.
-        ReloadEntityInternal();
+        Node::ReloadEntityInternal();
     }
 
     bool Node::SendEvent(Event const& event, EventDirection direction) {
         if (direction == EventDirection::Up) {
             return SendEventUp(event);
-        } else if (direction == EventDirection::Down) {
+        }
+        if (direction == EventDirection::Down) {
             return SendEventDown(event);
         }
         assert(false && "Bad event direction.");
@@ -30,13 +31,13 @@ namespace moth_ui {
     }
 
     bool Node::SendEventUp(Event const& event) {
-        auto currentNode = this;
-        do {
+        auto* currentNode = this;
+        while (currentNode != nullptr) {
             if (currentNode->OnEvent(event)) {
                 return true;
             }
             currentNode = currentNode->GetParent();
-        } while (currentNode != nullptr);
+        }
         return false;
     }
 

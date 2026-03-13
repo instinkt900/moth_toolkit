@@ -9,7 +9,9 @@ namespace moth_ui {
         : Node(context)
         , m_horizontalAlignment(TextHorizAlignment::Left)
         , m_verticalAlignment(TextVertAlignment::Top)
-        , m_dropShadow(false) {
+        , m_dropShadow(false)
+        , m_dropShadowOffset{ 0, 0 }
+        , m_dropShadowColor(BasicColors::Black) {
     }
 
     NodeText::NodeText(Context& context, std::shared_ptr<LayoutEntityText> layoutEntity)

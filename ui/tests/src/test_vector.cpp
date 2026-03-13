@@ -1,7 +1,6 @@
 #include "moth_ui/utils/vector.h"
 #include "string_helpers.h"
-#include <catch2/catch.hpp>
-
+#include <catch2/catch_all.hpp>
 
 using namespace moth_ui;
 using namespace Catch::literals;
@@ -95,8 +94,8 @@ TEST_CASE("Vector 2 float and Vector 2 float operators", "[vector][operators][pr
     REQUIRE(mutableMultiplied == resultMultiplied);
 
     Vector<float, 2> const resultDivided = vec1 / vec2;
-    REQUIRE(resultDivided.x == 0.23_a.epsilon(0.02));
-    REQUIRE(resultDivided.y == 0.34_a.epsilon(0.02));
+    REQUIRE(resultDivided.x == Catch::Approx(0.23).epsilon(0.02));
+    REQUIRE(resultDivided.y == Catch::Approx(0.34).epsilon(0.02));
 
     Vector<float, 2> mutableDivided = vec1;
     mutableDivided /= vec2;
@@ -132,8 +131,8 @@ TEST_CASE("Vector 2 float and float operators", "[vector][operators][properties]
     REQUIRE(mutableMultiplied == resultMultiplied);
 
     Vector<float, 2> const resultDivided = vec1 / number;
-    REQUIRE(resultDivided.x == 0.66_a.epsilon(0.02));
-    REQUIRE(resultDivided.y == 0.15_a.epsilon(0.02));
+    REQUIRE(resultDivided.x == Catch::Approx(0.66).epsilon(0.02));
+    REQUIRE(resultDivided.y == Catch::Approx(0.15).epsilon(0.02));
 
     Vector<float, 2> mutableDivided = vec1;
     mutableDivided /= number;
@@ -172,9 +171,9 @@ TEST_CASE("Vector 3 float and Vector 3 float operators", "[vector][operators][pr
     REQUIRE(mutableMultiplied == resultMultiplied);
 
     Vector<float, 3> const resultDivided = vec1 / vec2;
-    REQUIRE(resultDivided.x == 0.23_a.epsilon(0.02));
-    REQUIRE(resultDivided.y == 0.34_a.epsilon(0.02));
-    REQUIRE(resultDivided.z == 1.38_a.epsilon(0.02));
+    REQUIRE(resultDivided.x == Catch::Approx(0.23).epsilon(0.02));
+    REQUIRE(resultDivided.y == Catch::Approx(0.34).epsilon(0.02));
+    REQUIRE(resultDivided.z == Catch::Approx(1.38).epsilon(0.02));
 
     Vector<float, 3> mutableDivided = vec1;
     mutableDivided /= vec2;
@@ -213,9 +212,9 @@ TEST_CASE("Vector 3 float and float operators", "[vector][operators][properties]
     REQUIRE(mutableMultiplied == resultMultiplied);
 
     Vector<float, 3> const resultDivided = vec1 / number;
-    REQUIRE(resultDivided.x == 0.66_a.epsilon(0.02));
-    REQUIRE(resultDivided.y == 0.15_a.epsilon(0.02));
-    REQUIRE(resultDivided.z == 1.05_a.epsilon(0.02));
+    REQUIRE(resultDivided.x == Catch::Approx(0.66).epsilon(0.02));
+    REQUIRE(resultDivided.y == Catch::Approx(0.15).epsilon(0.02));
+    REQUIRE(resultDivided.z == Catch::Approx(1.05).epsilon(0.02));
 
     Vector<float, 3> mutableDivided = vec1;
     mutableDivided /= number;
@@ -257,10 +256,10 @@ TEST_CASE("Vector 4 float and Vector 4 float operators", "[vector][operators][pr
     REQUIRE(mutableMultiplied == resultMultiplied);
 
     Vector<float, 4> const resultDivided = vec1 / vec2;
-    REQUIRE(resultDivided.x == 0.23_a.epsilon(0.02));
-    REQUIRE(resultDivided.y == 0.34_a.epsilon(0.02));
-    REQUIRE(resultDivided.z == 1.38_a.epsilon(0.02));
-    REQUIRE(resultDivided.w == 0.44_a.epsilon(0.02));
+    REQUIRE(resultDivided.x == Catch::Approx(0.23).epsilon(0.02));
+    REQUIRE(resultDivided.y == Catch::Approx(0.34).epsilon(0.02));
+    REQUIRE(resultDivided.z == Catch::Approx(1.38).epsilon(0.02));
+    REQUIRE(resultDivided.w == Catch::Approx(0.44).epsilon(0.02));
 
     Vector<float, 4> mutableDivided = vec1;
     mutableDivided /= vec2;
@@ -302,10 +301,10 @@ TEST_CASE("Vector 4 float and float operators", "[vector][operators][properties]
     REQUIRE(mutableMultiplied == resultMultiplied);
 
     Vector<float, 4> const resultDivided = vec1 / number;
-    REQUIRE(resultDivided.x == 0.66_a.epsilon(0.02));
-    REQUIRE(resultDivided.y == 0.15_a.epsilon(0.02));
-    REQUIRE(resultDivided.z == 1.05_a.epsilon(0.02));
-    REQUIRE(resultDivided.w == 0.042_a.epsilon(0.02));
+    REQUIRE(resultDivided.x == Catch::Approx(0.66).epsilon(0.02));
+    REQUIRE(resultDivided.y == Catch::Approx(0.15).epsilon(0.02));
+    REQUIRE(resultDivided.z == Catch::Approx(1.05).epsilon(0.02));
+    REQUIRE(resultDivided.w == Catch::Approx(0.042).epsilon(0.02));
 
     Vector<float, 4> mutableDivided = vec1;
     mutableDivided /= number;

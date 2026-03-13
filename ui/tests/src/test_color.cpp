@@ -1,6 +1,6 @@
 #include "moth_ui/utils/color.h"
 #include "string_helpers.h"
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 
 using namespace moth_ui;
 using namespace Catch::literals;
@@ -56,10 +56,10 @@ TEST_CASE("Color and Color operators", "[color][operators][properties]") {
     REQUIRE(mutableMultiplied == resultMultiplied);
 
     Color const resultDivided = color1 / color2;
-    REQUIRE(resultDivided.r == 0.23_a.epsilon(0.02));
-    REQUIRE(resultDivided.g == 0.34_a.epsilon(0.02));
-    REQUIRE(resultDivided.b == 1.38_a.epsilon(0.02));
-    REQUIRE(resultDivided.a == 0.44_a.epsilon(0.02));
+    REQUIRE(resultDivided.r == Catch::Approx(0.23f).epsilon(0.02));
+    REQUIRE(resultDivided.g == Catch::Approx(0.34f).epsilon(0.02));
+    REQUIRE(resultDivided.b == Catch::Approx(1.38).epsilon(0.02));
+    REQUIRE(resultDivided.a == Catch::Approx(0.44).epsilon(0.02));
 
     Color mutableDivided = color1;
     mutableDivided /= color2;
@@ -101,10 +101,10 @@ TEST_CASE("Color and float operators", "[color][operators][properties]") {
     REQUIRE(mutableMultiplied == resultMultiplied);
 
     Color const resultDivided = color1 / number;
-    REQUIRE(resultDivided.r == 0.66_a.epsilon(0.02));
-    REQUIRE(resultDivided.g == 0.15_a.epsilon(0.02));
-    REQUIRE(resultDivided.b == 1.05_a.epsilon(0.02));
-    REQUIRE(resultDivided.a == 0.042_a.epsilon(0.02));
+    REQUIRE(resultDivided.r == Catch::Approx(0.66).epsilon(0.02));
+    REQUIRE(resultDivided.g == Catch::Approx(0.15).epsilon(0.02));
+    REQUIRE(resultDivided.b == Catch::Approx(1.05).epsilon(0.02));
+    REQUIRE(resultDivided.a == Catch::Approx(0.042).epsilon(0.02));
 
     Color mutableDivided = color1;
     mutableDivided /= number;
@@ -113,16 +113,16 @@ TEST_CASE("Color and float operators", "[color][operators][properties]") {
 
 TEST_CASE("Color uint32_t conversions", "[color][conversion]") {
     Color const color1{ FromRGBA(0x8F237CDC) };
-    REQUIRE(color1.r == 0.561_a.epsilon(0.01));
-    REQUIRE(color1.g == 0.137_a.epsilon(0.01));
-    REQUIRE(color1.b == 0.486_a.epsilon(0.01));
-    REQUIRE(color1.a == 0.863_a.epsilon(0.01));
+    REQUIRE(color1.r == Catch::Approx(0.561).epsilon(0.01));
+    REQUIRE(color1.g == Catch::Approx(0.137).epsilon(0.01));
+    REQUIRE(color1.b == Catch::Approx(0.486).epsilon(0.01));
+    REQUIRE(color1.a == Catch::Approx(0.863).epsilon(0.01));
 
     Color const color2{ FromARGB(0x8F237CDC) };
-    REQUIRE(color2.r == 0.137_a.epsilon(0.01));
-    REQUIRE(color2.g == 0.486_a.epsilon(0.01));
-    REQUIRE(color2.b == 0.863_a.epsilon(0.01));
-    REQUIRE(color2.a == 0.561_a.epsilon(0.01));
+    REQUIRE(color2.r == Catch::Approx(0.137).epsilon(0.01));
+    REQUIRE(color2.g == Catch::Approx(0.486).epsilon(0.01));
+    REQUIRE(color2.b == Catch::Approx(0.863).epsilon(0.01));
+    REQUIRE(color2.a == Catch::Approx(0.561).epsilon(0.01));
 
     uint32_t rgba = ToRGBA(color1);
     REQUIRE(rgba == 0x8F237CDC);
@@ -137,34 +137,34 @@ TEST_CASE("Color utility methods", "[color][utilities]") {
     Color const limitedColor1 = Limit(color1);
     Color const clampedColor1 = Clamp(color1);
 
-    REQUIRE(normalizedColor1.r == 1.0_a.epsilon(0.01));
-    REQUIRE(normalizedColor1.g == 0.146_a.epsilon(0.01));
-    REQUIRE(normalizedColor1.b == 0.042_a.epsilon(0.01));
-    REQUIRE(normalizedColor1.a == 0.063_a.epsilon(0.01));
-    REQUIRE(limitedColor1.r == 1.0_a.epsilon(0.01));
-    REQUIRE(limitedColor1.g == 0.146_a.epsilon(0.01));
-    REQUIRE(limitedColor1.b == 0.042_a.epsilon(0.01));
-    REQUIRE(limitedColor1.a == 0.063_a.epsilon(0.01));
-    REQUIRE(clampedColor1.r == 1.0_a.epsilon(0.01));
-    REQUIRE(clampedColor1.g == 0.7_a.epsilon(0.01));
-    REQUIRE(clampedColor1.b == 0.2_a.epsilon(0.01));
-    REQUIRE(clampedColor1.a == 0.3_a.epsilon(0.01));
+    REQUIRE(normalizedColor1.r == Catch::Approx(1.0).epsilon(0.01));
+    REQUIRE(normalizedColor1.g == Catch::Approx(0.146).epsilon(0.01));
+    REQUIRE(normalizedColor1.b == Catch::Approx(0.042).epsilon(0.01));
+    REQUIRE(normalizedColor1.a == Catch::Approx(0.063).epsilon(0.01));
+    REQUIRE(limitedColor1.r == Catch::Approx(1.0).epsilon(0.01));
+    REQUIRE(limitedColor1.g == Catch::Approx(0.146).epsilon(0.01));
+    REQUIRE(limitedColor1.b == Catch::Approx(0.042).epsilon(0.01));
+    REQUIRE(limitedColor1.a == Catch::Approx(0.063).epsilon(0.01));
+    REQUIRE(clampedColor1.r == Catch::Approx(1.0).epsilon(0.01));
+    REQUIRE(clampedColor1.g == Catch::Approx(0.7).epsilon(0.01));
+    REQUIRE(clampedColor1.b == Catch::Approx(0.2).epsilon(0.01));
+    REQUIRE(clampedColor1.a == Catch::Approx(0.3).epsilon(0.01));
 
     Color const color2{ 0.4f, 0.7f, 0.2f, 0.3f };
     Color const normalizedColor2 = Normalize(color2);
     Color const limitedColor2 = Limit(color2);
     Color const clampedColor2 = Clamp(color2);
 
-    REQUIRE(normalizedColor2.r == 0.571_a.epsilon(0.01));
-    REQUIRE(normalizedColor2.g == 1.0_a.epsilon(0.01));
-    REQUIRE(normalizedColor2.b == 0.286_a.epsilon(0.01));
-    REQUIRE(normalizedColor2.a == 0.429_a.epsilon(0.01));
-    REQUIRE(limitedColor2.r == 0.4_a.epsilon(0.01));
-    REQUIRE(limitedColor2.g == 0.7_a.epsilon(0.01));
-    REQUIRE(limitedColor2.b == 0.2_a.epsilon(0.01));
-    REQUIRE(limitedColor2.a == 0.3_a.epsilon(0.01));
-    REQUIRE(clampedColor2.r == 0.4_a.epsilon(0.01));
-    REQUIRE(clampedColor2.g == 0.7_a.epsilon(0.01));
-    REQUIRE(clampedColor2.b == 0.2_a.epsilon(0.01));
-    REQUIRE(clampedColor2.a == 0.3_a.epsilon(0.01));
+    REQUIRE(normalizedColor2.r == Catch::Approx(0.571).epsilon(0.01));
+    REQUIRE(normalizedColor2.g == Catch::Approx(1.0).epsilon(0.01));
+    REQUIRE(normalizedColor2.b == Catch::Approx(0.286).epsilon(0.01));
+    REQUIRE(normalizedColor2.a == Catch::Approx(0.429).epsilon(0.01));
+    REQUIRE(limitedColor2.r == Catch::Approx(0.4).epsilon(0.01));
+    REQUIRE(limitedColor2.g == Catch::Approx(0.7).epsilon(0.01));
+    REQUIRE(limitedColor2.b == Catch::Approx(0.2).epsilon(0.01));
+    REQUIRE(limitedColor2.a == Catch::Approx(0.3).epsilon(0.01));
+    REQUIRE(clampedColor2.r == Catch::Approx(0.4).epsilon(0.01));
+    REQUIRE(clampedColor2.g == Catch::Approx(0.7).epsilon(0.01));
+    REQUIRE(clampedColor2.b == Catch::Approx(0.2).epsilon(0.01));
+    REQUIRE(clampedColor2.a == Catch::Approx(0.3).epsilon(0.01));
 }

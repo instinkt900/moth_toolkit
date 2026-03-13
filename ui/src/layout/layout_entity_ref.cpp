@@ -8,7 +8,6 @@ namespace moth_ui {
     LayoutEntityRef::LayoutEntityRef(LayoutRect const& initialBounds, Layout const& layoutRef)
         : LayoutEntityGroup(initialBounds)
         , m_layoutPath(layoutRef.GetLoadedPath()) {
-        std::shared_ptr<Layout> targetLayout;
         CopyLayout(layoutRef);
     }
 
@@ -98,13 +97,14 @@ namespace moth_ui {
     void LayoutEntityRef::CopyLayout(Layout const& other) {
         m_class = other.m_class;
         for (auto&& child : other.m_children) {
-            m_children.push_back(child);
-            child->m_parent = this;
-            child->m_hardReference = child->Clone(CloneType::Shallow);
+            auto clone = child->Clone(CloneType::Deep);
+            clone->m_parent = this;
+            clone->m_hardReference = child->Clone(CloneType::Shallow);
+            m_children.push_back(std::move(clone));
         }
 
         for (auto&& clip : other.m_clips) {
-            m_clips.push_back(std::make_unique<AnimationClip>(*clip));
+            m_clips.push_back(std::make_shared<AnimationClip>(*clip));
         }
     }
 }

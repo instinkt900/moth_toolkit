@@ -75,8 +75,8 @@ namespace moth_ui {
         m_renderHeight = dimensions.y;
     }
 
-    void LayerStack::BroadcastEvent(Event const& event) {
-        if (m_eventListener) {
+    void LayerStack::FireEvent(Event const& event) {
+        if (m_eventListener != nullptr) {
             m_eventListener->OnEvent(event);
         }
     }

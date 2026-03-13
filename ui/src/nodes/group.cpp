@@ -11,6 +11,7 @@
 namespace moth_ui {
     Group::Group(Context& context)
         : Node(context) {
+        m_animationClipController = std::make_unique<AnimationClipController>(this);
     }
 
     Group::Group(Context& context, std::shared_ptr<LayoutEntityGroup> layoutEntityGroup)
@@ -37,7 +38,8 @@ namespace moth_ui {
 
     void Group::Update(uint32_t ticks) {
         Node::Update(ticks);
-        m_animationClipController->Update(ticks / 1000.0f);
+        //NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
+        m_animationClipController->Update(static_cast<float>(ticks) / 1000.0f);
         for (auto&& child : m_children) {
             child->Update(ticks);
         }
@@ -51,7 +53,7 @@ namespace moth_ui {
 
     void Group::AddChild(std::shared_ptr<Node> child, size_t index) {
         if (index != static_cast<size_t>(-1)) {
-            auto it = std::begin(m_children) + index;
+            auto it = std::begin(m_children) + static_cast<std::ptrdiff_t>(index);
             m_children.insert(it, child);
         } else {
             m_children.push_back(child);
@@ -82,7 +84,7 @@ namespace moth_ui {
             auto& animationClips = layout->m_clips;
             auto it = ranges::find_if(animationClips, [&name](auto& clip) { return clip->m_name == name; });
             if (std::end(animationClips) != it) {
-                m_animationClipController->SetClip(it->get());
+                m_animationClipController->SetClip(*it);
                 return true;
             }
         }
@@ -130,7 +132,7 @@ namespace moth_ui {
             child->Draw();
         }
 
-        while (clipRects--) {
+        while ((clipRects--) != 0) {
             m_context.GetRenderer().PopClip();
         }
     }

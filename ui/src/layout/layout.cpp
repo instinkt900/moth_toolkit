@@ -93,10 +93,6 @@ namespace moth_ui {
     }
 
     Layout::LoadResult Layout::Load(std::filesystem::path const& path, std::shared_ptr<Layout>* outLayout) {
-        if (outLayout == nullptr) {
-            return LoadResult::NoOutput;
-        }
-
         std::ifstream ifile(path);
         if (!ifile.is_open()) {
             return LoadResult::DoesNotExist;
@@ -106,18 +102,27 @@ namespace moth_ui {
         context.m_rootPath = path.parent_path();
 
         nlohmann::json json;
-        ifile >> json;
+        try {
+            ifile >> json;
+        } catch (nlohmann::json::parse_error const&) {
+            return LoadResult::IncorrectFormat;
+        }
         auto const layout = std::make_shared<Layout>();
         if (!layout->Deserialize(json, context)) {
             return LoadResult::IncorrectFormat;
         }
 
         layout->m_loadedPath = path;
+
+        if (outLayout == nullptr) {
+            return LoadResult::NoOutput;
+        }
+
         *outLayout = layout;
         return LoadResult::Success;
     }
 
-    bool Layout::Save(std::filesystem::path const& path) {
+    bool Layout::Save(std::filesystem::path const& path) const {
         std::ofstream ofile(path);
         if (!ofile.is_open()) {
             return false;

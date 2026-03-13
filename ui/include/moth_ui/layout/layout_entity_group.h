@@ -5,23 +5,39 @@
 #include <nlohmann/json_fwd.hpp>
 
 namespace moth_ui {
+    /**
+     * @brief A LayoutEntity that acts as a container for child entities and animation clips.
+     *
+     * LayoutEntityGroup owns the lists of child entities, animation clips, and
+     * animation event markers that belong to a group node.
+     */
     class LayoutEntityGroup : public LayoutEntity {
     public:
+        /**
+         * @brief Constructs a group with an explicit initial bounds.
+         * @param initialBounds Starting layout rect.
+         */
         explicit LayoutEntityGroup(LayoutRect const& initialBounds);
+
+        /**
+         * @brief Constructs a group as a child of the given parent.
+         * @param parent Owning group.
+         */
         explicit LayoutEntityGroup(LayoutEntityGroup* parent);
         LayoutEntityGroup(LayoutEntityGroup const& other);
         LayoutEntityGroup(LayoutEntityGroup&& other) noexcept;
 
+        /// @brief Returns @c LayoutEntityType::Group.
         LayoutEntityType GetType() const override { return LayoutEntityType::Group; }
 
         nlohmann::json Serialize(SerializeContext const& context) const override;
         bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
 
-        std::vector<std::shared_ptr<LayoutEntity>> m_children;
-        std::vector<std::unique_ptr<AnimationClip>> m_clips;
-        std::vector<std::unique_ptr<AnimationEvent>> m_events;
+        std::vector<std::shared_ptr<LayoutEntity>> m_children; ///< Ordered child entities.
+        std::vector<std::shared_ptr<AnimationClip>> m_clips;   ///< Named animation clips for this group.
+        std::vector<std::unique_ptr<AnimationEvent>> m_events; ///< Frame-triggered animation event markers.
 
-        LayoutEntityGroup& operator=(LayoutEntityGroup const&) = default;
+        LayoutEntityGroup& operator=(LayoutEntityGroup const&) = delete;
         LayoutEntityGroup& operator=(LayoutEntityGroup&&) = default;
         ~LayoutEntityGroup() override;
     };

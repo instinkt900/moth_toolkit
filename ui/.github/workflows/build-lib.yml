@@ -1,7 +1,9 @@
-name: Build Library
+name: Build and Test
 
 on:
   workflow_dispatch:
+  push:
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 

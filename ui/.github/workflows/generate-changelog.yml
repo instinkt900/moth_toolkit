@@ -1,4 +1,4 @@
-name: Release
+name: Generate Changelog
 
 # Triggered when upload-lib.yml tags the repo with the version from version.txt
 on:

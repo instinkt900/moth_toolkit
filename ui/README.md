@@ -1,7 +1,7 @@
 # Moth UI
 
-[![Build Status](https://github.com/instinkt900/moth_ui/actions/workflows/build-lib.yml/badge.svg)](https://github.com/instinkt900/moth_ui/actions/workflows/build-lib.yml)
-[![Upload Status](https://github.com/instinkt900/moth_ui/actions/workflows/upload-lib.yml/badge.svg)](https://github.com/instinkt900/moth_ui/actions/workflows/upload-lib.yml)
+[![Build Status](https://github.com/instinkt900/moth_ui/actions/workflows/build-test.yml/badge.svg)](https://github.com/instinkt900/moth_ui/actions/workflows/build-test.yml)
+[![Upload Status](https://github.com/instinkt900/moth_ui/actions/workflows/upload-release.yml/badge.svg)](https://github.com/instinkt900/moth_ui/actions/workflows/upload-release.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A C++ library for building 2D UIs in graphical applications such as games and media players. It supports Flash-style keyframe animation, a variety of easing curves, mouse and keyboard events, and custom animation events that let the UI signal back to the application during playback.

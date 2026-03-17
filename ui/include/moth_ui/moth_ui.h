@@ -69,5 +69,4 @@
 #include "moth_ui/ifont_factory.h"
 #include "moth_ui/iimage_factory.h"
 #include "moth_ui/node_factory.h"
-#include "moth_ui/moth_ui_fwd.h"
 

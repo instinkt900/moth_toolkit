@@ -1,11 +1,10 @@
 # Moth UI
 
-[![Build Status](https://github.com/instinkt900/moth_ui/actions/workflows/build-lib.yml/badge.svg)](https://github.com/instinkt900/moth_ui/actions/workflows/build-lib.yml)
-[![Upload Status](https://github.com/instinkt900/moth_ui/actions/workflows/upload-lib.yml/badge.svg)](https://github.com/instinkt900/moth_ui/actions/workflows/upload-lib.yml)
+[![Build Status](https://github.com/instinkt900/moth_ui/actions/workflows/build-test.yml/badge.svg)](https://github.com/instinkt900/moth_ui/actions/workflows/build-test.yml)
+[![Upload Status](https://github.com/instinkt900/moth_ui/actions/workflows/upload-release.yml/badge.svg)](https://github.com/instinkt900/moth_ui/actions/workflows/upload-release.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A C++ Flash-like framework for building 2D UIs in graphical applications such as games and media players. It supports keyframed animation, a variety of easing curves, mouse and keyboard events, and custom animation events that let the UI signal back to the application during playback.
-
-![Screenshot 2023-10-14 141636](https://github.com/instinkt900/moth_ui/assets/35185578/a8779a2b-978e-450a-b80a-b0dad4f06306)
+A C++ library for building 2D UIs in graphical applications such as games and media players. It supports Flash-style keyframe animation, a variety of easing curves, mouse and keyboard events, and custom animation events that let the UI signal back to the application during playback.
 
 ---
 
@@ -14,13 +13,16 @@ A C++ Flash-like framework for building 2D UIs in graphical applications such as
 - [Overview](#overview)
 - [Architecture](#architecture)
 - [Dependencies](#dependencies)
+- [Using with Conan](#using-with-conan)
 - [Building the Library](#building-the-library)
   - [Prerequisites](#prerequisites)
   - [Linux](#linux)
   - [Windows](#windows)
 - [Running the Tests](#running-the-tests)
-- [Integrating into Your Project](#integrating-into-your-project)
 - [Implementing the Backend Interfaces](#implementing-the-backend-interfaces)
+- [Including in Your Code](#including-in-your-code)
+- [Related Projects](#related-projects)
+- [License](#license)
 
 ---
 
@@ -71,6 +73,31 @@ See [canyon](https://github.com/instinkt900/canyon) for a reference implementati
 
 ---
 
+## Using with Conan
+
+The recommended way to consume moth_ui is as a Conan package. Add it as a dependency in your `conanfile.py`:
+
+```python
+def requirements(self):
+    self.requires("moth_ui/<version>")
+```
+
+Or in a `conanfile.txt`:
+
+```ini
+[requires]
+moth_ui/<version>
+```
+
+Then link against the `moth_ui` target in CMake:
+
+```cmake
+find_package(moth_ui REQUIRED)
+target_link_libraries(my_app PRIVATE moth_ui::moth_ui)
+```
+
+---
+
 ## Building the Library
 
 ### Prerequisites
@@ -111,18 +138,11 @@ cmake --install build --config Release --prefix=<install_path>
 
 The install step copies headers and the compiled library into `<install_path>`, ready to consume as a standard C++ library.
 
-To publish to a Conan remote instead:
-
-```bash
-conan create . --profile conan/profiles/<platform>_profile --build=missing
-conan upload moth_ui --remote <remote_name>
-```
-
 ---
 
 ## Running the Tests
 
-The test suite uses [Catch2](https://github.com/catchorg/Catch2) and lives in the `tests/` directory. It is built and run separately from the main library.
+The test suite uses [Catch2](https://github.com/catchorg/Catch2) and lives in the `tests/` directory.
 
 ```bash
 cd tests
@@ -141,24 +161,6 @@ ctest --preset conan-debug --output-on-failure
 ```
 
 CI runs the full test matrix (Linux + Windows) on every pull request via GitHub Actions.
-
----
-
-## Integrating into Your Project
-
-The recommended approach is via Conan. Add moth_ui as a dependency in your `conanfile.py` or `conanfile.txt`:
-
-```ini
-[requires]
-moth_ui/<version>
-```
-
-Then link against the `moth_ui` target in CMake:
-
-```cmake
-find_package(moth_ui REQUIRED)
-target_link_libraries(my_app PRIVATE moth_ui::moth_ui)
-```
 
 ---
 
@@ -189,3 +191,36 @@ root->Draw();
 ```
 
 See the [canyon](https://github.com/instinkt900/canyon) project for a complete reference implementation.
+
+---
+
+## Including in Your Code
+
+Two convenience headers are provided so you can choose the right level of detail:
+
+**All public types and implementations — use in `.cpp` files or when you need the full API:**
+```cpp
+#include "moth_ui/moth_ui.h"
+```
+
+**Forward declarations only — use in headers to minimise compile-time dependencies:**
+```cpp
+#include "moth_ui/moth_ui_fwd.h"
+```
+
+You can also include individual headers directly from `moth_ui/animation/`, `moth_ui/nodes/`, `moth_ui/layout/`, etc.
+
+---
+
+## Related Projects
+
+| Project | Description |
+|---|---|
+| [canyon](https://github.com/instinkt900/canyon) | Graphics and application framework built on moth_ui — provides SDL2 and Vulkan backends, window management, and a layer stack |
+| [moth_editor](https://github.com/instinkt900/moth_editor) | Visual layout and animation editor — Flash-like authoring tool for creating `.mothui` layout files |
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).

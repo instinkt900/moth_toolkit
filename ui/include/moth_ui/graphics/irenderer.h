@@ -1,6 +1,6 @@
 #pragma once
 
-#include "moth_ui/ui_fwd.h"
+#include "moth_ui/moth_ui_fwd.h"
 #include "moth_ui/graphics/blend_mode.h"
 #include "moth_ui/graphics/image_scale_type.h"
 #include "moth_ui/graphics/text_alignment.h"

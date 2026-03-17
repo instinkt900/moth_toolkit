@@ -1,7 +1,7 @@
 #pragma once
 
 #include "moth_ui/context.h"
-#include "moth_ui/ui_fwd.h"
+#include "moth_ui/moth_ui_fwd.h"
 
 #include <memory>
 #include <map>

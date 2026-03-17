@@ -2,7 +2,7 @@
 
 #include "moth_ui/events/event_listener.h"
 #include "moth_ui/utils/vector.h"
-#include "moth_ui/ui_fwd.h"
+#include "moth_ui/moth_ui_fwd.h"
 
 #include <memory>
 #include <vector>

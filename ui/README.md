@@ -11,6 +11,7 @@ A C++ library for building 2D UIs in graphical applications such as games and me
 ## Table of Contents
 
 - [Overview](#overview)
+  - [AI Disclosure](#ai-disclosure)
 - [Architecture](#architecture)
 - [Dependencies](#dependencies)
 - [Using with Conan](#using-with-conan)
@@ -37,6 +38,10 @@ Key features:
 - Custom animation events fired during playback for UI/game synchronisation
 - Graphics-backend agnostic — bring your own renderer
 - Event system with bubbling mouse, keyboard, and custom events
+
+### AI Disclosure
+
+AI agents (primarily Claude) are used as tools in this project for tasks such as refactoring, documentation writing, and test implementation. The architecture, design decisions, and direction of the project are human-driven. This is not a vibe-coded project.
 
 ---
 

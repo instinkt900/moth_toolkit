@@ -9,6 +9,13 @@ on:
         default: false
   push:
     branches: [ master ]
+    paths:
+      - 'src/**'
+      - 'include/**'
+      - 'CMakeLists.txt'
+      - 'conanfile.py'
+      - 'conan/**'
+      - 'version.txt'
 
 permissions:
   contents: write

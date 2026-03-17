@@ -4,8 +4,22 @@ on:
   workflow_dispatch:
   push:
     branches: [ master ]
+    paths:
+      - 'src/**'
+      - 'include/**'
+      - 'tests/**'
+      - 'CMakeLists.txt'
+      - 'conanfile.py'
+      - 'conan/**'
   pull_request:
     branches: [ master ]
+    paths:
+      - 'src/**'
+      - 'include/**'
+      - 'tests/**'
+      - 'CMakeLists.txt'
+      - 'conanfile.py'
+      - 'conan/**'
 
 jobs:
   build:

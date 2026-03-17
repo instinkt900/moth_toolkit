@@ -3,24 +3,39 @@
 All notable changes to this project will be documented in this file.
 Entries are generated automatically from git history using [git-cliff](https://github.com/orhun/git-cliff).
 
-## [Unreleased]
+## [1.1.0] - 2026-03-17
 ### Changes
-- Add animation clip controller event timing tests
+- Trigger build on push to master and rename release to generate-changelog
+- Rename workflows, consolidate release into upload-release
+- Fetch and rebase before pushing CHANGELOG.md to master
 
-## [1.0.0] - 2026-03-13
+### Documentation
+- Overhaul README and add MIT LICENSE
+
+### Features
+- Add moth_ui.h aggregate header and moth_ui_fwd.h forward declaration header
+
+### Miscellaneous
+- Export LICENSE in conanfile and deprecate ui_fwd.h
+- Bump version to 1.1.0
+- Fixing release action
+
+### Refactoring
+- Update all ui_fwd.h includes to moth_ui_fwd.h
+
+## [1.0.0] - 2026-03-14
 ### Changes
 - Pushing for v1.0
 - Removing artifactory url in favor of using secrets
-
-## [0.3.0] - 2025-08-14
-### Bug Fixes
-- Some fixes that showed up when consuming moth
-
-### Changes
-- Cleaning up the rect structure slightly.
+- Add animation clip controller event timing tests
+- Add [skip ci] to CHANGELOG commit to prevent re-triggering upload-lib
 
 ### Miscellaneous
-- Tagging the repo should only happen once after all the uploads.
+- Add git-cliff changelog automation
+
+## [0.3.0] - 2025-08-14
+### Changes
+- Cleaning up the rect structure slightly.
 
 ## [0.2.0] - 2025-05-10
 ### Bug Fixes
@@ -34,6 +49,7 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Made the nlohmann_json headers transitive.
 - Fixing bad casing on build configs in actions
 - Fixing upload action
+- Some fixes that showed up when consuming moth
 
 ### Changes
 - Initial commit of moth_ui separated from previous project
@@ -357,6 +373,7 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Removed example project.
 - More cleaning out of stuff.
 - Tweaking versions for flexibility
+- Tagging the repo should only happen once after all the uploads.
 
 ### Refactoring
 - Updating editor to use canyon as a backend.

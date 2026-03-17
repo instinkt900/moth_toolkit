@@ -1,3 +1,11 @@
 CompileFlags:
   CompilationDatabase: ./build/Debug
 
+---
+# Suppress unused-includes warnings in catch-all / forwarding headers where
+# every include is intentional by design.
+If:
+  PathMatch: '.*include/moth_ui/(moth_ui|moth_ui_fwd|ui_fwd)\.h'
+Diagnostics:
+  UnusedIncludes: None
+

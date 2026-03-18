@@ -137,12 +137,16 @@ jobs:
 
     - name: Archive (Linux)
       if: matrix.os == 'linux'
-      run: tar czf moth_ui-${{ steps.version.outputs.version }}-linux-${{ matrix.build_type }}.tar.gz -C staging .
+      run: |
+        mv staging moth_ui-${{ steps.version.outputs.version }}
+        tar czf moth_ui-${{ steps.version.outputs.version }}-linux-${{ matrix.build_type }}.tar.gz moth_ui-${{ steps.version.outputs.version }}
 
     - name: Archive (Windows)
       if: matrix.os == 'windows'
       shell: pwsh
-      run: Compress-Archive -Path staging\* -DestinationPath moth_ui-${{ steps.version.outputs.version }}-windows-${{ matrix.build_type }}.zip
+      run: |
+        Rename-Item staging moth_ui-${{ steps.version.outputs.version }}
+        Compress-Archive -Path moth_ui-${{ steps.version.outputs.version }} -DestinationPath moth_ui-${{ steps.version.outputs.version }}-windows-${{ matrix.build_type }}.zip
 
     - name: Upload archive as workflow artifact
       uses: actions/upload-artifact@v4

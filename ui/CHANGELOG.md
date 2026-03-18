@@ -3,11 +3,12 @@
 All notable changes to this project will be documented in this file.
 Entries are generated automatically from git history using [git-cliff](https://github.com/orhun/git-cliff).
 
-## [1.1.0] - 2026-03-17
+## [1.1.0] - 2026-03-18
 ### Changes
 - Trigger build on push to master and rename release to generate-changelog
 - Rename workflows, consolidate release into upload-release
 - Fetch and rebase before pushing CHANGELOG.md to master
+- Add path filters to workflow triggers; update TODO
 
 ### Documentation
 - Overhaul README and add MIT LICENSE
@@ -19,6 +20,9 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Export LICENSE in conanfile and deprecate ui_fwd.h
 - Bump version to 1.1.0
 - Fixing release action
+- Adding AI disclosure to readme
+- Updating TODO with some pending tasks
+- Release workflow to build archives with proper folder structure
 
 ### Refactoring
 - Update all ui_fwd.h includes to moth_ui_fwd.h

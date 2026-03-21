@@ -124,7 +124,7 @@ pip install conan
 ### Linux
 
 ```bash
-conan install . --build=missing -s build_type=Release
+conan install . -s compiler.cppstd=17 -s build_type=Release --build=missing
 cmake --preset conan-release
 cmake --build --preset conan-release
 cmake --install build --config Release --prefix=<install_path>
@@ -133,7 +133,7 @@ cmake --install build --config Release --prefix=<install_path>
 ### Windows
 
 ```bash
-conan install . --build=missing -s build_type=Release
+conan install . -s compiler.cppstd=17 -s build_type=Release --build=missing
 cmake --preset conan-default
 cmake --build --preset conan-release
 cmake --install build --config Release --prefix=<install_path>
@@ -151,13 +151,13 @@ The test suite uses [Catch2](https://github.com/catchorg/Catch2) and lives in th
 cd tests
 
 # Linux
-conan install . --build=missing -s build_type=Debug
+conan install . -s compiler.cppstd=17 -s build_type=Release --build=missing
 cmake --preset conan-debug
 cmake --build --preset conan-debug
 ctest --preset conan-debug --output-on-failure
 
 # Windows
-conan install . --build=missing -s build_type=Debug
+conan install . -s compiler.cppstd=17 -s build_type=Release --build=missing
 cmake --preset conan-default
 cmake --build --preset conan-debug
 ctest --preset conan-debug --output-on-failure

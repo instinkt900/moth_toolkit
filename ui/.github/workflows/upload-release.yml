@@ -65,6 +65,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Read version
+      id: version
+      shell: bash
+      run: echo "version=$(cat version.txt | tr -d '[:space:]')" >> $GITHUB_OUTPUT
+
     - name: Setup Conan
       uses: conan-io/setup-conan@v1
       with:
@@ -74,8 +79,8 @@ jobs:
       run: |
         conan remote add artifactory ${{ secrets.ARTIFACTORY_URL }}
         conan remote login artifactory ci -p ${{ secrets.ARTIFACTS_TOKEN }}
-        conan create . --build=missing
-        conan upload "moth_ui:*" --confirm --remote artifactory
+        conan create . -s build_type=Release --build=missing
+        conan upload "moth_ui/${{ steps.version.outputs.version }}:*" --confirm --remote artifactory
 
   build-release:
     if: github.repository == 'instinkt900/moth_ui' && needs.check-version.outputs.changed == 'true'

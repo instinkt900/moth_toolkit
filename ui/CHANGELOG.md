@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 Entries are generated automatically from git history using [git-cliff](https://github.com/orhun/git-cliff).
 
+## [1.1.1] - 2026-03-21
+### Bug Fixes
+- Fixing order of includes for serialization helpers
+
+### Changes
+- Run build via cmake directly so clang-tidy is exercised in CI
+- Simplifying build to not use profiles
+- Fixing upload action
+
+### Documentation
+- Updating readme with build command
+
+### Miscellaneous
+- Bump patch version to 1.1.1
+
 ## [1.1.0] - 2026-03-18
 ### Changes
 - Trigger build on push to master and rename release to generate-changelog

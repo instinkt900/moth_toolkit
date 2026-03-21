@@ -1,5 +1,8 @@
 #pragma once
 
+// utils (must come first — defines json partial specializations used by animation headers)
+#include "moth_ui/utils/serialize_utils.h"
+
 // animation
 #include "moth_ui/animation/animation_clip.h"
 #include "moth_ui/animation/animation_clip_controller.h"
@@ -58,7 +61,6 @@
 #include "moth_ui/utils/interp.h"
 #include "moth_ui/utils/rect.h"
 #include "moth_ui/utils/rect_serialization.h"
-#include "moth_ui/utils/serialize_utils.h"
 #include "moth_ui/utils/vector.h"
 #include "moth_ui/utils/vector_serialization.h"
 #include "moth_ui/utils/vector_utils.h"

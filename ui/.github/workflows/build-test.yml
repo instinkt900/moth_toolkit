@@ -59,7 +59,7 @@ jobs:
         cache_packages: true
 
     - name: Install dependencies
-      run: conan install . --profile conan/profiles/${{ matrix.os }}_profile --build=missing -s build_type=${{ matrix.build_type }}
+      run: conan install . -s compiler.cppstd=17 -s build_type=${{ matrix.build_type }} --build=missing
 
     - name: Configure and build
       shell: bash
@@ -90,8 +90,7 @@ jobs:
 
     - name: Install dependencies
       working-directory: tests
-      run: |
-        conan install . --profile ../conan/profiles/${{ matrix.os }}_profile --build=missing -s build_type=Debug
+      run: conan install . -s compiler.cppstd=17 -s build_type=Debug --build=missing
 
     - name: Configure
       working-directory: tests

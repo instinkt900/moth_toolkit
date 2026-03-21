@@ -121,12 +121,10 @@ python3 -m venv .venv
 pip install conan
 ```
 
-Conan profiles for both platforms are provided in `conan/profiles/`. They configure the compiler, C++ standard, and (on Linux) instruct Conan to install system packages via `apt`.
-
 ### Linux
 
 ```bash
-conan install . --profile conan/profiles/linux_profile --build=missing -s build_type=Release
+conan install . --build=missing -s build_type=Release
 cmake --preset conan-release
 cmake --build --preset conan-release
 cmake --install build --config Release --prefix=<install_path>
@@ -135,7 +133,7 @@ cmake --install build --config Release --prefix=<install_path>
 ### Windows
 
 ```bash
-conan install . --profile conan/profiles/windows_profile --build=missing -s build_type=Release
+conan install . --build=missing -s build_type=Release
 cmake --preset conan-default
 cmake --build --preset conan-release
 cmake --install build --config Release --prefix=<install_path>
@@ -153,13 +151,13 @@ The test suite uses [Catch2](https://github.com/catchorg/Catch2) and lives in th
 cd tests
 
 # Linux
-conan install . --profile ../conan/profiles/linux_profile --build=missing -s build_type=Debug
+conan install . --build=missing -s build_type=Debug
 cmake --preset conan-debug
 cmake --build --preset conan-debug
 ctest --preset conan-debug --output-on-failure
 
 # Windows
-conan install . --profile ../conan/profiles/windows_profile --build=missing -s build_type=Debug
+conan install . --build=missing -s build_type=Debug
 cmake --preset conan-default
 cmake --build --preset conan-debug
 ctest --preset conan-debug --output-on-failure

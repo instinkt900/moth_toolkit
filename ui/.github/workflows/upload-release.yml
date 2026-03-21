@@ -74,8 +74,8 @@ jobs:
       run: |
         conan remote add artifactory ${{ secrets.ARTIFACTORY_URL }}
         conan remote login artifactory ci -p ${{ secrets.ARTIFACTS_TOKEN }}
-        conan create . --profile conan/profiles/${{ matrix.os }}_profile --build=missing
-        conan upload moth_ui --confirm --remote artifactory
+        conan create . --build=missing
+      conan upload "moth_ui:*" --confirm --remote artifactory
 
   build-release:
     if: github.repository == 'instinkt900/moth_ui' && needs.check-version.outputs.changed == 'true'
@@ -114,7 +114,7 @@ jobs:
         cache_packages: true
 
     - name: Install dependencies
-      run: conan install . --profile conan/profiles/${{ matrix.os }}_profile --build=missing -s build_type=${{ matrix.build_type }}
+      run: conan install . -s compiler.cppstd=17 -s build_type=${{ matrix.build_type }} --build=missing
 
     - name: Configure and build
       shell: bash

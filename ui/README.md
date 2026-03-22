@@ -219,8 +219,10 @@ You can also include individual headers directly from `moth_ui/animation/`, `mot
 
 | Project | Description |
 |---|---|
-| [canyon](https://github.com/instinkt900/canyon) | Graphics and application framework built on moth_ui — provides SDL2 and Vulkan backends, window management, and a layer stack |
-| [moth_editor](https://github.com/instinkt900/moth_editor) | Visual layout and animation editor — Flash-like authoring tool for creating `.mothui` layout files |
+| moth_ui | *(this project)* Core UI library — node graph, keyframe animation, and event system |
+| [canyon](https://github.com/instinkt900/canyon) | Graphics and application framework built on moth_ui — SDL2 and Vulkan backends, window management, and a layer stack |
+| [moth_editor](https://github.com/instinkt900/moth_editor) | Visual layout and animation editor — Flash-like authoring tool for creating moth_ui layout files |
+| [moth_packer](https://github.com/instinkt900/moth_packer) | Command-line texture atlas packer for images and moth_ui layouts |
 
 ---
 

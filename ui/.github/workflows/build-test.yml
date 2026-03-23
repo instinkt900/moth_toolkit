@@ -75,7 +75,7 @@ jobs:
       working-directory: tests
       shell: bash
       run: |
-        conan install . -pr .conan/profile -s build_type=Debug --build=missing
+        conan install . -pr ../.conan/profile -s build_type=Debug --build=missing
         cmake --preset ${{ matrix.configure_preset }}
         cmake --build --preset conan-debug
         ctest --preset conan-debug --output-on-failure

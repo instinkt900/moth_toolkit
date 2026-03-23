@@ -39,8 +39,18 @@ namespace moth_ui {
             IncorrectFormat, ///< The file exists but could not be parsed.
         };
 
+        /// @brief Options controlling how a layout is written to disk.
+        struct SaveOptions {
+            bool binary = false; ///< Write MessagePack binary (.mothb) instead of JSON.
+            bool pretty = false; ///< Pretty-print JSON output (ignored when binary is true).
+        };
+
         /**
          * @brief Loads a layout from a file.
+         *
+         * The format is detected from the file extension: @c .mothb is read as
+         * MessagePack binary; all other extensions are parsed as JSON.
+         *
          * @param path      Path to the layout file.
          * @param outLayout If non-null, receives the loaded Layout on success.
          * @return A LoadResult indicating success or the reason for failure.
@@ -49,14 +59,18 @@ namespace moth_ui {
 
         /**
          * @brief Saves this layout to a file.
-         * @param path Destination path.
+         * @param path    Destination path.
+         * @param options Controls binary/text format and JSON pretty-printing.
          * @return @c true on success.
          */
         bool Save(std::filesystem::path const& path) const;
+        bool Save(std::filesystem::path const& path, SaveOptions const& options) const;
 
-        static int const Version;            ///< Current file format version.
-        static std::string const Extension;  ///< File extension without the leading dot.
-        static std::string const FullExtension; ///< Full file extension including the leading dot.
+        static int const Version;                     ///< Current file format version.
+        static std::string const Extension;           ///< JSON file extension without the leading dot.
+        static std::string const FullExtension;       ///< JSON full file extension including the leading dot.
+        static std::string const BinaryExtension;     ///< Binary file extension without the leading dot.
+        static std::string const FullBinaryExtension; ///< Binary full file extension including the leading dot.
 
         Layout(Layout const&) = default;
         Layout(Layout&&) = default;

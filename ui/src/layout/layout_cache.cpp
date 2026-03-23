@@ -9,7 +9,7 @@ namespace moth_ui {
     }
 
     std::shared_ptr<Layout> LayoutCache::GetLayout(std::string_view name) {
-        auto const it = m_cache.find(std::string(name));
+        auto const it = m_cache.find(name);
         if (std::end(m_cache) == it) {
             return LoadLayout(name);
         }

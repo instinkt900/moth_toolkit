@@ -34,7 +34,7 @@ namespace moth_ui {
 
     private:
         std::string m_root;
-        std::map<std::string, std::shared_ptr<Layout>> m_cache;
+        std::map<std::string, std::shared_ptr<Layout>, std::less<>> m_cache;
 
         std::shared_ptr<Layout> LoadLayout(std::string_view name);
     };

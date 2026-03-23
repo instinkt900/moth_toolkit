@@ -39,23 +39,32 @@ namespace moth_ui {
             IncorrectFormat, ///< The file exists but could not be parsed.
         };
 
+        /// @brief Options controlling how a layout is read from disk.
+        struct LoadOptions {
+            bool binary = false; ///< Read as MessagePack binary; if false, parse as JSON.
+        };
+
         /// @brief Options controlling how a layout is written to disk.
         struct SaveOptions {
             bool binary = false; ///< Write MessagePack binary (.mothb) instead of JSON.
             bool pretty = false; ///< Pretty-print JSON output (ignored when binary is true).
         };
 
+        /// @brief Loads a layout from a file as JSON (default format). Equivalent to Load(path, LoadOptions{}, outLayout).
+        static LoadResult Load(std::filesystem::path const& path, std::shared_ptr<Layout>* outLayout = nullptr);
+
         /**
          * @brief Loads a layout from a file.
          *
-         * The format is detected from the file extension: @c .mothb is read as
-         * MessagePack binary; all other extensions are parsed as JSON.
+         * The caller is responsible for specifying the correct format via @p options.
+         * No inference is performed from the file extension.
          *
          * @param path      Path to the layout file.
+         * @param options   Specifies whether to read as binary (MessagePack) or text (JSON).
          * @param outLayout If non-null, receives the loaded Layout on success.
          * @return A LoadResult indicating success or the reason for failure.
          */
-        static LoadResult Load(std::filesystem::path const& path, std::shared_ptr<Layout>* outLayout = nullptr);
+        static LoadResult Load(std::filesystem::path const& path, LoadOptions const& options, std::shared_ptr<Layout>* outLayout = nullptr);
 
         /// @brief Saves this layout to a file using default SaveOptions (JSON, non-pretty).
         ///        Equivalent to calling Save(path, SaveOptions{}).

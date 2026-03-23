@@ -95,12 +95,16 @@ namespace moth_ui {
     }
 
     Layout::LoadResult Layout::Load(std::filesystem::path const& path, std::shared_ptr<Layout>* outLayout) {
+        return Load(path, {}, outLayout);
+    }
+
+    Layout::LoadResult Layout::Load(std::filesystem::path const& path, LoadOptions const& options, std::shared_ptr<Layout>* outLayout) {
         SerializeContext context;
         context.m_rootPath = path.parent_path();
 
         nlohmann::json json;
         try {
-            if (path.extension() == FullBinaryExtension) {
+            if (options.binary) {
                 std::ifstream ifile(path, std::ios::binary);
                 if (!ifile.is_open()) {
                     return LoadResult::DoesNotExist;

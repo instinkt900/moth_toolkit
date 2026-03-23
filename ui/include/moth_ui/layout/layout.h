@@ -57,13 +57,17 @@ namespace moth_ui {
          */
         static LoadResult Load(std::filesystem::path const& path, std::shared_ptr<Layout>* outLayout = nullptr);
 
+        /// @brief Saves this layout to a file using default SaveOptions (JSON, non-pretty).
+        ///        Equivalent to calling Save(path, SaveOptions{}).
+        bool Save(std::filesystem::path const& path) const;
+
         /**
          * @brief Saves this layout to a file.
          * @param path    Destination path.
-         * @param options Controls binary/text format and JSON pretty-printing.
+         * @param options Controls the output format. SaveOptions defaults to JSON
+         *                (binary = false) with compact output (pretty = false).
          * @return @c true on success.
          */
-        bool Save(std::filesystem::path const& path) const;
         bool Save(std::filesystem::path const& path, SaveOptions const& options) const;
 
         static int const Version;                     ///< Current file format version.

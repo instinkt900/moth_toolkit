@@ -12,6 +12,7 @@ on:
       - 'conanfile.py'
       - 'version.txt'
       - '.conan/**'
+      - '.github/workflows/**'
   pull_request:
     branches: [ master ]
     paths:
@@ -22,6 +23,7 @@ on:
       - 'conanfile.py'
       - 'version.txt'
       - '.conan/**'
+      - '.github/workflows/**'
 
 jobs:
   build:

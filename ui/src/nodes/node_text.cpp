@@ -22,11 +22,11 @@ namespace moth_ui {
         ReloadEntityPrivate();
     }
 
-    void NodeText::Load(char const* fontName, int size) {
-        if (fontName == nullptr || *fontName == 0) {
+    void NodeText::Load(std::string_view fontName, int size) {
+        if (fontName.empty()) {
             m_font = m_context.GetFontFactory().GetDefaultFont(size);
         } else {
-            m_font = m_context.GetFontFactory().GetFont(fontName, size);
+            m_font = m_context.GetFontFactory().GetFont(std::string(fontName), size);
         }
     }
 
@@ -61,6 +61,6 @@ namespace moth_ui {
         m_dropShadow = layoutEntity->m_dropShadow;
         m_dropShadowOffset = layoutEntity->m_dropShadowOffset;
         m_dropShadowColor = layoutEntity->m_dropShadowColor;
-        Load(layoutEntity->m_fontName.c_str(), layoutEntity->m_fontSize);
+        Load(layoutEntity->m_fontName, layoutEntity->m_fontSize);
     }
 }

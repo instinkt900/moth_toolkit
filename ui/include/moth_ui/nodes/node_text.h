@@ -5,6 +5,7 @@
 
 #include <memory>
 #include <string>
+#include <string_view>
 
 namespace moth_ui {
     /**
@@ -37,7 +38,7 @@ namespace moth_ui {
          * @param fontName Name of the font registered with the font factory.
          * @param size     Point size to load.
          */
-        void Load(char const* fontName, int size);
+        void Load(std::string_view fontName, int size);
 
         /**
          * @brief Returns the currently loaded font, or @c nullptr.

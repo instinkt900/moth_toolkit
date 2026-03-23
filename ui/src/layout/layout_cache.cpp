@@ -25,8 +25,10 @@ namespace moth_ui {
         std::shared_ptr<moth_ui::Layout> newLayout;
         auto const loadResult = Layout::Load(filename.c_str(), &newLayout);
         if (loadResult == moth_ui::Layout::LoadResult::Success) {
-            m_cache[std::string(name)] = newLayout;
-            return newLayout;
+            auto insertResult = m_cache.try_emplace(std::string(name), newLayout);
+            if (insertResult.second) {
+                return newLayout;
+            }
         }
         return nullptr;
     }

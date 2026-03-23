@@ -10,6 +10,8 @@ namespace moth_ui {
     int const Layout::Version = 1;
     std::string const Layout::Extension("mothui");
     std::string const Layout::FullExtension("." + Extension);
+    std::string const Layout::BinaryExtension("mothb");
+    std::string const Layout::FullBinaryExtension("." + BinaryExtension);
 
     std::unique_ptr<LayoutEntity> LoadEntity(nlohmann::json const& json, LayoutEntityGroup* parent, LayoutEntity::SerializeContext const& context) {
         LayoutEntityType type = json.value("type", LayoutEntityType::Unknown);
@@ -93,20 +95,32 @@ namespace moth_ui {
     }
 
     Layout::LoadResult Layout::Load(std::filesystem::path const& path, std::shared_ptr<Layout>* outLayout) {
-        std::ifstream ifile(path);
-        if (!ifile.is_open()) {
-            return LoadResult::DoesNotExist;
-        }
+        return Load(path, {}, outLayout);
+    }
 
+    Layout::LoadResult Layout::Load(std::filesystem::path const& path, LoadOptions const& options, std::shared_ptr<Layout>* outLayout) {
         SerializeContext context;
         context.m_rootPath = path.parent_path();
 
         nlohmann::json json;
         try {
-            ifile >> json;
+            if (options.binary) {
+                std::ifstream ifile(path, std::ios::binary);
+                if (!ifile.is_open()) {
+                    return LoadResult::DoesNotExist;
+                }
+                json = nlohmann::json::from_msgpack(ifile);
+            } else {
+                std::ifstream ifile(path);
+                if (!ifile.is_open()) {
+                    return LoadResult::DoesNotExist;
+                }
+                ifile >> json;
+            }
         } catch (nlohmann::json::parse_error const&) {
             return LoadResult::IncorrectFormat;
         }
+
         auto const layout = std::make_shared<Layout>();
         if (!layout->Deserialize(json, context)) {
             return LoadResult::IncorrectFormat;
@@ -123,15 +137,29 @@ namespace moth_ui {
     }
 
     bool Layout::Save(std::filesystem::path const& path) const {
+        return Save(path, {});
+    }
+
+    bool Layout::Save(std::filesystem::path const& path, SaveOptions const& options) const {
+        SerializeContext serializeContext;
+        serializeContext.m_rootPath = path.parent_path();
+        nlohmann::json const json = Serialize(serializeContext);
+
+        if (options.binary) {
+            std::ofstream ofile(path, std::ios::binary);
+            if (!ofile.is_open()) {
+                return false;
+            }
+            auto const bytes = nlohmann::json::to_msgpack(json);
+            std::copy(bytes.begin(), bytes.end(), std::ostreambuf_iterator<char>(ofile));
+            return ofile.good();
+        }
+
         std::ofstream ofile(path);
         if (!ofile.is_open()) {
             return false;
         }
-
-        SerializeContext serializeContext;
-        serializeContext.m_rootPath = path.parent_path();
-        nlohmann::json json = Serialize(serializeContext);
-        ofile << json;
-        return true;
+        ofile << json.dump(options.pretty ? 2 : -1);
+        return ofile.good();
     }
 }

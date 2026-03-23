@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <string>
+#include <string_view>
 #include <map>
 
 namespace moth_ui {
@@ -19,22 +20,22 @@ namespace moth_ui {
          * @brief Sets the root directory used to resolve layout names to file paths.
          * @param path Filesystem path to the root directory.
          */
-        void SetLayoutRoot(char const* path);
+        void SetLayoutRoot(std::string_view path);
 
         /**
          * @brief Returns the layout with the given name, loading it from disk if necessary.
          * @param name Layout name (relative to the root directory, without extension).
          * @return Shared pointer to the layout, or @c nullptr on failure.
          */
-        std::shared_ptr<Layout> GetLayout(char const* name);
+        std::shared_ptr<Layout> GetLayout(std::string_view name);
 
         /// @brief Removes all cached layouts so they are reloaded on next access.
         void FlushCache();
 
     private:
         std::string m_root;
-        std::map<std::string, std::shared_ptr<Layout>> m_cache;
+        std::map<std::string, std::shared_ptr<Layout>, std::less<>> m_cache;
 
-        std::shared_ptr<Layout> LoadLayout(char const* name);
+        std::shared_ptr<Layout> LoadLayout(std::string_view name);
     };
 }

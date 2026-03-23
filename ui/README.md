@@ -4,7 +4,7 @@
 [![Upload Status](https://github.com/instinkt900/moth_ui/actions/workflows/upload-release.yml/badge.svg)](https://github.com/instinkt900/moth_ui/actions/workflows/upload-release.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A C++ library for building 2D UIs in graphical applications such as games and media players. It supports Flash-style keyframe animation, a variety of easing curves, mouse and keyboard events, and custom animation events that let the UI signal back to the application during playback.
+A C++17 library for building 2D UIs in graphical applications such as games and media players. It supports Flash-style keyframe animation, a variety of easing curves, mouse and keyboard events, and custom animation events that let the UI signal back to the application during playback.
 
 ---
 
@@ -121,10 +121,12 @@ python3 -m venv .venv
 pip install conan
 ```
 
+**C++17 is required.** A `.conan/profile` is provided that sets `compiler.cppstd=17`. This profile is used in CI and can be used directly or as a reference when building locally.
+
 ### Linux
 
 ```bash
-conan install . -s compiler.cppstd=17 -s build_type=Release --build=missing
+conan install . -pr .conan/profile -s build_type=Release --build=missing
 cmake --preset conan-release
 cmake --build --preset conan-release
 cmake --install build --config Release --prefix=<install_path>
@@ -133,7 +135,7 @@ cmake --install build --config Release --prefix=<install_path>
 ### Windows
 
 ```bash
-conan install . -s compiler.cppstd=17 -s build_type=Release --build=missing
+conan install . -pr .conan/profile -s build_type=Release --build=missing
 cmake --preset conan-default
 cmake --build --preset conan-release
 cmake --install build --config Release --prefix=<install_path>
@@ -151,13 +153,13 @@ The test suite uses [Catch2](https://github.com/catchorg/Catch2) and lives in th
 cd tests
 
 # Linux
-conan install . -s compiler.cppstd=17 -s build_type=Release --build=missing
+conan install . -pr .conan/profile -s build_type=Debug --build=missing
 cmake --preset conan-debug
 cmake --build --preset conan-debug
 ctest --preset conan-debug --output-on-failure
 
 # Windows
-conan install . -s compiler.cppstd=17 -s build_type=Release --build=missing
+conan install . -pr .conan/profile -s build_type=Debug --build=missing
 cmake --preset conan-default
 cmake --build --preset conan-debug
 ctest --preset conan-debug --output-on-failure

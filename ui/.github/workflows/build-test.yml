@@ -11,6 +11,7 @@ on:
       - 'CMakeLists.txt'
       - 'conanfile.py'
       - 'version.txt'
+      - '.conan/**'
   pull_request:
     branches: [ master ]
     paths:
@@ -20,6 +21,7 @@ on:
       - 'CMakeLists.txt'
       - 'conanfile.py'
       - 'version.txt'
+      - '.conan/**'
 
 jobs:
   build:
@@ -45,7 +47,7 @@ jobs:
     - name: Configure and build
       shell: bash
       run: |
-        conan install . -s compiler.cppstd=17 -s build_type=Release --build=missing -c tools.system.package_manager:mode=install -c tools.system.package_manager:sudo=true
+        conan install . -pr .conan/profile -s build_type=Release --build=missing
         cmake --preset ${{ matrix.configure_preset }}
         cmake --build --preset conan-release --config Release
 
@@ -73,7 +75,7 @@ jobs:
       working-directory: tests
       shell: bash
       run: |
-        conan install . -s compiler.cppstd=17 -s build_type=Debug --build=missing -c tools.system.package_manager:mode=install -c tools.system.package_manager:sudo=true
+        conan install . -pr .conan/profile -s build_type=Debug --build=missing
         cmake --preset ${{ matrix.configure_preset }}
         cmake --build --preset conan-debug
         ctest --preset conan-debug --output-on-failure

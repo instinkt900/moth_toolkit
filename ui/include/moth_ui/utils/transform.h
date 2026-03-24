@@ -80,5 +80,21 @@ namespace moth_ui {
             static constexpr float kRadToDeg = 180.0f / 3.14159265358979f;
             return std::atan2(m[1][0], m[0][0]) * kRadToDeg;
         }
+
+        /**
+         * @brief Returns the inverse of this transform.
+         * @note Valid only for rigid-body transforms (rotation + translation, no scale or shear).
+         *       For such transforms the inverse is R^T with translation -(R^T * t).
+         */
+        FloatMat4x4 Invert() const {
+            FloatMat4x4 result;
+            // Transpose the rotation sub-matrix
+            result.m[0][0] = m[0][0];  result.m[0][1] = m[1][0];
+            result.m[1][0] = m[0][1];  result.m[1][1] = m[1][1];
+            // Inverse translation: -(R^T * t)
+            result.m[0][3] = -((m[0][0] * m[0][3]) + (m[1][0] * m[1][3]));
+            result.m[1][3] = -((m[0][1] * m[0][3]) + (m[1][1] * m[1][3]));
+            return result;
+        }
     };
 }

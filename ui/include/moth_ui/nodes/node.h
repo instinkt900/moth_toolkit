@@ -219,6 +219,9 @@ namespace moth_ui {
         AnimationController& GetAnimationController() { return *m_animationController; }
 
     protected:
+        /// @brief Returns the fully composed local-to-world transform for this node.
+        FloatMat4x4 GetWorldTransform() const;
+
         Context& m_context;
         std::shared_ptr<LayoutEntity> m_layout;
 

@@ -55,33 +55,48 @@ namespace moth_ui {
     void Node::Update(uint32_t ticks) {
     }
 
+    FloatMat4x4 Node::GetWorldTransform() const {
+        float const w = static_cast<float>(m_screenRect.bottomRight.x - m_screenRect.topLeft.x);
+        float const h = static_cast<float>(m_screenRect.bottomRight.y - m_screenRect.topLeft.y);
+        FloatVec2 const localPivot = { m_pivot.x * w, m_pivot.y * h };
+        FloatVec2 const translation = m_parent != nullptr
+            ? static_cast<FloatVec2>(m_screenRect.topLeft - m_parent->GetScreenRect().topLeft)
+            : static_cast<FloatVec2>(m_screenRect.topLeft);
+        auto const localTransform = FloatMat4x4::Translation(translation) * FloatMat4x4::Rotation(m_rotation, localPivot);
+        if (m_parent != nullptr) {
+            return m_parent->GetWorldTransform() * localTransform;
+        }
+        return localTransform;
+    }
+
     void Node::Draw() {
         if (!IsVisible()) {
             return;
         }
 
-        auto const w = static_cast<float>(m_screenRect.bottomRight.x - m_screenRect.topLeft.x);
-        auto const h = static_cast<float>(m_screenRect.bottomRight.y - m_screenRect.topLeft.y);
-        auto const localPivot = FloatVec2{ m_pivot.x * w, m_pivot.y * h };
-        auto const transform = FloatMat4x4::Translation(static_cast<FloatVec2>(m_screenRect.topLeft))
-                             * FloatMat4x4::Rotation(m_rotation, localPivot);
+        float const w = static_cast<float>(m_screenRect.bottomRight.x - m_screenRect.topLeft.x);
+        float const h = static_cast<float>(m_screenRect.bottomRight.y - m_screenRect.topLeft.y);
+        FloatVec2 const localPivot = { m_pivot.x * w, m_pivot.y * h };
+        FloatVec2 const translation = m_parent != nullptr
+            ? static_cast<FloatVec2>(m_screenRect.topLeft - m_parent->GetScreenRect().topLeft)
+            : static_cast<FloatVec2>(m_screenRect.topLeft);
+        auto const localTransform = FloatMat4x4::Translation(translation) * FloatMat4x4::Rotation(m_rotation, localPivot);
 
         auto& renderer = m_context.GetRenderer();
-        renderer.PushTransform(transform);
+        renderer.PushTransform(localTransform);
         renderer.PushBlendMode(m_blend);
         renderer.PushColor(m_color);
         DrawInternal();
-        renderer.PopColor();
-        renderer.PopBlendMode();
-        renderer.PopTransform();
-
         if (m_showRect) {
             renderer.PushColor(BasicColors::Red);
             renderer.PushBlendMode(BlendMode::Replace);
-            renderer.RenderRect(m_screenRect);
+            renderer.RenderRect(IntRect{ { 0, 0 }, { static_cast<int>(w), static_cast<int>(h) } });
             renderer.PopBlendMode();
             renderer.PopColor();
         }
+        renderer.PopColor();
+        renderer.PopBlendMode();
+        renderer.PopTransform();
     }
 
     void Node::SetScreenRect(IntRect const& rect) {
@@ -118,14 +133,15 @@ namespace moth_ui {
     }
 
     bool Node::IsInBounds(IntVec2 const& point) const {
-        return IsInRect(point, m_screenRect);
+        auto const localPoint = GetWorldTransform().Invert().TransformPoint(static_cast<FloatVec2>(point));
+        float const w = static_cast<float>(m_screenRect.bottomRight.x - m_screenRect.topLeft.x);
+        float const h = static_cast<float>(m_screenRect.bottomRight.y - m_screenRect.topLeft.y);
+        return localPoint.x >= 0.0f && localPoint.x <= w && localPoint.y >= 0.0f && localPoint.y <= h;
     }
 
     IntVec2 Node::TranslatePosition(IntVec2 const& point) const {
-        IntVec2 translated = point;
-        translated.x -= m_screenRect.topLeft.x;
-        translated.y -= m_screenRect.topLeft.y;
-        return translated;
+        auto const localPoint = GetWorldTransform().Invert().TransformPoint(static_cast<FloatVec2>(point));
+        return static_cast<IntVec2>(localPoint);
     }
 
     std::shared_ptr<Node> Node::FindChild(std::string const& id) {

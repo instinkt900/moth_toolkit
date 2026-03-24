@@ -53,7 +53,8 @@ namespace moth_ui {
                     }
                 }
             } else {
-                renderer.RenderImage(*m_image, m_sourceRect, m_screenRect, m_imageScaleType, m_imageScale);
+                IntRect const localRect{ { 0, 0 }, m_screenRect.bottomRight - m_screenRect.topLeft };
+                renderer.RenderImage(*m_image, m_sourceRect, localRect, m_imageScaleType, m_imageScale);
             }
         }
     }
@@ -66,10 +67,10 @@ namespace moth_ui {
             m_sourceSlices[3] = m_sourceRect.bottomRight;
 
             auto const screenDim = static_cast<FloatVec2>(m_screenRect.dimensions());
-            m_targetSlices[0] = m_screenRect.topLeft;
-            m_targetSlices[1] = m_screenRect.topLeft + static_cast<IntVec2>(screenDim * m_targetBorders.anchor.topLeft + m_targetBorders.offset.topLeft);
-            m_targetSlices[2] = m_screenRect.topLeft + static_cast<IntVec2>(screenDim * m_targetBorders.anchor.bottomRight + m_targetBorders.offset.bottomRight);
-            m_targetSlices[3] = m_screenRect.bottomRight;
+            m_targetSlices[0] = { 0, 0 };
+            m_targetSlices[1] = static_cast<IntVec2>(screenDim * m_targetBorders.anchor.topLeft + m_targetBorders.offset.topLeft);
+            m_targetSlices[2] = static_cast<IntVec2>(screenDim * m_targetBorders.anchor.bottomRight + m_targetBorders.offset.bottomRight);
+            m_targetSlices[3] = static_cast<IntVec2>(screenDim);
         }
     }
 

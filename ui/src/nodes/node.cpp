@@ -60,12 +60,20 @@ namespace moth_ui {
             return;
         }
 
+        auto const w = static_cast<float>(m_screenRect.bottomRight.x - m_screenRect.topLeft.x);
+        auto const h = static_cast<float>(m_screenRect.bottomRight.y - m_screenRect.topLeft.y);
+        auto const localPivot = FloatVec2{ m_pivot.x * w, m_pivot.y * h };
+        auto const transform = FloatMat4x4::Translation(static_cast<FloatVec2>(m_screenRect.topLeft))
+                             * FloatMat4x4::Rotation(m_rotation, localPivot);
+
         auto& renderer = m_context.GetRenderer();
+        renderer.PushTransform(transform);
         renderer.PushBlendMode(m_blend);
         renderer.PushColor(m_color);
         DrawInternal();
         renderer.PopColor();
         renderer.PopBlendMode();
+        renderer.PopTransform();
 
         if (m_showRect) {
             renderer.PushColor(BasicColors::Red);
@@ -87,6 +95,7 @@ namespace moth_ui {
     void Node::Refresh(float frame) {
         m_layoutRect = m_layout->GetBoundsAtFrame(frame);
         m_color = m_layout->GetColorAtFrame(frame);
+        m_rotation = m_layout->GetRotationAtFrame(frame);
         RecalculateBounds();
     }
 
@@ -134,6 +143,8 @@ namespace moth_ui {
         m_id = m_layout->m_id;
         m_layoutRect = m_layout->GetBoundsAtFrame(0);
         m_color = m_layout->GetColorAtFrame(0);
+        m_rotation = m_layout->GetRotationAtFrame(0);
+        m_pivot = m_layout->m_pivot;
         m_visible = m_layout->m_visible;
         m_blend = m_layout->m_blend;
         m_animationController = std::make_unique<AnimationController>(this);

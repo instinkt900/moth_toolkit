@@ -34,6 +34,8 @@ namespace {
             return node->GetColor().b;
         case AnimationTrack::Target::ColorAlpha:
             return node->GetColor().a;
+        case AnimationTrack::Target::Rotation:
+            return node->GetRotation();
         case AnimationTrack::Target::Events:
         case AnimationTrack::Target::Unknown:
             break;

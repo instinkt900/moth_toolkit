@@ -6,6 +6,7 @@
 #include "moth_ui/layout/layout_rect.h"
 #include "moth_ui/moth_ui_fwd.h"
 #include "moth_ui/utils/color.h"
+#include "moth_ui/utils/transform.h"
 
 #include <memory>
 
@@ -174,6 +175,18 @@ namespace moth_ui {
         BlendMode GetBlendMode() const { return m_blend; }
 
         /**
+         * @brief Sets the clockwise rotation in degrees applied when drawing this node.
+         * @param rotation Rotation in degrees.
+         */
+        void SetRotation(float rotation) { m_rotation = rotation; }
+
+        /// @brief Returns the clockwise rotation in degrees applied when drawing this node.
+        float GetRotation() const { return m_rotation; }
+
+        /// @brief Returns a mutable reference to the node's rotation.
+        float& GetRotation() { return m_rotation; }
+
+        /**
          * @brief Switches the active animation clip by name.
          * @param name Name of the animation clip to play.
          * @return @c true if the clip was found and activated.
@@ -215,6 +228,8 @@ namespace moth_ui {
         LayoutRect m_layoutRect;
         Color m_color = BasicColors::White;
         BlendMode m_blend = BlendMode::Replace;
+        float m_rotation = 0.0f;
+        FloatVec2 m_pivot = kDefaultPivot;
 
         bool m_visible = true;
         bool m_showRect = false;

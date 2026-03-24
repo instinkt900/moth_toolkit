@@ -61,6 +61,7 @@
 #include "moth_ui/utils/interp.h"
 #include "moth_ui/utils/rect.h"
 #include "moth_ui/utils/rect_serialization.h"
+#include "moth_ui/utils/transform.h"
 #include "moth_ui/utils/vector.h"
 #include "moth_ui/utils/vector_serialization.h"
 #include "moth_ui/utils/vector_utils.h"

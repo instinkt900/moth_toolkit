@@ -6,6 +6,7 @@
 #include "moth_ui/graphics/text_alignment.h"
 #include "moth_ui/utils/color.h"
 #include "moth_ui/utils/rect.h"
+#include "moth_ui/utils/transform.h"
 
 #include <string>
 
@@ -35,6 +36,18 @@ namespace moth_ui {
 
         /// @brief Pops the top colour, restoring the previous one.
         virtual void PopColor() = 0;
+
+        /**
+         * @brief Pushes a 2D affine transform. Draw calls use local-space rects;
+         *        the renderer maps them to screen space via this transform.
+         *        Transforms are not composed — each push replaces the active transform
+         *        until the matching PopTransform.
+         * @param transform The absolute local-to-screen transform for the current node.
+         */
+        virtual void PushTransform(FloatMat4x4 const& transform) = 0;
+
+        /// @brief Pops the current transform, restoring the previous one.
+        virtual void PopTransform() = 0;
 
         /**
          * @brief Pushes a clip rectangle; subsequent draws are clipped to it.

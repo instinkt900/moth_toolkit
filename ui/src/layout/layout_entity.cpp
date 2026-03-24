@@ -101,6 +101,14 @@ namespace moth_ui {
         return bounds;
     }
 
+    float LayoutEntity::GetRotationAtFrame(float frame) const {
+        auto const trackIt = m_tracks.find(AnimationTrack::Target::Rotation);
+        if (std::end(m_tracks) != trackIt) {
+            return trackIt->second->GetValueAtFrame(frame);
+        }
+        return 0.0f;
+    }
+
     Color LayoutEntity::GetColorAtFrame(float frame) const {
         auto GetValue = [&](AnimationTrack::Target target) {
             float value = 0;
@@ -127,6 +135,7 @@ namespace moth_ui {
         j["class"] = m_class;
         j["visible"] = m_visible;
         j["blend"] = m_blend;
+        j["pivot"] = m_pivot;
         nlohmann::json trackJson;
         for (auto&& [target, track] : m_tracks) {
             trackJson.push_back(*track);
@@ -144,6 +153,7 @@ namespace moth_ui {
         m_class = json.value("class", "");
         m_visible = json.value("visible", m_visible);
         m_blend = json.value("blend", m_blend);
+        m_pivot = json.value("pivot", m_pivot);
 
         if (json.contains("tracks")) {
             auto const& tracksJson = json["tracks"];
@@ -189,6 +199,7 @@ namespace moth_ui {
             std::make_pair(AnimationTrack::Target::ColorGreen, 1.0f),
             std::make_pair(AnimationTrack::Target::ColorBlue, 1.0f),
             std::make_pair(AnimationTrack::Target::ColorAlpha, 1.0f),
+            std::make_pair(AnimationTrack::Target::Rotation, 0.0f),
         };
         for (auto&& [target, value] : targetList) {
             if (std::end(m_tracks) == m_tracks.find(target)) {

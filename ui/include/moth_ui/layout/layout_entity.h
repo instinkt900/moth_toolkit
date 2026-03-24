@@ -4,6 +4,7 @@
 #include "moth_ui/layout/layout_entity_type.h"
 #include "moth_ui/moth_ui_fwd.h"
 #include "moth_ui/utils/color.h"
+#include "moth_ui/utils/transform.h"
 
 #include <filesystem>
 #include <nlohmann/json_fwd.hpp>
@@ -81,6 +82,12 @@ namespace moth_ui {
         Color GetColorAtFrame(float frame) const;
 
         /**
+         * @brief Returns the interpolated rotation (degrees, clockwise) at the given frame.
+         * @param frame Frame index (may be fractional).
+         */
+        float GetRotationAtFrame(float frame) const;
+
+        /**
          * @brief Context passed to Serialize() / Deserialize() for path resolution.
          */
         struct SerializeContext {
@@ -120,6 +127,7 @@ namespace moth_ui {
         LayoutEntityGroup* m_parent = nullptr; ///< Owning group, or @c nullptr for root entities.
         bool m_visible = true;            ///< Default visibility of the instantiated node.
         BlendMode m_blend = BlendMode::Replace; ///< Default blend mode of the instantiated node.
+        FloatVec2 m_pivot = kDefaultPivot; ///< Rotation pivot as a normalised [0,1] fraction of the node's bounds. Default is centre.
         std::map<AnimationTrack::Target, std::unique_ptr<AnimationTrack>> m_tracks; ///< Per-property keyframe tracks.
         std::shared_ptr<LayoutEntity> m_hardReference; ///< Immutable source data used to compute overrides for sublayout refs.
 

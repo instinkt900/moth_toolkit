@@ -55,18 +55,26 @@ namespace moth_ui {
     void Node::Update(uint32_t ticks) {
     }
 
-    FloatMat4x4 Node::GetWorldTransform() const {
+    void Node::UpdateLocalTransform() {
         float const w = static_cast<float>(m_screenRect.bottomRight.x - m_screenRect.topLeft.x);
         float const h = static_cast<float>(m_screenRect.bottomRight.y - m_screenRect.topLeft.y);
         FloatVec2 const localPivot = { m_pivot.x * w, m_pivot.y * h };
         FloatVec2 const translation = m_parent != nullptr
             ? static_cast<FloatVec2>(m_screenRect.topLeft - m_parent->GetScreenRect().topLeft)
             : static_cast<FloatVec2>(m_screenRect.topLeft);
-        auto const localTransform = FloatMat4x4::Translation(translation) * FloatMat4x4::Rotation(m_rotation, localPivot);
+        m_localTransform = FloatMat4x4::Translation(translation) * FloatMat4x4::Rotation(m_rotation, localPivot);
+    }
+
+    FloatMat4x4 Node::GetWorldTransform() const {
         if (m_parent != nullptr) {
-            return m_parent->GetWorldTransform() * localTransform;
+            return m_parent->GetWorldTransform() * m_localTransform;
         }
-        return localTransform;
+        return m_localTransform;
+    }
+
+    void Node::SetRotation(float rotation) {
+        m_rotation = rotation;
+        UpdateLocalTransform();
     }
 
     void Node::Draw() {
@@ -76,14 +84,9 @@ namespace moth_ui {
 
         float const w = static_cast<float>(m_screenRect.bottomRight.x - m_screenRect.topLeft.x);
         float const h = static_cast<float>(m_screenRect.bottomRight.y - m_screenRect.topLeft.y);
-        FloatVec2 const localPivot = { m_pivot.x * w, m_pivot.y * h };
-        FloatVec2 const translation = m_parent != nullptr
-            ? static_cast<FloatVec2>(m_screenRect.topLeft - m_parent->GetScreenRect().topLeft)
-            : static_cast<FloatVec2>(m_screenRect.topLeft);
-        auto const localTransform = FloatMat4x4::Translation(translation) * FloatMat4x4::Rotation(m_rotation, localPivot);
 
         auto& renderer = m_context.GetRenderer();
-        renderer.PushTransform(localTransform);
+        renderer.PushTransform(m_localTransform);
         renderer.PushBlendMode(m_blend);
         renderer.PushColor(m_color);
         DrawInternal();
@@ -103,6 +106,7 @@ namespace moth_ui {
         m_overrideScreenRect = true;
         if (m_screenRect != rect) {
             m_screenRect = rect;
+            UpdateLocalTransform();
             UpdateChildBounds();
         }
     }
@@ -122,6 +126,7 @@ namespace moth_ui {
             m_screenRect.topLeft = static_cast<IntVec2>(parentOffset + m_layoutRect.offset.topLeft + parentDimensions * m_layoutRect.anchor.topLeft);
             m_screenRect.bottomRight = static_cast<IntVec2>(parentOffset + m_layoutRect.offset.bottomRight + parentDimensions * m_layoutRect.anchor.bottomRight);
         }
+        UpdateLocalTransform();
         UpdateChildBounds();
     }
 

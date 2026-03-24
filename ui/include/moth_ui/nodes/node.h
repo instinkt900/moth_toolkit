@@ -178,7 +178,7 @@ namespace moth_ui {
          * @brief Sets the clockwise rotation in degrees applied when drawing this node.
          * @param rotation Rotation in degrees.
          */
-        void SetRotation(float rotation) { m_rotation = rotation; }
+        void SetRotation(float rotation);
 
         /// @brief Returns the clockwise rotation in degrees applied when drawing this node.
         float GetRotation() const { return m_rotation; }
@@ -234,6 +234,8 @@ namespace moth_ui {
         float m_rotation = 0.0f;
         FloatVec2 m_pivot = kDefaultPivot;
 
+        FloatMat4x4 m_localTransform;
+
         bool m_visible = true;
         bool m_showRect = false;
         bool m_overrideScreenRect = false;
@@ -247,5 +249,6 @@ namespace moth_ui {
 
     private:
         void ReloadEntityPrivate();
+        void UpdateLocalTransform();
     };
 }

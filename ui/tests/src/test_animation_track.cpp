@@ -19,8 +19,8 @@ TEST_CASE("AnimationTrack initial value construction", "[animation_track][initia
     REQUIRE(track.Keyframes()[0]->m_value == Catch::Approx(0.5f));
 }
 
-TEST_CASE("AnimationTrack ContinuousTargets has 12 entries", "[animation_track]") {
-    REQUIRE(AnimationTrack::ContinuousTargets.size() == 12);
+TEST_CASE("AnimationTrack ContinuousTargets has 13 entries", "[animation_track]") {
+    REQUIRE(AnimationTrack::ContinuousTargets.size() == 13);
 }
 
 TEST_CASE("AnimationTrack ContinuousTargets layout offsets and anchors", "[animation_track]") {

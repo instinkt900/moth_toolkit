@@ -18,6 +18,8 @@ public:
     void PopBlendMode() override {}
     void PushColor(moth_ui::Color const&) override {}
     void PopColor() override {}
+    void PushTransform(moth_ui::FloatMat4x4 const&) override {}
+    void PopTransform() override {}
     void PushClip(moth_ui::IntRect const&) override {}
     void PopClip() override {}
     void RenderRect(moth_ui::IntRect const&) override {}

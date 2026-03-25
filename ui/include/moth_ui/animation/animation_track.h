@@ -36,10 +36,11 @@ namespace moth_ui {
             ColorGreen,    ///< Green colour component [0,1].
             ColorBlue,     ///< Blue colour component [0,1].
             ColorAlpha,    ///< Alpha colour component [0,1].
+            Rotation,      ///< Clockwise rotation in degrees.
         };
 
         /// @brief All targets that are continuously interpolated (excludes Unknown).
-        static constexpr std::array<Target, 12> ContinuousTargets{
+        static constexpr std::array<Target, 13> ContinuousTargets{
             Target::TopOffset,
             Target::BottomOffset,
             Target::LeftOffset,
@@ -52,6 +53,7 @@ namespace moth_ui {
             Target::ColorGreen,
             Target::ColorBlue,
             Target::ColorAlpha,
+            Target::Rotation,
         };
 
         AnimationTrack(AnimationTrack const& other);

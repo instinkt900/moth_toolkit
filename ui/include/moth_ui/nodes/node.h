@@ -6,6 +6,7 @@
 #include "moth_ui/layout/layout_rect.h"
 #include "moth_ui/moth_ui_fwd.h"
 #include "moth_ui/utils/color.h"
+#include "moth_ui/utils/transform.h"
 
 #include <memory>
 
@@ -174,6 +175,24 @@ namespace moth_ui {
         BlendMode GetBlendMode() const { return m_blend; }
 
         /**
+         * @brief Sets the clockwise rotation in degrees applied when drawing this node.
+         * @param rotation Rotation in degrees.
+         */
+        void SetRotation(float rotation);
+
+        /// @brief Returns the clockwise rotation in degrees applied when drawing this node.
+        float GetRotation() const { return m_rotation; }
+
+        /**
+         * @brief Sets the rotation pivot as a normalised [0,1] fraction of the node's bounds.
+         *        Only updates the local transform; does not reload the full entity.
+         */
+        void SetPivot(FloatVec2 const& pivot);
+
+        /// @brief Returns a mutable reference to the node's rotation.
+        float& GetRotation() { return m_rotation; }
+
+        /**
          * @brief Switches the active animation clip by name.
          * @param name Name of the animation clip to play.
          * @return @c true if the clip was found and activated.
@@ -206,6 +225,9 @@ namespace moth_ui {
         AnimationController& GetAnimationController() { return *m_animationController; }
 
     protected:
+        /// @brief Returns the fully composed local-to-world transform for this node.
+        FloatMat4x4 GetWorldTransform() const;
+
         Context& m_context;
         std::shared_ptr<LayoutEntity> m_layout;
 
@@ -215,6 +237,10 @@ namespace moth_ui {
         LayoutRect m_layoutRect;
         Color m_color = BasicColors::White;
         BlendMode m_blend = BlendMode::Replace;
+        float m_rotation = 0.0f;
+        FloatVec2 m_pivot = kDefaultPivot;
+
+        FloatMat4x4 m_localTransform;
 
         bool m_visible = true;
         bool m_showRect = false;
@@ -229,5 +255,6 @@ namespace moth_ui {
 
     private:
         void ReloadEntityPrivate();
+        void UpdateLocalTransform();
     };
 }

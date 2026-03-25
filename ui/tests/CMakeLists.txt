@@ -26,6 +26,7 @@ set(SOURCES
     src/test_group.cpp
     src/test_layout_serialization.cpp
     src/test_animation_clip_controller.cpp
+    src/test_transform.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

@@ -2,6 +2,7 @@
 #include "moth_ui/nodes/node.h"
 #include "moth_ui/events/event_mouse.h"
 #include "moth_ui/utils/color.h"
+#include "moth_ui/utils/rect.h"
 #include "moth_ui/graphics/blend_mode.h"
 #include "moth_ui/layout/layout_rect.h"
 #include <catch2/catch_all.hpp>
@@ -129,4 +130,63 @@ TEST_CASE("Node FindChild returns nullptr for leaf node", "[node][hierarchy]") {
     MockContext mc;
     auto node = std::make_shared<Node>(mc.context);
     REQUIRE(node->FindChild("anything") == nullptr);
+}
+
+TEST_CASE("Node default rotation is zero", "[node][rotation]") {
+    MockContext mc;
+    auto node = std::make_shared<Node>(mc.context);
+    REQUIRE(node->GetRotation() == Catch::Approx(0.0f));
+}
+
+TEST_CASE("Node rotation get and set", "[node][rotation]") {
+    MockContext mc;
+    auto node = std::make_shared<Node>(mc.context);
+    node->SetScreenRect(MakeRect(0, 0, 100, 100));
+    node->SetRotation(45.0f);
+    REQUIRE(node->GetRotation() == Catch::Approx(45.0f));
+}
+
+TEST_CASE("Node IsInBounds unrotated accepts interior point", "[node][rotation][bounds]") {
+    MockContext mc;
+    auto node = std::make_shared<Node>(mc.context);
+    node->SetScreenRect(MakeRect(0, 0, 100, 100));
+    REQUIRE(node->IsInBounds(IntVec2{ 50, 50 }));
+}
+
+TEST_CASE("Node IsInBounds unrotated rejects exterior point", "[node][rotation][bounds]") {
+    MockContext mc;
+    auto node = std::make_shared<Node>(mc.context);
+    node->SetScreenRect(MakeRect(0, 0, 100, 100));
+    REQUIRE_FALSE(node->IsInBounds(IntVec2{ 150, 50 }));
+}
+
+TEST_CASE("Node IsInBounds with 90-degree rotation", "[node][rotation][bounds]") {
+    // 100x100 node at (0,0), rotated 90 degrees CW around its centre (50,50).
+    // The bounding region does not change for a square; (50,50) must remain inside.
+    MockContext mc;
+    auto node = std::make_shared<Node>(mc.context);
+    node->SetScreenRect(MakeRect(0, 0, 100, 100));
+    node->SetRotation(90.0f);
+    REQUIRE(node->IsInBounds(IntVec2{ 50, 50 }));
+}
+
+TEST_CASE("Node IsInBounds with 45-degree rotation rejects corner that moved out", "[node][rotation][bounds]") {
+    // 100x100 node at (0,0) rotated 45 CW around centre (50,50).
+    // The original top-right corner (100,0) in world space moves to roughly (50+71, 50) = (121, 50).
+    // The world point (95, 5) — near the original top-right — is outside the rotated rect.
+    MockContext mc;
+    auto node = std::make_shared<Node>(mc.context);
+    node->SetScreenRect(MakeRect(0, 0, 100, 100));
+    node->SetRotation(45.0f);
+    REQUIRE_FALSE(node->IsInBounds(IntVec2{ 95, 5 }));
+}
+
+TEST_CASE("Node TranslatePosition maps world point to local space", "[node][rotation][bounds]") {
+    MockContext mc;
+    auto node = std::make_shared<Node>(mc.context);
+    // No rotation: world point (30,40) on a node at (10,10) -> local (20,30)
+    node->SetScreenRect(MakeRect(10, 10, 110, 110));
+    auto const local = node->TranslatePosition(IntVec2{ 30, 40 });
+    REQUIRE(local.x == Catch::Approx(20.0f).margin(1.0f));
+    REQUIRE(local.y == Catch::Approx(30.0f).margin(1.0f));
 }

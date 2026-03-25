@@ -37,23 +37,24 @@ namespace moth_ui {
 
     void NodeText::DrawInternal() {
         auto& renderer = m_context.GetRenderer();
+        IntRect const localRect{ { 0, 0 }, m_screenRect.bottomRight - m_screenRect.topLeft };
         if (m_font) {
             if (m_dropShadow) {
                 // pop the color so the dropshadow color isnt affected by the node color unlike the text
                 renderer.PopColor();
                 renderer.PushColor(m_dropShadowColor);
-                IntRect dropRect = m_screenRect;
+                IntRect dropRect = localRect;
                 dropRect.topLeft += m_dropShadowOffset;
                 dropRect.bottomRight += m_dropShadowOffset;
                 renderer.RenderText(m_text, *m_font, m_horizontalAlignment, m_verticalAlignment, dropRect);
                 renderer.PopColor();
                 renderer.PushColor(m_color);
             }
-            renderer.RenderText(m_text, *m_font, m_horizontalAlignment, m_verticalAlignment, m_screenRect);
+            renderer.RenderText(m_text, *m_font, m_horizontalAlignment, m_verticalAlignment, localRect);
         } else {
             renderer.PopColor();
             renderer.PushColor({ 1.0f, 0.0f, 1.0f, 1.0f });
-            renderer.RenderFilledRect(m_screenRect);
+            renderer.RenderFilledRect(localRect);
             renderer.PopColor();
             renderer.PushColor(m_color);
         }

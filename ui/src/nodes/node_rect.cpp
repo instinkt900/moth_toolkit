@@ -19,10 +19,11 @@ namespace moth_ui {
     }
 
     void NodeRect::DrawInternal() {
+        IntRect const localRect{ { 0, 0 }, m_screenRect.bottomRight - m_screenRect.topLeft };
         if (m_filled) {
-            m_context.GetRenderer().RenderFilledRect(m_screenRect);
+            m_context.GetRenderer().RenderFilledRect(localRect);
         } else {
-            m_context.GetRenderer().RenderRect(m_screenRect);
+            m_context.GetRenderer().RenderRect(localRect);
         }
     }
 

@@ -3,14 +3,48 @@
 All notable changes to this project will be documented in this file.
 Entries are generated automatically from git history using [git-cliff](https://github.com/orhun/git-cliff).
 
+## [1.5.0] - 2026-03-25
+### Features
+- Add binary and pretty-print options to Layout::Save, detect binary on Load
+- Add LoadOptions to Layout::Load, remove extension inference
+- Draw magenta placeholder rect when NodeText font is missing
+- Add rotation and transform support to nodes
+- Composing transforms, rotation-aware hit testing
+- Add SetPivot() to Node
+
+### Bug Fixes
+- Fetch tags after creation so git-cliff --current finds the tag
+- Force-refresh tags on fetch to avoid stale refs on retry
+- Use ../.conan/profile in tests subdirectory
+- Using try_emplace rather than operator[] in layout cache
+- Pass world transform to PushTransform; fix test coverage gaps
+- Recompute local transform after ReloadEntityPrivate
+
+### Refactoring
+- Replace char const* with std::string_view in public API
+- Use transparent comparator in LayoutCache to avoid temporary string on lookup
+- Promote kDegToRad and kRadToDeg to namespace scope in transform.h
+
+### Performance
+- Cache local transform on Node to avoid per-frame trig
+
+### Documentation
+- Add full ecosystem table to Related Projects
+- Update canyon link to moth_graphics in Related Projects
+- Clarify Save overload docs to state default SaveOptions behaviour
+
+### Testing
+- Add tests for FloatMat4x4 and node rotation/hit-testing
+
+### Miscellaneous
+- Removing unused conan profiles
+
+### Changes
+- Update version from 1.1.1 to 1.5.0
+
 ## [1.1.1] - 2026-03-21
 ### Bug Fixes
 - Fixing order of includes for serialization helpers
-
-### Changes
-- Run build via cmake directly so clang-tidy is exercised in CI
-- Simplifying build to not use profiles
-- Fixing upload action
 
 ### Documentation
 - Updating readme with build command
@@ -19,17 +53,14 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Bump patch version to 1.1.1
 
 ## [1.1.0] - 2026-03-18
-### Changes
-- Trigger build on push to master and rename release to generate-changelog
-- Rename workflows, consolidate release into upload-release
-- Fetch and rebase before pushing CHANGELOG.md to master
-- Add path filters to workflow triggers; update TODO
+### Features
+- Add moth_ui.h aggregate header and moth_ui_fwd.h forward declaration header
+
+### Refactoring
+- Update all ui_fwd.h includes to moth_ui_fwd.h
 
 ### Documentation
 - Overhaul README and add MIT LICENSE
-
-### Features
-- Add moth_ui.h aggregate header and moth_ui_fwd.h forward declaration header
 
 ### Miscellaneous
 - Export LICENSE in conanfile and deprecate ui_fwd.h
@@ -39,18 +70,14 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Updating TODO with some pending tasks
 - Release workflow to build archives with proper folder structure
 
-### Refactoring
-- Update all ui_fwd.h includes to moth_ui_fwd.h
-
 ## [1.0.0] - 2026-03-14
+### Miscellaneous
+- Add git-cliff changelog automation
+
 ### Changes
 - Pushing for v1.0
 - Removing artifactory url in favor of using secrets
 - Add animation clip controller event timing tests
-- Add [skip ci] to CHANGELOG commit to prevent re-triggering upload-lib
-
-### Miscellaneous
-- Add git-cliff changelog automation
 
 ## [0.3.0] - 2025-08-14
 ### Changes
@@ -69,6 +96,20 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Fixing bad casing on build configs in actions
 - Fixing upload action
 - Some fixes that showed up when consuming moth
+
+### Refactoring
+- Updating editor to use canyon as a backend.
+
+### Testing
+- Testing protection
+
+### Miscellaneous
+- Removing unused submodules
+- Removed unused externals
+- Removed example project.
+- More cleaning out of stuff.
+- Tweaking versions for flexibility
+- Tagging the repo should only happen once after all the uploads.
 
 ### Changes
 - Initial commit of moth_ui separated from previous project
@@ -385,19 +426,5 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Added configs for shared library building.
 - Removing shared configuration.
 - Source cleanup.
-
-### Miscellaneous
-- Removing unused submodules
-- Removed unused externals
-- Removed example project.
-- More cleaning out of stuff.
-- Tweaking versions for flexibility
-- Tagging the repo should only happen once after all the uploads.
-
-### Refactoring
-- Updating editor to use canyon as a backend.
-
-### Testing
-- Testing protection
 
 

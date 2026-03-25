@@ -174,5 +174,6 @@ namespace moth_ui {
         m_visible = m_layout->m_visible;
         m_blend = m_layout->m_blend;
         m_animationController = std::make_unique<AnimationController>(this);
+        UpdateLocalTransform();
     }
 }

@@ -9,6 +9,12 @@ namespace moth_ui {
     // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers)
     /// @brief The default rotation pivot: the centre of a node's bounds.
     inline FloatVec2 const kDefaultPivot = { 0.5f, 0.5f };
+
+    /// @brief Multiply by this to convert degrees to radians.
+    inline constexpr float kDegToRad = 3.14159265358979f / 180.0f;
+
+    /// @brief Multiply by this to convert radians to degrees.
+    inline constexpr float kRadToDeg = 180.0f / 3.14159265358979f;
     // NOLINTEND(cppcoreguidelines-avoid-magic-numbers)
 
     /**
@@ -43,7 +49,6 @@ namespace moth_ui {
 
         /// @brief Returns a clockwise rotation around Z in degrees, pivoting around @p pivot (in the same space as the points being transformed).
         static FloatMat4x4 Rotation(float degrees, FloatVec2 pivot) {
-            static constexpr float kDegToRad = 3.14159265358979f / 180.0f;
             float const rad = degrees * kDegToRad;
             float const cosA = std::cos(rad);
             float const sinA = std::sin(rad);
@@ -77,7 +82,6 @@ namespace moth_ui {
 
         /// @brief Extracts the clockwise Z-rotation angle in degrees encoded in the matrix.
         float GetRotationDegrees() const {
-            static constexpr float kRadToDeg = 180.0f / 3.14159265358979f;
             return std::atan2(m[1][0], m[0][0]) * kRadToDeg;
         }
 

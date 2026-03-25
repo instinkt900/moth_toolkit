@@ -77,6 +77,11 @@ namespace moth_ui {
         UpdateLocalTransform();
     }
 
+    void Node::SetPivot(FloatVec2 const& pivot) {
+        m_pivot = pivot;
+        UpdateLocalTransform();
+    }
+
     void Node::Draw() {
         if (!IsVisible()) {
             return;

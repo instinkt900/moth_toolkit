@@ -183,6 +183,12 @@ namespace moth_ui {
         /// @brief Returns the clockwise rotation in degrees applied when drawing this node.
         float GetRotation() const { return m_rotation; }
 
+        /**
+         * @brief Sets the rotation pivot as a normalised [0,1] fraction of the node's bounds.
+         *        Only updates the local transform; does not reload the full entity.
+         */
+        void SetPivot(FloatVec2 const& pivot);
+
         /// @brief Returns a mutable reference to the node's rotation.
         float& GetRotation() { return m_rotation; }
 

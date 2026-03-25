@@ -4,7 +4,6 @@
 
 using namespace moth_ui;
 
-static constexpr float kPi = 3.14159265358979f;
 
 TEST_CASE("FloatMat4x4 Identity leaves point unchanged", "[transform]") {
     auto const t = FloatMat4x4::Identity();

@@ -91,7 +91,7 @@ namespace moth_ui {
         float const h = static_cast<float>(m_screenRect.bottomRight.y - m_screenRect.topLeft.y);
 
         auto& renderer = m_context.GetRenderer();
-        renderer.PushTransform(m_localTransform);
+        renderer.PushTransform(GetWorldTransform());
         renderer.PushBlendMode(m_blend);
         renderer.PushColor(m_color);
         DrawInternal();

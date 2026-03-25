@@ -41,6 +41,7 @@ TEST_CASE("AnimationTrack ContinuousTargets colour channels", "[animation_track]
     REQUIRE(ct[9]  == AnimationTrack::Target::ColorGreen);
     REQUIRE(ct[10] == AnimationTrack::Target::ColorBlue);
     REQUIRE(ct[11] == AnimationTrack::Target::ColorAlpha);
+    REQUIRE(ct[12] == AnimationTrack::Target::Rotation);
 }
 
 TEST_CASE("AnimationTrack GetOrCreateKeyframe inserts sorted", "[animation_track][keyframes]") {

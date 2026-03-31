@@ -14,5 +14,6 @@ namespace moth_ui {
         Image,   ///< LayoutEntityImage.
         Text,    ///< LayoutEntityText.
         Clip,    ///< LayoutEntityClip (scissor region).
+        Flipbook,///< LayoutEntityFlipbook.
     };
 }

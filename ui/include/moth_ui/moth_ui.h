@@ -20,6 +20,7 @@
 #include "moth_ui/events/event_key.h"
 #include "moth_ui/events/event_listener.h"
 #include "moth_ui/events/event_mouse.h"
+#include "moth_ui/events/event_flipbook.h"
 
 // graphics
 #include "moth_ui/graphics/blend_mode.h"
@@ -29,6 +30,7 @@
 #include "moth_ui/graphics/irenderer.h"
 #include "moth_ui/graphics/itarget.h"
 #include "moth_ui/graphics/text_alignment.h"
+#include "moth_ui/graphics/iflipbook.h"
 
 // layout
 #include "moth_ui/layout/layout.h"
@@ -42,6 +44,7 @@
 #include "moth_ui/layout/layout_entity_text.h"
 #include "moth_ui/layout/layout_entity_type.h"
 #include "moth_ui/layout/layout_rect.h"
+#include "moth_ui/layout/layout_entity_flipbook.h"
 
 // layers
 #include "moth_ui/layers/layer.h"
@@ -55,6 +58,7 @@
 #include "moth_ui/nodes/node_rect.h"
 #include "moth_ui/nodes/node_text.h"
 #include "moth_ui/nodes/widget.h"
+#include "moth_ui/nodes/node_flipbook.h"
 
 // utils
 #include "moth_ui/utils/color.h"
@@ -72,4 +76,5 @@
 #include "moth_ui/ifont_factory.h"
 #include "moth_ui/iimage_factory.h"
 #include "moth_ui/node_factory.h"
+#include "moth_ui/iflipbook_factory.h"
 

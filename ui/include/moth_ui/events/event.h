@@ -18,6 +18,8 @@ namespace moth_ui {
         EVENTTYPE_ANIMATION = 5,          ///< EventAnimation (animation marker fired).
         EVENTTYPE_ANIMATION_STARTED = 6,  ///< EventAnimationStarted.
         EVENTTYPE_ANIMATION_STOPPED = 7,  ///< EventAnimationStopped.
+        EVENTTYPE_FLIPBOOK_STARTED = 8,   ///< EventFlipbookStarted.
+        EVENTTYPE_FLIPBOOK_STOPPED = 9,   ///< EventFlipbookStopped.
 
         EVENTTYPE_USER0 = 1000,           ///< First user-defined event range.
         EVENTTYPE_USER1 = 2000,           ///< Second user-defined event range.

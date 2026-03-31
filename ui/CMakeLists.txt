@@ -24,24 +24,28 @@ set(PUBLIC_HEADERS
 	include/moth_ui/context.h
 	include/moth_ui/events/event_animation.h
 	include/moth_ui/events/event_dispatch.h
+	include/moth_ui/events/event_flipbook.h
 	include/moth_ui/events/event.h
 	include/moth_ui/events/event_key.h
 	include/moth_ui/events/event_listener.h
 	include/moth_ui/events/event_mouse.h
 	include/moth_ui/font_factory.h
 	include/moth_ui/graphics/blend_mode.h
+	include/moth_ui/graphics/iflipbook.h
 	include/moth_ui/graphics/ifont.h
 	include/moth_ui/graphics/iimage.h
 	include/moth_ui/graphics/image_scale_type.h
 	include/moth_ui/graphics/irenderer.h
 	include/moth_ui/graphics/itarget.h
 	include/moth_ui/graphics/text_alignment.h
+	include/moth_ui/iflipbook_factory.h
 	include/moth_ui/ifont_factory.h
 	include/moth_ui/iimage_factory.h
 	include/moth_ui/layers/layer.h
 	include/moth_ui/layers/layer_stack.h
 	include/moth_ui/layout/layout_cache.h
 	include/moth_ui/layout/layout_entity_clip.h
+	include/moth_ui/layout/layout_entity_flipbook.h
 	include/moth_ui/layout/layout_entity_group.h
 	include/moth_ui/layout/layout_entity.h
 	include/moth_ui/layout/layout_entity_image.h
@@ -54,6 +58,7 @@ set(PUBLIC_HEADERS
 	include/moth_ui/node_factory.h
 	include/moth_ui/nodes/group.h
 	include/moth_ui/nodes/node_clip.h
+	include/moth_ui/nodes/node_flipbook.h
 	include/moth_ui/nodes/node.h
 	include/moth_ui/nodes/node_image.h
 	include/moth_ui/nodes/node_rect.h
@@ -84,6 +89,7 @@ set(SOURCES ${SOURCES}
 	src/layout/layout.cpp
 	src/layout/layout_entity_clip.cpp
 	src/layout/layout_entity.cpp
+	src/layout/layout_entity_flipbook.cpp
 	src/layout/layout_entity_group.cpp
 	src/layout/layout_entity_image.cpp
 	src/layout/layout_entity_rect.cpp
@@ -93,6 +99,7 @@ set(SOURCES ${SOURCES}
 	src/nodes/group.cpp
 	src/nodes/node_clip.cpp
 	src/nodes/node.cpp
+	src/nodes/node_flipbook.cpp
 	src/nodes/node_image.cpp
 	src/nodes/node_rect.cpp
 	src/nodes/node_text.cpp

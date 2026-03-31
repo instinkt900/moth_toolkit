@@ -20,6 +20,8 @@ namespace moth_ui {
     class IFontFactory;
     class FontFactory;
     class NodeFactory;
+    class IFlipbook;
+    class IFlipbookFactory;
 
     // -------------------------------------------------------------------------
     // Events
@@ -35,6 +37,8 @@ namespace moth_ui {
     class EventAnimation;
     class EventAnimationStarted;
     class EventAnimationStopped;
+    class EventFlipbookStarted;
+    class EventFlipbookStopped;
 
     // -------------------------------------------------------------------------
     // Nodes
@@ -45,6 +49,7 @@ namespace moth_ui {
     class NodeImage;
     class NodeText;
     class NodeClip;
+    class NodeFlipbook;
 
     template <typename T, typename BaseType>
     class Widget;

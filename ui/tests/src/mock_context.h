@@ -32,7 +32,6 @@ public:
 class MockImageFactory : public moth_ui::IImageFactory {
 public:
     void FlushCache() override {}
-    bool LoadTexturePack(std::filesystem::path const&) override { return false; }
     std::unique_ptr<moth_ui::IImage> GetImage(std::filesystem::path const&) override { return nullptr; }
 };
 

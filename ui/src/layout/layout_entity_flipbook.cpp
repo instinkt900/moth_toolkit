@@ -23,6 +23,7 @@ namespace moth_ui {
 
         auto const relativePath = std::filesystem::relative(m_flipbookPath, context.m_rootPath);
         j["flipbook_path"] = relativePath.string();
+        j["clip_name"] = m_clipName;
         return j;
     }
 
@@ -32,6 +33,7 @@ namespace moth_ui {
         if (success) {
             std::string relativePath = json.value("flipbook_path", "");
             m_flipbookPath = std::filesystem::absolute(context.m_rootPath / relativePath);
+            m_clipName = json.value("clip_name", "");
         }
 
         return success;

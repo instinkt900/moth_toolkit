@@ -4,6 +4,7 @@
 #include "moth_ui/graphics/iflipbook.h"
 #include "moth_ui/layout/layout_entity_flipbook.h"
 #include "moth_ui/nodes/node.h"
+#include <optional>
 
 namespace moth_ui {
     /**
@@ -44,15 +45,33 @@ namespace moth_ui {
         /// @brief Returns the currently loaded flipbook, or @c nullptr.
         IFlipbook const* GetFlipbook() const { return m_flipbook.get(); }
 
-        void SetPlaying(bool playing) { m_playing = playing; }
+        /**
+         * @brief Activates a named clip and resets playback to its first frame.
+         *
+         * The node will not animate until a clip has been set. If the name is
+         * not found in the loaded flipbook the current clip is cleared and
+         * playback stops.
+         *
+         * @param name Name of the clip as defined in the flipbook descriptor.
+         */
+        void SetClip(std::string_view name);
+
+        /**
+         * @brief Pauses or resumes playback of the current clip.
+         * @param playing @c true to resume, @c false to pause.
+         */
+        void SetPlaying(bool playing);
 
         void Update(uint32_t ticks) override;
 
     protected:
-        std::unique_ptr<IFlipbook> m_flipbook;
-        int m_currentFrame = 0;
-        float m_accumulatedMs = 0.0f;
-        bool m_playing = false;
+        std::unique_ptr<IFlipbook> m_flipbook;            ///< Loaded flipbook, or null if none is set.
+        std::optional<IFlipbook::SheetDesc> m_sheetDesc;  ///< Cached sheet geometry, populated on load.
+        std::optional<IFlipbook::ClipDesc> m_currentClip; ///< Active clip description, empty if no clip is set.
+        std::string m_currentClipName; ///< Name of the active clip, or empty if none is set.
+        int m_currentFrame = 0;       ///< Current frame index within the full sheet grid.
+        float m_accumulatedMs = 0.0f; ///< Accumulated time since the last frame advance in milliseconds.
+        bool m_playing = false;       ///< Whether the current clip is advancing.
 
         void ReloadEntityInternal() override;
         void DrawInternal() override;

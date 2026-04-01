@@ -1,21 +1,23 @@
 #pragma once
 
 #include "moth_ui/events/event.h"
-#include "moth_ui/nodes/node.h"
+#include "moth_ui/nodes/node_flipbook.h"
 
 namespace moth_ui {
     /**
-     * @brief Event fired when a flipbook node begins playing.
+     * @brief Event fired when a flipbook node begins or resumes playing a clip.
      */
     class EventFlipbookStarted : public Event {
     public:
         /**
          * @brief Constructs the event.
-         * @param node The flipbook node that started playing.
+         * @param node     The flipbook node that started playing.
+         * @param clipName Name of the clip that started, or empty if no clip is set.
          */
-        EventFlipbookStarted(Node* node)
+        EventFlipbookStarted(NodeFlipbook* node, std::string_view clipName)
             : Event(GetStaticType())
-            , m_node(node) {}
+            , m_node(node)
+            , m_clipName(clipName) {}
 
         EventFlipbookStarted(EventFlipbookStarted const&) = default;
         EventFlipbookStarted(EventFlipbookStarted&&) = default;
@@ -27,29 +29,38 @@ namespace moth_ui {
         static constexpr int GetStaticType() { return EVENTTYPE_FLIPBOOK_STARTED; }
 
         /// @brief Returns the flipbook node that started playing.
-        Node* GetNode() const { return m_node; }
+        NodeFlipbook* GetNode() const { return m_node; }
+
+        /// @brief Returns the name of the clip that started playing.
+        std::string_view GetClipName() const { return m_clipName; }
 
         std::unique_ptr<Event> Clone() const override {
-            return std::make_unique<EventFlipbookStarted>(m_node);
+            return std::make_unique<EventFlipbookStarted>(m_node, m_clipName);
         }
 
     private:
-        Node* m_node = nullptr;
+        NodeFlipbook* m_node = nullptr;
+        std::string m_clipName;
     };
 
     /**
-     * @brief Event fired when a flipbook node reaches its last frame and stops
-     *        (only fired when loop is false).
+     * @brief Event fired when a flipbook clip reaches its end and stops.
+     *
+     * Fired for both @c LoopType::Stop (freezes on last frame) and
+     * @c LoopType::Reset (rewinds to first frame). Not fired for
+     * @c LoopType::Loop.
      */
     class EventFlipbookStopped : public Event {
     public:
         /**
          * @brief Constructs the event.
-         * @param node The flipbook node that stopped playing.
+         * @param node     The flipbook node that stopped playing.
+         * @param clipName Name of the clip that stopped.
          */
-        EventFlipbookStopped(Node* node)
+        EventFlipbookStopped(NodeFlipbook* node, std::string_view clipName)
             : Event(GetStaticType())
-            , m_node(node) {}
+            , m_node(node)
+            , m_clipName(clipName) {}
 
         EventFlipbookStopped(EventFlipbookStopped const&) = default;
         EventFlipbookStopped(EventFlipbookStopped&&) = default;
@@ -61,13 +72,17 @@ namespace moth_ui {
         static constexpr int GetStaticType() { return EVENTTYPE_FLIPBOOK_STOPPED; }
 
         /// @brief Returns the flipbook node that stopped playing.
-        Node* GetNode() const { return m_node; }
+        NodeFlipbook* GetNode() const { return m_node; }
+
+        /// @brief Returns the name of the clip that stopped.
+        std::string_view GetClipName() const { return m_clipName; }
 
         std::unique_ptr<Event> Clone() const override {
-            return std::make_unique<EventFlipbookStopped>(m_node);
+            return std::make_unique<EventFlipbookStopped>(m_node, m_clipName);
         }
 
     private:
-        Node* m_node = nullptr;
+        NodeFlipbook* m_node = nullptr;
+        std::string m_clipName;
     };
 }

@@ -45,6 +45,15 @@ namespace moth_ui {
         /// @brief Returns the currently loaded flipbook, or @c nullptr.
         IFlipbook const* GetFlipbook() const { return m_flipbook.get(); }
 
+        /// @brief Returns the current frame index within the full sheet grid.
+        int GetCurrentFrame() const { return m_currentFrame; }
+
+        /// @brief Returns @c true if the current clip is actively advancing.
+        bool IsPlaying() const { return m_playing; }
+
+        /// @brief Returns the name of the currently active clip, or empty if none is set.
+        std::string_view GetCurrentClipName() const { return m_currentClipName; }
+
         /**
          * @brief Activates a named clip and resets playback to its first frame.
          *

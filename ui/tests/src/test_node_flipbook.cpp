@@ -108,6 +108,91 @@ TEST_CASE("Load forwards path to flipbook factory", "[flipbook][load]") {
     REQUIRE(tc.flipbookFactory.lastRequestedPath == std::filesystem::path{ "dummy.flipbook.json" });
 }
 
+TEST_CASE("Load resets playback state before loading", "[flipbook][load]") {
+    FlipbookTestContext tc;
+    MockFlipbook fb = MakeSimpleFlipbook();
+    tc.flipbookFactory.nextFlipbook = &fb;
+
+    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    node->SetInitialClipName("run");
+    node->Load("dummy.flipbook.json");
+    node->SetPlaying(true);
+    node->Update(84); // advance one frame
+
+    REQUIRE(node->GetCurrentFrame() == 1);
+
+    // Reload — frame, time, and playing should all reset.
+    node->Load("dummy.flipbook.json");
+    REQUIRE(node->GetCurrentFrame() == 0);
+    REQUIRE_FALSE(node->IsPlaying());
+}
+
+TEST_CASE("Load with initial clip name activates that clip", "[flipbook][load]") {
+    FlipbookTestContext tc;
+    MockFlipbook fb = MakeSimpleFlipbook();
+    tc.flipbookFactory.nextFlipbook = &fb;
+
+    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    node->SetInitialClipName("run");
+    node->Load("dummy.flipbook.json");
+
+    REQUIRE(node->GetCurrentClipName() == "run");
+    REQUIRE(node->GetCurrentFrame() == 0); // Start of clip
+}
+
+TEST_CASE("Load with no initial clip name leaves clip unset", "[flipbook][load]") {
+    FlipbookTestContext tc;
+    MockFlipbook fb = MakeSimpleFlipbook();
+    tc.flipbookFactory.nextFlipbook = &fb;
+
+    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    // m_initialClipName defaults to empty
+    node->Load("dummy.flipbook.json");
+
+    REQUIRE(node->GetCurrentClipName().empty());
+    REQUIRE_FALSE(node->IsPlaying());
+}
+
+TEST_CASE("Autoplay true starts playback after Load", "[flipbook][load][autoplay]") {
+    FlipbookTestContext tc;
+    MockFlipbook fb = MakeSimpleFlipbook();
+    tc.flipbookFactory.nextFlipbook = &fb;
+
+    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    node->SetInitialClipName("run");
+    node->SetAutoplay(true);
+    node->Load("dummy.flipbook.json");
+
+    REQUIRE(node->IsPlaying());
+}
+
+TEST_CASE("Autoplay false does not start playback after Load", "[flipbook][load][autoplay]") {
+    FlipbookTestContext tc;
+    MockFlipbook fb = MakeSimpleFlipbook();
+    tc.flipbookFactory.nextFlipbook = &fb;
+
+    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    node->SetInitialClipName("run");
+    node->SetAutoplay(false);
+    node->Load("dummy.flipbook.json");
+
+    REQUIRE_FALSE(node->IsPlaying());
+}
+
+TEST_CASE("Autoplay true with no initial clip does not start playback", "[flipbook][load][autoplay]") {
+    // Autoplay requires a clip to be set — no clip means SetPlaying is a no-op.
+    FlipbookTestContext tc;
+    MockFlipbook fb = MakeSimpleFlipbook();
+    tc.flipbookFactory.nextFlipbook = &fb;
+
+    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    node->SetAutoplay(true);
+    // No SetInitialClipName — m_initialClipName is empty.
+    node->Load("dummy.flipbook.json");
+
+    REQUIRE_FALSE(node->IsPlaying());
+}
+
 // ---------------------------------------------------------------------------
 // Tests — no flipbook loaded
 // ---------------------------------------------------------------------------

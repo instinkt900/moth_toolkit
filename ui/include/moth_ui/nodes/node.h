@@ -35,6 +35,9 @@ namespace moth_ui {
         Node(Node const& other) = delete;
         Node(Node&& other) = default;
         Node& operator=(Node const&) = delete;
+        // Move-assign is deleted: m_context is a reference (cannot be rebound), and
+        // m_parent/shared_from_this ties a live node into the scene graph — overwriting
+        // an already-inserted node would corrupt the parent's child list.
         Node& operator=(Node&&) = delete;
         ~Node() override;
 

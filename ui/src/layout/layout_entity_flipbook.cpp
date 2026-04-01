@@ -21,8 +21,12 @@ namespace moth_ui {
     nlohmann::json LayoutEntityFlipbook::Serialize(SerializeContext const& context) const {
         nlohmann::json j = LayoutEntity::Serialize(context);
 
-        auto const relativePath = std::filesystem::relative(m_flipbookPath, context.m_rootPath);
-        j["flipbook_path"] = relativePath.string();
+        if (m_flipbookPath.empty()) {
+            j["flipbook_path"] = "";
+        } else {
+            auto const relativePath = std::filesystem::relative(m_flipbookPath, context.m_rootPath);
+            j["flipbook_path"] = relativePath.string();
+        }
         j["clip_name"] = m_clipName;
         return j;
     }
@@ -32,7 +36,11 @@ namespace moth_ui {
 
         if (success) {
             std::string relativePath = json.value("flipbook_path", "");
-            m_flipbookPath = std::filesystem::absolute(context.m_rootPath / relativePath);
+            if (relativePath.empty()) {
+                m_flipbookPath.clear();
+            } else {
+                m_flipbookPath = std::filesystem::absolute(context.m_rootPath / relativePath);
+            }
             m_clipName = json.value("clip_name", "");
         }
 

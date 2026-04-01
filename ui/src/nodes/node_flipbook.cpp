@@ -103,7 +103,7 @@ namespace moth_ui {
     }
 
     void NodeFlipbook::DrawInternal() {
-        if (m_flipbook == nullptr) {
+        if (m_flipbook == nullptr || !m_sheetDesc.has_value()) {
             return;
         }
         auto& renderer = m_context.GetRenderer();

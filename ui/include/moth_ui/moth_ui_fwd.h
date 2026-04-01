@@ -64,6 +64,7 @@ namespace moth_ui {
     class LayoutEntityText;
     class LayoutEntityClip;
     class LayoutEntityRef;
+    class LayoutEntityFlipbook;
     class Layout;
     class LayoutCache;
     struct LayoutRect;

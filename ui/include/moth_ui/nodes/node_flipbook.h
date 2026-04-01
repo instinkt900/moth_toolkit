@@ -2,9 +2,13 @@
 
 #include "moth_ui/context.h"
 #include "moth_ui/graphics/iflipbook.h"
-#include "moth_ui/layout/layout_entity_flipbook.h"
 #include "moth_ui/nodes/node.h"
+#include <memory>
 #include <optional>
+
+namespace moth_ui {
+    class LayoutEntityFlipbook;
+}
 
 namespace moth_ui {
     /**

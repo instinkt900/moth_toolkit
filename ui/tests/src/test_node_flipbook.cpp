@@ -53,10 +53,14 @@ public:
 class MockFlipbookFactory : public IFlipbookFactory {
 public:
     MockFlipbook* nextFlipbook = nullptr; // non-owning pointer to the flipbook to return
+    int getFlipbookCalls = 0;
+    std::filesystem::path lastRequestedPath;
 
     void FlushCache() override {}
 
-    std::unique_ptr<IFlipbook> GetFlipbook(std::filesystem::path const&) override {
+    std::unique_ptr<IFlipbook> GetFlipbook(std::filesystem::path const& path) override {
+        ++getFlipbookCalls;
+        lastRequestedPath = path;
         if (nextFlipbook == nullptr) return nullptr;
         // Build a new MockFlipbook cloned from nextFlipbook for each call.
         auto fb = std::make_unique<MockFlipbook>();
@@ -86,6 +90,22 @@ static MockFlipbook MakeSimpleFlipbook() {
     fb.sheetDesc.NumClips        = 1;
     fb.clips["run"] = IFlipbook::ClipDesc{ 0, 3, 12, IFlipbook::LoopType::Loop };
     return fb;
+}
+
+// ---------------------------------------------------------------------------
+// Tests — Load path forwarding
+// ---------------------------------------------------------------------------
+
+TEST_CASE("Load forwards path to flipbook factory", "[flipbook][load]") {
+    FlipbookTestContext tc;
+    MockFlipbook fb = MakeSimpleFlipbook();
+    tc.flipbookFactory.nextFlipbook = &fb;
+
+    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    node->Load(std::filesystem::path{ "dummy.flipbook.json" });
+
+    REQUIRE(tc.flipbookFactory.getFlipbookCalls == 1);
+    REQUIRE(tc.flipbookFactory.lastRequestedPath == std::filesystem::path{ "dummy.flipbook.json" });
 }
 
 // ---------------------------------------------------------------------------

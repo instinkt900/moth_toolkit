@@ -2,6 +2,7 @@
 
 #include "moth_ui/graphics/iflipbook.h"
 #include <filesystem>
+#include <memory>
 
 namespace moth_ui {
     /**

@@ -73,14 +73,29 @@ lives in moth_graphics; moth_ui never sees it.
 namespace moth_ui {
     class IFlipbook {
     public:
+        // Sheet-wide metadata: frame pixel size, grid layout, total usable frames, clip count.
+        struct SheetDesc {
+            IntVec2 FrameDimensions; // width and height of a single frame in pixels
+            IntVec2 SheetCells;      // grid size: x = cols, y = rows
+            int MaxFrames = 0;
+            int NumClips  = 0;
+        };
+
+        // Per-clip loop behaviour when the last frame is reached.
+        enum class LoopType { Stop, Reset, Loop };
+
+        // Per-clip settings: inclusive frame range, playback rate, loop behaviour.
+        struct ClipDesc {
+            int Start = 0;
+            int End   = 0;
+            int FPS   = 0;
+            LoopType Loop = LoopType::Stop;
+        };
+
         virtual IImage& GetImage() const = 0;
-        virtual int GetFrameWidth()  const = 0;
-        virtual int GetFrameHeight() const = 0;
-        virtual int GetFrameCols()   const = 0;
-        virtual int GetFrameRows()   const = 0;
-        virtual int GetMaxFrames()   const = 0;
-        virtual int GetFps()         const = 0;
-        virtual bool GetLoop()       const = 0;
+        virtual void GetSheetDesc(SheetDesc& outDesc) const = 0;
+        virtual std::string_view GetClipName(int index) const = 0;
+        virtual bool GetClipDesc(std::string_view name, ClipDesc& outDesc) const = 0;
 
         IFlipbook() = default;
         IFlipbook(IFlipbook const&) = default;
@@ -224,28 +239,32 @@ and `EventAnimationStopped` in `event_animation.h`:
 ```cpp
 class EventFlipbookStarted : public Event {
 public:
-    explicit EventFlipbookStarted(Node* node)
-        : Event(GetStaticType()), m_node(node) {}
+    EventFlipbookStarted(NodeFlipbook* node, std::string_view clipName)
+        : Event(GetStaticType()), m_node(node), m_clipName(clipName) {}
     static constexpr int GetStaticType() { return EVENTTYPE_FLIPBOOK_STARTED; }
-    Node* GetNode() const { return m_node; }
+    NodeFlipbook* GetNode() const { return m_node; }
+    std::string_view GetClipName() const { return m_clipName; }
     std::unique_ptr<Event> Clone() const override {
-        return std::make_unique<EventFlipbookStarted>(m_node);
+        return std::make_unique<EventFlipbookStarted>(m_node, m_clipName);
     }
 private:
-    Node* m_node = nullptr;
+    NodeFlipbook* m_node = nullptr;
+    std::string m_clipName;
 };
 
 class EventFlipbookStopped : public Event {
 public:
-    explicit EventFlipbookStopped(Node* node)
-        : Event(GetStaticType()), m_node(node) {}
+    EventFlipbookStopped(NodeFlipbook* node, std::string_view clipName)
+        : Event(GetStaticType()), m_node(node), m_clipName(clipName) {}
     static constexpr int GetStaticType() { return EVENTTYPE_FLIPBOOK_STOPPED; }
-    Node* GetNode() const { return m_node; }
+    NodeFlipbook* GetNode() const { return m_node; }
+    std::string_view GetClipName() const { return m_clipName; }
     std::unique_ptr<Event> Clone() const override {
-        return std::make_unique<EventFlipbookStopped>(m_node);
+        return std::make_unique<EventFlipbookStopped>(m_node, m_clipName);
     }
 private:
-    Node* m_node = nullptr;
+    NodeFlipbook* m_node = nullptr;
+    std::string m_clipName;
 };
 ```
 
@@ -391,7 +410,7 @@ class EventFlipbookStopped;
 
 Add the new source and header files to the target:
 
-```
+```text
 include/moth_ui/graphics/iflipbook.h
 include/moth_ui/iflipbook_factory.h
 include/moth_ui/events/event_flipbook.h
@@ -537,7 +556,7 @@ Wherever a `moth_ui::Context` is constructed (search for `moth_ui::Context{` or
 
 Add the new source and header files to the target:
 
-```
+```text
 include/moth_graphics/graphics/flipbook.h
 include/moth_graphics/graphics/flipbook_factory.h
 src/graphics/flipbook_factory.cpp

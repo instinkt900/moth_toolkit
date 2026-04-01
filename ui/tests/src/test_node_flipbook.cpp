@@ -234,6 +234,38 @@ TEST_CASE("SetPlaying false pauses playback", "[flipbook][playing]") {
 // Tests — frame advancement
 // ---------------------------------------------------------------------------
 
+TEST_CASE("Update with FPS = 0 does not crash and frame stays at start", "[flipbook][update][fps]") {
+    FlipbookTestContext tc;
+    MockFlipbook fb = MakeSimpleFlipbook();
+    fb.clips["run"].FPS = 0;
+    tc.flipbookFactory.nextFlipbook = &fb;
+    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    node->Load("dummy.flipbook.json");
+    node->SetClip("run");
+    node->SetPlaying(true);
+
+    node->Update(1000);
+
+    REQUIRE(node->IsPlaying());
+    REQUIRE(node->GetCurrentFrame() == 0);
+}
+
+TEST_CASE("Update with negative FPS does not crash and frame stays at start", "[flipbook][update][fps]") {
+    FlipbookTestContext tc;
+    MockFlipbook fb = MakeSimpleFlipbook();
+    fb.clips["run"].FPS = -12;
+    tc.flipbookFactory.nextFlipbook = &fb;
+    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    node->Load("dummy.flipbook.json");
+    node->SetClip("run");
+    node->SetPlaying(true);
+
+    node->Update(1000);
+
+    REQUIRE(node->IsPlaying());
+    REQUIRE(node->GetCurrentFrame() == 0);
+}
+
 TEST_CASE("Update advances frame at correct FPS", "[flipbook][update]") {
     // Clip is 12 FPS → one frame every ~83.3 ms.
     FlipbookTestContext tc;

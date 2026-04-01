@@ -76,6 +76,9 @@ namespace moth_ui {
             return;
         }
 
+        if (m_currentClip->FPS <= 0) {
+            return;
+        }
         float const frameDurationMs = 1000.0f / static_cast<float>(m_currentClip->FPS);
         m_accumulatedMs += static_cast<float>(ticks);
 

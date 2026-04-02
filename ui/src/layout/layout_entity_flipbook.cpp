@@ -28,6 +28,7 @@ namespace moth_ui {
             j["flipbook_path"] = relativePath.string();
         }
         j["clip_name"] = m_clipName;
+        j["autoplay"] = m_autoplay;
         return j;
     }
 
@@ -42,6 +43,7 @@ namespace moth_ui {
                 m_flipbookPath = std::filesystem::absolute(context.m_rootPath / relativePath);
             }
             m_clipName = json.value("clip_name", "");
+            m_autoplay = json.value("autoplay", false);
         }
 
         return success;

@@ -19,12 +19,29 @@ namespace moth_ui {
     }
 
     void NodeFlipbook::Load(std::filesystem::path const& path) {
+        m_currentFrame = 0;
+        m_accumulatedMs = 0.0f;
+        m_currentClip.reset();
+        m_currentClipName.clear();
+        m_sheetDesc.reset();
+        m_flipbook.reset();
+        m_playing = false;
         auto* factory = m_context.GetFlipbookFactory();
         if (factory != nullptr) {
             m_flipbook = factory->GetFlipbook(path);
             if (m_flipbook != nullptr) {
                 m_sheetDesc.emplace();
                 m_flipbook->GetSheetDesc(*m_sheetDesc);
+                if (m_sheetDesc->SheetCells.x <= 0 || m_sheetDesc->SheetCells.y <= 0 || m_sheetDesc->FrameDimensions.x <= 0 || m_sheetDesc->FrameDimensions.y <= 0) {
+                    m_sheetDesc.reset();
+                    m_flipbook.reset();
+                    // failure
+                    return;
+                }
+                SetClip(m_initialClipName);
+                if (m_autoplay) {
+                    SetPlaying(true);
+                }
             }
         }
     }
@@ -36,14 +53,9 @@ namespace moth_ui {
 
     void NodeFlipbook::ReloadEntityPrivate() {
         auto const layoutEntity = std::static_pointer_cast<LayoutEntityFlipbook>(m_layout);
-        m_currentFrame = 0;
-        m_accumulatedMs = 0.0f;
-        m_playing = false;
+        m_initialClipName = layoutEntity->m_clipName;
+        m_autoplay = layoutEntity->m_autoplay;
         Load(layoutEntity->m_flipbookPath);
-        if (m_flipbook && !layoutEntity->m_clipName.empty()) {
-            SetClip(layoutEntity->m_clipName);
-            SetPlaying(true);
-        }
     }
 
     void NodeFlipbook::SetClip(std::string_view name) {

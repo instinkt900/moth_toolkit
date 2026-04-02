@@ -96,6 +96,99 @@ static MockFlipbook MakeSimpleFlipbook() {
 // Tests — Load path forwarding
 // ---------------------------------------------------------------------------
 
+TEST_CASE("Load with null factory clears all flipbook state", "[flipbook][load]") {
+    // Context has no flipbook factory — Load should leave the node fully cleared.
+    MockContext mc;
+    auto node = std::make_shared<NodeFlipbook>(mc.context);
+
+    // Pre-load a valid flipbook so there is state to clear.
+    FlipbookTestContext tc;
+    MockFlipbook fb = MakeSimpleFlipbook();
+    tc.flipbookFactory.nextFlipbook = &fb;
+    auto primed = std::make_shared<NodeFlipbook>(tc.context);
+    primed->SetInitialClipName("run");
+    primed->Load("dummy.flipbook.json");
+    REQUIRE(primed->GetFlipbook() != nullptr);
+
+    // Now call Load on a node whose context has no factory.
+    node->Load("dummy.flipbook.json");
+    REQUIRE(node->GetFlipbook() == nullptr);
+    REQUIRE(node->GetCurrentClipName().empty());
+    REQUIRE_FALSE(node->IsPlaying());
+    REQUIRE(node->GetCurrentFrame() == 0);
+}
+
+TEST_CASE("Load with factory returning null clears all flipbook state", "[flipbook][load]") {
+    FlipbookTestContext tc;
+    // nextFlipbook is null — factory returns nullptr.
+    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    node->SetInitialClipName("run");
+    node->Load("nonexistent.flipbook.json");
+
+    REQUIRE(node->GetFlipbook() == nullptr);
+    REQUIRE(node->GetCurrentClipName().empty());
+    REQUIRE_FALSE(node->IsPlaying());
+    REQUIRE(node->GetCurrentFrame() == 0);
+}
+
+TEST_CASE("Load clears previous flipbook when factory returns null", "[flipbook][load]") {
+    FlipbookTestContext tc;
+    MockFlipbook fb = MakeSimpleFlipbook();
+    tc.flipbookFactory.nextFlipbook = &fb;
+
+    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    node->SetInitialClipName("run");
+    node->Load("dummy.flipbook.json");
+    REQUIRE(node->GetFlipbook() != nullptr);
+
+    // Now make the factory return null and reload.
+    tc.flipbookFactory.nextFlipbook = nullptr;
+    node->Load("dummy.flipbook.json");
+
+    REQUIRE(node->GetFlipbook() == nullptr);
+    REQUIRE(node->GetCurrentClipName().empty());
+    REQUIRE_FALSE(node->IsPlaying());
+    REQUIRE(node->GetCurrentFrame() == 0);
+}
+
+TEST_CASE("Load with malformed SheetDesc (zero columns) clears flipbook", "[flipbook][load]") {
+    FlipbookTestContext tc;
+    MockFlipbook fb = MakeSimpleFlipbook();
+    fb.sheetDesc.SheetCells = { 0, 1 }; // invalid — zero columns
+    tc.flipbookFactory.nextFlipbook = &fb;
+
+    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    node->Load("dummy.flipbook.json");
+
+    REQUIRE(node->GetFlipbook() == nullptr);
+    REQUIRE(node->GetCurrentClipName().empty());
+    REQUIRE_FALSE(node->IsPlaying());
+}
+
+TEST_CASE("Load with malformed SheetDesc (zero rows) clears flipbook", "[flipbook][load]") {
+    FlipbookTestContext tc;
+    MockFlipbook fb = MakeSimpleFlipbook();
+    fb.sheetDesc.SheetCells = { 4, 0 }; // invalid — zero rows
+    tc.flipbookFactory.nextFlipbook = &fb;
+
+    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    node->Load("dummy.flipbook.json");
+
+    REQUIRE(node->GetFlipbook() == nullptr);
+}
+
+TEST_CASE("Load with malformed SheetDesc (zero frame dimensions) clears flipbook", "[flipbook][load]") {
+    FlipbookTestContext tc;
+    MockFlipbook fb = MakeSimpleFlipbook();
+    fb.sheetDesc.FrameDimensions = { 0, 16 }; // invalid — zero width
+    tc.flipbookFactory.nextFlipbook = &fb;
+
+    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    node->Load("dummy.flipbook.json");
+
+    REQUIRE(node->GetFlipbook() == nullptr);
+}
+
 TEST_CASE("Load forwards path to flipbook factory", "[flipbook][load]") {
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();

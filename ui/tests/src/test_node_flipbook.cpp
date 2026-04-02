@@ -603,9 +603,9 @@ TEST_CASE("SetPlaying(true) fires EventFlipbookStarted", "[flipbook][events]") {
     int startedCount = 0;
     std::string capturedClip;
     group->SetEventHandler([&](Node*, Event const& ev) -> bool {
-        if (ev.GetType() == EventFlipbookStarted::GetStaticType()) {
+        if (auto const* e = event_cast<EventFlipbookStarted>(ev)) {
             ++startedCount;
-            capturedClip = std::string(static_cast<EventFlipbookStarted const&>(ev).GetClipName());
+            capturedClip = std::string(e->GetClipName());
         }
         return true;
     });
@@ -655,9 +655,9 @@ TEST_CASE("LoopType::Stop fires EventFlipbookStopped when clip ends", "[flipbook
     int stoppedCount = 0;
     std::string capturedClip;
     group->SetEventHandler([&](Node*, Event const& ev) -> bool {
-        if (ev.GetType() == EventFlipbookStopped::GetStaticType()) {
+        if (auto const* e = event_cast<EventFlipbookStopped>(ev)) {
             ++stoppedCount;
-            capturedClip = std::string(static_cast<EventFlipbookStopped const&>(ev).GetClipName());
+            capturedClip = std::string(e->GetClipName());
         }
         return true;
     });
@@ -730,8 +730,8 @@ TEST_CASE("EventFlipbookStarted GetNode locks to the firing node", "[flipbook][e
 
     std::shared_ptr<NodeFlipbook> capturedNode;
     group->SetEventHandler([&](Node*, Event const& ev) -> bool {
-        if (ev.GetType() == EventFlipbookStarted::GetStaticType()) {
-            capturedNode = static_cast<EventFlipbookStarted const&>(ev).GetNode().lock();
+        if (auto const* e = event_cast<EventFlipbookStarted>(ev)) {
+            capturedNode = e->GetNode().lock();
         }
         return true;
     });
@@ -759,8 +759,8 @@ TEST_CASE("EventFlipbookStopped GetNode locks to the firing node (Stop)", "[flip
 
     std::shared_ptr<NodeFlipbook> capturedNode;
     group->SetEventHandler([&](Node*, Event const& ev) -> bool {
-        if (ev.GetType() == EventFlipbookStopped::GetStaticType()) {
-            capturedNode = static_cast<EventFlipbookStopped const&>(ev).GetNode().lock();
+        if (auto const* e = event_cast<EventFlipbookStopped>(ev)) {
+            capturedNode = e->GetNode().lock();
         }
         return true;
     });
@@ -789,8 +789,8 @@ TEST_CASE("EventFlipbookStopped GetNode locks to the firing node (Reset)", "[fli
 
     std::shared_ptr<NodeFlipbook> capturedNode;
     group->SetEventHandler([&](Node*, Event const& ev) -> bool {
-        if (ev.GetType() == EventFlipbookStopped::GetStaticType()) {
-            capturedNode = static_cast<EventFlipbookStopped const&>(ev).GetNode().lock();
+        if (auto const* e = event_cast<EventFlipbookStopped>(ev)) {
+            capturedNode = e->GetNode().lock();
         }
         return true;
     });

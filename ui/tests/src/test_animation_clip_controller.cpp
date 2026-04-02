@@ -44,15 +44,12 @@ namespace {
 
             group = std::make_shared<Group>(mc.context, layout);
             group->SetEventHandler([this](Node* /*node*/, Event const& e) -> bool {
-                if (e.GetType() == EventAnimationStarted::GetStaticType()) {
-                    auto const* ev = dynamic_cast<EventAnimationStarted const*>(&e);
-                    if (ev != nullptr) { startedClips.push_back(ev->GetClipName()); }
-                } else if (e.GetType() == EventAnimationStopped::GetStaticType()) {
-                    auto const* ev = dynamic_cast<EventAnimationStopped const*>(&e);
-                    if (ev != nullptr) { stoppedClips.push_back(ev->GetClipName()); }
-                } else if (e.GetType() == EventAnimation::GetStaticType()) {
-                    auto const* ev = dynamic_cast<EventAnimation const*>(&e);
-                    if (ev != nullptr) { markerNames.push_back(ev->GetName()); }
+                if (auto const* ev = event_cast<EventAnimationStarted>(e)) {
+                    startedClips.push_back(ev->GetClipName());
+                } else if (auto const* ev = event_cast<EventAnimationStopped>(e)) {
+                    stoppedClips.push_back(ev->GetClipName());
+                } else if (auto const* ev = event_cast<EventAnimation>(e)) {
+                    markerNames.push_back(ev->GetName());
                 }
                 return false;
             });
@@ -227,8 +224,8 @@ TEST_CASE("EventAnimationStarted GetNode locks to the firing group", "[animation
 
     std::shared_ptr<Node> capturedNode;
     f.group->SetEventHandler([&](Node*, Event const& ev) -> bool {
-        if (ev.GetType() == EventAnimationStarted::GetStaticType()) {
-            capturedNode = static_cast<EventAnimationStarted const&>(ev).GetNode().lock();
+        if (auto const* e = event_cast<EventAnimationStarted>(ev)) {
+            capturedNode = e->GetNode().lock();
         }
         return false;
     });
@@ -244,8 +241,8 @@ TEST_CASE("EventAnimationStopped GetNode locks to the firing group", "[animation
 
     std::shared_ptr<Node> capturedNode;
     f.group->SetEventHandler([&](Node*, Event const& ev) -> bool {
-        if (ev.GetType() == EventAnimationStopped::GetStaticType()) {
-            capturedNode = static_cast<EventAnimationStopped const&>(ev).GetNode().lock();
+        if (auto const* e = event_cast<EventAnimationStopped>(ev)) {
+            capturedNode = e->GetNode().lock();
         }
         return false;
     });
@@ -265,8 +262,8 @@ TEST_CASE("EventAnimation GetNode locks to the firing group", "[animation][clip_
 
     std::shared_ptr<Node> capturedNode;
     f.group->SetEventHandler([&](Node*, Event const& ev) -> bool {
-        if (ev.GetType() == EventAnimation::GetStaticType()) {
-            capturedNode = static_cast<EventAnimation const&>(ev).GetNode().lock();
+        if (auto const* e = event_cast<EventAnimation>(ev)) {
+            capturedNode = e->GetNode().lock();
         }
         return false;
     });

@@ -59,6 +59,8 @@ namespace moth_ui {
     }
 
     void NodeFlipbook::SetClip(std::string_view name) {
+        m_accumulatedMs = 0;
+        m_currentFrame = 0;
         m_currentClip.reset();
         m_currentClipName.clear();
         if (m_flipbook != nullptr) {

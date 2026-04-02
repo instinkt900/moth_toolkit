@@ -20,6 +20,7 @@ A C++17 library for building 2D UIs in graphical applications such as games and 
   - [Linux](#linux)
   - [Windows](#windows)
 - [Running the Tests](#running-the-tests)
+- [Building the Documentation](#building-the-documentation)
 - [Implementing the Backend Interfaces](#implementing-the-backend-interfaces)
 - [Including in Your Code](#including-in-your-code)
 - [Related Projects](#related-projects)
@@ -166,6 +167,18 @@ ctest --preset conan-debug --output-on-failure
 ```
 
 CI runs the full test matrix (Linux + Windows) on every pull request via GitHub Actions.
+
+---
+
+## Building the Documentation
+
+If [Doxygen](https://www.doxygen.nl) is installed, a `docs` target is available after configuring with CMake:
+
+```bash
+cmake --build --preset conan-release --target docs
+```
+
+The generated HTML is written to `build/docs/html/index.html`.
 
 ---
 

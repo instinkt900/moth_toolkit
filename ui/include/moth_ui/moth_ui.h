@@ -75,6 +75,7 @@
 #include "moth_ui/font_factory.h"
 #include "moth_ui/ifont_factory.h"
 #include "moth_ui/iimage_factory.h"
+#include "moth_ui/ilogger.h"
 #include "moth_ui/node_factory.h"
 #include "moth_ui/iflipbook_factory.h"
 

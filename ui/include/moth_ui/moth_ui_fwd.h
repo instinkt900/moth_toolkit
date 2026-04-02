@@ -22,6 +22,8 @@ namespace moth_ui {
     class NodeFactory;
     class IFlipbook;
     class IFlipbookFactory;
+    class ILogger;
+    class NullLogger;
 
     // -------------------------------------------------------------------------
     // Events

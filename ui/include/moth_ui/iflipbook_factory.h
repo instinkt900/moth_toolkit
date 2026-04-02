@@ -13,16 +13,16 @@ namespace moth_ui {
      */
     class IFlipbookFactory {
     public:
+        /// @brief Loads a flipbook from a descriptor file.
+        /// @param path Path to the .flipbook.json descriptor.
+        /// @return Loaded flipbook, or nullptr on failure.
+        virtual std::unique_ptr<IFlipbook> GetFlipbook(std::filesystem::path const& path) = 0;
+
         IFlipbookFactory() = default;
         IFlipbookFactory(IFlipbookFactory const&) = default;
         IFlipbookFactory(IFlipbookFactory&&) = default;
         IFlipbookFactory& operator=(IFlipbookFactory const&) = default;
         IFlipbookFactory& operator=(IFlipbookFactory&&) = default;
         virtual ~IFlipbookFactory() = default;
-
-        /// @brief Loads a flipbook from a descriptor file.
-        /// @param path Path to the .flipbook.json descriptor.
-        /// @return Loaded flipbook, or nullptr on failure.
-        virtual std::unique_ptr<IFlipbook> GetFlipbook(std::filesystem::path const& path) = 0;
     };
 }

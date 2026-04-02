@@ -14,18 +14,18 @@ namespace moth_ui {
      */
     class IImageFactory {
     public:
-        IImageFactory() = default;
-        IImageFactory(IImageFactory const&) = default;
-        IImageFactory(IImageFactory&&) = default;
-        IImageFactory& operator=(IImageFactory const&) = default;
-        IImageFactory& operator=(IImageFactory&&) = default;
-        virtual ~IImageFactory() = default;
-
         /**
          * @brief Returns an image loaded from the given path.
          * @param path Path to the image file.
          * @return Newly created image, or @c nullptr on failure.
          */
         virtual std::unique_ptr<IImage> GetImage(std::filesystem::path const& path) = 0;
+
+        IImageFactory() = default;
+        IImageFactory(IImageFactory const&) = default;
+        IImageFactory(IImageFactory&&) = default;
+        IImageFactory& operator=(IImageFactory const&) = default;
+        IImageFactory& operator=(IImageFactory&&) = default;
+        virtual ~IImageFactory() = default;
     };
 }

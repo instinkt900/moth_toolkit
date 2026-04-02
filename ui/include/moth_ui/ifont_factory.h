@@ -15,13 +15,6 @@ namespace moth_ui {
      */
     class IFontFactory {
     public:
-        IFontFactory() = default;
-        IFontFactory(IFontFactory const&) = default;
-        IFontFactory(IFontFactory&&) = default;
-        IFontFactory& operator=(IFontFactory const&) = default;
-        IFontFactory& operator=(IFontFactory&&) = default;
-        virtual ~IFontFactory() = default;
-
         /**
          * @brief Registers a named font from a file path.
          * @param name Logical name used to look up the font later.
@@ -74,6 +67,13 @@ namespace moth_ui {
          * @param name Logical name of the font.
          */
         virtual std::filesystem::path GetFontPath(std::string const& name) const = 0;
+
+        IFontFactory() = default;
+        IFontFactory(IFontFactory const&) = default;
+        IFontFactory(IFontFactory&&) = default;
+        IFontFactory& operator=(IFontFactory const&) = default;
+        IFontFactory& operator=(IFontFactory&&) = default;
+        virtual ~IFontFactory() = default;
     };
 }
 

@@ -41,6 +41,7 @@ set(PUBLIC_HEADERS
 	include/moth_ui/iflipbook_factory.h
 	include/moth_ui/ifont_factory.h
 	include/moth_ui/iimage_factory.h
+	include/moth_ui/ilogger.h
 	include/moth_ui/layers/layer.h
 	include/moth_ui/layers/layer_stack.h
 	include/moth_ui/layout/layout_cache.h

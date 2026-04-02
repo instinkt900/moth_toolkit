@@ -97,10 +97,10 @@ namespace moth_ui {
         virtual void SetRendererLogicalSize(moth_ui::IntVec2 const& size) = 0;
 
         IRenderer() = default;
-        IRenderer(IRenderer const&) = delete;
-        IRenderer(IRenderer&&) = delete;
-        IRenderer& operator=(IRenderer const&) = delete;
-        IRenderer& operator=(IRenderer&&) = delete;
+        IRenderer(IRenderer const&) = default;
+        IRenderer(IRenderer&&) = default;
+        IRenderer& operator=(IRenderer const&) = default;
+        IRenderer& operator=(IRenderer&&) = default;
         virtual ~IRenderer() = default;
     };
 }

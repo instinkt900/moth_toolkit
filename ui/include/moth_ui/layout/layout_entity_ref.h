@@ -5,6 +5,8 @@
 
 #include <nlohmann/json_fwd.hpp>
 #include <filesystem>
+#include <map>
+#include <string>
 
 namespace moth_ui {
     /**
@@ -41,6 +43,15 @@ namespace moth_ui {
 
         std::filesystem::path m_layoutPath; ///< Path to the referenced layout file (relative to the project root).
 
+        /**
+         * @brief Re-applies stored property overrides to a child entity.
+         *
+         * Called after a child node reloads its entity to ensure overrides
+         * defined in this ref survive the reload.
+         * @param entity Child entity to re-apply overrides to.
+         */
+        void ReapplyOverrides(LayoutEntity& entity) const;
+
         LayoutEntityRef(LayoutEntityRef const& other) = default;
         LayoutEntityRef(LayoutEntityRef&& other) = default;
         LayoutEntityRef& operator=(LayoutEntityRef const&) = delete;
@@ -49,5 +60,8 @@ namespace moth_ui {
 
     private:
         void CopyLayout(Layout const& other);
+
+        /// Serialised override JSON per child index, retained from Deserialize for re-application.
+        std::map<int, std::string> m_childOverrides;
     };
 }

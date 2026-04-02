@@ -71,15 +71,17 @@ namespace moth_ui {
             if (loadResult == Layout::LoadResult::Success) {
                 CopyLayout(*targetLayout);
 
+                m_childOverrides.clear();
                 auto overrides = json.value("propertyOverrides", nlohmann::json{});
                 for (auto&& overrideEntry : overrides) {
                     if (overrideEntry.contains("childIndex") && overrideEntry.contains("type") && overrideEntry.contains("data")) {
-                        auto const childIndex = overrideEntry["childIndex"];
-                        if (childIndex >= 0 && childIndex < m_children.size()) {
+                        auto const childIndex = overrideEntry["childIndex"].get<int>();
+                        if (childIndex >= 0 && childIndex < static_cast<int>(m_children.size())) {
                             auto const overrideType = overrideEntry["type"];
                             auto child = m_children[childIndex];
                             if (child->GetType() == overrideType) {
                                 auto const overrideJson = overrideEntry["data"];
+                                m_childOverrides[childIndex] = overrideJson.dump();
                                 child->DeserializeOverrides(overrideJson);
                             }
                         }
@@ -92,6 +94,18 @@ namespace moth_ui {
         }
 
         return success;
+    }
+
+    void LayoutEntityRef::ReapplyOverrides(LayoutEntity& entity) const {
+        for (int i = 0; i < static_cast<int>(m_children.size()); ++i) {
+            if (m_children[i].get() == &entity) {
+                auto const it = m_childOverrides.find(i);
+                if (it != m_childOverrides.end()) {
+                    entity.DeserializeOverrides(nlohmann::json::parse(it->second));
+                }
+                return;
+            }
+        }
     }
 
     // clones a layout into this reference

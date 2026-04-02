@@ -151,11 +151,26 @@ install(DIRECTORY "include/"
 
 find_package(Doxygen OPTIONAL_COMPONENTS dot)
 if(DOXYGEN_FOUND)
+	include(FetchContent)
+	FetchContent_Declare(
+		doxygen-awesome-css
+		GIT_REPOSITORY https://github.com/jothepro/doxygen-awesome-css.git
+		GIT_TAG v2.4.2
+	)
+	FetchContent_MakeAvailable(doxygen-awesome-css)
+
 	set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/docs)
 	set(DOXYGEN_RECURSIVE YES)
 	set(DOXYGEN_EXTRACT_ALL YES)
+	set(DOXYGEN_GENERATE_TREEVIEW YES)
+	set(DOXYGEN_HTML_COLORSTYLE AUTO)
+	set(DOXYGEN_HTML_EXTRA_STYLESHEET ${doxygen-awesome-css_SOURCE_DIR}/doxygen-awesome.css)
 	doxygen_add_docs(docs
 		${CMAKE_CURRENT_SOURCE_DIR}/include
 		COMMENT "Generating API documentation"
+	)
+else()
+	add_custom_target(docs
+		COMMAND ${CMAKE_COMMAND} -E echo "docs target unavailable: doxygen not found. Install doxygen and reconfigure."
 	)
 endif()

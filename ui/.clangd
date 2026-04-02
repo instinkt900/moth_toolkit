@@ -1,6 +1,12 @@
 CompileFlags:
   CompilationDatabase: ./build/Debug
 
+Diagnostics:
+  Includes:
+    # common.h is a deliberate catch-all / precompiled-header stand-in;
+    # suppress unused-includes for it globally rather than annotating every file.
+    IgnoreHeader: ["common\\.h"]
+
 ---
 # Suppress unused-includes warnings in catch-all / forwarding headers where
 # every include is intentional by design.

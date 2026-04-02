@@ -44,15 +44,12 @@ namespace {
 
             group = std::make_shared<Group>(mc.context, layout);
             group->SetEventHandler([this](Node* /*node*/, Event const& e) -> bool {
-                if (e.GetType() == EventAnimationStarted::GetStaticType()) {
-                    auto const* ev = dynamic_cast<EventAnimationStarted const*>(&e);
-                    if (ev != nullptr) { startedClips.push_back(ev->GetClipName()); }
-                } else if (e.GetType() == EventAnimationStopped::GetStaticType()) {
-                    auto const* ev = dynamic_cast<EventAnimationStopped const*>(&e);
-                    if (ev != nullptr) { stoppedClips.push_back(ev->GetClipName()); }
-                } else if (e.GetType() == EventAnimation::GetStaticType()) {
-                    auto const* ev = dynamic_cast<EventAnimation const*>(&e);
-                    if (ev != nullptr) { markerNames.push_back(ev->GetName()); }
+                if (auto const* ev = event_cast<EventAnimationStarted>(e)) {
+                    startedClips.push_back(ev->GetClipName());
+                } else if (auto const* ev = event_cast<EventAnimationStopped>(e)) {
+                    stoppedClips.push_back(ev->GetClipName());
+                } else if (auto const* ev = event_cast<EventAnimation>(e)) {
+                    markerNames.push_back(ev->GetName());
                 }
                 return false;
             });
@@ -216,4 +213,66 @@ TEST_CASE("No events fire after Stop clip ends", "[animation][clip_controller]")
     f.tick(kOneTick * kClipEndFrame);
     REQUIRE(f.markerNames.size() == 1);
     REQUIRE(f.stoppedClips.size() == 1);
+}
+
+// ---------------------------------------------------------------------------
+// Tests — weak_ptr node references in animation events
+// ---------------------------------------------------------------------------
+
+TEST_CASE("EventAnimationStarted GetNode locks to the firing group", "[animation][clip_controller][weak_ptr]") {
+    AnimFixture f;
+
+    std::shared_ptr<Node> capturedNode;
+    f.group->SetEventHandler([&](Node*, Event const& ev) -> bool {
+        if (auto const* e = event_cast<EventAnimationStarted>(ev)) {
+            capturedNode = e->GetNode().lock();
+        }
+        return false;
+    });
+
+    f.start();
+
+    REQUIRE(capturedNode != nullptr);
+    REQUIRE(capturedNode.get() == f.group.get());
+}
+
+TEST_CASE("EventAnimationStopped GetNode locks to the firing group", "[animation][clip_controller][weak_ptr]") {
+    AnimFixture f; // Stop loop type by default
+
+    std::shared_ptr<Node> capturedNode;
+    f.group->SetEventHandler([&](Node*, Event const& ev) -> bool {
+        if (auto const* e = event_cast<EventAnimationStopped>(ev)) {
+            capturedNode = e->GetNode().lock();
+        }
+        return false;
+    });
+
+    f.start();
+    for (int i = 0; i < kClipEndFrame; ++i) {
+        f.tick();
+    }
+
+    REQUIRE(capturedNode != nullptr);
+    REQUIRE(capturedNode.get() == f.group.get());
+}
+
+TEST_CASE("EventAnimation GetNode locks to the firing group", "[animation][clip_controller][weak_ptr]") {
+    AnimFixture f;
+    f.addMarker(kMidFrame, "ping");
+
+    std::shared_ptr<Node> capturedNode;
+    f.group->SetEventHandler([&](Node*, Event const& ev) -> bool {
+        if (auto const* e = event_cast<EventAnimation>(ev)) {
+            capturedNode = e->GetNode().lock();
+        }
+        return false;
+    });
+
+    f.start();
+    for (int i = 0; i < kMidFrame; ++i) {
+        f.tick();
+    }
+
+    REQUIRE(capturedNode != nullptr);
+    REQUIRE(capturedNode.get() == f.group.get());
 }

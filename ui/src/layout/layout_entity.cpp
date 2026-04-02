@@ -1,5 +1,6 @@
 #include "common.h"
 #include "moth_ui/layout/layout_entity.h"
+#include "moth_ui/layout/layout_entity_flipbook.h"
 #include "moth_ui/layout/layout_entity_group.h"
 #include "moth_ui/layout/layout_entity_text.h"
 #include "moth_ui/layout/layout_entity_image.h"
@@ -21,6 +22,8 @@ namespace moth_ui {
             return std::make_unique<LayoutEntityRef>(nullptr);
         case LayoutEntityType::Clip:
             return std::make_unique<LayoutEntityClip>(nullptr);
+        case LayoutEntityType::Flipbook:
+            return std::make_unique<LayoutEntityFlipbook>(nullptr);
         default:
             assert(false && "unknown entity type");
             return nullptr;

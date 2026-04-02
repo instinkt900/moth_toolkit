@@ -25,13 +25,6 @@ namespace moth_ui {
         virtual void FlushCache() = 0;
 
         /**
-         * @brief Loads a texture atlas from a pack file.
-         * @param path Path to the texture pack descriptor file.
-         * @return @c true on success, @c false otherwise.
-         */
-        virtual bool LoadTexturePack(std::filesystem::path const& path) = 0;
-
-        /**
          * @brief Returns an image loaded from the given path.
          * @param path Path to the image file.
          * @return Newly created image, or @c nullptr on failure.

@@ -14,7 +14,7 @@ namespace moth_ui {
          * @param node     The flipbook node that started playing.
          * @param clipName Name of the clip that started, or empty if no clip is set.
          */
-        EventFlipbookStarted(NodeFlipbook* node, std::string_view clipName)
+        EventFlipbookStarted(std::weak_ptr<NodeFlipbook> node, std::string_view clipName)
             : Event(GetStaticType())
             , m_node(node)
             , m_clipName(clipName) {}
@@ -29,7 +29,7 @@ namespace moth_ui {
         static constexpr int GetStaticType() { return EVENTTYPE_FLIPBOOK_STARTED; }
 
         /// @brief Returns the flipbook node that started playing.
-        NodeFlipbook* GetNode() const { return m_node; }
+        std::weak_ptr<NodeFlipbook> GetNode() const { return m_node; }
 
         /// @brief Returns the name of the clip that started playing.
         std::string_view GetClipName() const { return m_clipName; }
@@ -39,7 +39,7 @@ namespace moth_ui {
         }
 
     private:
-        NodeFlipbook* m_node = nullptr;
+        std::weak_ptr<NodeFlipbook> m_node;
         std::string m_clipName;
     };
 
@@ -57,7 +57,7 @@ namespace moth_ui {
          * @param node     The flipbook node that stopped playing.
          * @param clipName Name of the clip that stopped.
          */
-        EventFlipbookStopped(NodeFlipbook* node, std::string_view clipName)
+        EventFlipbookStopped(std::weak_ptr<NodeFlipbook> node, std::string_view clipName)
             : Event(GetStaticType())
             , m_node(node)
             , m_clipName(clipName) {}
@@ -72,7 +72,7 @@ namespace moth_ui {
         static constexpr int GetStaticType() { return EVENTTYPE_FLIPBOOK_STOPPED; }
 
         /// @brief Returns the flipbook node that stopped playing.
-        NodeFlipbook* GetNode() const { return m_node; }
+        std::weak_ptr<NodeFlipbook> GetNode() const { return m_node; }
 
         /// @brief Returns the name of the clip that stopped.
         std::string_view GetClipName() const { return m_clipName; }
@@ -82,7 +82,7 @@ namespace moth_ui {
         }
 
     private:
-        NodeFlipbook* m_node = nullptr;
+        std::weak_ptr<NodeFlipbook> m_node;
         std::string m_clipName;
     };
 }

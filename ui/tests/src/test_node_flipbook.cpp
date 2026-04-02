@@ -719,3 +719,87 @@ TEST_CASE("LoopType::Loop does not fire EventFlipbookStopped", "[flipbook][event
 
     REQUIRE(stoppedCount == 0);
 }
+
+TEST_CASE("EventFlipbookStarted GetNode locks to the firing node", "[flipbook][events][weak_ptr]") {
+    FlipbookTestContext tc;
+    MockFlipbook fb = MakeSimpleFlipbook();
+    tc.flipbookFactory.nextFlipbook = &fb;
+
+    std::shared_ptr<NodeFlipbook> flipbook;
+    auto group = MakeGroupWithFlipbookChild(tc.context, flipbook);
+
+    std::shared_ptr<NodeFlipbook> capturedNode;
+    group->SetEventHandler([&](Node*, Event const& ev) -> bool {
+        if (ev.GetType() == EventFlipbookStarted::GetStaticType()) {
+            capturedNode = static_cast<EventFlipbookStarted const&>(ev).GetNode().lock();
+        }
+        return true;
+    });
+
+    flipbook->Load("dummy.flipbook.json");
+    flipbook->SetClip("run");
+    flipbook->SetPlaying(true);
+
+    REQUIRE(capturedNode != nullptr);
+    REQUIRE(capturedNode.get() == flipbook.get());
+}
+
+TEST_CASE("EventFlipbookStopped GetNode locks to the firing node (Stop)", "[flipbook][events][weak_ptr]") {
+    FlipbookTestContext tc;
+    MockFlipbook fb;
+    fb.sheetDesc.FrameDimensions = { 16, 16 };
+    fb.sheetDesc.SheetCells      = { 4, 1 };
+    fb.sheetDesc.MaxFrames       = 4;
+    fb.sheetDesc.NumClips        = 1;
+    fb.clips["hit"] = IFlipbook::ClipDesc{ 0, 3, 12, IFlipbook::LoopType::Stop };
+    tc.flipbookFactory.nextFlipbook = &fb;
+
+    std::shared_ptr<NodeFlipbook> flipbook;
+    auto group = MakeGroupWithFlipbookChild(tc.context, flipbook);
+
+    std::shared_ptr<NodeFlipbook> capturedNode;
+    group->SetEventHandler([&](Node*, Event const& ev) -> bool {
+        if (ev.GetType() == EventFlipbookStopped::GetStaticType()) {
+            capturedNode = static_cast<EventFlipbookStopped const&>(ev).GetNode().lock();
+        }
+        return true;
+    });
+
+    flipbook->Load("dummy.flipbook.json");
+    flipbook->SetClip("hit");
+    flipbook->SetPlaying(true);
+    flipbook->Update(1000);
+
+    REQUIRE(capturedNode != nullptr);
+    REQUIRE(capturedNode.get() == flipbook.get());
+}
+
+TEST_CASE("EventFlipbookStopped GetNode locks to the firing node (Reset)", "[flipbook][events][weak_ptr]") {
+    FlipbookTestContext tc;
+    MockFlipbook fb;
+    fb.sheetDesc.FrameDimensions = { 16, 16 };
+    fb.sheetDesc.SheetCells      = { 4, 1 };
+    fb.sheetDesc.MaxFrames       = 4;
+    fb.sheetDesc.NumClips        = 1;
+    fb.clips["die"] = IFlipbook::ClipDesc{ 0, 3, 10, IFlipbook::LoopType::Reset };
+    tc.flipbookFactory.nextFlipbook = &fb;
+
+    std::shared_ptr<NodeFlipbook> flipbook;
+    auto group = MakeGroupWithFlipbookChild(tc.context, flipbook);
+
+    std::shared_ptr<NodeFlipbook> capturedNode;
+    group->SetEventHandler([&](Node*, Event const& ev) -> bool {
+        if (ev.GetType() == EventFlipbookStopped::GetStaticType()) {
+            capturedNode = static_cast<EventFlipbookStopped const&>(ev).GetNode().lock();
+        }
+        return true;
+    });
+
+    flipbook->Load("dummy.flipbook.json");
+    flipbook->SetClip("die");
+    flipbook->SetPlaying(true);
+    flipbook->Update(1000);
+
+    REQUIRE(capturedNode != nullptr);
+    REQUIRE(capturedNode.get() == flipbook.get());
+}

@@ -105,17 +105,18 @@ namespace moth_ui {
         std::unique_ptr<IFlipbook> m_flipbook;            ///< Loaded flipbook, or null if none is set.
         std::optional<IFlipbook::SheetDesc> m_sheetDesc;  ///< Cached sheet geometry, populated on load.
         std::optional<IFlipbook::ClipDesc> m_currentClip; ///< Active clip description, empty if no clip is set.
-        std::string m_currentClipName; ///< Name of the active clip, or empty if none is set.
-        std::string m_initialClipName; ///< Clip name to activate when Load() is called. Empty means no pre-selection.
-        bool m_autoplay = false;       ///< Whether to start playing automatically after Load() activates the initial clip.
-        int m_currentFrame = 0;       ///< Current frame index within the full sheet grid.
-        float m_accumulatedMs = 0.0f; ///< Accumulated time since the last frame advance in milliseconds.
-        bool m_playing = false;       ///< Whether the current clip is advancing.
+        std::string m_currentClipName;                    ///< Name of the active clip, or empty if none is set.
+        std::string m_initialClipName;                    ///< Clip name to activate when Load() is called. Empty means no pre-selection.
+        bool m_autoplay = false;                          ///< Whether to start playing automatically after Load() activates the initial clip.
+        int m_currentFrame = 0;                           ///< Current frame index within the full sheet grid.
+        float m_accumulatedMs = 0.0f;                     ///< Accumulated time since the last frame advance in milliseconds.
+        bool m_playing = false;                           ///< Whether the current clip is advancing.
 
         void ReloadEntityInternal() override;
         void DrawInternal() override;
 
     private:
         void ReloadEntityPrivate();
+        std::shared_ptr<NodeFlipbook> SharedFromThis();
     };
 }

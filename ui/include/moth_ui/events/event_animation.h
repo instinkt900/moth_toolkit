@@ -17,7 +17,7 @@ namespace moth_ui {
          * @param node The node whose animation triggered the marker.
          * @param name Name of the animation marker that fired.
          */
-        EventAnimation(Node* node, std::string const& name)
+        EventAnimation(std::weak_ptr<Node> node, std::string const& name)
             : Event(GetStaticType())
             , m_node(node)
             , m_name(name) {}
@@ -32,7 +32,7 @@ namespace moth_ui {
         static constexpr int GetStaticType() { return EVENTTYPE_ANIMATION; }
 
         /// @brief Returns the node whose animation fired the marker.
-        Node* GetNode() const { return m_node; }
+        std::weak_ptr<Node> GetNode() const { return m_node; }
 
         /// @brief Returns the name of the animation marker that fired.
         std::string const& GetName() const { return m_name; }
@@ -42,7 +42,7 @@ namespace moth_ui {
         }
 
     private:
-        Node* m_node = nullptr;
+        std::weak_ptr<Node> m_node;
         std::string m_name;
     };
 
@@ -56,7 +56,7 @@ namespace moth_ui {
          * @param node     The node on which the clip started.
          * @param clipName Name of the clip that started.
          */
-        EventAnimationStarted(Node* node, std::string const& clipName)
+        EventAnimationStarted(std::weak_ptr<Node> node, std::string const& clipName)
             : Event(GetStaticType())
             , m_node(node)
             , m_clipName(clipName) {}
@@ -71,7 +71,7 @@ namespace moth_ui {
         static constexpr int GetStaticType() { return EVENTTYPE_ANIMATION_STARTED; }
 
         /// @brief Returns the node on which the clip started.
-        Node* GetNode() const { return m_node; }
+        std::weak_ptr<Node> GetNode() const { return m_node; }
 
         /// @brief Returns the name of the clip that started.
         std::string const& GetClipName() const { return m_clipName; }
@@ -81,7 +81,7 @@ namespace moth_ui {
         }
 
     private:
-        Node* m_node = nullptr;
+        std::weak_ptr<Node> m_node;
         std::string m_clipName;
     };
 
@@ -95,7 +95,7 @@ namespace moth_ui {
          * @param node     The node on which the clip stopped.
          * @param clipName Name of the clip that stopped.
          */
-        EventAnimationStopped(Node* node, std::string const& clipName)
+        EventAnimationStopped(std::weak_ptr<Node> node, std::string const& clipName)
             : Event(GetStaticType())
             , m_node(node)
             , m_clipName(clipName) {}
@@ -110,7 +110,7 @@ namespace moth_ui {
         static constexpr int GetStaticType() { return EVENTTYPE_ANIMATION_STOPPED; }
 
         /// @brief Returns the node on which the clip stopped.
-        Node* GetNode() const { return m_node; }
+        std::weak_ptr<Node> GetNode() const { return m_node; }
 
         /// @brief Returns the name of the clip that stopped.
         std::string const& GetClipName() const { return m_clipName; }
@@ -120,7 +120,7 @@ namespace moth_ui {
         }
 
     private:
-        Node* m_node = nullptr;
+        std::weak_ptr<Node> m_node;
         std::string m_clipName;
     };
 }

@@ -217,3 +217,65 @@ TEST_CASE("No events fire after Stop clip ends", "[animation][clip_controller]")
     REQUIRE(f.markerNames.size() == 1);
     REQUIRE(f.stoppedClips.size() == 1);
 }
+
+// ---------------------------------------------------------------------------
+// Tests — weak_ptr node references in animation events
+// ---------------------------------------------------------------------------
+
+TEST_CASE("EventAnimationStarted GetNode locks to the firing group", "[animation][clip_controller][weak_ptr]") {
+    AnimFixture f;
+
+    std::shared_ptr<Node> capturedNode;
+    f.group->SetEventHandler([&](Node*, Event const& ev) -> bool {
+        if (ev.GetType() == EventAnimationStarted::GetStaticType()) {
+            capturedNode = static_cast<EventAnimationStarted const&>(ev).GetNode().lock();
+        }
+        return false;
+    });
+
+    f.start();
+
+    REQUIRE(capturedNode != nullptr);
+    REQUIRE(capturedNode.get() == f.group.get());
+}
+
+TEST_CASE("EventAnimationStopped GetNode locks to the firing group", "[animation][clip_controller][weak_ptr]") {
+    AnimFixture f; // Stop loop type by default
+
+    std::shared_ptr<Node> capturedNode;
+    f.group->SetEventHandler([&](Node*, Event const& ev) -> bool {
+        if (ev.GetType() == EventAnimationStopped::GetStaticType()) {
+            capturedNode = static_cast<EventAnimationStopped const&>(ev).GetNode().lock();
+        }
+        return false;
+    });
+
+    f.start();
+    for (int i = 0; i < kClipEndFrame; ++i) {
+        f.tick();
+    }
+
+    REQUIRE(capturedNode != nullptr);
+    REQUIRE(capturedNode.get() == f.group.get());
+}
+
+TEST_CASE("EventAnimation GetNode locks to the firing group", "[animation][clip_controller][weak_ptr]") {
+    AnimFixture f;
+    f.addMarker(kMidFrame, "ping");
+
+    std::shared_ptr<Node> capturedNode;
+    f.group->SetEventHandler([&](Node*, Event const& ev) -> bool {
+        if (ev.GetType() == EventAnimation::GetStaticType()) {
+            capturedNode = static_cast<EventAnimation const&>(ev).GetNode().lock();
+        }
+        return false;
+    });
+
+    f.start();
+    for (int i = 0; i < kMidFrame; ++i) {
+        f.tick();
+    }
+
+    REQUIRE(capturedNode != nullptr);
+    REQUIRE(capturedNode.get() == f.group.get());
+}

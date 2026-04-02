@@ -35,7 +35,7 @@ namespace moth_ui {
                 if (m_sheetDesc->SheetCells.x <= 0 || m_sheetDesc->SheetCells.y <= 0 || m_sheetDesc->FrameDimensions.x <= 0 || m_sheetDesc->FrameDimensions.y <= 0) {
                     m_sheetDesc.reset();
                     m_flipbook.reset();
-                    // failure
+                    // TODO: log error via ILogger once the logging interface is implemented
                     return;
                 }
                 SetClip(m_initialClipName);
@@ -76,7 +76,7 @@ namespace moth_ui {
             bool wasPlaying = m_playing;
             m_playing = playing;
             if (!wasPlaying && m_playing) {
-                SendEventUp(EventFlipbookStarted(this, m_currentClipName));
+                SendEventUp(EventFlipbookStarted(SharedFromThis(), m_currentClipName));
             }
         }
     }
@@ -105,12 +105,12 @@ namespace moth_ui {
                 case IFlipbook::LoopType::Reset:
                     m_currentFrame = m_currentClip->Start;
                     m_playing = false;
-                    SendEventUp(EventFlipbookStopped(this, m_currentClipName));
+                    SendEventUp(EventFlipbookStopped(SharedFromThis(), m_currentClipName));
                     break;
                 case IFlipbook::LoopType::Stop:
                     m_currentFrame = m_currentClip->End;
                     m_playing = false;
-                    SendEventUp(EventFlipbookStopped(this, m_currentClipName));
+                    SendEventUp(EventFlipbookStopped(SharedFromThis(), m_currentClipName));
                     break;
                 }
             }
@@ -131,5 +131,9 @@ namespace moth_ui {
         auto& image = m_flipbook->GetImage();
         IntRect const localRect{ { 0, 0 }, m_screenRect.bottomRight - m_screenRect.topLeft };
         renderer.RenderImage(image, srcRect, localRect, ImageScaleType::Stretch, 1.0f);
+    }
+
+    std::shared_ptr<NodeFlipbook> NodeFlipbook::SharedFromThis() {
+        return std::static_pointer_cast<NodeFlipbook>(shared_from_this());
     }
 }

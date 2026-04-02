@@ -19,7 +19,7 @@ namespace moth_ui {
             for (auto& child : m_group->GetChildren()) {
                 child->GetAnimationController().SetFrame(m_frame);
             }
-            m_group->SendEvent(EventAnimationStarted(m_group, clip->m_name), Node::EventDirection::Up);
+            m_group->SendEvent(EventAnimationStarted(m_group->shared_from_this(), clip->m_name), Node::EventDirection::Up);
         }
     }
 
@@ -72,16 +72,19 @@ namespace moth_ui {
             }
 
             if (animationEnded) {
-                m_group->SendEvent(EventAnimationStopped(m_group, animationName), Node::EventDirection::Up);
+                m_group->SendEvent(EventAnimationStopped(m_group->shared_from_this(), animationName), Node::EventDirection::Up);
             }
         }
     }
 
     void AnimationClipController::CheckEvents(float startFrame, float endFrame) {
         auto layout = std::static_pointer_cast<LayoutEntityGroup>(m_group->GetLayoutEntity());
+        if (!layout) {
+            return;
+        }
         for (auto& animEvent : layout->m_events) {
             if (static_cast<float>(animEvent->m_frame) > startFrame && static_cast<float>(animEvent->m_frame) <= endFrame) {
-                m_group->SendEvent(EventAnimation(m_group, animEvent->m_name), Node::EventDirection::Up);
+                m_group->SendEvent(EventAnimation(m_group->shared_from_this(), animEvent->m_name), Node::EventDirection::Up);
             }
         }
     }

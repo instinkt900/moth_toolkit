@@ -132,7 +132,7 @@ namespace moth_ui {
                                          row * m_sheetDesc->FrameDimensions.y,
                                          m_sheetDesc->FrameDimensions.x,
                                          m_sheetDesc->FrameDimensions.y);
-        auto& image = m_flipbook->GetImage();
+        auto const& image = m_flipbook->GetImage();
         IntRect const localRect{ { 0, 0 }, m_screenRect.bottomRight - m_screenRect.topLeft };
         renderer.RenderImage(image, srcRect, localRect, ImageScaleType::Stretch, 1.0f);
     }

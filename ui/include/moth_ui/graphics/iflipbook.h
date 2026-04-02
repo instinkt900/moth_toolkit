@@ -16,7 +16,7 @@ namespace moth_ui {
     class IFlipbook {
     public:
         /// @brief Returns the sprite sheet image used for all frames.
-        virtual IImage& GetImage() const = 0;
+        virtual IImage const& GetImage() const = 0;
 
         /**
          * @brief Describes the uniform grid layout of the sprite sheet.

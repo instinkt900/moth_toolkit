@@ -78,7 +78,7 @@ namespace moth_ui {
          * @param scaleType  How the image is scaled to fill @p destRect.
          * @param scale      Uniform scale factor applied during tiled/nine-slice modes.
          */
-        virtual void RenderImage(IImage& image, IntRect const& sourceRect, IntRect const& destRect, ImageScaleType scaleType, float scale) = 0;
+        virtual void RenderImage(IImage const& image, IntRect const& sourceRect, IntRect const& destRect, ImageScaleType scaleType, float scale) = 0;
 
         /**
          * @brief Draws a UTF-8 string using the specified font and alignment.

@@ -31,7 +31,7 @@ public:
     SheetDesc sheetDesc;
     std::map<std::string, ClipDesc, std::less<>> clips;
 
-    IImage& GetImage() const override { return image; }
+    IImage const& GetImage() const override { return image; }
     void GetSheetDesc(SheetDesc& outDesc) const override { outDesc = sheetDesc; }
 
     std::string_view GetClipName(int index) const override {

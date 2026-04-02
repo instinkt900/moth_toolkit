@@ -20,9 +20,6 @@ namespace moth_ui {
         IFlipbookFactory& operator=(IFlipbookFactory&&) = default;
         virtual ~IFlipbookFactory() = default;
 
-        /// @brief Discards all cached flipbooks, forcing subsequent loads from disk.
-        virtual void FlushCache() = 0;
-
         /// @brief Loads a flipbook from a descriptor file.
         /// @param path Path to the .flipbook.json descriptor.
         /// @return Loaded flipbook, or nullptr on failure.

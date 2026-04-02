@@ -24,14 +24,13 @@ public:
     void PopClip() override {}
     void RenderRect(moth_ui::IntRect const&) override {}
     void RenderFilledRect(moth_ui::IntRect const&) override {}
-    void RenderImage(moth_ui::IImage&, moth_ui::IntRect const&, moth_ui::IntRect const&, moth_ui::ImageScaleType, float) override {}
+    void RenderImage(moth_ui::IImage const&, moth_ui::IntRect const&, moth_ui::IntRect const&, moth_ui::ImageScaleType, float) override {}
     void RenderText(std::string const&, moth_ui::IFont&, moth_ui::TextHorizAlignment, moth_ui::TextVertAlignment, moth_ui::IntRect const&) override {}
     void SetRendererLogicalSize(moth_ui::IntVec2 const&) override {}
 };
 
 class MockImageFactory : public moth_ui::IImageFactory {
 public:
-    void FlushCache() override {}
     std::unique_ptr<moth_ui::IImage> GetImage(std::filesystem::path const&) override { return nullptr; }
 };
 

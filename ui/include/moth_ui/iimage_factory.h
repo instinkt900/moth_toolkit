@@ -21,9 +21,6 @@ namespace moth_ui {
         IImageFactory& operator=(IImageFactory&&) = default;
         virtual ~IImageFactory() = default;
 
-        /// @brief Discards all cached images, forcing subsequent loads from disk.
-        virtual void FlushCache() = 0;
-
         /**
          * @brief Returns an image loaded from the given path.
          * @param path Path to the image file.

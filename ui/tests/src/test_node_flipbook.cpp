@@ -56,8 +56,6 @@ public:
     int getFlipbookCalls = 0;
     std::filesystem::path lastRequestedPath;
 
-    void FlushCache() override {}
-
     std::unique_ptr<IFlipbook> GetFlipbook(std::filesystem::path const& path) override {
         ++getFlipbookCalls;
         lastRequestedPath = path;

@@ -15,7 +15,8 @@ class MothUI(ConanFile):
     exports_sources = "CMakeLists.txt", "version.txt", "LICENSE", "include/*", "src/*"
 
     def set_version(self):
-        self.version = load(self, "version.txt").strip()
+        if not self.version:
+            self.version = load(self, "version.txt").strip()
 
     def requirements(self):
         self.requires("nlohmann_json/[~3.11]", transitive_headers=True)

@@ -105,11 +105,13 @@ namespace moth_ui {
                     m_currentFrame = m_currentClip->Start;
                     break;
                 case IFlipbook::LoopType::Reset:
+                    m_accumulatedMs = 0;
                     m_currentFrame = m_currentClip->Start;
                     m_playing = false;
                     SendEventUp(EventFlipbookStopped(SharedFromThis(), m_currentClipName));
                     break;
                 case IFlipbook::LoopType::Stop:
+                    m_accumulatedMs = 0;
                     m_currentFrame = m_currentClip->End;
                     m_playing = false;
                     SendEventUp(EventFlipbookStopped(SharedFromThis(), m_currentClipName));

@@ -29,13 +29,18 @@ namespace moth_ui {
         auto* factory = m_context.GetFlipbookFactory();
         if (factory != nullptr) {
             m_flipbook = factory->GetFlipbook(path);
-            if (m_flipbook != nullptr) {
+            if (m_flipbook == nullptr) {
+                GetLogger().Warning("NodeFlipbook: failed to load flipbook '{}'", path.string());
+            } else {
                 m_sheetDesc.emplace();
                 m_flipbook->GetSheetDesc(*m_sheetDesc);
                 if (m_sheetDesc->SheetCells.x <= 0 || m_sheetDesc->SheetCells.y <= 0 || m_sheetDesc->FrameDimensions.x <= 0 || m_sheetDesc->FrameDimensions.y <= 0) {
+                    GetLogger().Error("NodeFlipbook: invalid sheet descriptor in '{}' (cells={}x{} frame={}x{})",
+                        path.string(),
+                        m_sheetDesc->SheetCells.x, m_sheetDesc->SheetCells.y,
+                        m_sheetDesc->FrameDimensions.x, m_sheetDesc->FrameDimensions.y);
                     m_sheetDesc.reset();
                     m_flipbook.reset();
-                    // TODO: log error via ILogger once the logging interface is implemented
                     return;
                 }
                 SetClip(m_initialClipName);
@@ -69,6 +74,8 @@ namespace moth_ui {
                 m_currentClip = clipDesc;
                 m_currentClipName = name;
                 m_currentFrame = m_currentClip->Start;
+            } else if (!name.empty()) {
+                GetLogger().Warning("NodeFlipbook: clip '{}' not found", name);
             }
         }
     }

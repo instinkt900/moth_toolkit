@@ -8,6 +8,7 @@ Checks: >
   -cppcoreguidelines-non-private-member-variables-in-classes,
   -readability-identifier-length,
   -cppcoreguidelines-avoid-const-or-ref-data-members,
+  -cppcoreguidelines-avoid-non-const-global-variables,
   -cppcoreguidelines-pro-type-union-access,
   -cppcoreguidelines-pro-bounds-constant-array-index,
   -readability-use-anyofallof,

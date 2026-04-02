@@ -45,8 +45,13 @@ namespace moth_ui {
 
     class NullLogger : public ILogger {
     public:
-        void Log(LogLevel level, std::string_view message) override {
-            // null logger just no-ops
-        }
+        void Log(LogLevel /*level*/, std::string_view /*message*/) override {}
     };
+
+    /// @brief Registers a logger for use by the moth_ui library.
+    ///        Pass @c nullptr to revert to the silent NullLogger.
+    void SetLogger(ILogger* logger);
+
+    /// @brief Returns the active logger, or a NullLogger if none has been set.
+    ILogger& GetLogger();
 }

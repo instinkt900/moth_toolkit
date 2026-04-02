@@ -83,6 +83,7 @@ set(SOURCES ${SOURCES}
 	src/animation/animation_track.cpp
 	src/animation/keyframe.cpp
 	src/context.cpp
+	src/logger.cpp
 	src/font_factory.cpp
 	src/layers/layer.cpp
 	src/layers/layer_stack.cpp

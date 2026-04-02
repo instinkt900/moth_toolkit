@@ -107,22 +107,26 @@ namespace moth_ui {
             if (options.binary) {
                 std::ifstream ifile(path, std::ios::binary);
                 if (!ifile.is_open()) {
+                    GetLogger().Error("Failed to load layout '{}': file not found", path.string());
                     return LoadResult::DoesNotExist;
                 }
                 json = nlohmann::json::from_msgpack(ifile);
             } else {
                 std::ifstream ifile(path);
                 if (!ifile.is_open()) {
+                    GetLogger().Error("Failed to load layout '{}': file not found", path.string());
                     return LoadResult::DoesNotExist;
                 }
                 ifile >> json;
             }
         } catch (nlohmann::json::parse_error const&) {
+            GetLogger().Error("Failed to load layout '{}': JSON parse error", path.string());
             return LoadResult::IncorrectFormat;
         }
 
         auto const layout = std::make_shared<Layout>();
         if (!layout->Deserialize(json, context)) {
+            GetLogger().Error("Failed to load layout '{}': deserialization failed", path.string());
             return LoadResult::IncorrectFormat;
         }
 

@@ -15,17 +15,19 @@ namespace moth_ui {
     std::unique_ptr<Group> NodeFactory::Create(Context& context, std::filesystem::path const& path, int width, int height) {
         std::shared_ptr<Layout> layout;
         auto const loadResult = Layout::Load(path, &layout);
-        if (loadResult == Layout::LoadResult::Success) {
-            std::unique_ptr<Group> resultNode = Create(context, std::static_pointer_cast<LayoutEntityGroup>(layout));
-
-            IntRect initialRect;
-            initialRect.topLeft = { 0, 0 };
-            initialRect.bottomRight = { width, height };
-            resultNode->SetScreenRect(initialRect);
-
-            return resultNode;
+        if (loadResult != Layout::LoadResult::Success) {
+            GetLogger().Error("Failed to load layout '{}': {}", path.string(), magic_enum::enum_name(loadResult));
+            return nullptr;
         }
-        return nullptr;
+
+        std::unique_ptr<Group> resultNode = Create(context, std::static_pointer_cast<LayoutEntityGroup>(layout));
+
+        IntRect initialRect;
+        initialRect.topLeft = { 0, 0 };
+        initialRect.bottomRight = { width, height };
+        resultNode->SetScreenRect(initialRect);
+
+        return resultNode;
     }
 
     std::unique_ptr<Group> NodeFactory::Create(Context& context, std::shared_ptr<LayoutEntityGroup> group) {

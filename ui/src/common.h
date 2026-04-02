@@ -15,6 +15,7 @@
 #include <range/v3/algorithm/sort.hpp>
 
 #include "moth_ui/utils/serialize_utils.h"
+#include "moth_ui/ilogger.h"
 
 #undef min
 #undef max

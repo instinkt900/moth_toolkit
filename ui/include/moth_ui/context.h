@@ -3,10 +3,9 @@
 #include "moth_ui/graphics/irenderer.h"
 #include "moth_ui/ifont_factory.h"
 #include "moth_ui/iimage_factory.h"
+#include "moth_ui/iflipbook_factory.h"
 
 #include <cassert>
-#include "moth_ui/iflipbook_factory.h"
-#include "moth_ui/ilogger.h"
 
 namespace moth_ui {
     /**
@@ -28,8 +27,7 @@ namespace moth_ui {
         Context(IImageFactory* imageFactory,
                 IFontFactory* fontFactory,
                 IRenderer* renderer,
-                IFlipbookFactory* flipbookFactory = nullptr,
-                ILogger* logger = nullptr);
+                IFlipbookFactory* flipbookFactory = nullptr);
 
         /// @brief Returns the image factory associated with this context.
         IImageFactory& GetImageFactory() const {
@@ -54,14 +52,6 @@ namespace moth_ui {
             return m_flipbookFactory;
         }
 
-        ILogger& GetLogger() const {
-            if (m_logger != nullptr) {
-                return *m_logger;
-            }
-            static NullLogger nullLogger;
-            return nullLogger;
-        }
-
         Context(Context const&) = default;
         Context(Context&&) = default;
         Context& operator=(Context const&) = default;
@@ -73,6 +63,5 @@ namespace moth_ui {
         IFontFactory* m_fontFactory;
         IRenderer* m_renderer;
         IFlipbookFactory* m_flipbookFactory;
-        ILogger* m_logger;
     };
 }

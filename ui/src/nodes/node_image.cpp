@@ -20,6 +20,9 @@ namespace moth_ui {
 
     void NodeImage::Load(std::filesystem::path const& path) {
         m_image = m_context.GetImageFactory().GetImage(path);
+        if (!m_image) {
+            GetLogger().Warning("NodeImage: failed to load image '{}'", path.string());
+        }
         if (m_image && IsZero(m_sourceRect)) {
             auto const imageDimensions = m_image->GetDimensions();
             m_sourceRect.bottomRight.x = imageDimensions.x;

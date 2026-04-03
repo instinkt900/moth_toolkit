@@ -3,6 +3,42 @@
 All notable changes to this project will be documented in this file.
 Entries are generated automatically from git history using [git-cliff](https://github.com/orhun/git-cliff).
 
+## [1.6.0] - 2026-04-03
+### Features
+- Add NodeFlipbook and IFlipbook/IFlipbookFactory interfaces
+- Flesh out NodeFlipbook with clips, loop types, and named events
+- Add ILogger interface with NullLogger fallback in Context
+- Add global ILogger with callsites throughout the library
+
+### Bug Fixes
+- Address review findings in NodeFlipbook implementation
+- Guard NodeFlipbook::Update against zero/negative FPS
+- Validate SheetDesc on load and clear all state on load failure
+- Clear m_accumulatedMs when Stop/Reset clip ends
+- Allow --version override in conanfile set_version
+- Make IRenderer::RenderImage and IFlipbook::GetImage take/return const
+- Re-apply LayoutEntityRef property overrides after Node::ReloadEntity
+
+### Refactoring
+- Use weak_ptr for node references in animation and flipbook events
+- Use event_cast in event handler test doubles
+- Remove FlushCache from IImageFactory and IFlipbookFactory
+
+### Documentation
+- Explain why Node move-assignment is deleted
+- Update NodeFlipbook docs and add autoplay/load tests
+- Add Doxygen cmake target and document it in README
+- Add Doxygen Awesome theme via FetchContent
+
+### Testing
+- Add NodeFlipbook unit tests
+
+### Miscellaneous
+- Suppress unused-includes for common.h in clangd; update test mock
+
+### Changes
+- Bump version from 1.5.0 to 1.6.0
+
 ## [1.5.0] - 2026-03-25
 ### Features
 - Add binary and pretty-print options to Layout::Save, detect binary on Load

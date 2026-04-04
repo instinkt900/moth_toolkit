@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 Entries are generated automatically from git history using [git-cliff](https://github.com/orhun/git-cliff).
 
+## [1.7.0] - 2026-04-04
+### Features
+- Add LayoutEntityFlipbook(LayoutRect, path) constructor
+- Add discrete animation tracks for flipbook clip and playing state
+
+### Bug Fixes
+- Defer EventFlipbookStarted when node is not yet shared_ptr-owned
+- Address review findings in discrete track and layout entity code
+
+### Testing
+- Update and extend flipbook and discrete track test suite
+
+### Changes
+- Bump version from 1.6.0 to 1.7.0
+
 ## [1.6.0] - 2026-04-03
 ### Features
 - Add NodeFlipbook and IFlipbook/IFlipbookFactory interfaces

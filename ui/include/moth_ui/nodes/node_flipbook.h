@@ -111,6 +111,7 @@ namespace moth_ui {
         int m_currentFrame = 0;                           ///< Current frame index within the full sheet grid.
         float m_accumulatedMs = 0.0f;                     ///< Accumulated time since the last frame advance in milliseconds.
         bool m_playing = false;                           ///< Whether the current clip is advancing.
+        bool m_pendingStartedEvent = false;               ///< True when EventFlipbookStarted could not be sent during construction and should be fired on the next Update().
 
         void ReloadEntityInternal() override;
         void DrawInternal() override;

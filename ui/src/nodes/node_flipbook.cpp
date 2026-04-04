@@ -85,13 +85,22 @@ namespace moth_ui {
             bool wasPlaying = m_playing;
             m_playing = playing;
             if (!wasPlaying && m_playing) {
-                SendEventUp(EventFlipbookStarted(SharedFromThis(), m_currentClipName));
+                if (weak_from_this().expired()) {
+                    m_pendingStartedEvent = true;
+                } else {
+                    SendEventUp(EventFlipbookStarted(SharedFromThis(), m_currentClipName));
+                }
             }
         }
     }
 
     void NodeFlipbook::Update(uint32_t ticks) {
         Node::Update(ticks);
+
+        if (m_pendingStartedEvent) {
+            m_pendingStartedEvent = false;
+            SendEventUp(EventFlipbookStarted(SharedFromThis(), m_currentClipName));
+        }
 
         if (!m_playing || !m_flipbook || !m_currentClip.has_value()) {
             return;

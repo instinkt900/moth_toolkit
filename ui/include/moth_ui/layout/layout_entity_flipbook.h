@@ -15,6 +15,7 @@ namespace moth_ui {
     public:
         explicit LayoutEntityFlipbook(LayoutRect const& initialBounds);
         explicit LayoutEntityFlipbook(LayoutEntityGroup* parent);
+        LayoutEntityFlipbook(LayoutRect const& initialBounds, std::filesystem::path const& flipbookPath);
 
         std::shared_ptr<LayoutEntity> Clone(CloneType cloneType) override;
         LayoutEntityType GetType() const override { return LayoutEntityType::Flipbook; }

@@ -10,6 +10,11 @@ namespace moth_ui {
         : LayoutEntity(parent) {
     }
 
+    LayoutEntityFlipbook::LayoutEntityFlipbook(LayoutRect const& initialBounds, std::filesystem::path const& flipbookPath)
+        : LayoutEntity(initialBounds)
+        , m_flipbookPath(flipbookPath) {
+    }
+
     std::shared_ptr<LayoutEntity> LayoutEntityFlipbook::Clone(CloneType cloneType) {
         return std::make_shared<LayoutEntityFlipbook>(*this);
     }

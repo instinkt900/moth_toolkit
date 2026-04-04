@@ -1,6 +1,7 @@
 #include "common.h"
 #include "moth_ui/animation/animation_controller.h"
 #include "moth_ui/animation/animation_track_controller.h"
+#include "moth_ui/animation/discrete_animation_track_controller.h"
 #include "moth_ui/layout/layout_entity.h"
 #include "moth_ui/nodes/node.h"
 
@@ -37,6 +38,8 @@ namespace {
         case AnimationTrack::Target::Rotation:
             return node->GetRotation();
         case AnimationTrack::Target::Events:
+        case AnimationTrack::Target::FlipbookClip:
+        case AnimationTrack::Target::FlipbookPlaying:
         case AnimationTrack::Target::Unknown:
             break;
         }
@@ -69,6 +72,28 @@ namespace moth_ui {
         for (auto&& track : m_trackControllers) {
             track->SetFrame(frame);
         }
+        for (auto&& track : m_discreteControllers) {
+            track->SetFrame(frame);
+        }
         m_node->RecalculateBounds();
+    }
+
+    void AnimationController::SetFrameDiscrete(float frame) {
+        for (auto&& track : m_discreteControllers) {
+            track->SetFrame(frame);
+        }
+    }
+
+    void AnimationController::ClearDiscreteCallbacks() {
+        m_discreteControllers.clear();
+    }
+
+    void AnimationController::RegisterDiscreteCallback(AnimationTrack::Target target, std::function<void(std::string_view)> callback) {
+        if (auto const layout = m_node->GetLayoutEntity()) {
+            auto it = layout->m_discreteTracks.find(target);
+            if (it != layout->m_discreteTracks.end()) {
+                m_discreteControllers.push_back(std::make_unique<DiscreteAnimationTrackController>(it->second, std::move(callback)));
+            }
+        }
     }
 }

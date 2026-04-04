@@ -1,8 +1,11 @@
 #include "mock_context.h"
+#include "moth_ui/animation/animation_track.h"
 #include "moth_ui/events/event_flipbook.h"
 #include "moth_ui/graphics/iflipbook.h"
 #include "moth_ui/graphics/iimage.h"
 #include "moth_ui/iflipbook_factory.h"
+#include "moth_ui/layout/layout_entity_flipbook.h"
+#include "moth_ui/layout/layout_rect.h"
 #include "moth_ui/nodes/group.h"
 #include "moth_ui/nodes/node_flipbook.h"
 #include <catch2/catch_all.hpp>
@@ -104,8 +107,8 @@ TEST_CASE("Load with null factory clears all flipbook state", "[flipbook][load]"
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
     auto primed = std::make_shared<NodeFlipbook>(tc.context);
-    primed->SetInitialClipName("run");
     primed->Load("dummy.flipbook.json");
+    primed->SetClip("run");
     REQUIRE(primed->GetFlipbook() != nullptr);
 
     // Now call Load on a node whose context has no factory.
@@ -120,7 +123,6 @@ TEST_CASE("Load with factory returning null clears all flipbook state", "[flipbo
     FlipbookTestContext tc;
     // nextFlipbook is null — factory returns nullptr.
     auto node = std::make_shared<NodeFlipbook>(tc.context);
-    node->SetInitialClipName("run");
     node->Load("nonexistent.flipbook.json");
 
     REQUIRE(node->GetFlipbook() == nullptr);
@@ -135,8 +137,8 @@ TEST_CASE("Load clears previous flipbook when factory returns null", "[flipbook]
     tc.flipbookFactory.nextFlipbook = &fb;
 
     auto node = std::make_shared<NodeFlipbook>(tc.context);
-    node->SetInitialClipName("run");
     node->Load("dummy.flipbook.json");
+    node->SetClip("run");
     REQUIRE(node->GetFlipbook() != nullptr);
 
     // Now make the factory return null and reload.
@@ -205,8 +207,8 @@ TEST_CASE("Load resets playback state before loading", "[flipbook][load]") {
     tc.flipbookFactory.nextFlipbook = &fb;
 
     auto node = std::make_shared<NodeFlipbook>(tc.context);
-    node->SetInitialClipName("run");
     node->Load("dummy.flipbook.json");
+    node->SetClip("run");
     node->SetPlaying(true);
     node->Update(84); // advance one frame
 
@@ -218,68 +220,77 @@ TEST_CASE("Load resets playback state before loading", "[flipbook][load]") {
     REQUIRE_FALSE(node->IsPlaying());
 }
 
-TEST_CASE("Load with initial clip name activates that clip", "[flipbook][load]") {
+TEST_CASE("SetClip after Load activates the named clip", "[flipbook][load]") {
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
 
     auto node = std::make_shared<NodeFlipbook>(tc.context);
-    node->SetInitialClipName("run");
     node->Load("dummy.flipbook.json");
+    node->SetClip("run");
 
     REQUIRE(node->GetCurrentClipName() == "run");
     REQUIRE(node->GetCurrentFrame() == 0); // Start of clip
 }
 
-TEST_CASE("Load with no initial clip name leaves clip unset", "[flipbook][load]") {
+TEST_CASE("Load with no clip set leaves clip unset", "[flipbook][load]") {
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
 
     auto node = std::make_shared<NodeFlipbook>(tc.context);
-    // m_initialClipName defaults to empty
     node->Load("dummy.flipbook.json");
+    // No SetClip call — clip stays empty.
 
     REQUIRE(node->GetCurrentClipName().empty());
     REQUIRE_FALSE(node->IsPlaying());
 }
 
-TEST_CASE("Autoplay true starts playback after Load", "[flipbook][load][autoplay]") {
+TEST_CASE("Discrete track FlipbookPlaying=1 at frame 0 starts playback on instantiate", "[flipbook][load][discrete]") {
+    // Autoplay is now expressed via the FlipbookPlaying discrete track on the layout entity.
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
 
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
-    node->SetInitialClipName("run");
-    node->SetAutoplay(true);
-    node->Load("dummy.flipbook.json");
+    auto entity = std::make_shared<LayoutEntityFlipbook>(MakeDefaultLayoutRect(), "dummy.flipbook.json");
+    entity->m_discreteTracks.at(AnimationTrack::Target::FlipbookClip).GetOrCreateKeyframe(0) = "run";
+    entity->m_discreteTracks.at(AnimationTrack::Target::FlipbookPlaying).GetOrCreateKeyframe(0) = "1";
+
+    auto nodeBase = entity->Instantiate(tc.context);
+    auto* node = static_cast<NodeFlipbook*>(nodeBase.get());
 
     REQUIRE(node->IsPlaying());
+    REQUIRE(node->GetCurrentClipName() == "run");
 }
 
-TEST_CASE("Autoplay false does not start playback after Load", "[flipbook][load][autoplay]") {
+TEST_CASE("Discrete track FlipbookPlaying=0 at frame 0 does not start playback on instantiate", "[flipbook][load][discrete]") {
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
 
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
-    node->SetInitialClipName("run");
-    node->SetAutoplay(false);
-    node->Load("dummy.flipbook.json");
+    auto entity = std::make_shared<LayoutEntityFlipbook>(MakeDefaultLayoutRect(), "dummy.flipbook.json");
+    entity->m_discreteTracks.at(AnimationTrack::Target::FlipbookClip).GetOrCreateKeyframe(0) = "run";
+    // FlipbookPlaying defaults to "0" at frame 0 from InitDiscreteFlipbookTracks.
+
+    auto nodeBase = entity->Instantiate(tc.context);
+    auto* node = static_cast<NodeFlipbook*>(nodeBase.get());
 
     REQUIRE_FALSE(node->IsPlaying());
+    REQUIRE(node->GetCurrentClipName() == "run");
 }
 
-TEST_CASE("Autoplay true with no initial clip does not start playback", "[flipbook][load][autoplay]") {
-    // Autoplay requires a clip to be set — no clip means SetPlaying is a no-op.
+TEST_CASE("Discrete track FlipbookPlaying=1 with no clip does not start playback", "[flipbook][load][discrete]") {
+    // SetPlaying requires a clip — FlipbookPlaying=1 with no clip is a no-op.
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
 
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
-    node->SetAutoplay(true);
-    // No SetInitialClipName — m_initialClipName is empty.
-    node->Load("dummy.flipbook.json");
+    auto entity = std::make_shared<LayoutEntityFlipbook>(MakeDefaultLayoutRect(), "dummy.flipbook.json");
+    entity->m_discreteTracks.at(AnimationTrack::Target::FlipbookPlaying).GetOrCreateKeyframe(0) = "1";
+    // No clip name set in FlipbookClip track.
+
+    auto nodeBase = entity->Instantiate(tc.context);
+    auto* node = static_cast<NodeFlipbook*>(nodeBase.get());
 
     REQUIRE_FALSE(node->IsPlaying());
 }

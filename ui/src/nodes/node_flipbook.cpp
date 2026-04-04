@@ -1,5 +1,7 @@
 #include "common.h"
 #include "moth_ui/nodes/node_flipbook.h"
+#include "moth_ui/animation/animation_controller.h"
+#include "moth_ui/animation/animation_track.h"
 #include "moth_ui/events/event_flipbook.h"
 #include "moth_ui/graphics/image_scale_type.h"
 #include "moth_ui/layout/layout_entity_flipbook.h"
@@ -26,6 +28,8 @@ namespace moth_ui {
         m_sheetDesc.reset();
         m_flipbook.reset();
         m_playing = false;
+        m_pendingStartedEvent = false;
+        m_pendingStartedClipName.clear();
         auto* factory = m_context.GetFlipbookFactory();
         if (factory != nullptr) {
             m_flipbook = factory->GetFlipbook(path);
@@ -43,10 +47,7 @@ namespace moth_ui {
                     m_flipbook.reset();
                     return;
                 }
-                SetClip(m_initialClipName);
-                if (m_autoplay) {
-                    SetPlaying(true);
-                }
+                // Initial clip and playing state are driven by discrete track callbacks.
             }
         }
     }
@@ -58,9 +59,18 @@ namespace moth_ui {
 
     void NodeFlipbook::ReloadEntityPrivate() {
         auto const layoutEntity = std::static_pointer_cast<LayoutEntityFlipbook>(m_layout);
-        m_initialClipName = layoutEntity->m_clipName;
-        m_autoplay = layoutEntity->m_autoplay;
         Load(layoutEntity->m_flipbookPath);
+
+        auto& controller = GetAnimationController();
+        controller.ClearDiscreteCallbacks();
+        controller.RegisterDiscreteCallback(AnimationTrack::Target::FlipbookClip, [this](std::string_view value) {
+            SetClip(value);
+        });
+        controller.RegisterDiscreteCallback(AnimationTrack::Target::FlipbookPlaying, [this](std::string_view value) {
+            SetPlaying(value == "1");
+        });
+        // Apply initial state from discrete tracks at frame 0.
+        controller.SetFrameDiscrete(0.0f);
     }
 
     void NodeFlipbook::SetClip(std::string_view name) {
@@ -68,6 +78,8 @@ namespace moth_ui {
         m_currentFrame = 0;
         m_currentClip.reset();
         m_currentClipName.clear();
+        m_pendingStartedEvent = false;
+        m_pendingStartedClipName.clear();
         if (m_flipbook != nullptr) {
             IFlipbook::ClipDesc clipDesc;
             if (m_flipbook->GetClipDesc(name, clipDesc)) {
@@ -85,13 +97,24 @@ namespace moth_ui {
             bool wasPlaying = m_playing;
             m_playing = playing;
             if (!wasPlaying && m_playing) {
-                SendEventUp(EventFlipbookStarted(SharedFromThis(), m_currentClipName));
+                if (weak_from_this().expired()) {
+                    m_pendingStartedEvent = true;
+                    m_pendingStartedClipName = m_currentClipName;
+                } else {
+                    SendEventUp(EventFlipbookStarted(SharedFromThis(), m_currentClipName));
+                }
             }
         }
     }
 
     void NodeFlipbook::Update(uint32_t ticks) {
         Node::Update(ticks);
+
+        if (m_pendingStartedEvent) {
+            m_pendingStartedEvent = false;
+            SendEventUp(EventFlipbookStarted(SharedFromThis(), m_pendingStartedClipName));
+            m_pendingStartedClipName.clear();
+        }
 
         if (!m_playing || !m_flipbook || !m_currentClip.has_value()) {
             return;

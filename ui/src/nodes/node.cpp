@@ -121,6 +121,7 @@ namespace moth_ui {
         m_layoutRect = m_layout->GetBoundsAtFrame(frame);
         m_color = m_layout->GetColorAtFrame(frame);
         m_rotation = m_layout->GetRotationAtFrame(frame);
+        m_animationController->SetFrameDiscrete(frame);
         RecalculateBounds();
     }
 

@@ -1,13 +1,45 @@
 #include "moth_ui/layout/layout_entity_flipbook.h"
+#include "moth_ui/animation/discrete_animation_track.h"
+#include "moth_ui/animation/animation_track.h"
 #include "moth_ui/nodes/node_flipbook.h"
 
 namespace moth_ui {
+    namespace {
+        constexpr std::array<AnimationTrack::Target, 2> kFlipbookDiscreteTargets{
+            AnimationTrack::Target::FlipbookClip,
+            AnimationTrack::Target::FlipbookPlaying,
+        };
+
+        void InitDiscreteFlipbookTracks(LayoutEntity& entity, bool seedFrame0) {
+            for (auto target : kFlipbookDiscreteTargets) {
+                if (entity.m_discreteTracks.find(target) == entity.m_discreteTracks.end()) {
+                    auto [it, ok] = entity.m_discreteTracks.emplace(target, DiscreteAnimationTrack(target));
+                    if (seedFrame0) {
+                        std::string defaultValue;
+                        if (target == AnimationTrack::Target::FlipbookPlaying) {
+                            defaultValue = "0";
+                        }
+                        it->second.GetOrCreateKeyframe(0) = std::move(defaultValue);
+                    }
+                }
+            }
+        }
+    }
+
     LayoutEntityFlipbook::LayoutEntityFlipbook(LayoutRect const& initialBounds)
         : LayoutEntity(initialBounds) {
+        InitDiscreteFlipbookTracks(*this, true);
     }
 
     LayoutEntityFlipbook::LayoutEntityFlipbook(LayoutEntityGroup* parent)
         : LayoutEntity(parent) {
+        InitDiscreteFlipbookTracks(*this, true);
+    }
+
+    LayoutEntityFlipbook::LayoutEntityFlipbook(LayoutRect const& initialBounds, std::filesystem::path const& flipbookPath)
+        : LayoutEntity(initialBounds)
+        , m_flipbookPath(flipbookPath) {
+        InitDiscreteFlipbookTracks(*this, true);
     }
 
     std::shared_ptr<LayoutEntity> LayoutEntityFlipbook::Clone(CloneType cloneType) {
@@ -27,8 +59,6 @@ namespace moth_ui {
             auto const relativePath = std::filesystem::relative(m_flipbookPath, context.m_rootPath);
             j["flipbook_path"] = relativePath.string();
         }
-        j["clip_name"] = m_clipName;
-        j["autoplay"] = m_autoplay;
         return j;
     }
 
@@ -42,8 +72,22 @@ namespace moth_ui {
             } else {
                 m_flipbookPath = std::filesystem::absolute(context.m_rootPath / relativePath);
             }
-            m_clipName = json.value("clip_name", "");
-            m_autoplay = json.value("autoplay", false);
+            // Migrate legacy fields into discrete tracks (only if the track has no keyframes yet).
+            std::string legacyClipName = json.value("clip_name", "");
+            bool legacyAutoplay = json.value("autoplay", false);
+            InitDiscreteFlipbookTracks(*this, false);
+            if (!legacyClipName.empty()) {
+                auto& clipTrack = m_discreteTracks.at(AnimationTrack::Target::FlipbookClip);
+                if (clipTrack.Keyframes().empty()) {
+                    clipTrack.GetOrCreateKeyframe(0) = legacyClipName;
+                }
+            }
+            if (legacyAutoplay) {
+                auto& playingTrack = m_discreteTracks.at(AnimationTrack::Target::FlipbookPlaying);
+                if (playingTrack.Keyframes().empty()) {
+                    playingTrack.GetOrCreateKeyframe(0) = "1";
+                }
+            }
         }
 
         return success;

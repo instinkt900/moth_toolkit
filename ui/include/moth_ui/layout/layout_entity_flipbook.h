@@ -6,15 +6,19 @@ namespace moth_ui {
     /**
      * @brief Layout entity that describes a flipbook (sprite-sheet animation) node.
      *
-     * Stores the path to the .flipbook.json descriptor, an optional initial clip
-     * name, and an autoplay flag. When instantiated into a NodeFlipbook, the named
-     * clip is activated on load and playback begins automatically if @c m_autoplay
-     * is @c true.
+     * Stores the path to the .flipbook.json descriptor. Clip selection and
+     * playback state are managed by discrete animation tracks
+     * (@c AnimationTrack::Target::FlipbookClip and
+     * @c AnimationTrack::Target::FlipbookPlaying) rather than per-entity fields.
+     * When instantiated into a NodeFlipbook, the active clip and initial play
+     * state are determined by those tracks at frame 0. To start playback
+     * automatically, set the @c FlipbookPlaying track value to @c "1" at frame 0.
      */
     class LayoutEntityFlipbook : public LayoutEntity {
     public:
         explicit LayoutEntityFlipbook(LayoutRect const& initialBounds);
         explicit LayoutEntityFlipbook(LayoutEntityGroup* parent);
+        LayoutEntityFlipbook(LayoutRect const& initialBounds, std::filesystem::path const& flipbookPath);
 
         std::shared_ptr<LayoutEntity> Clone(CloneType cloneType) override;
         LayoutEntityType GetType() const override { return LayoutEntityType::Flipbook; }
@@ -23,7 +27,5 @@ namespace moth_ui {
         bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
 
         std::filesystem::path m_flipbookPath; ///< Path to the .flipbook.json descriptor file.
-        std::string m_clipName;               ///< Clip to activate on load. Empty means no clip is pre-selected.
-        bool m_autoplay = false;              ///< If @c true, playback begins automatically after the clip is loaded.
     };
 }

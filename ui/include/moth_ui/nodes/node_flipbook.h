@@ -44,9 +44,12 @@ namespace moth_ui {
          * @brief Loads a flipbook from a descriptor file path.
          *
          * Resets all playback state (frame, accumulated time, playing flag) before
-         * loading. If the load succeeds and @c m_initialClipName is non-empty, that
-         * clip is activated automatically. If @c m_autoplay is also @c true,
-         * playback starts immediately.
+         * loading. After a successful load the node has no active clip and is not
+         * playing; clip selection and autoplay are driven by discrete animation
+         * tracks (@c FlipbookClip and @c FlipbookPlaying) evaluated via
+         * @c ReloadEntityPrivate() when the node is instantiated from a
+         * @c LayoutEntityFlipbook, or by explicit calls to @c SetClip() and
+         * @c SetPlaying() at runtime.
          *
          * @param path Path to the .flipbook.json descriptor file.
          */
@@ -66,24 +69,6 @@ namespace moth_ui {
          * @param playing @c true to resume, @c false to pause.
          */
         void SetPlaying(bool playing);
-
-        /// @brief Returns the clip name that will be activated on the next @c Load() call.
-        std::string_view GetInitialClipName() const { return m_initialClipName; }
-
-        /// @brief Returns @c true if playback starts automatically after @c Load() activates the initial clip.
-        bool GetAutoplay() const { return m_autoplay; }
-
-        /**
-         * @brief Sets the clip name to activate on the next @c Load() call.
-         * @param name Clip name, or empty to load without pre-selecting a clip.
-         */
-        void SetInitialClipName(std::string_view name) { m_initialClipName = name; }
-
-        /**
-         * @brief Controls whether playback starts automatically after @c Load() activates the initial clip.
-         * @param autoplay @c true to start playing immediately after load, @c false to load paused.
-         */
-        void SetAutoplay(bool autoplay) { m_autoplay = autoplay; }
 
         /// @brief Returns the name of the currently active clip, or empty if none is set.
         std::string_view GetCurrentClipName() const { return m_currentClipName; }
@@ -106,11 +91,11 @@ namespace moth_ui {
         std::optional<IFlipbook::SheetDesc> m_sheetDesc;  ///< Cached sheet geometry, populated on load.
         std::optional<IFlipbook::ClipDesc> m_currentClip; ///< Active clip description, empty if no clip is set.
         std::string m_currentClipName;                    ///< Name of the active clip, or empty if none is set.
-        std::string m_initialClipName;                    ///< Clip name to activate when Load() is called. Empty means no pre-selection.
-        bool m_autoplay = false;                          ///< Whether to start playing automatically after Load() activates the initial clip.
         int m_currentFrame = 0;                           ///< Current frame index within the full sheet grid.
         float m_accumulatedMs = 0.0f;                     ///< Accumulated time since the last frame advance in milliseconds.
         bool m_playing = false;                           ///< Whether the current clip is advancing.
+        bool m_pendingStartedEvent = false;               ///< True when EventFlipbookStarted could not be sent during construction and should be fired on the next Update().
+        std::string m_pendingStartedClipName;             ///< Clip name captured when m_pendingStartedEvent was set, used to fire the correct name even if SetClip is called before Update().
 
         void ReloadEntityInternal() override;
         void DrawInternal() override;

@@ -1,5 +1,6 @@
 #include "common.h"
 #include "moth_ui/layout/layout_entity.h"
+#include "moth_ui/animation/discrete_animation_track.h"
 #include "moth_ui/layout/layout_entity_flipbook.h"
 #include "moth_ui/layout/layout_entity_group.h"
 #include "moth_ui/layout/layout_entity_text.h"
@@ -44,7 +45,9 @@ namespace moth_ui {
         : m_id(other.m_id)
         , m_class(other.m_class)
         , m_visible(other.m_visible)
-        , m_blend(other.m_blend) {
+        , m_blend(other.m_blend)
+        , m_pivot(other.m_pivot)
+        , m_discreteTracks(other.m_discreteTracks) {
         if (other.m_hardReference) {
             m_hardReference = other.m_hardReference->Clone(CloneType::Shallow);
         }
@@ -54,9 +57,12 @@ namespace moth_ui {
     }
 
     LayoutEntity::LayoutEntity(LayoutEntity&& other) noexcept
-        : m_id(other.m_id)
+        : m_id(std::move(other.m_id))
+        , m_class(std::move(other.m_class))
         , m_visible(other.m_visible)
-        , m_blend(other.m_blend) {
+        , m_blend(other.m_blend)
+        , m_pivot(other.m_pivot)
+        , m_discreteTracks(std::move(other.m_discreteTracks)) {
         if (other.m_hardReference) {
             m_hardReference = other.m_hardReference->Clone(CloneType::Shallow);
         }
@@ -145,6 +151,13 @@ namespace moth_ui {
             trackJson.push_back(*track);
         }
         j["tracks"] = trackJson;
+        if (!m_discreteTracks.empty()) {
+            nlohmann::json discreteJson = nlohmann::json::array();
+            for (auto&& [target, track] : m_discreteTracks) {
+                discreteJson.push_back(track);
+            }
+            j["discrete_tracks"] = discreteJson;
+        }
         return j;
     }
 
@@ -165,6 +178,16 @@ namespace moth_ui {
                 auto track = std::make_unique<AnimationTrack>(trackJson);
                 m_tracks.erase(track->GetTarget());
                 m_tracks.insert(std::make_pair(track->GetTarget(), std::move(track)));
+            }
+        }
+
+        m_discreteTracks.clear();
+        if (json.contains("discrete_tracks")) {
+            for (auto const& trackJson : json["discrete_tracks"]) {
+                DiscreteAnimationTrack track(AnimationTrack::Target::Unknown);
+                from_json(trackJson, track);
+                auto target = track.GetTarget();
+                m_discreteTracks.emplace(target, std::move(track));
             }
         }
 

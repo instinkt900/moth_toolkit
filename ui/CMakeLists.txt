@@ -20,6 +20,8 @@ set(PUBLIC_HEADERS
 	include/moth_ui/animation/animation_track_controller.h
 	include/moth_ui/animation/animation_track.h
 	include/moth_ui/animation/clip_controller.h
+	include/moth_ui/animation/discrete_animation_track.h
+	include/moth_ui/animation/discrete_animation_track_controller.h
 	include/moth_ui/animation/keyframe.h
 	include/moth_ui/context.h
 	include/moth_ui/events/event_animation.h
@@ -81,6 +83,8 @@ set(SOURCES ${SOURCES}
 	src/animation/animation_event.cpp
 	src/animation/animation_track_controller.cpp
 	src/animation/animation_track.cpp
+	src/animation/discrete_animation_track.cpp
+	src/animation/discrete_animation_track_controller.cpp
 	src/animation/keyframe.cpp
 	src/context.cpp
 	src/logger.cpp

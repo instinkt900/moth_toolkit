@@ -37,6 +37,8 @@ namespace moth_ui {
             ColorBlue,     ///< Blue colour component [0,1].
             ColorAlpha,    ///< Alpha colour component [0,1].
             Rotation,      ///< Clockwise rotation in degrees.
+            FlipbookClip,    ///< Flipbook clip name (discrete string, step-interpolated).
+            FlipbookPlaying, ///< Flipbook play/pause state as "1"/"0" (discrete, step-interpolated).
         };
 
         /// @brief All targets that are continuously interpolated (excludes Unknown).
@@ -54,6 +56,12 @@ namespace moth_ui {
             Target::ColorBlue,
             Target::ColorAlpha,
             Target::Rotation,
+        };
+
+        /// @brief All targets that are step-interpolated string values (discrete tracks).
+        static constexpr std::array<Target, 2> DiscreteTargets{
+            Target::FlipbookClip,
+            Target::FlipbookPlaying,
         };
 
         AnimationTrack(AnimationTrack const& other);

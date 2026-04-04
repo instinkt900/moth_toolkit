@@ -82,6 +82,8 @@ namespace moth_ui {
     class AnimationController;
     class AnimationTrackController;
     class AnimationClipController;
+    class DiscreteAnimationTrack;
+    class DiscreteAnimationTrackController;
     struct ClipController;
 
     // -------------------------------------------------------------------------

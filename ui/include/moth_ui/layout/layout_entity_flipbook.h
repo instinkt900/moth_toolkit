@@ -24,7 +24,5 @@ namespace moth_ui {
         bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
 
         std::filesystem::path m_flipbookPath; ///< Path to the .flipbook.json descriptor file.
-        std::string m_clipName;               ///< Clip to activate on load. Empty means no clip is pre-selected.
-        bool m_autoplay = false;              ///< If @c true, playback begins automatically after the clip is loaded.
     };
 }

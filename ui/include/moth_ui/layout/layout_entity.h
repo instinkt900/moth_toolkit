@@ -1,12 +1,14 @@
 #pragma once
 
 #include "moth_ui/animation/animation_track.h"
+#include "moth_ui/animation/discrete_animation_track.h"
 #include "moth_ui/layout/layout_entity_type.h"
 #include "moth_ui/moth_ui_fwd.h"
 #include "moth_ui/utils/color.h"
 #include "moth_ui/utils/transform.h"
 
 #include <filesystem>
+#include <map>
 #include <nlohmann/json_fwd.hpp>
 
 namespace moth_ui {
@@ -128,7 +130,8 @@ namespace moth_ui {
         bool m_visible = true;            ///< Default visibility of the instantiated node.
         BlendMode m_blend = BlendMode::Replace; ///< Default blend mode of the instantiated node.
         FloatVec2 m_pivot = kDefaultPivot; ///< Rotation pivot as a normalised [0,1] fraction of the node's bounds. Default is centre.
-        std::map<AnimationTrack::Target, std::unique_ptr<AnimationTrack>> m_tracks; ///< Per-property keyframe tracks.
+        std::map<AnimationTrack::Target, std::unique_ptr<AnimationTrack>> m_tracks; ///< Per-property continuous keyframe tracks.
+        std::map<AnimationTrack::Target, DiscreteAnimationTrack> m_discreteTracks; ///< Per-property discrete (string, step) keyframe tracks.
         std::shared_ptr<LayoutEntity> m_hardReference; ///< Immutable source data used to compute overrides for sublayout refs.
 
         LayoutEntity& operator=(LayoutEntity const&) = delete;

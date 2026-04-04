@@ -1,5 +1,7 @@
 #include "common.h"
 #include "moth_ui/nodes/node_flipbook.h"
+#include "moth_ui/animation/animation_controller.h"
+#include "moth_ui/animation/animation_track.h"
 #include "moth_ui/events/event_flipbook.h"
 #include "moth_ui/graphics/image_scale_type.h"
 #include "moth_ui/layout/layout_entity_flipbook.h"
@@ -43,10 +45,7 @@ namespace moth_ui {
                     m_flipbook.reset();
                     return;
                 }
-                SetClip(m_initialClipName);
-                if (m_autoplay) {
-                    SetPlaying(true);
-                }
+                // Initial clip and playing state are driven by discrete track callbacks.
             }
         }
     }
@@ -58,9 +57,18 @@ namespace moth_ui {
 
     void NodeFlipbook::ReloadEntityPrivate() {
         auto const layoutEntity = std::static_pointer_cast<LayoutEntityFlipbook>(m_layout);
-        m_initialClipName = layoutEntity->m_clipName;
-        m_autoplay = layoutEntity->m_autoplay;
         Load(layoutEntity->m_flipbookPath);
+
+        auto& controller = GetAnimationController();
+        controller.ClearDiscreteCallbacks();
+        controller.RegisterDiscreteCallback(AnimationTrack::Target::FlipbookClip, [this](std::string_view value) {
+            SetClip(value);
+        });
+        controller.RegisterDiscreteCallback(AnimationTrack::Target::FlipbookPlaying, [this](std::string_view value) {
+            SetPlaying(value == "1");
+        });
+        // Apply initial state from discrete tracks at frame 0.
+        controller.SetFrameDiscrete(0.0f);
     }
 
     void NodeFlipbook::SetClip(std::string_view name) {

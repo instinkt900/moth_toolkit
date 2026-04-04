@@ -28,6 +28,8 @@ set(SOURCES
     src/test_animation_clip_controller.cpp
     src/test_transform.cpp
     src/test_node_flipbook.cpp
+    src/test_discrete_animation_track.cpp
+    src/test_discrete_animation_track_controller.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

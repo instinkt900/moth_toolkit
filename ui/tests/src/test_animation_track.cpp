@@ -182,6 +182,16 @@ TEST_CASE("AnimationTrack ForKeyframesOverFrames visits correct keyframes", "[an
     REQUIRE(visited[1] == 10);
 }
 
+TEST_CASE("AnimationTrack DiscreteTargets has 2 entries", "[animation_track][discrete]") {
+    REQUIRE(AnimationTrack::DiscreteTargets.size() == 2);
+}
+
+TEST_CASE("AnimationTrack DiscreteTargets contains FlipbookClip and FlipbookPlaying", "[animation_track][discrete]") {
+    auto const& dt = AnimationTrack::DiscreteTargets;
+    REQUIRE(dt[0] == AnimationTrack::Target::FlipbookClip);
+    REQUIRE(dt[1] == AnimationTrack::Target::FlipbookPlaying);
+}
+
 TEST_CASE("AnimationTrack copy construction deep-copies keyframes", "[animation_track][copy]") {
     AnimationTrack original(AnimationTrack::Target::TopOffset);
     original.GetOrCreateKeyframe(0).m_value = 7.0f;

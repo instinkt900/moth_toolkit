@@ -46,6 +46,7 @@ namespace moth_ui {
         , m_class(other.m_class)
         , m_visible(other.m_visible)
         , m_blend(other.m_blend)
+        , m_pivot(other.m_pivot)
         , m_discreteTracks(other.m_discreteTracks) {
         if (other.m_hardReference) {
             m_hardReference = other.m_hardReference->Clone(CloneType::Shallow);
@@ -56,9 +57,11 @@ namespace moth_ui {
     }
 
     LayoutEntity::LayoutEntity(LayoutEntity&& other) noexcept
-        : m_id(other.m_id)
+        : m_id(std::move(other.m_id))
+        , m_class(std::move(other.m_class))
         , m_visible(other.m_visible)
         , m_blend(other.m_blend)
+        , m_pivot(other.m_pivot)
         , m_discreteTracks(std::move(other.m_discreteTracks)) {
         if (other.m_hardReference) {
             m_hardReference = other.m_hardReference->Clone(CloneType::Shallow);
@@ -149,7 +152,7 @@ namespace moth_ui {
         }
         j["tracks"] = trackJson;
         if (!m_discreteTracks.empty()) {
-            nlohmann::json discreteJson;
+            nlohmann::json discreteJson = nlohmann::json::array();
             for (auto&& [target, track] : m_discreteTracks) {
                 discreteJson.push_back(track);
             }
@@ -178,8 +181,8 @@ namespace moth_ui {
             }
         }
 
+        m_discreteTracks.clear();
         if (json.contains("discrete_tracks")) {
-            m_discreteTracks.clear();
             for (auto const& trackJson : json["discrete_tracks"]) {
                 DiscreteAnimationTrack track(AnimationTrack::Target::Unknown);
                 from_json(trackJson, track);

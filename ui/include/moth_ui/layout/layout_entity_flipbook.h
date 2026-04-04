@@ -6,10 +6,13 @@ namespace moth_ui {
     /**
      * @brief Layout entity that describes a flipbook (sprite-sheet animation) node.
      *
-     * Stores the path to the .flipbook.json descriptor, an optional initial clip
-     * name, and an autoplay flag. When instantiated into a NodeFlipbook, the named
-     * clip is activated on load and playback begins automatically if @c m_autoplay
-     * is @c true.
+     * Stores the path to the .flipbook.json descriptor. Clip selection and
+     * playback state are managed by discrete animation tracks
+     * (@c AnimationTrack::Target::FlipbookClip and
+     * @c AnimationTrack::Target::FlipbookPlaying) rather than per-entity fields.
+     * When instantiated into a NodeFlipbook, the active clip and initial play
+     * state are determined by those tracks at frame 0. To start playback
+     * automatically, set the @c FlipbookPlaying track value to @c "1" at frame 0.
      */
     class LayoutEntityFlipbook : public LayoutEntity {
     public:

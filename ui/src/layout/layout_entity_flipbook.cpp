@@ -5,8 +5,13 @@
 
 namespace moth_ui {
     namespace {
+        constexpr std::array<AnimationTrack::Target, 2> kFlipbookDiscreteTargets{
+            AnimationTrack::Target::FlipbookClip,
+            AnimationTrack::Target::FlipbookPlaying,
+        };
+
         void InitDiscreteFlipbookTracks(LayoutEntity& entity, bool seedFrame0) {
-            for (auto target : AnimationTrack::DiscreteTargets) {
+            for (auto target : kFlipbookDiscreteTargets) {
                 if (entity.m_discreteTracks.find(target) == entity.m_discreteTracks.end()) {
                     auto [it, ok] = entity.m_discreteTracks.emplace(target, DiscreteAnimationTrack(target));
                     if (seedFrame0) {

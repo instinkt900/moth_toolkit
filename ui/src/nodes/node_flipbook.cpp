@@ -28,6 +28,8 @@ namespace moth_ui {
         m_sheetDesc.reset();
         m_flipbook.reset();
         m_playing = false;
+        m_pendingStartedEvent = false;
+        m_pendingStartedClipName.clear();
         auto* factory = m_context.GetFlipbookFactory();
         if (factory != nullptr) {
             m_flipbook = factory->GetFlipbook(path);
@@ -76,6 +78,8 @@ namespace moth_ui {
         m_currentFrame = 0;
         m_currentClip.reset();
         m_currentClipName.clear();
+        m_pendingStartedEvent = false;
+        m_pendingStartedClipName.clear();
         if (m_flipbook != nullptr) {
             IFlipbook::ClipDesc clipDesc;
             if (m_flipbook->GetClipDesc(name, clipDesc)) {
@@ -95,6 +99,7 @@ namespace moth_ui {
             if (!wasPlaying && m_playing) {
                 if (weak_from_this().expired()) {
                     m_pendingStartedEvent = true;
+                    m_pendingStartedClipName = m_currentClipName;
                 } else {
                     SendEventUp(EventFlipbookStarted(SharedFromThis(), m_currentClipName));
                 }
@@ -107,7 +112,8 @@ namespace moth_ui {
 
         if (m_pendingStartedEvent) {
             m_pendingStartedEvent = false;
-            SendEventUp(EventFlipbookStarted(SharedFromThis(), m_currentClipName));
+            SendEventUp(EventFlipbookStarted(SharedFromThis(), m_pendingStartedClipName));
+            m_pendingStartedClipName.clear();
         }
 
         if (!m_playing || !m_flipbook || !m_currentClip.has_value()) {

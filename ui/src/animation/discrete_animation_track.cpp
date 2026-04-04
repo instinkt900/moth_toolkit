@@ -76,6 +76,7 @@ namespace moth_ui {
                 std::string value = kfJson.value("value", std::string{});
                 track.m_keyframes.emplace_back(frame, std::move(value));
             }
+            track.SortKeyframes();
         }
     }
 }

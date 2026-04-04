@@ -44,9 +44,12 @@ namespace moth_ui {
          * @brief Loads a flipbook from a descriptor file path.
          *
          * Resets all playback state (frame, accumulated time, playing flag) before
-         * loading. If the load succeeds and @c m_initialClipName is non-empty, that
-         * clip is activated automatically. If @c m_autoplay is also @c true,
-         * playback starts immediately.
+         * loading. After a successful load the node has no active clip and is not
+         * playing; clip selection and autoplay are driven by discrete animation
+         * tracks (@c FlipbookClip and @c FlipbookPlaying) evaluated via
+         * @c ReloadEntityPrivate() when the node is instantiated from a
+         * @c LayoutEntityFlipbook, or by explicit calls to @c SetClip() and
+         * @c SetPlaying() at runtime.
          *
          * @param path Path to the .flipbook.json descriptor file.
          */
@@ -92,6 +95,7 @@ namespace moth_ui {
         float m_accumulatedMs = 0.0f;                     ///< Accumulated time since the last frame advance in milliseconds.
         bool m_playing = false;                           ///< Whether the current clip is advancing.
         bool m_pendingStartedEvent = false;               ///< True when EventFlipbookStarted could not be sent during construction and should be fired on the next Update().
+        std::string m_pendingStartedClipName;             ///< Clip name captured when m_pendingStartedEvent was set, used to fire the correct name even if SetClip is called before Update().
 
         void ReloadEntityInternal() override;
         void DrawInternal() override;

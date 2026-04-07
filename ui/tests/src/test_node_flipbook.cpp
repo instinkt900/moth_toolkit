@@ -8,6 +8,7 @@
 #include "moth_ui/layout/layout_rect.h"
 #include "moth_ui/nodes/group.h"
 #include "moth_ui/nodes/node_flipbook.h"
+#include "moth_ui/utils/rect.h"
 #include <catch2/catch_all.hpp>
 #include <filesystem>
 #include <map>
@@ -31,23 +32,32 @@ public:
 class MockFlipbook : public IFlipbook {
 public:
     mutable MockImage image;
-    SheetDesc sheetDesc;
+    std::vector<FrameDesc> frames;
     std::map<std::string, ClipDesc, std::less<>> clips;
 
     IImage const& GetImage() const override { return image; }
-    void GetSheetDesc(SheetDesc& outDesc) const override { outDesc = sheetDesc; }
+
+    int GetFrameCount() const override { return static_cast<int>(frames.size()); }
+
+    bool GetFrameDesc(int index, FrameDesc& outDesc) const override {
+        if (index < 0 || index >= static_cast<int>(frames.size())) { return false; }
+        outDesc = frames[index];
+        return true;
+    }
+
+    int GetClipCount() const override { return static_cast<int>(clips.size()); }
 
     std::string_view GetClipName(int index) const override {
         int i = 0;
         for (auto const& [name, _] : clips) {
-            if (i++ == index) return name;
+            if (i++ == index) { return name; }
         }
         return {};
     }
 
     bool GetClipDesc(std::string_view name, ClipDesc& outDesc) const override {
         auto it = clips.find(name);
-        if (it == clips.end()) return false;
+        if (it == clips.end()) { return false; }
         outDesc = it->second;
         return true;
     }
@@ -62,7 +72,7 @@ public:
     std::unique_ptr<IFlipbook> GetFlipbook(std::filesystem::path const& path) override {
         ++getFlipbookCalls;
         lastRequestedPath = path;
-        if (nextFlipbook == nullptr) return nullptr;
+        if (nextFlipbook == nullptr) { return nullptr; }
         // Build a new MockFlipbook cloned from nextFlipbook for each call.
         auto fb = std::make_unique<MockFlipbook>();
         *fb = *nextFlipbook;
@@ -82,14 +92,26 @@ struct FlipbookTestContext {
 // Helpers
 // ---------------------------------------------------------------------------
 
-// Build a MockFlipbook with a 4×1 sheet and one clip named "run" (frames 0–3, 12 FPS, Loop).
+// Build a ClipDesc from a list of atlas frame indices, each held for durationMs.
+static IFlipbook::ClipDesc MakeClip(std::initializer_list<int> frameIndices,
+                                    int durationMs,
+                                    IFlipbook::LoopType loop) {
+    IFlipbook::ClipDesc clip;
+    clip.loop = loop;
+    for (int idx : frameIndices) {
+        clip.frames.push_back({ idx, durationMs });
+    }
+    return clip;
+}
+
+// Build a MockFlipbook with 4 frames (16×16 each) and one clip "run" (frames 0–3,
+// 84 ms per frame ≈ 12 FPS, Loop).
 static MockFlipbook MakeSimpleFlipbook() {
     MockFlipbook fb;
-    fb.sheetDesc.FrameDimensions = { 16, 16 };
-    fb.sheetDesc.SheetCells      = { 4, 1 };
-    fb.sheetDesc.MaxFrames       = 4;
-    fb.sheetDesc.NumClips        = 1;
-    fb.clips["run"] = IFlipbook::ClipDesc{ 0, 3, 12, IFlipbook::LoopType::Loop };
+    for (int i = 0; i < 4; ++i) {
+        fb.frames.push_back({ MakeRect(i * 16, 0, 16, 16), { 8, 8 } });
+    }
+    fb.clips["run"] = MakeClip({ 0, 1, 2, 3 }, 84, IFlipbook::LoopType::Loop);
     return fb;
 }
 
@@ -151,10 +173,9 @@ TEST_CASE("Load clears previous flipbook when factory returns null", "[flipbook]
     REQUIRE(node->GetCurrentFrame() == 0);
 }
 
-TEST_CASE("Load with malformed SheetDesc (zero columns) clears flipbook", "[flipbook][load]") {
+TEST_CASE("Load with zero frames clears flipbook", "[flipbook][load]") {
     FlipbookTestContext tc;
-    MockFlipbook fb = MakeSimpleFlipbook();
-    fb.sheetDesc.SheetCells = { 0, 1 }; // invalid — zero columns
+    MockFlipbook fb; // no frames added
     tc.flipbookFactory.nextFlipbook = &fb;
 
     auto node = std::make_shared<NodeFlipbook>(tc.context);
@@ -163,30 +184,6 @@ TEST_CASE("Load with malformed SheetDesc (zero columns) clears flipbook", "[flip
     REQUIRE(node->GetFlipbook() == nullptr);
     REQUIRE(node->GetCurrentClipName().empty());
     REQUIRE_FALSE(node->IsPlaying());
-}
-
-TEST_CASE("Load with malformed SheetDesc (zero rows) clears flipbook", "[flipbook][load]") {
-    FlipbookTestContext tc;
-    MockFlipbook fb = MakeSimpleFlipbook();
-    fb.sheetDesc.SheetCells = { 4, 0 }; // invalid — zero rows
-    tc.flipbookFactory.nextFlipbook = &fb;
-
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
-    node->Load("dummy.flipbook.json");
-
-    REQUIRE(node->GetFlipbook() == nullptr);
-}
-
-TEST_CASE("Load with malformed SheetDesc (zero frame dimensions) clears flipbook", "[flipbook][load]") {
-    FlipbookTestContext tc;
-    MockFlipbook fb = MakeSimpleFlipbook();
-    fb.sheetDesc.FrameDimensions = { 0, 16 }; // invalid — zero width
-    tc.flipbookFactory.nextFlipbook = &fb;
-
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
-    node->Load("dummy.flipbook.json");
-
-    REQUIRE(node->GetFlipbook() == nullptr);
 }
 
 TEST_CASE("Load forwards path to flipbook factory", "[flipbook][load]") {
@@ -210,7 +207,7 @@ TEST_CASE("Load resets playback state before loading", "[flipbook][load]") {
     node->Load("dummy.flipbook.json");
     node->SetClip("run");
     node->SetPlaying(true);
-    node->Update(84); // advance one frame
+    node->Update(84); // advance one step
 
     REQUIRE(node->GetCurrentFrame() == 1);
 
@@ -230,7 +227,7 @@ TEST_CASE("SetClip after Load activates the named clip", "[flipbook][load]") {
     node->SetClip("run");
 
     REQUIRE(node->GetCurrentClipName() == "run");
-    REQUIRE(node->GetCurrentFrame() == 0); // Start of clip
+    REQUIRE(node->GetCurrentFrame() == 0); // always starts at first step
 }
 
 TEST_CASE("Load with no clip set leaves clip unset", "[flipbook][load]") {
@@ -247,7 +244,6 @@ TEST_CASE("Load with no clip set leaves clip unset", "[flipbook][load]") {
 }
 
 TEST_CASE("Discrete track FlipbookPlaying=1 at frame 0 starts playback on instantiate", "[flipbook][load][discrete]") {
-    // Autoplay is now expressed via the FlipbookPlaying discrete track on the layout entity.
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
@@ -280,7 +276,6 @@ TEST_CASE("Discrete track FlipbookPlaying=0 at frame 0 does not start playback o
 }
 
 TEST_CASE("Discrete track FlipbookPlaying=1 with no clip does not start playback", "[flipbook][load][discrete]") {
-    // SetPlaying requires a clip — FlipbookPlaying=1 with no clip is a no-op.
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
@@ -301,7 +296,6 @@ TEST_CASE("Discrete track FlipbookPlaying=1 with no clip does not start playback
 
 TEST_CASE("NodeFlipbook default state: no clip, not playing, frame 0", "[flipbook]") {
     FlipbookTestContext tc;
-    // Factory returns nullptr — no flipbook loaded.
     auto node = std::make_shared<NodeFlipbook>(tc.context);
 
     REQUIRE(node->GetFlipbook() == nullptr);
@@ -321,15 +315,14 @@ TEST_CASE("NodeFlipbook Update without flipbook does not crash", "[flipbook]") {
 // Tests — SetClip
 // ---------------------------------------------------------------------------
 
-TEST_CASE("SetClip with valid name sets frame to clip start", "[flipbook][clip]") {
+TEST_CASE("SetClip with valid name resets to first step of the clip", "[flipbook][clip]") {
     FlipbookTestContext tc;
     MockFlipbook fb;
-    fb.sheetDesc.FrameDimensions = { 16, 16 };
-    fb.sheetDesc.SheetCells      = { 6, 1 };
-    fb.sheetDesc.MaxFrames       = 6;
-    fb.sheetDesc.NumClips        = 2;
-    fb.clips["idle"] = IFlipbook::ClipDesc{ 0, 2, 10, IFlipbook::LoopType::Loop };
-    fb.clips["run"]  = IFlipbook::ClipDesc{ 3, 5, 12, IFlipbook::LoopType::Loop };
+    for (int i = 0; i < 6; ++i) {
+        fb.frames.push_back({ MakeRect(i * 16, 0, 16, 16), { 8, 8 } });
+    }
+    fb.clips["idle"] = MakeClip({ 0, 1, 2 }, 100, IFlipbook::LoopType::Loop);
+    fb.clips["run"]  = MakeClip({ 3, 4, 5 }, 84,  IFlipbook::LoopType::Loop);
 
     tc.flipbookFactory.nextFlipbook = &fb;
     auto node = std::make_shared<NodeFlipbook>(tc.context);
@@ -337,7 +330,7 @@ TEST_CASE("SetClip with valid name sets frame to clip start", "[flipbook][clip]"
 
     node->SetClip("run");
     REQUIRE(node->GetCurrentClipName() == "run");
-    REQUIRE(node->GetCurrentFrame() == 3);
+    REQUIRE(node->GetCurrentFrame() == 0); // always starts at first step of the clip
 }
 
 TEST_CASE("SetClip with invalid name clears clip", "[flipbook][clip]") {
@@ -370,7 +363,6 @@ TEST_CASE("SetPlaying without a clip does not start playback", "[flipbook][playi
     tc.flipbookFactory.nextFlipbook = &fb;
     auto node = std::make_shared<NodeFlipbook>(tc.context);
     node->Load("dummy.flipbook.json");
-    // No clip set — SetPlaying should be a no-op.
     node->SetPlaying(true);
     REQUIRE_FALSE(node->IsPlaying());
 }
@@ -421,10 +413,10 @@ TEST_CASE("SetPlaying false pauses playback", "[flipbook][playing]") {
 // Tests — frame advancement
 // ---------------------------------------------------------------------------
 
-TEST_CASE("Update with FPS = 0 does not crash and frame stays at start", "[flipbook][update][fps]") {
+TEST_CASE("Update with zero durationMs does not advance and does not crash", "[flipbook][update][duration]") {
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
-    fb.clips["run"].FPS = 0;
+    fb.clips["run"] = MakeClip({ 0, 1, 2, 3 }, 0, IFlipbook::LoopType::Loop); // zero duration
     tc.flipbookFactory.nextFlipbook = &fb;
     auto node = std::make_shared<NodeFlipbook>(tc.context);
     node->Load("dummy.flipbook.json");
@@ -437,26 +429,10 @@ TEST_CASE("Update with FPS = 0 does not crash and frame stays at start", "[flipb
     REQUIRE(node->GetCurrentFrame() == 0);
 }
 
-TEST_CASE("Update with negative FPS does not crash and frame stays at start", "[flipbook][update][fps]") {
+TEST_CASE("Update advances frame at correct duration", "[flipbook][update]") {
+    // 84 ms per frame. 83 ms is not enough; 84 ms crosses the threshold.
     FlipbookTestContext tc;
-    MockFlipbook fb = MakeSimpleFlipbook();
-    fb.clips["run"].FPS = -12;
-    tc.flipbookFactory.nextFlipbook = &fb;
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
-    node->Load("dummy.flipbook.json");
-    node->SetClip("run");
-    node->SetPlaying(true);
-
-    node->Update(1000);
-
-    REQUIRE(node->IsPlaying());
-    REQUIRE(node->GetCurrentFrame() == 0);
-}
-
-TEST_CASE("Update advances frame at correct FPS", "[flipbook][update]") {
-    // Clip is 12 FPS → one frame every ~83.3 ms.
-    FlipbookTestContext tc;
-    MockFlipbook fb = MakeSimpleFlipbook(); // "run": frames 0–3, 12 FPS, Loop
+    MockFlipbook fb = MakeSimpleFlipbook(); // 84 ms per frame
     tc.flipbookFactory.nextFlipbook = &fb;
     auto node = std::make_shared<NodeFlipbook>(tc.context);
     node->Load("dummy.flipbook.json");
@@ -465,11 +441,11 @@ TEST_CASE("Update advances frame at correct FPS", "[flipbook][update]") {
 
     REQUIRE(node->GetCurrentFrame() == 0);
 
-    // 83 ms — not quite enough for one frame.
+    // 83 ms — not quite enough for one step.
     node->Update(83);
     REQUIRE(node->GetCurrentFrame() == 0);
 
-    // 1 more ms pushes accumulated to 84 ms, which crosses 83.33 ms threshold.
+    // 1 more ms pushes accumulated to 84 ms, which meets the 84 ms threshold.
     node->Update(1);
     REQUIRE(node->GetCurrentFrame() == 1);
 }
@@ -488,7 +464,7 @@ TEST_CASE("Update does not advance frame when paused", "[flipbook][update]") {
 }
 
 TEST_CASE("Update advances multiple frames in one large tick", "[flipbook][update]") {
-    // 12 FPS → 83.33 ms/frame. 3 frames = ~250 ms.
+    // 84 ms per frame. 3 steps = 252 ms; 260 ms crosses 3 boundaries (step 0→1→2→3).
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
@@ -497,7 +473,6 @@ TEST_CASE("Update advances multiple frames in one large tick", "[flipbook][updat
     node->SetClip("run");
     node->SetPlaying(true);
 
-    // Advance 260 ms — well past 3 frame boundaries at 83.33 ms/frame (0 → 1 → 2 → 3).
     node->Update(260);
     REQUIRE(node->GetCurrentFrame() == 3);
 }
@@ -506,8 +481,8 @@ TEST_CASE("Update advances multiple frames in one large tick", "[flipbook][updat
 // Tests — LoopType::Loop
 // ---------------------------------------------------------------------------
 
-TEST_CASE("LoopType::Loop wraps frame back to Start", "[flipbook][loop]") {
-    // "run": frames 0–3, 12 FPS, Loop. After frame 3, wraps to 0.
+TEST_CASE("LoopType::Loop wraps back to first step", "[flipbook][loop]") {
+    // "run": 4 steps × 84 ms = 336 ms per loop. 340 ms wraps once to step 0.
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
@@ -516,8 +491,7 @@ TEST_CASE("LoopType::Loop wraps frame back to Start", "[flipbook][loop]") {
     node->SetClip("run");
     node->SetPlaying(true);
 
-    // Advance past end: 4 frames worth (frame 0→1→2→3→0).
-    node->Update(340); // 4 * 83.33 ms ≈ 333 ms, use 340 to be safe
+    node->Update(340);
     REQUIRE(node->IsPlaying());
     REQUIRE(node->GetCurrentFrame() == 0);
 }
@@ -531,8 +505,7 @@ TEST_CASE("LoopType::Loop continues playing after wrap", "[flipbook][loop]") {
     node->SetClip("run");
     node->SetPlaying(true);
 
-    // Advance two full loops (8 frames).
-    node->Update(668); // 8 * 83.33 ms ≈ 666 ms
+    node->Update(668); // crosses multiple loop boundaries
     REQUIRE(node->IsPlaying());
 }
 
@@ -540,14 +513,13 @@ TEST_CASE("LoopType::Loop continues playing after wrap", "[flipbook][loop]") {
 // Tests — LoopType::Stop
 // ---------------------------------------------------------------------------
 
-TEST_CASE("LoopType::Stop freezes on End frame and stops playing", "[flipbook][stop]") {
+TEST_CASE("LoopType::Stop freezes on last step and stops playing", "[flipbook][stop]") {
     FlipbookTestContext tc;
     MockFlipbook fb;
-    fb.sheetDesc.FrameDimensions = { 16, 16 };
-    fb.sheetDesc.SheetCells      = { 4, 1 };
-    fb.sheetDesc.MaxFrames       = 4;
-    fb.sheetDesc.NumClips        = 1;
-    fb.clips["hit"] = IFlipbook::ClipDesc{ 0, 3, 12, IFlipbook::LoopType::Stop };
+    for (int i = 0; i < 4; ++i) {
+        fb.frames.push_back({ MakeRect(i * 16, 0, 16, 16), { 8, 8 } });
+    }
+    fb.clips["hit"] = MakeClip({ 0, 1, 2, 3 }, 84, IFlipbook::LoopType::Stop);
     tc.flipbookFactory.nextFlipbook = &fb;
 
     auto node = std::make_shared<NodeFlipbook>(tc.context);
@@ -555,24 +527,22 @@ TEST_CASE("LoopType::Stop freezes on End frame and stops playing", "[flipbook][s
     node->SetClip("hit");
     node->SetPlaying(true);
 
-    // Advance well past the end.
     node->Update(1000);
     REQUIRE_FALSE(node->IsPlaying());
-    REQUIRE(node->GetCurrentFrame() == 3); // frozen at End
+    REQUIRE(node->GetCurrentFrame() == 3); // frozen at last step
 }
 
 // ---------------------------------------------------------------------------
 // Tests — LoopType::Reset
 // ---------------------------------------------------------------------------
 
-TEST_CASE("LoopType::Reset rewinds to Start and stops playing", "[flipbook][reset]") {
+TEST_CASE("LoopType::Reset rewinds to first step and stops playing", "[flipbook][reset]") {
     FlipbookTestContext tc;
     MockFlipbook fb;
-    fb.sheetDesc.FrameDimensions = { 16, 16 };
-    fb.sheetDesc.SheetCells      = { 6, 1 };
-    fb.sheetDesc.MaxFrames       = 6;
-    fb.sheetDesc.NumClips        = 1;
-    fb.clips["die"] = IFlipbook::ClipDesc{ 2, 5, 10, IFlipbook::LoopType::Reset };
+    for (int i = 0; i < 4; ++i) {
+        fb.frames.push_back({ MakeRect(i * 16, 0, 16, 16), { 8, 8 } });
+    }
+    fb.clips["die"] = MakeClip({ 0, 1, 2, 3 }, 100, IFlipbook::LoopType::Reset);
     tc.flipbookFactory.nextFlipbook = &fb;
 
     auto node = std::make_shared<NodeFlipbook>(tc.context);
@@ -580,10 +550,9 @@ TEST_CASE("LoopType::Reset rewinds to Start and stops playing", "[flipbook][rese
     node->SetClip("die");
     node->SetPlaying(true);
 
-    // Advance past the end.
     node->Update(1000);
     REQUIRE_FALSE(node->IsPlaying());
-    REQUIRE(node->GetCurrentFrame() == 2); // rewound to Start
+    REQUIRE(node->GetCurrentFrame() == 0); // rewound to first step
 }
 
 // ---------------------------------------------------------------------------
@@ -637,7 +606,7 @@ TEST_CASE("SetPlaying(true) twice only fires EventFlipbookStarted once", "[flipb
 
     int startedCount = 0;
     group->SetEventHandler([&](Node*, Event const& ev) -> bool {
-        if (ev.GetType() == EventFlipbookStarted::GetStaticType()) ++startedCount;
+        if (ev.GetType() == EventFlipbookStarted::GetStaticType()) { ++startedCount; }
         return true;
     });
 
@@ -651,11 +620,10 @@ TEST_CASE("SetPlaying(true) twice only fires EventFlipbookStarted once", "[flipb
 TEST_CASE("LoopType::Stop fires EventFlipbookStopped when clip ends", "[flipbook][events]") {
     FlipbookTestContext tc;
     MockFlipbook fb;
-    fb.sheetDesc.FrameDimensions = { 16, 16 };
-    fb.sheetDesc.SheetCells      = { 4, 1 };
-    fb.sheetDesc.MaxFrames       = 4;
-    fb.sheetDesc.NumClips        = 1;
-    fb.clips["hit"] = IFlipbook::ClipDesc{ 0, 3, 12, IFlipbook::LoopType::Stop };
+    for (int i = 0; i < 4; ++i) {
+        fb.frames.push_back({ MakeRect(i * 16, 0, 16, 16), { 8, 8 } });
+    }
+    fb.clips["hit"] = MakeClip({ 0, 1, 2, 3 }, 84, IFlipbook::LoopType::Stop);
     tc.flipbookFactory.nextFlipbook = &fb;
 
     std::shared_ptr<NodeFlipbook> flipbook;
@@ -683,11 +651,10 @@ TEST_CASE("LoopType::Stop fires EventFlipbookStopped when clip ends", "[flipbook
 TEST_CASE("LoopType::Reset fires EventFlipbookStopped when clip ends", "[flipbook][events]") {
     FlipbookTestContext tc;
     MockFlipbook fb;
-    fb.sheetDesc.FrameDimensions = { 16, 16 };
-    fb.sheetDesc.SheetCells      = { 4, 1 };
-    fb.sheetDesc.MaxFrames       = 4;
-    fb.sheetDesc.NumClips        = 1;
-    fb.clips["die"] = IFlipbook::ClipDesc{ 0, 3, 10, IFlipbook::LoopType::Reset };
+    for (int i = 0; i < 4; ++i) {
+        fb.frames.push_back({ MakeRect(i * 16, 0, 16, 16), { 8, 8 } });
+    }
+    fb.clips["die"] = MakeClip({ 0, 1, 2, 3 }, 100, IFlipbook::LoopType::Reset);
     tc.flipbookFactory.nextFlipbook = &fb;
 
     std::shared_ptr<NodeFlipbook> flipbook;
@@ -695,7 +662,7 @@ TEST_CASE("LoopType::Reset fires EventFlipbookStopped when clip ends", "[flipboo
 
     int stoppedCount = 0;
     group->SetEventHandler([&](Node*, Event const& ev) -> bool {
-        if (ev.GetType() == EventFlipbookStopped::GetStaticType()) ++stoppedCount;
+        if (ev.GetType() == EventFlipbookStopped::GetStaticType()) { ++stoppedCount; }
         return true;
     });
 
@@ -717,7 +684,7 @@ TEST_CASE("LoopType::Loop does not fire EventFlipbookStopped", "[flipbook][event
 
     int stoppedCount = 0;
     group->SetEventHandler([&](Node*, Event const& ev) -> bool {
-        if (ev.GetType() == EventFlipbookStopped::GetStaticType()) ++stoppedCount;
+        if (ev.GetType() == EventFlipbookStopped::GetStaticType()) { ++stoppedCount; }
         return true;
     });
 
@@ -756,11 +723,10 @@ TEST_CASE("EventFlipbookStarted GetNode locks to the firing node", "[flipbook][e
 TEST_CASE("EventFlipbookStopped GetNode locks to the firing node (Stop)", "[flipbook][events][weak_ptr]") {
     FlipbookTestContext tc;
     MockFlipbook fb;
-    fb.sheetDesc.FrameDimensions = { 16, 16 };
-    fb.sheetDesc.SheetCells      = { 4, 1 };
-    fb.sheetDesc.MaxFrames       = 4;
-    fb.sheetDesc.NumClips        = 1;
-    fb.clips["hit"] = IFlipbook::ClipDesc{ 0, 3, 12, IFlipbook::LoopType::Stop };
+    for (int i = 0; i < 4; ++i) {
+        fb.frames.push_back({ MakeRect(i * 16, 0, 16, 16), { 8, 8 } });
+    }
+    fb.clips["hit"] = MakeClip({ 0, 1, 2, 3 }, 84, IFlipbook::LoopType::Stop);
     tc.flipbookFactory.nextFlipbook = &fb;
 
     std::shared_ptr<NodeFlipbook> flipbook;
@@ -786,11 +752,10 @@ TEST_CASE("EventFlipbookStopped GetNode locks to the firing node (Stop)", "[flip
 TEST_CASE("EventFlipbookStopped GetNode locks to the firing node (Reset)", "[flipbook][events][weak_ptr]") {
     FlipbookTestContext tc;
     MockFlipbook fb;
-    fb.sheetDesc.FrameDimensions = { 16, 16 };
-    fb.sheetDesc.SheetCells      = { 4, 1 };
-    fb.sheetDesc.MaxFrames       = 4;
-    fb.sheetDesc.NumClips        = 1;
-    fb.clips["die"] = IFlipbook::ClipDesc{ 0, 3, 10, IFlipbook::LoopType::Reset };
+    for (int i = 0; i < 4; ++i) {
+        fb.frames.push_back({ MakeRect(i * 16, 0, 16, 16), { 8, 8 } });
+    }
+    fb.clips["die"] = MakeClip({ 0, 1, 2, 3 }, 100, IFlipbook::LoopType::Reset);
     tc.flipbookFactory.nextFlipbook = &fb;
 
     std::shared_ptr<NodeFlipbook> flipbook;

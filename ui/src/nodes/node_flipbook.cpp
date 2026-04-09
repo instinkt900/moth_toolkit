@@ -151,8 +151,12 @@ namespace moth_ui {
         }
         auto& renderer = m_context.GetRenderer();
         auto const& image = m_flipbook->GetImage();
-        IntRect const localRect{ { 0, 0 }, m_screenRect.bottomRight - m_screenRect.topLeft };
-        renderer.RenderImage(image, frameDesc.rect, localRect, ImageScaleType::Stretch, 1.0f);
+        // Offset the destination so the frame's pivot pixel lands at the node's top-left origin.
+        IntRect const destRect{
+            { -frameDesc.pivot.x, -frameDesc.pivot.y },
+            { frameDesc.rect.w() - frameDesc.pivot.x, frameDesc.rect.h() - frameDesc.pivot.y }
+        };
+        renderer.RenderImage(image, frameDesc.rect, destRect, ImageScaleType::Stretch, 1.0f);
     }
 
     std::shared_ptr<NodeFlipbook> NodeFlipbook::SharedFromThis() {

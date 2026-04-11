@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(Catch2 REQUIRED)
+find_package(Catch2 3 REQUIRED)
 
 add_subdirectory(.. moth_ui)
 

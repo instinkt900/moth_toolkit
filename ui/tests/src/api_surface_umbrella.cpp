@@ -1,16 +1,13 @@
-// Verifies that the two public aggregate headers each compile as a single include
-// in an otherwise-empty translation unit. A removed header, circular dependency,
-// or missing include guard breaks compilation here before it can reach consumers.
+// Verifies co-inclusion compatibility: moth_ui_fwd.h included before moth_ui.h
+// must not cause redefinition errors or ODR violations. This is the common
+// consumer pattern — a header forward-declares via moth_ui_fwd.h, then the
+// corresponding .cpp includes the full moth_ui.h.
 
-#include "moth_ui/moth_ui.h"
 #include "moth_ui/moth_ui_fwd.h"
+#include "moth_ui/moth_ui.h"
 
 #include <catch2/catch_all.hpp>
 
-TEST_CASE("moth_ui.h compiles as a standalone include", "[api][headers]") {
-    SUCCEED();
-}
-
-TEST_CASE("moth_ui_fwd.h compiles alongside moth_ui.h", "[api][headers]") {
+TEST_CASE("moth_ui_fwd.h and moth_ui.h are co-inclusion compatible", "[api][headers]") {
     SUCCEED();
 }

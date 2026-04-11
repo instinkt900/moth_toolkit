@@ -7,6 +7,29 @@
 
 using namespace moth_ui;
 
+namespace {
+    // std::array::operator== is only constexpr from C++20; provide a C++17 helper.
+    template <typename T, std::size_t N>
+    constexpr bool arrays_equal(std::array<T, N> const& a, std::array<T, N> const& b) {
+        for (std::size_t i = 0; i < N; ++i) {
+            if (a[i] != b[i]) { return false; }
+        }
+        return true;
+    }
+
+    // Namespace-scope static_assert: evaluated at translation-unit level, no
+    // function-scope ambiguity about whether the expression is a constant expression.
+    using Target = AnimationTrack::Target;
+    constexpr std::array expectedContinuous = {
+        Target::TopOffset,    Target::BottomOffset, Target::LeftOffset,  Target::RightOffset,
+        Target::TopAnchor,    Target::BottomAnchor, Target::LeftAnchor,  Target::RightAnchor,
+        Target::ColorRed,     Target::ColorGreen,   Target::ColorBlue,   Target::ColorAlpha,
+        Target::Rotation
+    };
+    static_assert(arrays_equal(AnimationTrack::ContinuousTargets, expectedContinuous),
+                  "AnimationTrack::ContinuousTargets contents or order changed");
+}
+
 TEST_CASE("Keyframe fields are stable", "[api][animation][keyframe]") {
     static_assert(std::is_same_v<decltype(Keyframe::m_frame),     int>);
     static_assert(std::is_same_v<decltype(Keyframe::m_value),     float>);
@@ -32,9 +55,8 @@ TEST_CASE("AnimationTrack::Target enum values are stable", "[api][animation][tra
 }
 
 TEST_CASE("AnimationTrack static arrays are stable", "[api][animation][track]") {
-    // ContinuousTargets covers all layout properties except Unknown, Events, and the two discrete ones.
+    // ContinuousTargets: pinned at namespace scope above (arrays_equal, expectedContinuous).
     // DiscreteTargets covers FlipbookClip and FlipbookPlaying.
-    static_assert(AnimationTrack::ContinuousTargets.size() > 0);
     static_assert(AnimationTrack::DiscreteTargets.size()   == 2);
     static_assert(AnimationTrack::DiscreteTargets[0] == AnimationTrack::Target::FlipbookClip);
     static_assert(AnimationTrack::DiscreteTargets[1] == AnimationTrack::Target::FlipbookPlaying);

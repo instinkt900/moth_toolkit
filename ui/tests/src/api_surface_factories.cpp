@@ -53,7 +53,10 @@ TEST_CASE("IFlipbookFactory method signatures are stable", "[api][factories][ifl
 }
 
 TEST_CASE("Context construction and getters are stable", "[api][context]") {
-    // The four-parameter constructor (fourth defaults to nullptr) must exist.
+    // Three-argument form (fourth parameter defaults to nullptr) must also compile.
+    static_assert(std::is_constructible_v<Context,
+                                          IImageFactory*, IFontFactory*, IRenderer*>);
+    // Four-argument form (explicit flipbook factory) must exist.
     static_assert(std::is_constructible_v<Context,
                                           IImageFactory*, IFontFactory*,
                                           IRenderer*, IFlipbookFactory*>);

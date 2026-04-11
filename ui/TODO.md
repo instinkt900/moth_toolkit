@@ -1,6 +1,6 @@
 # TODO
 
-### v1.0 Relaunch
+## v1.0 Relaunch
 
 **Effort:** Small
 

@@ -104,6 +104,17 @@ static IFlipbook::ClipDesc MakeClip(std::initializer_list<int> frameIndices,
     return clip;
 }
 
+// Build a ClipDesc from per-frame (frameIndex, durationMs) pairs.
+static IFlipbook::ClipDesc MakeClip(std::initializer_list<std::pair<int, int>> frameSteps,
+                                    IFlipbook::LoopType loop) {
+    IFlipbook::ClipDesc clip;
+    clip.loop = loop;
+    for (auto const& [frameIndex, durationMs] : frameSteps) {
+        clip.frames.push_back({ frameIndex, durationMs });
+    }
+    return clip;
+}
+
 // Build a MockFlipbook with 4 frames (16×16 each) and one clip "run" (frames 0–3,
 // 84 ms per frame ≈ 12 FPS, Loop).
 static MockFlipbook MakeSimpleFlipbook() {

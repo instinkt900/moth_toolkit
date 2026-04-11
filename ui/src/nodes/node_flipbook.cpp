@@ -78,6 +78,9 @@ namespace moth_ui {
                 GetLogger().Warning("NodeFlipbook: clip '{}' not found", name);
             }
         }
+        if (!m_currentClip.has_value()) {
+            m_playing = false;
+        }
     }
 
     void NodeFlipbook::SetPlaying(bool playing) {

@@ -8,17 +8,28 @@
 
 using namespace moth_ui;
 
+namespace {
+    // All-pairs uniqueness check: returns true iff every argument is distinct.
+    // Variadic template deduces the count — no explicit size literal needed.
+    template <typename... Ts>
+    constexpr bool all_distinct(Ts... vals) {
+        std::array<int, sizeof...(Ts)> arr{ static_cast<int>(vals)... };
+        for (std::size_t i = 0; i < sizeof...(Ts); ++i) {
+            for (std::size_t j = i + 1; j < sizeof...(Ts); ++j) {
+                if (arr[i] == arr[j]) { return false; }
+            }
+        }
+        return true;
+    }
+}
+
 TEST_CASE("EventType constants exist and are distinct", "[api][events][types]") {
-    // Verify each constant exists and all ten values are mutually distinct.
-    static_assert(EVENTTYPE_KEY               != EVENTTYPE_MOUSE_DOWN);
-    static_assert(EVENTTYPE_MOUSE_DOWN        != EVENTTYPE_MOUSE_UP);
-    static_assert(EVENTTYPE_MOUSE_UP          != EVENTTYPE_MOUSE_MOVE);
-    static_assert(EVENTTYPE_MOUSE_MOVE        != EVENTTYPE_MOUSE_WHEEL);
-    static_assert(EVENTTYPE_MOUSE_WHEEL       != EVENTTYPE_ANIMATION);
-    static_assert(EVENTTYPE_ANIMATION         != EVENTTYPE_ANIMATION_STARTED);
-    static_assert(EVENTTYPE_ANIMATION_STARTED != EVENTTYPE_ANIMATION_STOPPED);
-    static_assert(EVENTTYPE_ANIMATION_STOPPED != EVENTTYPE_FLIPBOOK_STARTED);
-    static_assert(EVENTTYPE_FLIPBOOK_STARTED  != EVENTTYPE_FLIPBOOK_STOPPED);
+    // All ten system event type constants must be mutually distinct (not just adjacent).
+    static_assert(all_distinct(EVENTTYPE_KEY, EVENTTYPE_MOUSE_DOWN,
+                                EVENTTYPE_MOUSE_UP, EVENTTYPE_MOUSE_MOVE,
+                                EVENTTYPE_MOUSE_WHEEL, EVENTTYPE_ANIMATION,
+                                EVENTTYPE_ANIMATION_STARTED, EVENTTYPE_ANIMATION_STOPPED,
+                                EVENTTYPE_FLIPBOOK_STARTED, EVENTTYPE_FLIPBOOK_STOPPED));
     // User-range constants exist and are well above the system range.
     static_assert(EVENTTYPE_USER0 > EVENTTYPE_FLIPBOOK_STOPPED);
     static_assert(EVENTTYPE_USER1 > EVENTTYPE_USER0);

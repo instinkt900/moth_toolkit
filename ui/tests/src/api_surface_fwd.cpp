@@ -10,40 +10,75 @@
 // never called; the compile step is what matters. Grouping them in an anonymous
 // namespace suppresses unused-function warnings.
 namespace {
-    void pin_graphics(moth_ui::IRenderer*, moth_ui::IImage*, moth_ui::IFont*,
-                      moth_ui::ITarget*, moth_ui::IFlipbook*, moth_ui::IFlipbookFactory*,
-                      moth_ui::IImageFactory*, moth_ui::IFontFactory*, moth_ui::FontFactory*,
-                      moth_ui::NodeFactory*, moth_ui::ILogger*, moth_ui::NullLogger*) {}
+    void pin_graphics(moth_ui::IRenderer* renderer, moth_ui::IImage* image, moth_ui::IFont* font,
+                      moth_ui::ITarget* target, moth_ui::IFlipbook* flipbook,
+                      moth_ui::IFlipbookFactory* flipbookFactory,
+                      moth_ui::IImageFactory* imageFactory, moth_ui::IFontFactory* fontFactory,
+                      moth_ui::FontFactory* fontFactoryImpl, moth_ui::NodeFactory* nodeFactory,
+                      moth_ui::ILogger* logger, moth_ui::NullLogger* nullLogger) {
+        (void)renderer; (void)image; (void)font; (void)target; (void)flipbook;
+        (void)flipbookFactory; (void)imageFactory; (void)fontFactory;
+        (void)fontFactoryImpl; (void)nodeFactory; (void)logger; (void)nullLogger;
+    }
 
-    void pin_events(moth_ui::Event*, moth_ui::EventListener*, moth_ui::EventDispatch*,
-                    moth_ui::EventMouseDown*, moth_ui::EventMouseUp*,
-                    moth_ui::EventMouseMove*, moth_ui::EventMouseWheel*,
-                    moth_ui::EventKey*,
-                    moth_ui::EventAnimation*, moth_ui::EventAnimationStarted*,
-                    moth_ui::EventAnimationStopped*,
-                    moth_ui::EventFlipbookStarted*, moth_ui::EventFlipbookStopped*) {}
+    void pin_events(moth_ui::Event* event, moth_ui::EventListener* listener,
+                    moth_ui::EventDispatch* dispatch,
+                    moth_ui::EventMouseDown* mouseDown, moth_ui::EventMouseUp* mouseUp,
+                    moth_ui::EventMouseMove* mouseMove, moth_ui::EventMouseWheel* mouseWheel,
+                    moth_ui::EventKey* key,
+                    moth_ui::EventAnimation* animation,
+                    moth_ui::EventAnimationStarted* animationStarted,
+                    moth_ui::EventAnimationStopped* animationStopped,
+                    moth_ui::EventFlipbookStarted* flipbookStarted,
+                    moth_ui::EventFlipbookStopped* flipbookStopped) {
+        (void)event; (void)listener; (void)dispatch;
+        (void)mouseDown; (void)mouseUp; (void)mouseMove; (void)mouseWheel; (void)key;
+        (void)animation; (void)animationStarted; (void)animationStopped;
+        (void)flipbookStarted; (void)flipbookStopped;
+    }
 
-    void pin_nodes(moth_ui::Node*, moth_ui::Group*, moth_ui::NodeRect*,
-                   moth_ui::NodeImage*, moth_ui::NodeText*, moth_ui::NodeClip*,
-                   moth_ui::NodeFlipbook*) {}
+    void pin_nodes(moth_ui::Node* node, moth_ui::Group* group, moth_ui::NodeRect* nodeRect,
+                   moth_ui::NodeImage* nodeImage, moth_ui::NodeText* nodeText,
+                   moth_ui::NodeClip* nodeClip, moth_ui::NodeFlipbook* nodeFlipbook) {
+        (void)node; (void)group; (void)nodeRect; (void)nodeImage;
+        (void)nodeText; (void)nodeClip; (void)nodeFlipbook;
+    }
 
-    void pin_layout(moth_ui::LayoutEntity*, moth_ui::LayoutEntityGroup*,
-                    moth_ui::LayoutEntityRect*, moth_ui::LayoutEntityImage*,
-                    moth_ui::LayoutEntityText*, moth_ui::LayoutEntityClip*,
-                    moth_ui::LayoutEntityRef*, moth_ui::LayoutEntityFlipbook*,
-                    moth_ui::Layout*, moth_ui::LayoutCache*, moth_ui::LayoutRect*) {}
+    void pin_layout(moth_ui::LayoutEntity* layoutEntity,
+                    moth_ui::LayoutEntityGroup* layoutGroup,
+                    moth_ui::LayoutEntityRect* layoutRect,
+                    moth_ui::LayoutEntityImage* layoutImage,
+                    moth_ui::LayoutEntityText* layoutText,
+                    moth_ui::LayoutEntityClip* layoutClip,
+                    moth_ui::LayoutEntityRef* layoutRef,
+                    moth_ui::LayoutEntityFlipbook* layoutFlipbook,
+                    moth_ui::Layout* layout, moth_ui::LayoutCache* layoutCache,
+                    moth_ui::LayoutRect* layoutRectObj) {
+        (void)layoutEntity; (void)layoutGroup; (void)layoutRect; (void)layoutImage;
+        (void)layoutText; (void)layoutClip; (void)layoutRef; (void)layoutFlipbook;
+        (void)layout; (void)layoutCache; (void)layoutRectObj;
+    }
 
-    void pin_animation(moth_ui::AnimationTrack*, moth_ui::AnimationClip*,
-                       moth_ui::AnimationEvent*, moth_ui::AnimationController*,
-                       moth_ui::AnimationTrackController*,
-                       moth_ui::AnimationClipController*,
-                       moth_ui::DiscreteAnimationTrack*,
-                       moth_ui::DiscreteAnimationTrackController*,
-                       moth_ui::ClipController*) {}
+    void pin_animation(moth_ui::AnimationTrack* animationTrack,
+                       moth_ui::AnimationClip* animationClip,
+                       moth_ui::AnimationEvent* animationEvent,
+                       moth_ui::AnimationController* animationController,
+                       moth_ui::AnimationTrackController* animationTrackController,
+                       moth_ui::AnimationClipController* animationClipController,
+                       moth_ui::DiscreteAnimationTrack* discreteTrack,
+                       moth_ui::DiscreteAnimationTrackController* discreteTrackController,
+                       moth_ui::ClipController* clipController) {
+        (void)animationTrack; (void)animationClip; (void)animationEvent;
+        (void)animationController; (void)animationTrackController;
+        (void)animationClipController; (void)discreteTrack;
+        (void)discreteTrackController; (void)clipController;
+    }
 
-    void pin_layers(moth_ui::Layer*, moth_ui::LayerStack*) {}
+    void pin_layers(moth_ui::Layer* layer, moth_ui::LayerStack* layerStack) {
+        (void)layer; (void)layerStack;
+    }
 
-    void pin_context(moth_ui::Context*) {}
+    void pin_context(moth_ui::Context* context) { (void)context; }
 
     // Suppress unused-function warnings without suppressing the pin checks above.
     void use_all() {

@@ -4,11 +4,13 @@
 
 namespace moth_ui {
     void LayoutCache::SetLayoutRoot(std::string_view path) {
-        FlushCache();
+        std::lock_guard lock(m_mutex);
+        m_cache.clear();
         m_root = path;
     }
 
     std::shared_ptr<Layout> LayoutCache::GetLayout(std::string_view name) {
+        std::lock_guard lock(m_mutex);
         auto const it = m_cache.find(name);
         if (std::end(m_cache) == it) {
             return LoadLayout(name);
@@ -17,6 +19,7 @@ namespace moth_ui {
     }
 
     void LayoutCache::FlushCache() {
+        std::lock_guard lock(m_mutex);
         m_cache.clear();
     }
 

@@ -3,6 +3,7 @@
 #include "moth_ui/moth_ui_fwd.h"
 
 #include <memory>
+#include <mutex>
 #include <string>
 #include <string_view>
 #include <map>
@@ -13,6 +14,8 @@ namespace moth_ui {
      *
      * Layouts are loaded on first request and reused on subsequent calls.
      * Call FlushCache() to force a reload on the next access.
+     *
+     * Thread safety: all public methods are thread-safe.
      */
     class LayoutCache {
     public:
@@ -33,6 +36,7 @@ namespace moth_ui {
         void FlushCache();
 
     private:
+        mutable std::mutex m_mutex;
         std::string m_root;
         std::map<std::string, std::shared_ptr<Layout>, std::less<>> m_cache;
 

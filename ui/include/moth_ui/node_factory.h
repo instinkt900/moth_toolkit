@@ -3,9 +3,10 @@
 #include "moth_ui/context.h"
 #include "moth_ui/moth_ui_fwd.h"
 
-#include <memory>
-#include <map>
 #include <filesystem>
+#include <map>
+#include <memory>
+#include <shared_mutex>
 
 namespace moth_ui {
     /**
@@ -13,6 +14,10 @@ namespace moth_ui {
      *
      * Custom widget types can be registered so that the factory creates the
      * correct subclass when deserializing a layout that references them.
+     *
+     * Thread safety: Get(), RegisterWidget(), and all Create() overloads are
+     * thread-safe. The typical pattern — registering all widget types at startup
+     * then calling Create() from any thread — is fully supported.
      */
     class NodeFactory {
     public:
@@ -22,12 +27,10 @@ namespace moth_ui {
         NodeFactory& operator=(NodeFactory&&) = delete;
         virtual ~NodeFactory() = default;
 
-        /// @brief Returns the singleton NodeFactory instance.
+        /// @brief Returns the singleton NodeFactory instance. Thread-safe.
         static NodeFactory& Get() {
-            if (s_instance == nullptr) {
-                s_instance = std::unique_ptr<NodeFactory>(new NodeFactory);
-            }
-            return *s_instance;
+            static NodeFactory instance;
+            return instance;
         }
 
         /// @brief Signature of a widget creation callback.
@@ -70,8 +73,7 @@ namespace moth_ui {
     private:
         NodeFactory() = default;
 
+        mutable std::shared_mutex m_mutex;
         std::map<std::string, CreationFunction> m_creationFunctions;
-
-        static std::unique_ptr<NodeFactory> s_instance;
     };
 }

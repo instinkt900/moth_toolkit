@@ -49,13 +49,13 @@ namespace moth_ui {
 
         /**
          * @brief Returns the four source slice points used in nine-slice rendering.
-         * @return Pointer to an array of four IntVec2 values, or @c nullptr.
+         * @return Pointer to the first of four IntVec2 slice points (always non-null).
          */
         IntVec2 const* GetSourceSlices() const { return m_sourceSlices.data(); }
 
         /**
          * @brief Returns the four destination slice points used in nine-slice rendering.
-         * @return Pointer to an array of four IntVec2 values, or @c nullptr.
+         * @return Pointer to the first of four IntVec2 slice points (always non-null).
          */
         IntVec2 const* GetTargetSlices() const { return m_targetSlices.data(); }
 

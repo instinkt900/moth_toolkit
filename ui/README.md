@@ -194,7 +194,7 @@ class MyFontFactory : public moth_ui::IFontFactory { /* ... */ };
 MyRenderer renderer;
 MyImageFactory imageFactory;
 MyFontFactory fontFactory;
-moth_ui::Context context(renderer, imageFactory, fontFactory);
+moth_ui::Context context(&imageFactory, &fontFactory, &renderer);
 ```
 
 Once you have a context, load and display a layout:

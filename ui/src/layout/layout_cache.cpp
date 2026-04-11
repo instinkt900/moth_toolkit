@@ -4,19 +4,35 @@
 
 namespace moth_ui {
     void LayoutCache::SetLayoutRoot(std::string_view path) {
-        FlushCache();
+        std::lock_guard lock(m_mutex);
+        m_cache.clear();
         m_root = path;
     }
 
     std::shared_ptr<Layout> LayoutCache::GetLayout(std::string_view name) {
-        auto const it = m_cache.find(name);
-        if (std::end(m_cache) == it) {
-            return LoadLayout(name);
+        {
+            std::lock_guard lock(m_mutex);
+            auto const it = m_cache.find(name);
+            if (std::end(m_cache) != it) {
+                return it->second;
+            }
         }
-        return it->second;
+
+        // Cache miss: load from disk without holding the lock.
+        std::shared_ptr<Layout> newLayout = LoadLayout(name);
+        if (!newLayout) {
+            return nullptr;
+        }
+
+        // Re-acquire to insert; a concurrent thread may have loaded and inserted
+        // the same layout while we were on disk, so let the first insertion win.
+        std::lock_guard lock(m_mutex);
+        auto const result = m_cache.try_emplace(std::string(name), std::move(newLayout));
+        return result.first->second;
     }
 
     void LayoutCache::FlushCache() {
+        std::lock_guard lock(m_mutex);
         m_cache.clear();
     }
 
@@ -25,10 +41,7 @@ namespace moth_ui {
         std::shared_ptr<moth_ui::Layout> newLayout;
         auto const loadResult = Layout::Load(filename.c_str(), &newLayout);
         if (loadResult == moth_ui::Layout::LoadResult::Success) {
-            auto insertResult = m_cache.try_emplace(std::string(name), newLayout);
-            if (insertResult.second) {
-                return newLayout;
-            }
+            return newLayout;
         }
         return nullptr;
     }

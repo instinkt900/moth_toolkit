@@ -1,13 +1,14 @@
 #include "common.h"
 #include "moth_ui/node_factory.h"
+#include <mutex>
+#include <shared_mutex>
 #include "moth_ui/layout/layout.h"
 #include "moth_ui/nodes/node.h"
 #include "moth_ui/nodes/group.h"
 
 namespace moth_ui {
-    std::unique_ptr<NodeFactory> NodeFactory::s_instance;
-
     std::string NodeFactory::RegisterWidget(std::string const& className, CreationFunction const& func) {
+        std::unique_lock lock(m_mutex);
         m_creationFunctions[className] = func;
         return className;
     }
@@ -34,9 +35,16 @@ namespace moth_ui {
         std::unique_ptr<Group> resultNode;
 
         if (!group->m_class.empty()) {
-            auto const it = m_creationFunctions.find(group->m_class);
-            if (std::end(m_creationFunctions) != it) {
-                resultNode = it->second(context, group);
+            CreationFunction fn = nullptr;
+            {
+                std::shared_lock lock(m_mutex);
+                auto const it = m_creationFunctions.find(group->m_class);
+                if (std::end(m_creationFunctions) != it) {
+                    fn = it->second;
+                }
+            }
+            if (fn != nullptr) {
+                resultNode = fn(context, group);
             }
         }
 

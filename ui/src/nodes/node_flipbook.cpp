@@ -25,7 +25,6 @@ namespace moth_ui {
         m_accumulatedMs = 0.0f;
         m_currentClip.reset();
         m_currentClipName.clear();
-        m_sheetDesc.reset();
         m_flipbook.reset();
         m_playing = false;
         m_pendingStartedEvent = false;
@@ -35,19 +34,9 @@ namespace moth_ui {
             m_flipbook = factory->GetFlipbook(path);
             if (m_flipbook == nullptr) {
                 GetLogger().Warning("NodeFlipbook: failed to load flipbook '{}'", path.string());
-            } else {
-                m_sheetDesc.emplace();
-                m_flipbook->GetSheetDesc(*m_sheetDesc);
-                if (m_sheetDesc->SheetCells.x <= 0 || m_sheetDesc->SheetCells.y <= 0 || m_sheetDesc->FrameDimensions.x <= 0 || m_sheetDesc->FrameDimensions.y <= 0) {
-                    GetLogger().Error("NodeFlipbook: invalid sheet descriptor in '{}' (cells={}x{} frame={}x{})",
-                        path.string(),
-                        m_sheetDesc->SheetCells.x, m_sheetDesc->SheetCells.y,
-                        m_sheetDesc->FrameDimensions.x, m_sheetDesc->FrameDimensions.y);
-                    m_sheetDesc.reset();
-                    m_flipbook.reset();
-                    return;
-                }
-                // Initial clip and playing state are driven by discrete track callbacks.
+            } else if (m_flipbook->GetFrameCount() <= 0) {
+                GetLogger().Error("NodeFlipbook: flipbook '{}' has no frames", path.string());
+                m_flipbook.reset();
             }
         }
     }
@@ -83,18 +72,20 @@ namespace moth_ui {
         if (m_flipbook != nullptr) {
             IFlipbook::ClipDesc clipDesc;
             if (m_flipbook->GetClipDesc(name, clipDesc)) {
-                m_currentClip = clipDesc;
+                m_currentClip = std::move(clipDesc);
                 m_currentClipName = name;
-                m_currentFrame = m_currentClip->Start;
             } else if (!name.empty()) {
                 GetLogger().Warning("NodeFlipbook: clip '{}' not found", name);
             }
+        }
+        if (!m_currentClip.has_value()) {
+            m_playing = false;
         }
     }
 
     void NodeFlipbook::SetPlaying(bool playing) {
         if (m_flipbook && m_currentClip.has_value()) {
-            bool wasPlaying = m_playing;
+            bool const wasPlaying = m_playing;
             m_playing = playing;
             if (!wasPlaying && m_playing) {
                 if (weak_from_this().expired()) {
@@ -116,33 +107,34 @@ namespace moth_ui {
             m_pendingStartedClipName.clear();
         }
 
-        if (!m_playing || !m_flipbook || !m_currentClip.has_value()) {
+        if (!m_playing || !m_flipbook || !m_currentClip.has_value() || m_currentClip->frames.empty()) {
             return;
         }
 
-        if (m_currentClip->FPS <= 0) {
-            return;
-        }
-        float const frameDurationMs = 1000.0f / static_cast<float>(m_currentClip->FPS);
         m_accumulatedMs += static_cast<float>(ticks);
 
-        while (m_playing && m_accumulatedMs >= frameDurationMs) {
-            m_accumulatedMs -= frameDurationMs;
+        while (m_playing) {
+            int const durationMs = m_currentClip->frames[m_currentFrame].durationMs;
+            if (durationMs <= 0 || m_accumulatedMs < static_cast<float>(durationMs)) {
+                break;
+            }
+            m_accumulatedMs -= static_cast<float>(durationMs);
             ++m_currentFrame;
-            if (m_currentFrame > m_currentClip->End) {
-                switch (m_currentClip->Loop) {
+            int const lastStep = static_cast<int>(m_currentClip->frames.size()) - 1;
+            if (m_currentFrame > lastStep) {
+                switch (m_currentClip->loop) {
                 case IFlipbook::LoopType::Loop:
-                    m_currentFrame = m_currentClip->Start;
+                    m_currentFrame = 0;
                     break;
                 case IFlipbook::LoopType::Reset:
                     m_accumulatedMs = 0;
-                    m_currentFrame = m_currentClip->Start;
+                    m_currentFrame = 0;
                     m_playing = false;
                     SendEventUp(EventFlipbookStopped(SharedFromThis(), m_currentClipName));
                     break;
                 case IFlipbook::LoopType::Stop:
                     m_accumulatedMs = 0;
-                    m_currentFrame = m_currentClip->End;
+                    m_currentFrame = lastStep;
                     m_playing = false;
                     SendEventUp(EventFlipbookStopped(SharedFromThis(), m_currentClipName));
                     break;
@@ -152,19 +144,22 @@ namespace moth_ui {
     }
 
     void NodeFlipbook::DrawInternal() {
-        if (m_flipbook == nullptr || !m_sheetDesc.has_value()) {
+        if (m_flipbook == nullptr || !m_currentClip.has_value() || m_currentClip->frames.empty()) {
+            return;
+        }
+        int const atlasFrameIndex = m_currentClip->frames[m_currentFrame].frameIndex;
+        IFlipbook::FrameDesc frameDesc;
+        if (!m_flipbook->GetFrameDesc(atlasFrameIndex, frameDesc)) {
             return;
         }
         auto& renderer = m_context.GetRenderer();
-        int const col = m_currentFrame % m_sheetDesc->SheetCells.x;
-        int const row = m_currentFrame / m_sheetDesc->SheetCells.x;
-        IntRect const srcRect = MakeRect(col * m_sheetDesc->FrameDimensions.x,
-                                         row * m_sheetDesc->FrameDimensions.y,
-                                         m_sheetDesc->FrameDimensions.x,
-                                         m_sheetDesc->FrameDimensions.y);
         auto const& image = m_flipbook->GetImage();
-        IntRect const localRect{ { 0, 0 }, m_screenRect.bottomRight - m_screenRect.topLeft };
-        renderer.RenderImage(image, srcRect, localRect, ImageScaleType::Stretch, 1.0f);
+        // Offset the destination so the frame's pivot pixel lands at the node's top-left origin.
+        IntRect const destRect{
+            { -frameDesc.pivot.x, -frameDesc.pivot.y },
+            { frameDesc.rect.w() - frameDesc.pivot.x, frameDesc.rect.h() - frameDesc.pivot.y }
+        };
+        renderer.RenderImage(image, frameDesc.rect, destRect, ImageScaleType::Stretch, 1.0f);
     }
 
     std::shared_ptr<NodeFlipbook> NodeFlipbook::SharedFromThis() {

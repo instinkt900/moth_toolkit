@@ -67,10 +67,8 @@ set(PUBLIC_HEADERS
 	include/moth_ui/nodes/node_rect.h
 	include/moth_ui/nodes/node_text.h
 	include/moth_ui/nodes/widget.h
-	include/moth_ui/ui_fwd.h
 	include/moth_ui/utils/color.h
 	include/moth_ui/utils/interp.h
-	include/moth_ui/utils/math_utils.h
 	include/moth_ui/utils/rect.h
 	include/moth_ui/utils/rect_serialization.h
 	include/moth_ui/utils/serialize_utils.h

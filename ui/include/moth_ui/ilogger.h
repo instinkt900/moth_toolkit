@@ -48,10 +48,10 @@ namespace moth_ui {
         void Log(LogLevel /*level*/, std::string_view /*message*/) override {}
     };
 
-    /// @brief Registers a logger for use by the moth_ui library.
+    /// @brief Registers a logger for use by the moth_ui library. Thread-safe.
     ///        Pass @c nullptr to revert to the silent NullLogger.
     void SetLogger(ILogger* logger);
 
-    /// @brief Returns the active logger, or a NullLogger if none has been set.
+    /// @brief Returns the active logger, or a NullLogger if none has been set. Thread-safe.
     ILogger& GetLogger();
 }

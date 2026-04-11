@@ -13,6 +13,7 @@ A C++17 library for building 2D UIs in graphical applications such as games and 
 - [Overview](#overview)
   - [AI Disclosure](#ai-disclosure)
 - [Architecture](#architecture)
+- [Thread Safety](#thread-safety)
 - [Dependencies](#dependencies)
 - [Using with Conan](#using-with-conan)
 - [Building the Library](#building-the-library)
@@ -63,6 +64,25 @@ Consumers must provide concrete implementations of:
 - `moth_ui::IFont` / `moth_ui::IFontFactory` — font asset loading
 
 See [canyon](https://github.com/instinkt900/canyon) for a reference implementation built on SDL2 and Vulkan.
+
+---
+
+## Thread Safety
+
+The library is designed around a typical game/application pattern: layout factories are configured on startup, and the UI is driven from a single render thread.
+
+| Component | Thread safe? |
+|---|---|
+| `NodeFactory::Get()` | Yes — singleton initialisation uses a function-local static (C++11 magic static) |
+| `NodeFactory::RegisterWidget()` | Yes — guarded by an internal `std::shared_mutex` |
+| `NodeFactory::Create()` | Yes — concurrent calls are safe; creation callbacks are invoked outside the lock |
+| `SetLogger()` / `GetLogger()` | Yes — backed by `std::atomic<ILogger*>` |
+| `LayoutCache` | Yes — all methods are guarded by an internal `std::mutex` |
+| `Node` trees (update, draw, event dispatch) | **No** — all operations on a node tree must happen on a single thread |
+
+The recommended pattern is:
+- Register custom widget types from the main thread before spawning any worker threads.
+- Drive all node update/draw/event calls from a single render thread.
 
 ---
 
@@ -194,7 +214,7 @@ class MyFontFactory : public moth_ui::IFontFactory { /* ... */ };
 MyRenderer renderer;
 MyImageFactory imageFactory;
 MyFontFactory fontFactory;
-moth_ui::Context context(renderer, imageFactory, fontFactory);
+moth_ui::Context context(&imageFactory, &fontFactory, &renderer);
 ```
 
 Once you have a context, load and display a layout:

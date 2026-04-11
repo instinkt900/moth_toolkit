@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(Catch2 REQUIRED)
+find_package(Catch2 3 REQUIRED)
 
 add_subdirectory(.. moth_ui)
 
@@ -30,6 +30,15 @@ set(SOURCES
     src/test_node_flipbook.cpp
     src/test_discrete_animation_track.cpp
     src/test_discrete_animation_track_controller.cpp
+    # API surface tests — compile-time only, no runtime assertions
+    src/api_surface_umbrella.cpp
+    src/api_surface_fwd.cpp
+    src/api_surface_graphics.cpp
+    src/api_surface_factories.cpp
+    src/api_surface_nodes.cpp
+    src/api_surface_animation.cpp
+    src/api_surface_layout.cpp
+    src/api_surface_events.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

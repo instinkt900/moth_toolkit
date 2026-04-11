@@ -1,39 +1,29 @@
 #pragma once
 
 #include "moth_ui/graphics/iimage.h"
+#include "moth_ui/utils/rect.h"
 #include <string_view>
+#include <vector>
 
 namespace moth_ui {
     /**
      * @brief Abstract representation of a loaded flipbook (sprite-sheet animation).
      *
-     * Backend implementations wrap the underlying image and expose the frame
-     * layout and playback parameters needed by NodeFlipbook.
+     * Backend implementations wrap the underlying atlas image and expose the per-frame
+     * rects and named animation clips needed by NodeFlipbook.
      *
-     * Sheet geometry is described by SheetDesc. Named animation ranges are
-     * described by ClipDesc and accessed by name via GetClipDesc().
+     * Each frame has an independent source rect within the atlas, so frames may vary
+     * in size. Clips are explicit ordered sequences of frame steps, each with its own
+     * display duration, allowing repeated frames, non-linear sequences, and frame
+     * sharing between clips.
      */
     class IFlipbook {
     public:
-        /// @brief Returns the sprite sheet image used for all frames.
+        /// @brief Returns the atlas image used for all frames.
         virtual IImage const& GetImage() const = 0;
 
         /**
-         * @brief Describes the uniform grid layout of the sprite sheet.
-         *
-         * All frames are assumed to be the same size. The usable frame count
-         * may be less than SheetCells.x * SheetCells.y when the sheet is not
-         * fully packed.
-         */
-        struct SheetDesc {
-            IntVec2 FrameDimensions; ///< Width and height of a single frame in pixels.
-            IntVec2 SheetCells;      ///< Grid size: x = number of columns, y = number of rows.
-            int MaxFrames = 0;       ///< Total number of usable frames (<= cols * rows).
-            int NumClips  = 0;       ///< Number of named clips defined on this flipbook.
-        };
-
-        /**
-         * @brief Controls what happens when a clip reaches its last frame.
+         * @brief Controls what happens when a clip reaches its last step.
          */
         enum class LoopType {
             /// Freeze on the last frame of the clip and fire EventFlipbookStopped.
@@ -45,27 +35,49 @@ namespace moth_ui {
         };
 
         /**
-         * @brief Describes a named animation range within the sprite sheet.
-         *
-         * Both Start and End are inclusive frame indices. For example, a six-frame
-         * sheet split into two clips would be described as {0, 2} and {3, 5}.
+         * @brief Describes a single frame within the atlas.
          */
-        struct ClipDesc {
-            int Start = 0; ///< Index of the first frame (inclusive).
-            int End   = 0; ///< Index of the last frame (inclusive).
-            int FPS   = 0;                  ///< Playback rate for this clip in frames per second.
-            LoopType Loop = LoopType::Stop; ///< Playback behaviour when the end is reached.
+        struct FrameDesc {
+            IntRect rect;   ///< Source rect within the atlas image, in pixels.
+            IntVec2 pivot;  ///< Pivot point in pixels, relative to the frame's top-left corner.
         };
 
         /**
-         * @brief Populates @p outDesc with the sheet geometry and clip count.
-         * @param outDesc Receives the sheet description.
+         * @brief A single step within a clip sequence.
          */
-        virtual void GetSheetDesc(SheetDesc& outDesc) const = 0;
+        struct ClipFrame {
+            int frameIndex = 0;  ///< Index into the flipbook's frame list.
+            int durationMs = 0;  ///< How long this step is displayed, in milliseconds.
+        };
+
+        /**
+         * @brief Describes a named animation clip as an ordered sequence of frame steps.
+         *
+         * Using an explicit list of steps rather than a start/end range allows repeated
+         * frames, non-linear sequences, and frame sharing between clips.
+         */
+        struct ClipDesc {
+            std::vector<ClipFrame> frames;      ///< Ordered sequence of steps.
+            LoopType loop = LoopType::Stop;     ///< Playback behaviour when the last step is reached.
+        };
+
+        /// @brief Returns the number of frames in the atlas.
+        virtual int GetFrameCount() const = 0;
+
+        /**
+         * @brief Populates @p outDesc with the frame at the given index.
+         * @param index   Zero-based frame index; must be in [0, GetFrameCount()).
+         * @param outDesc Receives the frame description if the index is valid.
+         * @return @c true if the index is valid, @c false otherwise.
+         */
+        virtual bool GetFrameDesc(int index, FrameDesc& outDesc) const = 0;
+
+        /// @brief Returns the number of named clips.
+        virtual int GetClipCount() const = 0;
 
         /**
          * @brief Returns the name of the clip at the given index.
-         * @param index Zero-based clip index; must be in [0, SheetDesc::NumClips).
+         * @param index Zero-based clip index; must be in [0, GetClipCount()).
          * @return Clip name, or an empty string_view if the index is out of range.
          */
         virtual std::string_view GetClipName(int index) const = 0;

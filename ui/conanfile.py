@@ -7,7 +7,7 @@ class MothUI(ConanFile):
 
     license = "MIT"
     url = "https://github.com/instinkt900/moth_ui"
-    description = "A UI library and toolkit for games."
+    description = "A C++17 UI library with Flash-style keyframe animation, layout serialization, and a graphics-backend-agnostic renderer interface. Designed for games and interactive media applications."
 
     settings = "os", "compiler", "build_type", "arch"
     package_type = "static-library"

@@ -13,14 +13,6 @@ public API stable across minor versions going forward.
 
 ## Pre-1.0 API fixes
 
-### Remove mutable `GetColor()` / `GetRotation()` overloads — `include/moth_ui/nodes/node.h:169,196`
-
-**Effort:** Small
-
-`SetRotation()` calls `UpdateLocalTransform()` internally; the mutable `float& GetRotation()`
-overload bypasses that, leaving the local transform stale. `Color& GetColor()` is similarly
-confusing alongside the proper setter. Remove both mutable overloads.
-
 ### Remove `IImage::ImGui()` from the core interface — `include/moth_ui/graphics/iimage.h:29`
 
 **Effort:** Medium

@@ -165,9 +165,6 @@ namespace moth_ui {
         /// @brief Returns the colour modulation applied when drawing this node.
         Color const& GetColor() const { return m_color; }
 
-        /// @brief Returns a mutable reference to the node's colour.
-        Color& GetColor() { return m_color; }
-
         /**
          * @brief Sets the blend mode used when drawing this node.
          * @param mode Blend mode to use.
@@ -191,9 +188,6 @@ namespace moth_ui {
          *        Only updates the local transform; does not reload the full entity.
          */
         void SetPivot(FloatVec2 const& pivot);
-
-        /// @brief Returns a mutable reference to the node's rotation.
-        float& GetRotation() { return m_rotation; }
 
         /**
          * @brief Switches the active animation clip by name.

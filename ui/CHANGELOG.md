@@ -40,6 +40,13 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Address review findings in discrete track and layout entity code
 - Apply per-frame pivot offset in NodeFlipbook::DrawInternal
 - Fixing version string issues with cmake
+- Change AddChild/IndexOf index type from size_t to int
+- Remove mutable GetColor() and GetRotation() overloads from Node
+- Remove ImGui() from IImage interface
+- Throw std::invalid_argument from Context constructor for null required args
+- Restore AnimationController write access to Node members via friend
+- Bounds-check index in Group::AddChild before computing insert iterator
+- Take Node& in AnimationController ctor to prevent null pointer
 
 ### Refactoring
 - Update all ui_fwd.h includes to moth_ui_fwd.h
@@ -64,6 +71,7 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Update NodeFlipbook docs and add autoplay/load tests
 - Add Doxygen cmake target and document it in README
 - Add Doxygen Awesome theme via FetchContent
+- Clarify docstrings for pre-1.0 API review findings
 
 ### Testing
 - Add tests for FloatMat4x4 and node rotation/hit-testing

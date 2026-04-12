@@ -193,10 +193,13 @@ namespace moth_ui {
          * @brief Switches the active animation clip by name.
          * @param name Name of the animation clip to play.
          * @return @c true if the clip was found and activated.
+         * @note Base implementation is a no-op returning @c false; @c Group overrides
+         *       this to drive its @c AnimationClipController.
          */
         virtual bool SetAnimation(std::string const& name) { return false; }
 
         /// @brief Stops the currently playing animation clip.
+        /// @note Base implementation is a no-op; @c Group overrides this.
         virtual void StopAnimation() {}
 
         /// @brief Callback type for event interception.

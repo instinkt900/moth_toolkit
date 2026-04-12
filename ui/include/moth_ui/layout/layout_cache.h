@@ -15,7 +15,9 @@ namespace moth_ui {
      * Layouts are loaded on first request and reused on subsequent calls.
      * Call FlushCache() to force a reload on the next access.
      *
-     * Thread safety: all public methods are thread-safe.
+     * Thread safety: all public methods are thread-safe. Concurrent calls
+     * to GetLayout() with the same name may each load from disk independently;
+     * the first insertion wins and all callers receive the same @c shared_ptr.
      */
     class LayoutCache {
     public:

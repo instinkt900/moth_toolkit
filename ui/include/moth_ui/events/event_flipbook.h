@@ -12,7 +12,9 @@ namespace moth_ui {
         /**
          * @brief Constructs the event.
          * @param node     The flipbook node that started playing.
-         * @param clipName Name of the clip that started, or empty if no clip is set.
+         * @param clipName Name of the clip that started. May be empty if @c Play()
+         *                 was called while no clip was loaded — playback begins in
+         *                 a blank state and no frames will advance.
          */
         EventFlipbookStarted(std::weak_ptr<NodeFlipbook> node, std::string_view clipName)
             : Event(GetStaticType())

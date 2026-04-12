@@ -26,7 +26,6 @@ public:
     int GetWidth() const override { return 64; }
     int GetHeight() const override { return 64; }
     IntVec2 GetDimensions() const override { return { 64, 64 }; }
-    void ImGui(IntVec2 const&, FloatVec2 const&, FloatVec2 const&) const override {}
 };
 
 class MockFlipbook : public IFlipbook {

@@ -165,9 +165,6 @@ namespace moth_ui {
         /// @brief Returns the colour modulation applied when drawing this node.
         Color const& GetColor() const { return m_color; }
 
-        /// @brief Returns a mutable reference to the node's colour.
-        Color& GetColor() { return m_color; }
-
         /**
          * @brief Sets the blend mode used when drawing this node.
          * @param mode Blend mode to use.
@@ -192,17 +189,17 @@ namespace moth_ui {
          */
         void SetPivot(FloatVec2 const& pivot);
 
-        /// @brief Returns a mutable reference to the node's rotation.
-        float& GetRotation() { return m_rotation; }
-
         /**
          * @brief Switches the active animation clip by name.
          * @param name Name of the animation clip to play.
          * @return @c true if the clip was found and activated.
+         * @note Base implementation is a no-op returning @c false; @c Group overrides
+         *       this to drive its @c AnimationClipController.
          */
         virtual bool SetAnimation(std::string const& name) { return false; }
 
         /// @brief Stops the currently playing animation clip.
+        /// @note Base implementation is a no-op; @c Group overrides this.
         virtual void StopAnimation() {}
 
         /// @brief Callback type for event interception.
@@ -257,6 +254,8 @@ namespace moth_ui {
         virtual void DrawInternal() {}
 
     private:
+        friend class AnimationController;
+
         void ReloadEntityPrivate();
         void UpdateLocalTransform();
     };

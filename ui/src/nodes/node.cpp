@@ -9,7 +9,7 @@
 namespace moth_ui {
     Node::Node(Context& context)
         : m_context(context) {
-        m_animationController = std::make_unique<AnimationController>(this);
+        m_animationController = std::make_unique<AnimationController>(*this);
     }
 
     Node::~Node() = default;
@@ -184,7 +184,7 @@ namespace moth_ui {
         m_pivot = m_layout->m_pivot;
         m_visible = m_layout->m_visible;
         m_blend = m_layout->m_blend;
-        m_animationController = std::make_unique<AnimationController>(this);
+        m_animationController = std::make_unique<AnimationController>(*this);
         UpdateLocalTransform();
     }
 }

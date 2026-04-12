@@ -8,8 +8,12 @@ namespace moth_ui {
     /**
      * @brief A Node that defines a scissor-clip region for its siblings.
      *
-     * NodeClip itself has no visual appearance; it exists to communicate
-     * clip region information through the layout system.
+     * NodeClip itself has no visual appearance. When a @c Group draws its
+     * children it inspects them in order; any child that is a @c NodeClip
+     * causes the renderer's scissor rectangle to be pushed before the
+     * remaining children are drawn, and popped afterward. Place a
+     * @c NodeClip as the first child of a @c Group to restrict rendering
+     * of its siblings to that rectangle.
      */
     class NodeClip : public Node {
     public:

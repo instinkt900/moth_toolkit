@@ -21,8 +21,9 @@ namespace moth_ui {
         /**
          * @brief Constructs the controller for a specific node.
          * @param node Node whose layout entity's tracks are to be driven.
+         *             The node must outlive this controller.
          */
-        AnimationController(Node* node);
+        explicit AnimationController(Node& node);
         ~AnimationController();
 
         /**
@@ -57,6 +58,8 @@ namespace moth_ui {
         AnimationController& operator=(AnimationController&&) = default;
 
     private:
+        static float& GetTargetReference(Node* node, AnimationTrack::Target target);
+
         Node* m_node = nullptr;
         std::vector<std::unique_ptr<AnimationTrackController>> m_trackControllers;
         std::vector<std::unique_ptr<DiscreteAnimationTrackController>> m_discreteControllers;

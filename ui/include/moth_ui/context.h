@@ -5,8 +5,6 @@
 #include "moth_ui/iimage_factory.h"
 #include "moth_ui/iflipbook_factory.h"
 
-#include <cassert>
-
 namespace moth_ui {
     /**
      * @brief Aggregates the core service objects required by the UI system.
@@ -18,11 +16,12 @@ namespace moth_ui {
     public:
         /**
          * @brief Constructs a Context.
-         * @param imageFactory    Factory used to load and cache images.
-         * @param fontFactory     Factory used to load and cache fonts.
-         * @param renderer        Renderer used to draw UI nodes.
+         * @param imageFactory    Factory used to load and cache images. Must be non-null.
+         * @param fontFactory     Factory used to load and cache fonts. Must be non-null.
+         * @param renderer        Renderer used to draw UI nodes. Must be non-null.
          * @param flipbookFactory Optional factory used to load flipbooks.
          *                        May be null if no flipbook nodes are used.
+         * @throws std::invalid_argument if @p imageFactory, @p fontFactory, or @p renderer is null.
          */
         Context(IImageFactory* imageFactory,
                 IFontFactory* fontFactory,
@@ -30,22 +29,13 @@ namespace moth_ui {
                 IFlipbookFactory* flipbookFactory = nullptr);
 
         /// @brief Returns the image factory associated with this context.
-        IImageFactory& GetImageFactory() const {
-            assert(m_imageFactory && "No image factory?");
-            return *m_imageFactory;
-        }
+        IImageFactory& GetImageFactory() const { return *m_imageFactory; }
 
         /// @brief Returns the font factory associated with this context.
-        IFontFactory& GetFontFactory() const {
-            assert(m_fontFactory && "No font factory?");
-            return *m_fontFactory;
-        }
+        IFontFactory& GetFontFactory() const { return *m_fontFactory; }
 
         /// @brief Returns the renderer associated with this context.
-        IRenderer& GetRenderer() const {
-            assert(m_renderer && "No renderer?");
-            return *m_renderer;
-        }
+        IRenderer& GetRenderer() const { return *m_renderer; }
 
         /// @brief Returns the flipbook factory, or @c nullptr if one was not provided.
         IFlipbookFactory* GetFlipbookFactory() const {

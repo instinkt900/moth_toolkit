@@ -39,9 +39,9 @@ namespace moth_ui {
         /**
          * @brief Adds a child node to this group.
          * @param child Child node to add.
-         * @param index Position to insert at; @c -1 appends to the end.
+         * @param index Zero-based position to insert at; negative values append to the end.
          */
-        void AddChild(std::shared_ptr<Node> child, size_t index = -1);
+        void AddChild(std::shared_ptr<Node> child, int index = -1);
 
         /**
          * @brief Removes a child node from this group.
@@ -52,9 +52,9 @@ namespace moth_ui {
         /**
          * @brief Returns the zero-based index of a child within this group.
          * @param child Child node to find.
-         * @return Index of the child.
+         * @return Zero-based index of the child, or @c -1 if not found.
          */
-        size_t IndexOf(std::shared_ptr<Node> child) const;
+        int IndexOf(std::shared_ptr<Node> child) const;
 
         /// @brief Returns the number of direct children.
         int GetChildCount() const { return static_cast<int>(m_children.size()); }

@@ -13,15 +13,6 @@ public API stable across minor versions going forward.
 
 ## Pre-1.0 API fixes
 
-### `Context` constructor — validate non-null required args — `include/moth_ui/context.h:27`
-
-**Effort:** Trivial
-
-`GetImageFactory()`, `GetFontFactory()`, and `GetRenderer()` use `assert()` which is stripped in
-Release builds, causing a silent nullptr dereference if null is passed. Throw
-`std::invalid_argument` in the constructor for null `imageFactory`, `fontFactory`, or `renderer`.
-`flipbookFactory` is intentionally optional — leave it as-is.
-
 ---
 
 ## Pre-1.0 docstring fixes

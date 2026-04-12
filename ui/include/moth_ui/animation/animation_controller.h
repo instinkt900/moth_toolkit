@@ -21,11 +21,9 @@ namespace moth_ui {
         /**
          * @brief Constructs the controller for a specific node.
          * @param node Node whose layout entity's tracks are to be driven.
-         *             The node must outlive this controller; the controller
-         *             is always owned by the node itself so this invariant
-         *             holds by construction.
+         *             The node must outlive this controller.
          */
-        AnimationController(Node* node);
+        explicit AnimationController(Node& node);
         ~AnimationController();
 
         /**

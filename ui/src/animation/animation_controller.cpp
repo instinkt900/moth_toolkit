@@ -48,15 +48,15 @@ namespace moth_ui {
         return dummy;
     }
 
-    AnimationController::AnimationController(Node* node)
-        : m_node(node) {
-        if (auto const layout = node->GetLayoutEntity()) {
+    AnimationController::AnimationController(Node& node)
+        : m_node(&node) {
+        if (auto const layout = node.GetLayoutEntity()) {
             for (auto&& [target, track] : layout->m_tracks) {
                 auto const& continuous = AnimationTrack::ContinuousTargets;
                 if (std::find(continuous.begin(), continuous.end(), target) == continuous.end()) {
                     continue;
                 }
-                m_trackControllers.push_back(std::make_unique<AnimationTrackController>(GetTargetReference(node, target), *track));
+                m_trackControllers.push_back(std::make_unique<AnimationTrackController>(GetTargetReference(&node, target), *track));
             }
         }
     }

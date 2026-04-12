@@ -254,6 +254,8 @@ namespace moth_ui {
         virtual void DrawInternal() {}
 
     private:
+        friend class AnimationController;
+
         void ReloadEntityPrivate();
         void UpdateLocalTransform();
     };

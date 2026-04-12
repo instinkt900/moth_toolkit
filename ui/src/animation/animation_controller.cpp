@@ -5,10 +5,8 @@
 #include "moth_ui/layout/layout_entity.h"
 #include "moth_ui/nodes/node.h"
 
-namespace {
-    using namespace moth_ui;
-
-    float& GetTargetReference(Node* node, AnimationTrack::Target target) {
+namespace moth_ui {
+    float& AnimationController::GetTargetReference(Node* node, AnimationTrack::Target target) {
         auto& layoutRect = node->GetLayoutRect();
         switch (target) {
         case AnimationTrack::Target::TopOffset:
@@ -28,15 +26,15 @@ namespace {
         case AnimationTrack::Target::RightAnchor:
             return layoutRect.anchor.bottomRight.x;
         case AnimationTrack::Target::ColorRed:
-            return node->GetColor().r;
+            return node->m_color.r;
         case AnimationTrack::Target::ColorGreen:
-            return node->GetColor().g;
+            return node->m_color.g;
         case AnimationTrack::Target::ColorBlue:
-            return node->GetColor().b;
+            return node->m_color.b;
         case AnimationTrack::Target::ColorAlpha:
-            return node->GetColor().a;
+            return node->m_color.a;
         case AnimationTrack::Target::Rotation:
-            return node->GetRotation();
+            return node->m_rotation;
         case AnimationTrack::Target::Events:
         case AnimationTrack::Target::FlipbookClip:
         case AnimationTrack::Target::FlipbookPlaying:
@@ -49,9 +47,7 @@ namespace {
         static float dummy = 0;
         return dummy;
     }
-}
 
-namespace moth_ui {
     AnimationController::AnimationController(Node* node)
         : m_node(node) {
         if (auto const layout = node->GetLayoutEntity()) {

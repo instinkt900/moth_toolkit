@@ -51,8 +51,8 @@ namespace moth_ui {
         }
     }
 
-    void Group::AddChild(std::shared_ptr<Node> child, size_t index) {
-        if (index != static_cast<size_t>(-1)) {
+    void Group::AddChild(std::shared_ptr<Node> child, int index) {
+        if (index >= 0) {
             auto it = std::begin(m_children) + static_cast<std::ptrdiff_t>(index);
             m_children.insert(it, child);
         } else {
@@ -70,12 +70,12 @@ namespace moth_ui {
         }
     }
 
-    size_t Group::IndexOf(std::shared_ptr<Node> child) const {
+    int Group::IndexOf(std::shared_ptr<Node> child) const {
         auto const it = ranges::find(m_children, child);
         if (std::end(m_children) != it) {
-            return it - std::begin(m_children);
+            return static_cast<int>(it - std::begin(m_children));
         }
-        return static_cast<size_t>(-1);
+        return -1;
     }
 
     bool Group::SetAnimation(std::string const& name) {

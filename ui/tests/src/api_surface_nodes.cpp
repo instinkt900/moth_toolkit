@@ -51,7 +51,7 @@ TEST_CASE("Node method signatures are stable", "[api][nodes][node]") {
 }
 
 TEST_CASE("Group method signatures are stable", "[api][nodes][group]") {
-    void (Group::*addChild)(std::shared_ptr<Node>, size_t)   = &Group::AddChild;
+    void (Group::*addChild)(std::shared_ptr<Node>, int)      = &Group::AddChild;
     void (Group::*removeChild)(std::shared_ptr<Node>)        = &Group::RemoveChild;
     int  (Group::*getCount)() const                          = &Group::GetChildCount;
     std::vector<std::shared_ptr<Node>>& (Group::*getChildren)() = &Group::GetChildren;

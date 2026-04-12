@@ -13,12 +13,6 @@ public API stable across minor versions going forward.
 
 ## Pre-1.0 API fixes
 
-### `AddChild` index type — `include/moth_ui/nodes/group.h:44`
-
-**Effort:** Trivial
-
-`size_t index = -1` wraps to `SIZE_MAX` at the call site. Change to `int index = -1`.
-
 ### Remove mutable `GetColor()` / `GetRotation()` overloads — `include/moth_ui/nodes/node.h:169,196`
 
 **Effort:** Small

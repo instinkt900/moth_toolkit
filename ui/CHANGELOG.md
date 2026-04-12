@@ -1,0 +1,449 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+Entries are generated automatically from git history using [git-cliff](https://github.com/orhun/git-cliff).
+
+## [1.0.0-rc.1] - 2026-04-12
+### Features
+- Add moth_ui.h aggregate header and moth_ui_fwd.h forward declaration header
+- Add binary and pretty-print options to Layout::Save, detect binary on Load
+- Add LoadOptions to Layout::Load, remove extension inference
+- Draw magenta placeholder rect when NodeText font is missing
+- Add rotation and transform support to nodes
+- Composing transforms, rotation-aware hit testing
+- Add SetPivot() to Node
+- Add NodeFlipbook and IFlipbook/IFlipbookFactory interfaces
+- Flesh out NodeFlipbook with clips, loop types, and named events
+- Add ILogger interface with NullLogger fallback in Context
+- Add global ILogger with callsites throughout the library
+- Add LayoutEntityFlipbook(LayoutRect, path) constructor
+- Add discrete animation tracks for flipbook clip and playing state
+- Replace uniform-grid flipbook model with per-frame rects and clip sequences
+- Make NodeFactory, logger, and LayoutCache thread-safe
+
+### Bug Fixes
+- Fixing order of includes for serialization helpers
+- Fetch tags after creation so git-cliff --current finds the tag
+- Force-refresh tags on fetch to avoid stale refs on retry
+- Use ../.conan/profile in tests subdirectory
+- Using try_emplace rather than operator[] in layout cache
+- Pass world transform to PushTransform; fix test coverage gaps
+- Recompute local transform after ReloadEntityPrivate
+- Address review findings in NodeFlipbook implementation
+- Guard NodeFlipbook::Update against zero/negative FPS
+- Validate SheetDesc on load and clear all state on load failure
+- Clear m_accumulatedMs when Stop/Reset clip ends
+- Allow --version override in conanfile set_version
+- Make IRenderer::RenderImage and IFlipbook::GetImage take/return const
+- Re-apply LayoutEntityRef property overrides after Node::ReloadEntity
+- Defer EventFlipbookStarted when node is not yet shared_ptr-owned
+- Address review findings in discrete track and layout entity code
+- Apply per-frame pivot offset in NodeFlipbook::DrawInternal
+- Fixing version string issues with cmake
+
+### Refactoring
+- Update all ui_fwd.h includes to moth_ui_fwd.h
+- Replace char const* with std::string_view in public API
+- Use transparent comparator in LayoutCache to avoid temporary string on lookup
+- Promote kDegToRad and kRadToDeg to namespace scope in transform.h
+- Use weak_ptr for node references in animation and flipbook events
+- Use event_cast in event handler test doubles
+- Remove FlushCache from IImageFactory and IFlipbookFactory
+
+### Performance
+- Cache local transform on Node to avoid per-frame trig
+- Avoid holding mutex during disk I/O in LayoutCache::GetLayout
+
+### Documentation
+- Overhaul README and add MIT LICENSE
+- Updating readme with build command
+- Add full ecosystem table to Related Projects
+- Update canyon link to moth_graphics in Related Projects
+- Clarify Save overload docs to state default SaveOptions behaviour
+- Explain why Node move-assignment is deleted
+- Update NodeFlipbook docs and add autoplay/load tests
+- Add Doxygen cmake target and document it in README
+- Add Doxygen Awesome theme via FetchContent
+
+### Testing
+- Add tests for FloatMat4x4 and node rotation/hit-testing
+- Add NodeFlipbook unit tests
+- Update and extend flipbook and discrete track test suite
+- Add API surface tests and clean up stale planning docs
+- Apply code-review fixes to API surface tests and NodeFlipbook
+
+### Miscellaneous
+- Add git-cliff changelog automation
+- Export LICENSE in conanfile and deprecate ui_fwd.h
+- Bump version to 1.1.0
+- Fixing release action
+- Adding AI disclosure to readme
+- Updating TODO with some pending tasks
+- Release workflow to build archives with proper folder structure
+- Bump patch version to 1.1.1
+- Removing unused conan profiles
+- Suppress unused-includes for common.h in clangd; update test mock
+- Pre-release fixes for 1.0.0
+- Expand conanfile description for 1.0 release
+- Removed changelog
+- Export README.md with recipe for Artifactory display
+- Tagging as v1 rc1. todo now contains remaining issues to check
+
+### Changes
+- Pushing for v1.0
+- Removing artifactory url in favor of using secrets
+- Add animation clip controller event timing tests
+- Update version from 1.1.1 to 1.5.0
+- Bump version from 1.5.0 to 1.6.0
+- Bump version from 1.6.0 to 1.7.0
+- Delete CHANGELOG.md
+
+## [0.3.0] - 2025-08-14
+### Changes
+- Cleaning up the rect structure slightly.
+
+## [0.2.0] - 2025-05-10
+### Bug Fixes
+- Fixing submodule. maybe? path seems bad
+- Fixing sublayout overrides when the ref is newly added to the layout
+- Fixing conan deps issue. conan2 continues to fail me. i need a new package manager
+- Fixing the usual conan bullshit
+- Fixing more conan bullshit
+- Fixing missing build tools
+- Fixing env setup step
+- Made the nlohmann_json headers transitive.
+- Fixing bad casing on build configs in actions
+- Fixing upload action
+- Some fixes that showed up when consuming moth
+
+### Refactoring
+- Updating editor to use canyon as a backend.
+
+### Testing
+- Testing protection
+
+### Miscellaneous
+- Removing unused submodules
+- Removed unused externals
+- Removed example project.
+- More cleaning out of stuff.
+- Tweaking versions for flexibility
+- Tagging the repo should only happen once after all the uploads.
+
+### Changes
+- Initial commit of moth_ui separated from previous project
+- Adding imgui submodule. This is not using conan since we want the docking branch
+- Adding git ignores
+- Ignores related to what visual studio adds
+- Renaming uilib to moth_ui
+- Adding a visual studio project for debugging etc
+- Updating makefile for the font cache file
+- Removing SDL dependency from ui lib
+- Fixing up namespaces
+- Making the editor a bit more like a native tool
+- Adding source rects to both the base image class but also the node image class
+- Adding a color class for various format handling.
+- Adding some tests using catch2. VS only currently
+- Updated color handling and tests
+- Adding todo to track needs.
+- Adding a close button to the keyframe editor window
+- Fixing file locations.
+- Adding interp types to keyframes.
+- Adding exit menu item. App is now an event listener
+- Added a preview window
+- Rewrote vector class to be more generic.
+- Fixing previoew window not getting correct keyframe timings.
+- Updating testing.
+- Toying with release and install paths. Need more work
+- Addign basic font support. still wip
+- Tweaking font handling. Fonts no longer take paths and instead are referred to by name.
+- Changing order of nodes via pgup and pgdown
+- Fixing loading layouts with text elements
+- Adding image tiling to the image node
+- Updating the properties panel to be supported by the undo/redo system.
+- Testing
+- Revert "Testing"
+- Working with possible imgui fix for inputint asserts
+- Switched to my own imgui branch until a fix is merged for inputint
+- One day git will make sense
+- Added imgui back after clearing up the mess
+- Cleaning up layout entity structure. favoring public members.
+- Adding some generic editor actions for the undo stack and removing a lot of specialized versions
+- Exit confirm prompt
+- What happens if we commit this?
+- Allowing the addition of user events
+- Cleaning up how layouts and sublayouts are loaded/saved
+- Adding layout versioning to handle old version loading
+- Adding clip rect support
+- Updating todo
+- Adding the skeleton of a layout cache. Unused for now
+- Fixing sublayout loading on editor
+- Updating the editor to use projects. Layout path and image path. The idea being that layouts and images will just be referred to by name rather than path.
+- Changed layouts to be able to convert paths to relative paths so saved image and sublayout references are relative to the layout theyre saved into.
+- Adding support for 9slicing
+- Nine slice is no longer its own entity and is now just a type of image scaling.
+- Fixing 9slice loading.
+- Just cleaning up the headers in editor layer
+- Should have built the project before my last commit. Here's the runon changes
+- Added key modifiers to key events.
+- Adding source rect and 9 slice indication to the image preview
+- Drawing 9slice guides on the bounds widget
+- Cleaning up menus. Adding keyboard shortcuts to things. Added a canvas reset option
+- Adding a proper extension to the layouts.
+- Changing the dockspace over viewport setup in favor of using a canvas imgui window
+- Changing the image and layout lists to be a single asset list file browser. Still need to sort out what to do with project settings
+- No more delete acttion on the asset list. I'm thinking it doesnt need to be an explorer replacement, it's just a shortcut.
+- Slight modification to the canvas input handling. Only take inputs when focused for a start
+- Adding multi selection behaviour.
+- Cleaning up selection logic. Can select and deselect items using ctrl.
+- Added text drop shadow support.
+- Added the ability to alter/override some sublayout data
+- Nice
+- Adding the ability to add a class to layouts so they can be hooked into implementation details in code
+- Updates to event handling. Send events up or down the tree
+- Hooked in event handler
+- Updated how the context works. Now can set and replace contexts so theres no longer a single static context.
+- Removed time from animations and work purely on frames. Much simpler
+- Adding alt drag on keyframes to duplicate them
+- Adding box select to keyframe window
+- Added actions for adding and removing clips so now they should undo/redo properly.
+- Adding layout extension when saving
+- Adding persistence to current directory, window size, canvas settings etc.
+- Drag and drop elements will now be placed where the mouse drops them.
+- Adding anchor preset buttons to the top of the bounds widget. Topleft and Fill.
+- Fixing image and sublayout element buttons opening file windows not at cwd.
+- 9 slice target rects are now anchor based. probably has limited use but it gives more options
+- Added visibility to the serialized data.
+- Just committing this to clean up
+- Removed ImGui from moth_ui
+- Removed ImGui from moth_ui
+- Ignored release build files
+- Fixing drag select in animation panel only starting when clicking in the region
+- Allowing drag cloning 0th keyframe.
+- Added a menu option to set an animation event name.
+- Fixing id change causing entities to be positioned incorrectly.
+- Added self registering widget classes
+- Fixing imgui.ini location
+- Added animation stopped event that should only be sent once per event. Not super stoked about its implementation but it works for now.
+- Fixed starting up in non existent directory.
+- Adding event for animation start
+- Adding some color customisation to the editor
+- Adding texture packing tool.
+- Sorting out texture packing alpha
+- Changing how the texture packer decides the pack dimensions
+- Bit of an overhaul of the animation panel to allow for different handling of events.
+- Moving draw calls into an interface in prep for vulkan.
+- Adding externals to the externals path. Im sure they used to be there but were removed for unknown reasons.
+- Removed glfw external
+- Moved imgui to v1.88
+- Moved imgui to docking. whoops
+- Fixing imgui image display with new texture wrapper stuff
+- Moving the graphics calls into its own interface
+- Recreated vulkan branch.
+- Adding some window management
+- Moving some things to the backend namespace
+- Fixing up changing to a directory that doesnt exist.
+- Implemented set window title for vulkan
+- Added validation layers.
+- Reasonably close to working. Just need to hook in imgui rendering again and clean up some small things. But graphics is reasonably ready
+- Small changes
+- Custom drawing and drawing of ImGui working. Just need to clean it up and put in some real world usages
+- Removed the second renderpass for render targets. Now properly transitions. (Properly?)
+- Cleaning up the app class
+- Cleaning up the context class
+- Cleaning up graphics class
+- Added imgui support to images. Not a nice implementation since we need access to the graphics shader but it works for now
+- Adding some rendering into the vulkan ui_renderer
+- Fixing set logical size for vulkan
+- Removing the need for caching draw lists and instead opting to directly use the command buffer
+- Cleaning up semaphore usage with framebuffers
+- Adding the starting font changes
+- Ugh
+- Adding murmurhash external
+- Vulkan fonts are building but go not run since the libs clash with sdl ttf (as far as i can tell) so the backends need to be separated into libraries and configurations or something
+- Small updates to where freetype was installed
+- Added a TTF shim to allow dynamic loading of sdl_ttf libs while still linking to freetype. Might be a better idea to work the other way? either way this compiles for now.
+- Updating to vs 2022
+- Fixed the rendering of the canvas.
+- Basic bitmap font rendering working. Still need to deal with positioning etc. but its visible progress
+- Working text alignment with vulkan. Needs a lot of cleanup. Also need some kind of font cache at some point
+- Adding a font cache used for reusing font objects of the same face and size
+- Fixing widget rendering when canvas tab bar is visible
+- Updating to latest vs 2022
+- Resolving conflicts with main
+- Adding resize support with vulkan swapchain recreation
+- Adding a readme but mostly just testing commit signs
+- Adding readme text
+- Adding keyboard events to vulkan implementation
+- Fixing up conan cmake process
+- Adding clip rect support in vulkan
+- Create cmake-multi-platform.yml
+- Update cmake-multi-platform.yml
+- Update cmake-multi-platform.yml
+- Update cmake-multi-platform.yml
+- Update cmake-multi-platform.yml
+- Update cmake-multi-platform.yml
+- Update cmake-multi-platform.yml
+- Update cmake-multi-platform.yml
+- Update cmake-multi-platform.yml
+- Update cmake-multi-platform.yml
+- Update cmake-multi-platform.yml
+- Update cmake-multi-platform.yml
+- Update cmake-multi-platform.yml
+- Update and rename cmake-multi-platform.yml to cmake-build-lib.yml
+- Update cmake-build-lib.yml
+- Sorting m_pi issues on linux
+- Create cmake-build-lib-linux.yml
+- Update and rename cmake-build-lib.yml to cmake-build-lib-win.yml
+- Update README.md
+- Adding trigger to workflows
+- Delete blah
+- Clip rects will now only clip entities below them in the scene rather than the whole layout
+- Updating readme to have some basic info. Also adding install step to cmake
+- Update README.md
+- Fixing up conan/cmake build on linux
+- Fixing up some warnings of the moth_ui lib under clang
+- Fixing up editor build. warnings etc
+- Adding back accidental removal of animation panel
+- Update cmake-build-lib-linux.yml
+- Update cmake-build-lib-linux.yml
+- Update cmake-build-lib-linux.yml
+- Update cmake-build-lib-linux.yml
+- Update cmake-build-lib-linux.yml
+- Update cmake-build-lib-linux.yml
+- Update cmake-build-lib-linux.yml
+- Fixed the preview window crashing the editor. Just needed to make sure we weren't trying to render a negative image size
+- Allowing the delete key to be used on the canvas or the animation panel. Added focused property to panels and added ToggleEntityVisibility to the layer
+- Moved the rendering code out to its own location that could act as its own library
+- Fixing up cmake build
+- Few small fixes
+- Moved application out of the backend folder
+- Moved the font loading from font factory to the application(s). moved the example layouts to its own base folder. fixed the location of imgui.ini
+- Update cmake-build-lib-linux.yml
+- Update cmake-build-lib-win.yml
+- Adding a font panel with the ability to add/remove fonts from the library and also load or save the library
+- Cleaning up font panel to be a bit nicer
+- Updating cmake build
+- Font factory is now no longer an interface and instead handles a bunch of generic stuff
+- Adding editor build actions for windows and linux
+- Removing the now unneeded ttf shim
+- Removing dead code
+- Moved application back to backend and made it more generic
+- Updating cmake file
+- Forgot to remove old files
+- Fixing some small build issues
+- Made backends its own library. Added an example application. Needs work
+- Fixing linux build
+- Fixing example build
+- Cleaning up cmake files
+- Added mouse events to application. Some window sizing tweaks. Added a button to the example layout
+- Started to fill out the example layouts but this can be completed in another branch
+- Fixing issues with clip name editing
+- Clip controller now properly sets the current frame when setting a new clip
+- Updated wrapping code. Added a WrapText function on the font that splits up a single line into multiple. Also supports newlines
+- Cleaning up wrapping
+- Update vulkan_graphics.cpp
+- Fixed a small issue with vulkan colour tinting not working
+- Fixing the animation cursor to properly be positioned when the track is scrolled
+- Adding harfbuzz usage. Rebuilt font rendering and word wrapping
+- Updating cmake build
+- Forked the harfbuzz build so i could disable the freetype build. Since it's already supplied elsewhere it just causes issues
+- Cleaning up the wrapping code a little
+- Fixing up clang issue
+- Fixing package conflicts
+- Fixing vulkan font rendering vertical positioning
+- Moved freetype repo to another mirror since the other one failed
+- Tweaked font rendering to fix some black line issues. Added a bunch of extra fonts for testing. Theres still some hard edges on some fonts. Might need to add some internal glyph border pixels
+- Wasn't supposed to commit this
+- Cleaning up and tweaking font rendering still
+- Fixing linux build
+- Adding a write to png function similar to sdl
+- Moved stb files around and made it more obvious where the actual implementation is
+- Not a rewrite but a lot of cleanups. Large change to how horizontal scrolling works
+- Cleaning up a bunch more stuff. Better use of clip rects when drawing clips events and keyframes
+- Fixing selecting keyframes not deselecting clips/events. fixes #40
+- Holy shit conan is bad
+- Conan continues to cause issues
+- Moved the frame ribbon outside of the scrolling panel. Fixes #53 Also fixed some keyframe issues where sometimes keyframes werent being created when moving elements around
+- Fixed unused variable. It was an error that we weren't using the drawList but when I changed it to use the draw list the cursor rendered under the scroll panel for some reason. The cursor has to be part of the scrolling panel draw list for some reason
+- Changing props file to only hold paths to things that might want to be customized. ie. things that need to be built might have a specific output directory to point to
+- Adding a script to build required libs for the visual studio solution
+- Whats the fucking point in having version numbers if the contents under that fucking version number changes
+- Props is now going to be not committed
+- Prereq script will now create a default .props file too
+- Embedding the vulkan shaders into the source code with a batch script to generate the source
+- Removing unused readFile function
+- Adding frame info to layout data so animation panel setup can be based on layouts loaded
+- Adding box selection to the keyframe window
+- Adding alt drag duplication to the animation panel. fixes #62
+- Fixing interpolation to guarantee that 0 == a and 1 == b. Fixes #39
+- Fixing copy/paste behaviour. Now copies will make a hard copy of the
+- Update README.md
+- Update README.md
+- Adding checks that the mouse is in the scrolling viewport/frame. Fixes #70
+- Updating the example with some new behaviour
+- Added glfw to the prereq build script
+- Bit of an overhaul on how property edits happen re. focus changes etc
+- Updating cmake build
+- Small fix to the prereqs script to prevent prompting
+- Update conanfile.py
+- Fixed small issue with incorrect horizontal scrolling on the animation
+- Updating lockfile. Might be better?
+- Reverted lockfile
+- Adding lockfile from linux
+- Replacing imgui filebrowser with nativefiledialog.
+- Created a fork for nativefiledialog so we can use cmake
+- Updating linux build to use lib gtk
+- Maybe?
+- Fixing string buffer sizes
+- Fixing extensions in native file dialog
+- Clear should close flag when we fire the exit request event.
+- Setting up file and console logging.
+- Tweaking to better support vscode
+- Updating github actions
+- Update CMakeLists.txt
+- Update CMakeLists.txt
+- Update CMakeLists.txt
+- Trying to add cmake as a build tool
+- Update cmake-build-lib-win.yml
+- Update cmake-build-lib-win.yml
+- Updating actions to use conan environment
+- Updating github actions to better utilize conan cmake presets
+- Updating broken paths
+- Fixing small action issues
+- Single config cmake for linux?
+- Fixing static variable stuff
+- Fixing uninitialised semaphores
+- Update vulkan_framebuffer.h
+- Update vulkan_framebuffer.cpp
+- Adding intellisense options and launch tasks
+- Fixing some issues that showed up on linux. Mostly just improper stack usage when creating vulkan instance
+- Fixing some issues that showed up on linux. Mostly just improper stack usage when creating vulkan instance
+- Update vulkan_swapchain.cpp
+- Added click to drag the keyframe window using the middle mouse button
+- Update editor_panel_animation.cpp
+- Building with harfbuzz and conan working. time to try linux
+- Linux appears to be building now?
+- Removing harfbuzz from the backends build. on linux at least it should be included with the gtk libs. windows might be a different story. harfbuzz here seems to cause issues with nativefiledialog for some reason
+- Updating windows build. Conditionally added harfbuzz to conan install. Linking harfbuzz when using windows
+- Using libgettext override because the configure of the latest version triggers a windows CRT popup that hard locks github runners
+- Updated the visual studio solution to use the conan generated props files to handle the dependencies. This means most of the external submodules can now go away. Also cleaned up the github action slightly
+- Shared linking with libpng. this should fix the crash with file dialogs
+- Libpng shared only on linux. rebuilt lock
+- Updated lock for linux
+- Just testing commit signing etc
+- Updating the docs a bit
+- Update README.md
+- Adding clangd support. Fixing conan config so moth_ui links properly
+- Silencing some msvc warnings
+- Fixing backends build issues
+- Updates for canyon
+- Fixing example project.
+- Removing moth editor into it's own repo.
+- Updating action with conan action and matrix of configs.
+- Removing projects and updating readme.
+- Added configs for shared library building.
+- Removing shared configuration.
+- Source cleanup.
+
+

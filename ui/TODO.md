@@ -13,14 +13,6 @@ public API stable across minor versions going forward.
 
 ## Pre-1.0 API fixes
 
-### Remove `IImage::ImGui()` from the core interface — `include/moth_ui/graphics/iimage.h:29`
-
-**Effort:** Medium
-
-A pure virtual ImGui method on the core image interface forces every backend implementation —
-including production, non-editor ones — to depend on ImGui. Remove it from `IImage`. The editor
-can cast to its concrete backend type or use a separate opt-in interface.
-
 ### `Context` constructor — validate non-null required args — `include/moth_ui/context.h:27`
 
 **Effort:** Trivial

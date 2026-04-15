@@ -47,6 +47,7 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Restore AnimationController write access to Node members via friend
 - Bounds-check index in Group::AddChild before computing insert iterator
 - Take Node& in AnimationController ctor to prevent null pointer
+- Include serialize_utils.h in animation_clip.h to define enum adl_serializer before NLOHMANN_DEFINE_TYPE_INTRUSIVE expands
 
 ### Refactoring
 - Update all ui_fwd.h includes to moth_ui_fwd.h

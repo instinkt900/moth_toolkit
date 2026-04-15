@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 Entries are generated automatically from git history using [git-cliff](https://github.com/orhun/git-cliff).
 
-## [1.0.0-rc.1] - 2026-04-12
+## [1.0.0-rc.1] - 2026-04-15
 ### Features
 - Add moth_ui.h aggregate header and moth_ui_fwd.h forward declaration header
 - Add binary and pretty-print options to Layout::Save, detect binary on Load
@@ -96,6 +96,7 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Removed changelog
 - Export README.md with recipe for Artifactory display
 - Tagging as v1 rc1. todo now contains remaining issues to check
+- Removed old todo
 
 ### Changes
 - Pushing for v1.0

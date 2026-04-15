@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "moth_ui/utils/serialize_utils.h"
 #include <nlohmann/json.hpp>
 
 namespace moth_ui {

@@ -22,6 +22,8 @@ public:
     void PopTransform() override {}
     void PushClip(moth_ui::IntRect const&) override {}
     void PopClip() override {}
+    void PushTextureFilter(moth_ui::TextureFilter) override {}
+    void PopTextureFilter() override {}
     void RenderRect(moth_ui::IntRect const&) override {}
     void RenderFilledRect(moth_ui::IntRect const&) override {}
     void RenderImage(moth_ui::IImage const&, moth_ui::IntRect const&, moth_ui::IntRect const&, moth_ui::ImageScaleType, float) override {}

@@ -19,6 +19,8 @@ TEST_CASE("IRenderer method signatures are stable", "[api][graphics][irenderer]"
     void (IRenderer::*popXform)()                    = &IRenderer::PopTransform;
     void (IRenderer::*pushClip)(IntRect const&)      = &IRenderer::PushClip;
     void (IRenderer::*popClip)()                     = &IRenderer::PopClip;
+    void (IRenderer::*pushFilter)(TextureFilter)     = &IRenderer::PushTextureFilter;
+    void (IRenderer::*popFilter)()                   = &IRenderer::PopTextureFilter;
     // Draw calls
     void (IRenderer::*renderRect)(IntRect const&)        = &IRenderer::RenderRect;
     void (IRenderer::*renderFilled)(IntRect const&)      = &IRenderer::RenderFilledRect;
@@ -31,6 +33,7 @@ TEST_CASE("IRenderer method signatures are stable", "[api][graphics][irenderer]"
 
     (void)pushBlend; (void)popBlend; (void)pushColor; (void)popColor;
     (void)pushXform; (void)popXform; (void)pushClip;  (void)popClip;
+    (void)pushFilter; (void)popFilter;
     (void)renderRect; (void)renderFilled; (void)renderImg;
     (void)renderText; (void)setLogical;
     SUCCEED();
@@ -88,6 +91,13 @@ TEST_CASE("BlendMode enum values are stable", "[api][graphics][enums]") {
 TEST_CASE("ImageScaleType enum values are stable", "[api][graphics][enums]") {
     static_assert(ImageScaleType::Stretch   != ImageScaleType::Tile);
     static_assert(ImageScaleType::Tile      != ImageScaleType::NineSlice);
+    SUCCEED();
+}
+
+TEST_CASE("TextureFilter enum values are stable", "[api][graphics][enums]") {
+    static_assert(static_cast<int>(TextureFilter::Invalid) == -1);
+    static_assert(static_cast<int>(TextureFilter::Linear)  ==  0);
+    static_assert(static_cast<int>(TextureFilter::Nearest) ==  1);
     SUCCEED();
 }
 

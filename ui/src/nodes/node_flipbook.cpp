@@ -48,6 +48,7 @@ namespace moth_ui {
 
     void NodeFlipbook::ReloadEntityPrivate() {
         auto const layoutEntity = std::static_pointer_cast<LayoutEntityFlipbook>(m_layout);
+        m_textureFilter = layoutEntity->m_textureFilter;
         Load(layoutEntity->m_flipbookPath);
 
         auto& controller = GetAnimationController();
@@ -159,7 +160,9 @@ namespace moth_ui {
             { -frameDesc.pivot.x, -frameDesc.pivot.y },
             { frameDesc.rect.w() - frameDesc.pivot.x, frameDesc.rect.h() - frameDesc.pivot.y }
         };
+        renderer.PushTextureFilter(m_textureFilter);
         renderer.RenderImage(image, frameDesc.rect, destRect, ImageScaleType::Stretch, 1.0f);
+        renderer.PopTextureFilter();
     }
 
     std::shared_ptr<NodeFlipbook> NodeFlipbook::SharedFromThis() {

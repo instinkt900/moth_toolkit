@@ -2,6 +2,7 @@
 
 #include "moth_ui/context.h"
 #include "moth_ui/graphics/iflipbook.h"
+#include "moth_ui/graphics/texture_filter.h"
 #include "moth_ui/nodes/node.h"
 #include <memory>
 #include <optional>
@@ -90,9 +91,20 @@ namespace moth_ui {
          */
         void SetClip(std::string_view name);
 
+        /// @brief Returns the texture sampling filter applied when the flipbook is scaled.
+        TextureFilter GetTextureFilter() const { return m_textureFilter; }
+
+        /**
+         * @brief Sets the texture sampling filter.
+         * @param filter @c TextureFilter::Linear for smooth scaling,
+         *               @c TextureFilter::Nearest for crisp pixel art.
+         */
+        void SetTextureFilter(TextureFilter filter) { m_textureFilter = (filter == TextureFilter::Invalid) ? TextureFilter::Linear : filter; }
+
         void Update(uint32_t ticks) override;
 
     protected:
+        TextureFilter m_textureFilter = TextureFilter::Linear; ///< Sampling filter applied when the flipbook is scaled.
         std::unique_ptr<IFlipbook> m_flipbook;            ///< Loaded flipbook, or null if none is set.
         std::optional<IFlipbook::ClipDesc> m_currentClip; ///< Active clip, empty if no clip is set.
         std::string m_currentClipName;                    ///< Name of the active clip, or empty if none is set.

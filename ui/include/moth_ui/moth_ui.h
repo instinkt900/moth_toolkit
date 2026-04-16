@@ -30,6 +30,7 @@
 #include "moth_ui/graphics/irenderer.h"
 #include "moth_ui/graphics/itarget.h"
 #include "moth_ui/graphics/text_alignment.h"
+#include "moth_ui/graphics/texture_filter.h"
 #include "moth_ui/graphics/iflipbook.h"
 
 // layout

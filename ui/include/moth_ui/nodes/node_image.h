@@ -1,6 +1,7 @@
 #pragma once
 
 #include "moth_ui/graphics/image_scale_type.h"
+#include "moth_ui/graphics/texture_filter.h"
 #include "moth_ui/nodes/node.h"
 
 #include <array>
@@ -65,17 +66,28 @@ namespace moth_ui {
         /// @brief Returns the uniform scale factor used in tile/nine-slice modes.
         float GetImageScale() const { return m_imageScale; }
 
+        /// @brief Returns the texture sampling filter applied when the image is scaled.
+        TextureFilter GetTextureFilter() const { return m_textureFilter; }
+
         /**
          * @brief Sets the image scale type.
          * @param type Scale type to use when rendering.
          */
         void SetImageScaleType(ImageScaleType type) { m_imageScaleType = type; }
 
+        /**
+         * @brief Sets the texture sampling filter.
+         * @param filter @c TextureFilter::Linear for smooth scaling,
+         *               @c TextureFilter::Nearest for crisp pixel art.
+         */
+        void SetTextureFilter(TextureFilter filter) { m_textureFilter = filter; }
+
     protected:
         std::unique_ptr<IImage> m_image;
         IntRect m_sourceRect;
         ImageScaleType m_imageScaleType = ImageScaleType::Stretch;
         float m_imageScale = 1.0f;
+        TextureFilter m_textureFilter = TextureFilter::Linear;
 
         IntRect m_sourceBorders;
         LayoutRect m_targetBorders;

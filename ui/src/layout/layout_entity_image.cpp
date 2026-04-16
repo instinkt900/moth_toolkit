@@ -1,4 +1,5 @@
 #include "common.h"
+#include "moth_ui/graphics/texture_filter.h"
 #include "moth_ui/layout/layout_entity_image.h"
 #include "moth_ui/nodes/node_image.h"
 
@@ -32,6 +33,7 @@ namespace moth_ui {
         j["sourceRect"] = m_sourceRect;
         j["imageScaleType"] = m_imageScaleType;
         j["imageScale"] = m_imageScale;
+        j["textureFilter"] = m_textureFilter;
         j["sourceBorders"] = m_sourceBorders;
         j["targetBorders"] = m_targetBorders;
         return j;
@@ -44,6 +46,7 @@ namespace moth_ui {
             m_sourceRect = json.value("sourceRect", IntRect{});
             m_imageScaleType = json.value("imageScaleType", ImageScaleType::Stretch);
             m_imageScale = json.value("imageScale", 1.0f);
+            m_textureFilter = json.value("textureFilter", TextureFilter::Linear);
             m_sourceBorders = json.value("sourceBorders", IntRect{});
             m_targetBorders = json.value("targetBorders", MakeDefaultLayoutRect());
             std::string relativePath = json.value("imagePath", "");

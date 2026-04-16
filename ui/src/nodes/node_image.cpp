@@ -39,6 +39,7 @@ namespace moth_ui {
     void NodeImage::DrawInternal() {
         if (m_image) {
             auto& renderer = m_context.GetRenderer();
+            renderer.PushTextureFilter(m_textureFilter);
             if (m_imageScaleType == ImageScaleType::NineSlice) {
                 for (int horizSliceIdx = 0; horizSliceIdx < 3; ++horizSliceIdx) {
                     for (int vertSliceIdx = 0; vertSliceIdx < 3; ++vertSliceIdx) {
@@ -59,6 +60,7 @@ namespace moth_ui {
                 IntRect const localRect{ { 0, 0 }, m_screenRect.bottomRight - m_screenRect.topLeft };
                 renderer.RenderImage(*m_image, m_sourceRect, localRect, m_imageScaleType, m_imageScale);
             }
+            renderer.PopTextureFilter();
         }
     }
 
@@ -82,6 +84,7 @@ namespace moth_ui {
         m_sourceRect = layoutEntity->m_sourceRect;
         m_imageScaleType = layoutEntity->m_imageScaleType;
         m_imageScale = layoutEntity->m_imageScale;
+        m_textureFilter = layoutEntity->m_textureFilter;
         m_sourceBorders = layoutEntity->m_sourceBorders;
         m_targetBorders = layoutEntity->m_targetBorders;
         Load(layoutEntity->m_imagePath);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "moth_ui/graphics/image_scale_type.h"
+#include "moth_ui/graphics/texture_filter.h"
 #include "moth_ui/layout/layout_entity.h"
 #include "moth_ui/layout/layout_rect.h"
 #include "moth_ui/utils/rect.h"
@@ -49,6 +50,7 @@ namespace moth_ui {
         IntRect m_sourceRect;                                 ///< Portion of the image to display.
         ImageScaleType m_imageScaleType = ImageScaleType::Stretch; ///< How the image is scaled.
         float m_imageScale = 1.0f;                            ///< Uniform scale factor for tile/nine-slice modes.
+        TextureFilter m_textureFilter = TextureFilter::Linear; ///< Sampling filter applied when the image is scaled.
 
         // 9slice only
         static int constexpr DefaultBorderSize = 15;                                               ///< Default nine-slice border width in pixels.

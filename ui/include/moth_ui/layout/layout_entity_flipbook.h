@@ -1,5 +1,6 @@
 #pragma once
 
+#include "moth_ui/graphics/texture_filter.h"
 #include "moth_ui/layout/layout_entity.h"
 
 namespace moth_ui {
@@ -26,6 +27,7 @@ namespace moth_ui {
         nlohmann::json Serialize(SerializeContext const& context) const override;
         bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
 
-        std::filesystem::path m_flipbookPath; ///< Path to the .flipbook.json descriptor file.
+        std::filesystem::path m_flipbookPath;                  ///< Path to the .flipbook.json descriptor file.
+        TextureFilter m_textureFilter = TextureFilter::Linear; ///< Sampling filter applied when the flipbook is scaled.
     };
 }

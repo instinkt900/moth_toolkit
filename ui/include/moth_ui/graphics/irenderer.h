@@ -4,6 +4,7 @@
 #include "moth_ui/graphics/blend_mode.h"
 #include "moth_ui/graphics/image_scale_type.h"
 #include "moth_ui/graphics/text_alignment.h"
+#include "moth_ui/graphics/texture_filter.h"
 #include "moth_ui/utils/color.h"
 #include "moth_ui/utils/rect.h"
 #include "moth_ui/utils/transform.h"
@@ -57,6 +58,18 @@ namespace moth_ui {
 
         /// @brief Pops the top clip rectangle, restoring the previous clip region.
         virtual void PopClip() = 0;
+
+        /**
+         * @brief Pushes a texture sampling filter onto the filter stack.
+         *
+         * Affects subsequent @c RenderImage calls until the matching @c PopTextureFilter.
+         * The default (bottom of stack) is @c TextureFilter::Linear.
+         * @param filter The filter to apply.
+         */
+        virtual void PushTextureFilter(TextureFilter filter) = 0;
+
+        /// @brief Pops the top texture filter, restoring the previous one.
+        virtual void PopTextureFilter() = 0;
 
         /**
          * @brief Draws the outline of a rectangle using the current colour.

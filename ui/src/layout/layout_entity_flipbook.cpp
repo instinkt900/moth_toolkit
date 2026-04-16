@@ -1,3 +1,4 @@
+#include "moth_ui/graphics/texture_filter.h"
 #include "moth_ui/layout/layout_entity_flipbook.h"
 #include "moth_ui/animation/discrete_animation_track.h"
 #include "moth_ui/animation/animation_track.h"
@@ -59,6 +60,7 @@ namespace moth_ui {
             auto const relativePath = std::filesystem::relative(m_flipbookPath, context.m_rootPath);
             j["flipbook_path"] = relativePath.string();
         }
+        j["textureFilter"] = m_textureFilter;
         return j;
     }
 
@@ -72,6 +74,7 @@ namespace moth_ui {
             } else {
                 m_flipbookPath = std::filesystem::absolute(context.m_rootPath / relativePath);
             }
+            m_textureFilter = json.value("textureFilter", TextureFilter::Linear);
             // Migrate legacy fields into discrete tracks (only if the track has no keyframes yet).
             std::string legacyClipName = json.value("clip_name", "");
             bool legacyAutoplay = json.value("autoplay", false);

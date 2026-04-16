@@ -80,7 +80,7 @@ namespace moth_ui {
          * @param filter @c TextureFilter::Linear for smooth scaling,
          *               @c TextureFilter::Nearest for crisp pixel art.
          */
-        void SetTextureFilter(TextureFilter filter) { m_textureFilter = filter; }
+        void SetTextureFilter(TextureFilter filter) { m_textureFilter = (filter == TextureFilter::Invalid) ? TextureFilter::Linear : filter; }
 
     protected:
         std::unique_ptr<IImage> m_image;

@@ -46,7 +46,8 @@ namespace moth_ui {
             m_sourceRect = json.value("sourceRect", IntRect{});
             m_imageScaleType = json.value("imageScaleType", ImageScaleType::Stretch);
             m_imageScale = json.value("imageScale", 1.0f);
-            m_textureFilter = json.value("textureFilter", TextureFilter::Linear);
+            auto const rawFilter = json.value("textureFilter", TextureFilter::Linear);
+            m_textureFilter = (rawFilter == TextureFilter::Invalid) ? TextureFilter::Linear : rawFilter;
             m_sourceBorders = json.value("sourceBorders", IntRect{});
             m_targetBorders = json.value("targetBorders", MakeDefaultLayoutRect());
             std::string relativePath = json.value("imagePath", "");

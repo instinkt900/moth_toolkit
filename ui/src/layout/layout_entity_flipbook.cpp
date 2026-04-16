@@ -74,7 +74,8 @@ namespace moth_ui {
             } else {
                 m_flipbookPath = std::filesystem::absolute(context.m_rootPath / relativePath);
             }
-            m_textureFilter = json.value("textureFilter", TextureFilter::Linear);
+            auto const rawFilter = json.value("textureFilter", TextureFilter::Linear);
+            m_textureFilter = (rawFilter == TextureFilter::Invalid) ? TextureFilter::Linear : rawFilter;
             // Migrate legacy fields into discrete tracks (only if the track has no keyframes yet).
             std::string legacyClipName = json.value("clip_name", "");
             bool legacyAutoplay = json.value("autoplay", false);

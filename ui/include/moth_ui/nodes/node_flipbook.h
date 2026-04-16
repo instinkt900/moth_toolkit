@@ -99,7 +99,7 @@ namespace moth_ui {
          * @param filter @c TextureFilter::Linear for smooth scaling,
          *               @c TextureFilter::Nearest for crisp pixel art.
          */
-        void SetTextureFilter(TextureFilter filter) { m_textureFilter = filter; }
+        void SetTextureFilter(TextureFilter filter) { m_textureFilter = (filter == TextureFilter::Invalid) ? TextureFilter::Linear : filter; }
 
         void Update(uint32_t ticks) override;
 

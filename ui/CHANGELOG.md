@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 Entries are generated automatically from git history using [git-cliff](https://github.com/orhun/git-cliff).
 
-## [1.0.0-rc.1] - 2026-04-16
+## [1.0.0-rc.1] - 2026-04-17
 ### Features
 - Add moth_ui.h aggregate header and moth_ui_fwd.h forward declaration header
 - Add binary and pretty-print options to Layout::Save, detect binary on Load
@@ -50,6 +50,7 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Take Node& in AnimationController ctor to prevent null pointer
 - Include serialize_utils.h in animation_clip.h to define enum adl_serializer before NLOHMANN_DEFINE_TYPE_INTRUSIVE expands
 - Guard against TextureFilter::Invalid propagating into render state
+- Scale NodeFlipbook frame to node rect and anchor pivot to m_pivot
 
 ### Refactoring
 - Update all ui_fwd.h includes to moth_ui_fwd.h

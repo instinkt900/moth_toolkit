@@ -1,5 +1,7 @@
 #pragma once
 
+#include "moth_ui/version.h"
+
 // utils (must come first — defines json partial specializations used by animation headers)
 #include "moth_ui/utils/serialize_utils.h"
 

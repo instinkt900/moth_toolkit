@@ -7,6 +7,11 @@ string(REGEX REPLACE "[-+].*$" "" PROJECT_VERSION "${PROJECT_VERSION_FULL}")
 
 project(moth_ui VERSION ${PROJECT_VERSION} DESCRIPTION "A C++ game UI library")
 
+configure_file(
+    include/moth_ui/version.h.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/moth_ui/version.h
+)
+
 message("Building with CMake version: ${CMAKE_VERSION}")
 
 set(CMAKE_CXX_STANDARD 17)

@@ -1,3 +1,4 @@
 build/
 CMakeUserPresets.json
 .venv/
+include/moth_ui/version.h

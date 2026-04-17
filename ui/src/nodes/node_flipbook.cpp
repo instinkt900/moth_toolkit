@@ -155,10 +155,22 @@ namespace moth_ui {
         }
         auto& renderer = m_context.GetRenderer();
         auto const& image = m_flipbook->GetImage();
-        // Offset the destination so the frame's pivot pixel lands at the node's top-left origin.
+        // Scale the frame to fill the node rect, then offset so the scaled pivot lands at the
+        // node's layout-pivot point (m_pivot, normalised [0,1], default centre {0.5, 0.5}).
+        // This makes the node rect control the display size, consistent with NodeImage.
+        int const nodeW = m_screenRect.bottomRight.x - m_screenRect.topLeft.x;
+        int const nodeH = m_screenRect.bottomRight.y - m_screenRect.topLeft.y;
+        int const frameW = frameDesc.rect.w();
+        int const frameH = frameDesc.rect.h();
+        float const scaleX = (frameW > 0) ? static_cast<float>(nodeW) / static_cast<float>(frameW) : 1.0f;
+        float const scaleY = (frameH > 0) ? static_cast<float>(nodeH) / static_cast<float>(frameH) : 1.0f;
+        int const anchorX = static_cast<int>(static_cast<float>(nodeW) * m_pivot.x);
+        int const anchorY = static_cast<int>(static_cast<float>(nodeH) * m_pivot.y);
+        int const scaledPivotX = static_cast<int>(static_cast<float>(frameDesc.pivot.x) * scaleX);
+        int const scaledPivotY = static_cast<int>(static_cast<float>(frameDesc.pivot.y) * scaleY);
         IntRect const destRect{
-            { -frameDesc.pivot.x, -frameDesc.pivot.y },
-            { frameDesc.rect.w() - frameDesc.pivot.x, frameDesc.rect.h() - frameDesc.pivot.y }
+            { anchorX - scaledPivotX,         anchorY - scaledPivotY },
+            { anchorX - scaledPivotX + nodeW,  anchorY - scaledPivotY + nodeH }
         };
         renderer.PushTextureFilter(m_textureFilter);
         renderer.RenderImage(image, frameDesc.rect, destRect, ImageScaleType::Stretch, 1.0f);

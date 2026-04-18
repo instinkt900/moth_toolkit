@@ -78,7 +78,7 @@ namespace moth_ui {
         return -1;
     }
 
-    bool Group::SetAnimation(std::string const& name) {
+    bool Group::SetAnimation(std::string_view const& name) {
         if (m_layout) {
             auto layout = std::static_pointer_cast<LayoutEntityGroup>(m_layout);
             auto& animationClips = layout->m_clips;
@@ -95,7 +95,7 @@ namespace moth_ui {
         m_animationClipController->SetClip(nullptr);
     }
 
-    std::shared_ptr<Node> Group::GetChild(std::string const& id) {
+    std::shared_ptr<Node> Group::GetChild(std::string_view id) {
         auto const it = ranges::find_if(m_children, [&](auto child) { return child->GetId() == id; });
         if (std::end(m_children) != it) {
             return *it;
@@ -103,7 +103,7 @@ namespace moth_ui {
         return nullptr;
     }
 
-    std::shared_ptr<Node> Group::FindChild(std::string const& id) {
+    std::shared_ptr<Node> Group::FindChild(std::string_view id) {
         if (id == m_id) {
             return shared_from_this();
         }

@@ -51,7 +51,7 @@ namespace moth_ui {
          * @brief Sets the text string to display.
          * @param text UTF-8 string.
          */
-        void SetText(std::string const& text) { m_text = text; }
+        void SetText(std::string_view text) { m_text = text; }
 
         /// @brief Returns the text string currently displayed.
         std::string const& GetText() const { return m_text; }

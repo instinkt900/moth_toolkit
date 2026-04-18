@@ -4,6 +4,7 @@
 
 #include <nlohmann/json_fwd.hpp>
 #include <string>
+#include <string_view>
 
 namespace moth_ui {
     /**
@@ -19,7 +20,7 @@ namespace moth_ui {
          * @param frame Frame index at which the event fires.
          * @param name  Name dispatched with the EventAnimation.
          */
-        AnimationEvent(int frame, std::string const& name)
+        AnimationEvent(int frame, std::string_view name)
             : m_frame(frame)
             , m_name(name) {}
 

@@ -65,7 +65,7 @@ namespace moth_ui {
         /// @brief Returns a const reference to the ordered list of children.
         std::vector<std::shared_ptr<Node>> const& GetChildren() const { return m_children; }
 
-        bool SetAnimation(std::string const& name) override;
+        bool SetAnimation(std::string_view const& name) override;
         void StopAnimation() override;
 
         /**
@@ -73,9 +73,9 @@ namespace moth_ui {
          * @param id Identifier to look up.
          * @return Matching child, or @c nullptr.
          */
-        std::shared_ptr<Node> GetChild(std::string const& id);
+        std::shared_ptr<Node> GetChild(std::string_view id);
 
-        std::shared_ptr<Node> FindChild(std::string const& id) override;
+        std::shared_ptr<Node> FindChild(std::string_view id) override;
 
         /**
          * @brief Searches recursively for a child of type @p T with the given identifier.
@@ -84,7 +84,7 @@ namespace moth_ui {
          * @return Matching node cast to @p T, or @c nullptr.
          */
         template<typename T>
-        std::shared_ptr<T> FindChild(std::string const& id) {
+        std::shared_ptr<T> FindChild(std::string_view id) {
             return std::dynamic_pointer_cast<T>(FindChild(id));
         }
 

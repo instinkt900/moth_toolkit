@@ -5,6 +5,7 @@
 
 #include <memory>
 #include <string>
+#include <string_view>
 
 namespace moth_ui {
     /**
@@ -17,7 +18,7 @@ namespace moth_ui {
          * @param node The node whose animation triggered the marker.
          * @param name Name of the animation marker that fired.
          */
-        EventAnimation(std::weak_ptr<Node> node, std::string const& name)
+        EventAnimation(std::weak_ptr<Node> node, std::string_view name)
             : Event(GetStaticType())
             , m_node(node)
             , m_name(name) {}
@@ -56,7 +57,7 @@ namespace moth_ui {
          * @param node     The node on which the clip started.
          * @param clipName Name of the clip that started.
          */
-        EventAnimationStarted(std::weak_ptr<Node> node, std::string const& clipName)
+        EventAnimationStarted(std::weak_ptr<Node> node, std::string_view clipName)
             : Event(GetStaticType())
             , m_node(node)
             , m_clipName(clipName) {}
@@ -95,7 +96,7 @@ namespace moth_ui {
          * @param node     The node on which the clip stopped.
          * @param clipName Name of the clip that stopped.
          */
-        EventAnimationStopped(std::weak_ptr<Node> node, std::string const& clipName)
+        EventAnimationStopped(std::weak_ptr<Node> node, std::string_view clipName)
             : Event(GetStaticType())
             , m_node(node)
             , m_clipName(clipName) {}

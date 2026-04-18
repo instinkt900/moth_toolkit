@@ -165,7 +165,7 @@ namespace moth_ui {
         return static_cast<IntVec2>(localPoint);
     }
 
-    std::shared_ptr<Node> Node::FindChild(std::string const& id) {
+    std::shared_ptr<Node> Node::FindChild(std::string_view id) {
         if (id == m_id) {
             return shared_from_this();
         }

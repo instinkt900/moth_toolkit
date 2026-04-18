@@ -84,7 +84,7 @@ namespace moth_ui {
          * @brief Sets the node's string identifier.
          * @param id New identifier.
          */
-        void SetId(std::string const& id) { m_id = id; }
+        void SetId(std::string_view id) { m_id = id; }
 
         /// @brief Returns the node's string identifier.
         std::string const& GetId() const { return m_id; }
@@ -196,7 +196,7 @@ namespace moth_ui {
          * @note Base implementation is a no-op returning @c false; @c Group overrides
          *       this to drive its @c AnimationClipController.
          */
-        virtual bool SetAnimation(std::string const& name) { return false; }
+        virtual bool SetAnimation(std::string_view const& name) { return false; }
 
         /// @brief Stops the currently playing animation clip.
         /// @note Base implementation is a no-op; @c Group overrides this.
@@ -219,7 +219,7 @@ namespace moth_ui {
          * @param id Identifier to search for.
          * @return Shared pointer to the matching node, or @c nullptr.
          */
-        virtual std::shared_ptr<Node> FindChild(std::string const& id);
+        virtual std::shared_ptr<Node> FindChild(std::string_view id);
 
         /// @brief Returns the AnimationController that drives this node's tracks.
         AnimationController& GetAnimationController() { return *m_animationController; }

@@ -9,7 +9,7 @@
 #include "moth_ui/utils/rect.h"
 #include "moth_ui/utils/transform.h"
 
-#include <string>
+#include <string_view>
 
 namespace moth_ui {
     /**
@@ -101,7 +101,7 @@ namespace moth_ui {
          * @param verticalAlignment   Vertical alignment within @p destRect.
          * @param destRect            Bounding rectangle in screen space.
          */
-        virtual void RenderText(std::string const& text, IFont& font, TextHorizAlignment horizontalAlignment, TextVertAlignment verticalAlignment, IntRect const& destRect) = 0;
+        virtual void RenderText(std::string_view text, IFont& font, TextHorizAlignment horizontalAlignment, TextVertAlignment verticalAlignment, IntRect const& destRect) = 0;
 
         /**
          * @brief Sets the logical (virtual) rendering resolution.

@@ -38,7 +38,7 @@ namespace moth_ui {
 
     void Group::Update(uint32_t ticks) {
         Node::Update(ticks);
-        //NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
+        // NOLINTNEXTLINE(cppcoreguidelines-avoid-magic-numbers)
         m_animationClipController->Update(static_cast<float>(ticks) / 1000.0f);
         for (auto&& child : m_children) {
             child->Update(ticks);
@@ -123,17 +123,17 @@ namespace moth_ui {
     }
 
     void Group::DrawInternal() {
-        int clipRects = 0;
+        for (auto it = std::rbegin(m_children); it != std::rend(m_children); ++it) {
+            if (auto const clipNode = std::dynamic_pointer_cast<NodeClip>(*it)) {
+                m_context.GetRenderer().PushClip(clipNode->GetScreenRect());
+            }
+        }
         for (auto&& child : m_children) {
             if (auto const clipNode = std::dynamic_pointer_cast<NodeClip>(child)) {
-                m_context.GetRenderer().PushClip(clipNode->GetScreenRect());
-                ++clipRects;
+                m_context.GetRenderer().PopClip();
+            } else {
+                child->Draw();
             }
-            child->Draw();
-        }
-
-        while ((clipRects--) != 0) {
-            m_context.GetRenderer().PopClip();
         }
     }
 

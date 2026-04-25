@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 Entries are generated automatically from git history using [git-cliff](https://github.com/orhun/git-cliff).
 
-## [1.0.0-rc.1] - 2026-04-18
+## [1.0.0-rc.1] - 2026-04-25
 ### Features
 - Add moth_ui.h aggregate header and moth_ui_fwd.h forward declaration header
 - Add binary and pretty-print options to Layout::Save, detect binary on Load
@@ -21,6 +21,7 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Replace uniform-grid flipbook model with per-frame rects and clip sequences
 - Make NodeFactory, logger, and LayoutCache thread-safe
 - Add per-node TextureFilter support to IRenderer, layout entities, and nodes
+- Add GetPivot accessor and HasAnimation to Node/Group
 
 ### Bug Fixes
 - Fixing order of includes for serialization helpers

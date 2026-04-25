@@ -188,6 +188,9 @@ namespace moth_ui {
          *        Only updates the local transform; does not reload the full entity.
          */
         void SetPivot(FloatVec2 const& pivot);
+        FloatVec2 const& GetPivot() const { return m_pivot; }
+
+        virtual bool HasAnimation(std::string_view const& name) { return false; }
 
         /**
          * @brief Switches the active animation clip by name.

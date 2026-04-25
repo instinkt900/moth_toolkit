@@ -27,7 +27,8 @@ namespace moth_ui {
         }
 
         auto childrenCopy = m_children;
-        for (auto&& child : childrenCopy) {
+        for (auto it = std::rbegin(childrenCopy); it != std::rend(childrenCopy); ++it) {
+            auto const child = *it;
             if (child->SendEventDown(event)) {
                 return true;
             }
@@ -76,6 +77,18 @@ namespace moth_ui {
             return static_cast<int>(it - std::begin(m_children));
         }
         return -1;
+    }
+
+    bool Group::HasAnimation(std::string_view const& name) {
+        if (m_layout) {
+            auto layout = std::static_pointer_cast<LayoutEntityGroup>(m_layout);
+            auto& animationClips = layout->m_clips;
+            auto it = ranges::find_if(animationClips, [&name](auto& clip) { return clip->m_name == name; });
+            if (std::end(animationClips) != it) {
+                return true;
+            }
+        }
+        return false;
     }
 
     bool Group::SetAnimation(std::string_view const& name) {

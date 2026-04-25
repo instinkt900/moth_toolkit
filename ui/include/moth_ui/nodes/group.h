@@ -65,6 +65,7 @@ namespace moth_ui {
         /// @brief Returns a const reference to the ordered list of children.
         std::vector<std::shared_ptr<Node>> const& GetChildren() const { return m_children; }
 
+        bool HasAnimation(std::string_view const& name) override;
         bool SetAnimation(std::string_view const& name) override;
         void StopAnimation() override;
 

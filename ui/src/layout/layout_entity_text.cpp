@@ -62,7 +62,6 @@ namespace moth_ui {
 
     void LayoutEntityText::DeserializeOverrides(nlohmann::json const& overridesJson) {
         LayoutEntity::DeserializeOverrides(overridesJson);
-        auto const textEntity = std::static_pointer_cast<LayoutEntityText>(m_hardReference);
         m_text = overridesJson.value("text", m_text);
     }
 }

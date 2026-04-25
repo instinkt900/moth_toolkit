@@ -152,7 +152,10 @@ namespace moth_ui {
 
     void Group::ReloadEntityPrivate() {
         auto const layoutEntity = std::static_pointer_cast<LayoutEntityGroup>(m_layout);
-        m_children.clear();
+        for (auto it = std::begin(m_children); it != std::end(m_children); /* skip */) {
+            (*it)->SetParent(nullptr);
+            it = m_children.erase(it);
+        }
         auto& nodeFactory = NodeFactory::Get();
         for (auto&& childEntity : layoutEntity->m_children) {
             AddChild(nodeFactory.Create(m_context, childEntity));

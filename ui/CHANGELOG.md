@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 Entries are generated automatically from git history using [git-cliff](https://github.com/orhun/git-cliff).
 
-## [1.0.0-rc.1] - 2026-04-25
+## [1.0.0-rc.1] - 2026-04-26
 ### Features
 - Add moth_ui.h aggregate header and moth_ui_fwd.h forward declaration header
 - Add binary and pretty-print options to Layout::Save, detect binary on Load
@@ -53,6 +53,8 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Guard against TextureFilter::Invalid propagating into render state
 - Scale NodeFlipbook frame to node rect and anchor pivot to m_pivot
 - Clip rects now correctly clip nodes below them not above
+- Resolve four bugs from technical review
+- Update test signatures for string_view refactor
 
 ### Refactoring
 - Update all ui_fwd.h includes to moth_ui_fwd.h
@@ -63,6 +65,7 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Use event_cast in event handler test doubles
 - Remove FlushCache from IImageFactory and IFlipbookFactory
 - Use string_view for string parameters in public API
+- Replace SendEventDown with Broadcast, children-first dispatch
 
 ### Performance
 - Cache local transform on Node to avoid per-frame trig
@@ -105,6 +108,7 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Tagging as v1 rc1. todo now contains remaining issues to check
 - Removed old todo
 - Exposing version info in api
+- Const-correctness, docstring, and loop cleanup
 
 ### Changes
 - Pushing for v1.0

@@ -42,10 +42,8 @@ namespace moth_ui {
             break;
         }
 
-        // just a value dump for unknown targets
         assert(false && "AnimationController: unknown track target");
-        static float dummy = 0;
-        return dummy;
+        std::abort(); // very bad state
     }
 
     AnimationController::AnimationController(Node& node)

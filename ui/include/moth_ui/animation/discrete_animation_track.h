@@ -21,6 +21,10 @@ namespace moth_ui {
         /// @brief Ordered list of (frame, value) pairs sorted ascending by frame.
         using KeyframeList = std::vector<std::pair<int, std::string>>;
 
+        /**
+         * @brief Constructs a discrete track for the given animation target.
+         * @param target The property this track animates.
+         */
         explicit DiscreteAnimationTrack(AnimationTrack::Target target);
         DiscreteAnimationTrack(DiscreteAnimationTrack const& other) = default;
         DiscreteAnimationTrack(DiscreteAnimationTrack&&) = default;
@@ -42,18 +46,21 @@ namespace moth_ui {
          *
          * Returns an empty string if no keyframe precedes the given frame.
          * @param frame Frame index.
+         * @return Const reference to the value at or before @p frame.
          */
         std::string const& GetValueAtFrame(int frame) const;
 
         /**
          * @brief Returns a reference to the value at @p frame, creating an empty entry if absent.
          * @param frame Frame index.
+         * @return Reference to the existing or newly created value.
          */
         std::string& GetOrCreateKeyframe(int frame);
 
         /**
          * @brief Returns a pointer to the value at the given frame, or @c nullptr if absent.
          * @param frame Frame index.
+         * @return Pointer to the value, or @c nullptr if none exists at @p frame.
          */
         std::string* GetKeyframe(int frame);
 

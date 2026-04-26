@@ -15,6 +15,11 @@ namespace moth_ui {
      */
     class Layer : public EventListener {
     public:
+        /**
+         * @brief Default event handler. Returns @c false — override to handle events.
+         * @param event Event to process.
+         * @return @c true if the event was consumed.
+         */
         bool OnEvent(Event const& event) override;
 
         /**
@@ -43,6 +48,16 @@ namespace moth_ui {
 
         /// @brief Returns the render height of the owning LayerStack in pixels.
         int GetHeight() const;
+
+        /**
+         * @brief Fires an event upward through the owning LayerStack.
+         *
+         * Shortcut for @c m_layerStack->FireEvent(event). The event reaches
+         * the LayerStack's listener (the owning Window).
+         *
+         * @param event Event to fire.
+         */
+        void FireEvent(Event const& event) const;
 
         /**
          * @brief Returns @c true if this layer wants to use the render (logical) size

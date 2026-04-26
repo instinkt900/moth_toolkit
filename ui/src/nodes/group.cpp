@@ -19,22 +19,17 @@ namespace moth_ui {
         ReloadEntityPrivate();
     }
 
-    bool Group::SendEventDown(Event const& event) {
-        // disabled/visible checks?
-
-        if (OnEvent(event)) {
-            return true;
-        }
-
+    bool Group::Broadcast(Event const& event) {
+        // Children first (reverse z-order), then self. Deeper nodes get
+        // first opportunity to handle the event during the depth-first walk.
         auto childrenCopy = m_children;
         for (auto it = std::rbegin(childrenCopy); it != std::rend(childrenCopy); ++it) {
             auto const child = *it;
-            if (child->SendEventDown(event)) {
+            if (child->Broadcast(event)) {
                 return true;
             }
         }
-
-        return false;
+        return OnEvent(event);
     }
 
     void Group::Update(uint32_t ticks) {
@@ -79,7 +74,7 @@ namespace moth_ui {
         return -1;
     }
 
-    bool Group::HasAnimation(std::string_view const& name) {
+    bool Group::HasAnimation(std::string_view const& name) const {
         if (m_layout) {
             auto layout = std::static_pointer_cast<LayoutEntityGroup>(m_layout);
             auto& animationClips = layout->m_clips;
@@ -152,6 +147,9 @@ namespace moth_ui {
 
     void Group::ReloadEntityPrivate() {
         auto const layoutEntity = std::static_pointer_cast<LayoutEntityGroup>(m_layout);
+        for (auto& child : m_children) {
+            child->SetParent(nullptr);
+        }
         m_children.clear();
         auto& nodeFactory = NodeFactory::Get();
         for (auto&& childEntity : layoutEntity->m_children) {

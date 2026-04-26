@@ -11,7 +11,7 @@ using namespace moth_ui;
 
 TEST_CASE("Node method signatures are stable", "[api][nodes][node]") {
     // Identity
-    void (Node::*setId)(std::string const&)    = &Node::SetId;
+    void (Node::*setId)(std::string_view)    = &Node::SetId;
     std::string const& (Node::*getId)() const  = &Node::GetId;
     // Visibility
     void (Node::*setVis)(bool)         = &Node::SetVisible;
@@ -35,7 +35,7 @@ TEST_CASE("Node method signatures are stable", "[api][nodes][node]") {
     std::shared_ptr<LayoutEntity> (Node::*getEntity)() const = &Node::GetLayoutEntity;
     // Hierarchy
     Group* (Node::*getParent)() const          = &Node::GetParent;
-    std::shared_ptr<Node> (Node::*findChild)(std::string const&) = &Node::FindChild;
+    std::shared_ptr<Node> (Node::*findChild)(std::string_view) = &Node::FindChild;
     // Lifecycle
     void (Node::*update)(uint32_t)             = &Node::Update;
     void (Node::*draw)()                       = &Node::Draw;
@@ -55,8 +55,8 @@ TEST_CASE("Group method signatures are stable", "[api][nodes][group]") {
     void (Group::*removeChild)(std::shared_ptr<Node>)        = &Group::RemoveChild;
     int  (Group::*getCount)() const                          = &Group::GetChildCount;
     std::vector<std::shared_ptr<Node>>& (Group::*getChildren)() = &Group::GetChildren;
-    std::shared_ptr<Node> (Group::*findTyped)(std::string const&) = &Group::FindChild;
-    bool (Group::*setAnim)(std::string const&)               = &Group::SetAnimation;
+    std::shared_ptr<Node> (Group::*findTyped)(std::string_view) = &Group::FindChild;
+    bool (Group::*setAnim)(std::string_view const&)             = &Group::SetAnimation;
     void (Group::*stopAnim)()                                = &Group::StopAnimation;
     (void)addChild; (void)removeChild; (void)getCount; (void)getChildren;
     (void)findTyped; (void)setAnim; (void)stopAnim;

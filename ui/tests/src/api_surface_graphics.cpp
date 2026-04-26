@@ -26,7 +26,7 @@ TEST_CASE("IRenderer method signatures are stable", "[api][graphics][irenderer]"
     void (IRenderer::*renderFilled)(IntRect const&)      = &IRenderer::RenderFilledRect;
     void (IRenderer::*renderImg)(IImage const&, IntRect const&, IntRect const&,
                                  ImageScaleType, float) = &IRenderer::RenderImage;
-    void (IRenderer::*renderText)(std::string const&, IFont&,
+    void (IRenderer::*renderText)(std::string_view, IFont&,
                                   TextHorizAlignment, TextVertAlignment,
                                   IntRect const&)       = &IRenderer::RenderText;
     void (IRenderer::*setLogical)(IntVec2 const&)        = &IRenderer::SetRendererLogicalSize;

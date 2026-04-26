@@ -30,7 +30,21 @@ namespace moth_ui {
         Group& operator=(Group&&) = delete;
         ~Group() override = default;
 
-        bool SendEventDown(Event const& event) override;
+        /**
+         * @brief Broadcasts an event across this subtree in depth-first order.
+         *
+         * Visits children first (reverse z-order), then self. Deeper nodes
+         * get the first opportunity to handle the event.
+         *
+         * @param event Event to dispatch.
+         * @return @c true if the event was handled.
+         */
+        bool Broadcast(Event const& event) override;
+
+        /**
+         * @brief Advances group logic, including the animation clip controller and all children.
+         * @param ticks Elapsed time in milliseconds since the last update.
+         */
         void Update(uint32_t ticks) override;
 
         /// @brief Recomputes the screen rectangles of all direct children.
@@ -65,8 +79,25 @@ namespace moth_ui {
         /// @brief Returns a const reference to the ordered list of children.
         std::vector<std::shared_ptr<Node>> const& GetChildren() const { return m_children; }
 
-        bool HasAnimation(std::string_view const& name) override;
+        /**
+         * @brief Returns whether an animation clip with the given name exists.
+         * @param name Clip name to look up.
+         * @return @c true if the clip exists in the layout's clip list.
+         */
+        bool HasAnimation(std::string_view const& name) const override;
+
+        /**
+         * @brief Switches the active animation clip by name.
+         *
+         * Searches the layout's clip list and activates the match via the
+         * @c AnimationClipController.
+         *
+         * @param name Name of the animation clip to play.
+         * @return @c true if the clip was found and activated.
+         */
         bool SetAnimation(std::string_view const& name) override;
+
+        /// @brief Stops the currently playing animation clip.
         void StopAnimation() override;
 
         /**
@@ -76,6 +107,15 @@ namespace moth_ui {
          */
         std::shared_ptr<Node> GetChild(std::string_view id);
 
+        /**
+         * @brief Recursively searches for a descendant with the given identifier.
+         *
+         * Searches direct children depth-first, returning the first match.
+         * Overrides the base @c Node implementation which searches only itself.
+         *
+         * @param id Identifier to search for.
+         * @return Matching node, or @c nullptr.
+         */
         std::shared_ptr<Node> FindChild(std::string_view id) override;
 
         /**

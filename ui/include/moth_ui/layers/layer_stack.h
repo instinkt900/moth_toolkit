@@ -11,8 +11,12 @@ namespace moth_ui {
     /**
      * @brief An ordered stack of Layer objects that are updated and drawn each frame.
      *
-     * The stack forwards events, update ticks, and draw calls to all layers in
-     * order.  It also tracks separate render (logical) and window (physical) sizes
+     * @c OnEvent dispatches events to layers in reverse order (topmost first),
+     * stopping at the first handler that returns @c true (first-handler-wins).
+     * @c FireEvent propagates events upward to a single external listener (the
+     * owning Window) rather than broadcasting to all layers.
+     *
+     * The stack also tracks separate render (logical) and window (physical) sizes
      * so that layers can choose which coordinate space to work in.
      *
      * @note LayerStack is non-copyable and non-movable.
@@ -48,6 +52,14 @@ namespace moth_ui {
          */
         void RemoveLayer(Layer* layer);
 
+        /**
+         * @brief Iterates layers in reverse order and dispatches the event.
+         *
+         * The first layer whose @c OnEvent returns @c true consumes the event.
+         *
+         * @param event Event to dispatch.
+         * @return @c true if the event was handled by any layer.
+         */
         bool OnEvent(Event const& event) override;
 
         /**
@@ -87,13 +99,17 @@ namespace moth_ui {
         int GetWindowHeight() const { return m_windowHeight; }
 
         /**
-         * @brief Installs an external event listener that receives events before layers do.
+         * @brief Installs the single external listener that receives @c FireEvent dispatches.
          * @param listener Listener to install, or @c nullptr to remove.
          */
         void SetEventListener(EventListener* listener) { m_eventListener = listener; }
 
         /**
-         * @brief Dispatches an event to the external listener (if any) and then to all layers.
+         * @brief Dispatches an event to the external listener.
+         *
+         * This is an upward path: layers fire events that bubble out to
+         * the owning window (the listener).
+         *
          * @param event Event to dispatch.
          */
         void FireEvent(Event const& event);

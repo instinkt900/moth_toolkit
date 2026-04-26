@@ -63,12 +63,27 @@ namespace moth_ui {
         bool SendEventUp(Event const& event);
 
         /**
-         * @brief Sends an event downward into child nodes.
+         * @brief Broadcasts an event across the full subtree in depth-first order.
+         *
+         * Leaf nodes simply dispatch to @c OnEvent. Groups visit children
+         * first (reverse z-order), then self — deeper nodes get first
+         * opportunity to handle the event.
+         *
          * @param event Event to dispatch.
          * @return @c true if the event was handled.
          */
-        virtual bool SendEventDown(Event const& event);
+        virtual bool Broadcast(Event const& event);
 
+        /**
+         * @brief Handles an event dispatched to this node.
+         *
+         * Fires the installed @c EventHandler callback (if any) and returns
+         * its result. Subclasses may override this to add typed dispatch via
+         * @c EventDispatch before falling through to the base implementation.
+         *
+         * @param event Event to process.
+         * @return @c true if the event was consumed.
+         */
         bool OnEvent(Event const& event) override;
 
         /**
@@ -185,12 +200,26 @@ namespace moth_ui {
 
         /**
          * @brief Sets the rotation pivot as a normalised [0,1] fraction of the node's bounds.
-         *        Only updates the local transform; does not reload the full entity.
+         *
+         * Only updates the local transform; does not reload the full entity.
+         *
+         * @param pivot Pivot position, where @c {0,0} is top-left and @c {1,1} is bottom-right.
          */
         void SetPivot(FloatVec2 const& pivot);
+
+        /// @brief Returns the rotation pivot as a normalised [0,1] fraction of the node's bounds.
         FloatVec2 const& GetPivot() const { return m_pivot; }
 
-        virtual bool HasAnimation(std::string_view const& name) { return false; }
+        /**
+         * @brief Returns whether this node has an animation clip with the given name.
+         *
+         * Base implementation always returns @c false. @c Group overrides this to
+         * search its @c AnimationClipController.
+         *
+         * @param name Clip name to look up.
+         * @return @c true if the clip exists.
+         */
+        virtual bool HasAnimation(std::string_view const& name) const { return false; }
 
         /**
          * @brief Switches the active animation clip by name.
@@ -225,7 +254,11 @@ namespace moth_ui {
         virtual std::shared_ptr<Node> FindChild(std::string_view id);
 
         /// @brief Returns the AnimationController that drives this node's tracks.
+        /// @brief Returns the AnimationController that drives this node's tracks.
         AnimationController& GetAnimationController() { return *m_animationController; }
+
+        /// @brief Returns a const reference to the AnimationController.
+        AnimationController const& GetAnimationController() const { return *m_animationController; }
 
     protected:
         /// @brief Returns the fully composed local-to-world transform for this node.

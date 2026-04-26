@@ -25,7 +25,7 @@ namespace moth_ui {
             return SendEventUp(event);
         }
         if (direction == EventDirection::Down) {
-            return SendEventDown(event);
+            return Broadcast(event);
         }
         assert(false && "Bad event direction.");
         return false;
@@ -42,7 +42,7 @@ namespace moth_ui {
         return false;
     }
 
-    bool Node::SendEventDown(Event const& event) {
+    bool Node::Broadcast(Event const& event) {
         return OnEvent(event);
     }
 

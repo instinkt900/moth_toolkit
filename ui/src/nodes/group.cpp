@@ -19,22 +19,17 @@ namespace moth_ui {
         ReloadEntityPrivate();
     }
 
-    bool Group::SendEventDown(Event const& event) {
-        // disabled/visible checks?
-
-        if (OnEvent(event)) {
-            return true;
-        }
-
+    bool Group::Broadcast(Event const& event) {
+        // Children first (reverse z-order), then self. Deeper nodes get
+        // first opportunity to handle the event during the depth-first walk.
         auto childrenCopy = m_children;
         for (auto it = std::rbegin(childrenCopy); it != std::rend(childrenCopy); ++it) {
             auto const child = *it;
-            if (child->SendEventDown(event)) {
+            if (child->Broadcast(event)) {
                 return true;
             }
         }
-
-        return false;
+        return OnEvent(event);
     }
 
     void Group::Update(uint32_t ticks) {

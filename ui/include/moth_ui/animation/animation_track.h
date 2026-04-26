@@ -95,12 +95,14 @@ namespace moth_ui {
         /**
          * @brief Returns the keyframe at the given frame number, or @c nullptr.
          * @param frameNo Exact frame index to look up.
+         * @return Pointer to the keyframe, or @c nullptr if none exists at @p frameNo.
          */
         Keyframe* GetKeyframe(int frameNo);
 
         /**
          * @brief Returns the keyframe at @p frameNo, creating one if it does not exist.
          * @param frameNo Frame index.
+         * @return Reference to the existing or newly created keyframe.
          */
         Keyframe& GetOrCreateKeyframe(int frameNo);
 

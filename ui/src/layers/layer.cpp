@@ -37,4 +37,10 @@ namespace moth_ui {
         }
         return UseRenderSize() ? m_layerStack->GetRenderHeight() : m_layerStack->GetWindowHeight();
     }
+
+    void Layer::FireEvent(Event const& event) const {
+        if (m_layerStack != nullptr) {
+            m_layerStack->FireEvent(event);
+        }
+    }
 }

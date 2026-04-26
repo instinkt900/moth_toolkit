@@ -11,8 +11,12 @@ namespace moth_ui {
     /**
      * @brief An ordered stack of Layer objects that are updated and drawn each frame.
      *
-     * The stack forwards events, update ticks, and draw calls to all layers in
-     * order.  It also tracks separate render (logical) and window (physical) sizes
+     * @c OnEvent dispatches events to layers in reverse order (topmost first),
+     * stopping at the first handler that returns @c true (first-handler-wins).
+     * @c FireEvent propagates events upward to a single external listener (the
+     * owning Window) rather than broadcasting to all layers.
+     *
+     * The stack also tracks separate render (logical) and window (physical) sizes
      * so that layers can choose which coordinate space to work in.
      *
      * @note LayerStack is non-copyable and non-movable.

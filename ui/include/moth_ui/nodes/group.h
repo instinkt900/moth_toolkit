@@ -84,7 +84,7 @@ namespace moth_ui {
          * @param name Clip name to look up.
          * @return @c true if the clip exists in the layout's clip list.
          */
-        bool HasAnimation(std::string_view const& name) override;
+        bool HasAnimation(std::string_view const& name) const override;
 
         /**
          * @brief Switches the active animation clip by name.

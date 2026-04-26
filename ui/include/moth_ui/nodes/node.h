@@ -219,7 +219,7 @@ namespace moth_ui {
          * @param name Clip name to look up.
          * @return @c true if the clip exists.
          */
-        virtual bool HasAnimation(std::string_view const& name) { return false; }
+        virtual bool HasAnimation(std::string_view const& name) const { return false; }
 
         /**
          * @brief Switches the active animation clip by name.
@@ -254,7 +254,11 @@ namespace moth_ui {
         virtual std::shared_ptr<Node> FindChild(std::string_view id);
 
         /// @brief Returns the AnimationController that drives this node's tracks.
+        /// @brief Returns the AnimationController that drives this node's tracks.
         AnimationController& GetAnimationController() { return *m_animationController; }
+
+        /// @brief Returns a const reference to the AnimationController.
+        AnimationController const& GetAnimationController() const { return *m_animationController; }
 
     protected:
         /// @brief Returns the fully composed local-to-world transform for this node.

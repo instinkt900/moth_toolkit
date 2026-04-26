@@ -74,7 +74,7 @@ namespace moth_ui {
         return -1;
     }
 
-    bool Group::HasAnimation(std::string_view const& name) {
+    bool Group::HasAnimation(std::string_view const& name) const {
         if (m_layout) {
             auto layout = std::static_pointer_cast<LayoutEntityGroup>(m_layout);
             auto& animationClips = layout->m_clips;
@@ -147,10 +147,10 @@ namespace moth_ui {
 
     void Group::ReloadEntityPrivate() {
         auto const layoutEntity = std::static_pointer_cast<LayoutEntityGroup>(m_layout);
-        for (auto it = std::begin(m_children); it != std::end(m_children); /* skip */) {
-            (*it)->SetParent(nullptr);
-            it = m_children.erase(it);
+        for (auto& child : m_children) {
+            child->SetParent(nullptr);
         }
+        m_children.clear();
         auto& nodeFactory = NodeFactory::Get();
         for (auto&& childEntity : layoutEntity->m_children) {
             AddChild(nodeFactory.Create(m_context, childEntity));

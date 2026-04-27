@@ -100,35 +100,26 @@ namespace moth_ui {
     }
 
     float AnimationTrack::GetValueAtFrame(float frame) const {
-        float value = 0;
-
-        auto endKeyframeIt = std::end(m_keyframes);
-        auto firstKeyframeIt = std::begin(m_keyframes);
-        auto secondKeyframeIt = firstKeyframeIt;
-
-        // find the possible two keyframes bounding the current time
-        while (secondKeyframeIt != endKeyframeIt && static_cast<float>((*secondKeyframeIt)->m_frame) < frame) {
-            firstKeyframeIt = secondKeyframeIt;
-            ++secondKeyframeIt;
+        if (m_keyframes.empty()) {
+            return 0.0f;
         }
 
-        if (endKeyframeIt == firstKeyframeIt && endKeyframeIt == secondKeyframeIt) {
-            // did not find any frames
-        } else if (endKeyframeIt != firstKeyframeIt && endKeyframeIt != secondKeyframeIt) {
-            // found a start and end keyframe
-            float const deltaFrames = frame - static_cast<float>((*firstKeyframeIt)->m_frame);
-            float const totalFrames = static_cast<float>((*secondKeyframeIt)->m_frame - (*firstKeyframeIt)->m_frame);
-            float const factor = totalFrames == 0.0f ? 0.0f : deltaFrames / totalFrames;
-            float const startValue = (*firstKeyframeIt)->m_value;
-            float const endValue = (*secondKeyframeIt)->m_value;
-            value = Interp(startValue, endValue, factor, (*firstKeyframeIt)->m_interpType);
-        } else {
-            // found one keyframe
-            auto validKeyframeIt = firstKeyframeIt != endKeyframeIt ? firstKeyframeIt : secondKeyframeIt;
-            value = (*validKeyframeIt)->m_value;
+        auto second = std::lower_bound(std::begin(m_keyframes), std::end(m_keyframes), frame,
+            [](auto const& kf, float f) { return static_cast<float>(kf->m_frame) < f; });
+
+        if (second == std::begin(m_keyframes)) {
+            return (*second)->m_value;
         }
 
-        return value;
+        if (second == std::end(m_keyframes)) {
+            return m_keyframes.back()->m_value;
+        }
+
+        auto first = std::prev(second);
+        float const deltaFrames = frame - static_cast<float>((*first)->m_frame);
+        float const totalFrames = static_cast<float>((*second)->m_frame - (*first)->m_frame);
+        float const factor = totalFrames == 0.0f ? 0.0f : deltaFrames / totalFrames;
+        return Interp((*first)->m_value, (*second)->m_value, factor, (*first)->m_interpType);
     }
 
     void AnimationTrack::SortKeyframes() {

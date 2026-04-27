@@ -2,8 +2,8 @@
 
 // NOLINTBEGIN
 
+#include <array>
 #include <cassert>
-#include <map>
 
 #undef M_PI
 #define _USE_MATH_DEFINES
@@ -300,44 +300,46 @@ namespace moth_ui {
     /// @brief Function pointer type for easing functions.
     typedef float (*EaseFunction)(float);
 
-    /// @brief Map from InterpType to the corresponding easing function.
-    inline std::map<InterpType, EaseFunction> const InterpFuncs{
-        { InterpType::Step, easeStep },
-        { InterpType::Linear, easeLinear },
-        { InterpType::Smooth, easeSmooth },
-        { InterpType::SineIn, easeSineIn },
-        { InterpType::SineOut, easeSineOut },
-        { InterpType::SineInOut, easeSineInOut },
-        { InterpType::QuadIn, easeQuadIn },
-        { InterpType::QuadOut, easeQuadOut },
-        { InterpType::QuadInOut, easeQuadInOut },
-        { InterpType::CubicIn, easeCubicIn },
-        { InterpType::CubicOut, easeCubicOut },
-        { InterpType::CubicInOut, easeCubicInOut },
-        { InterpType::QuartIn, easeQuartIn },
-        { InterpType::QuartOut, easeQuartOut },
-        { InterpType::QuartInOut, easeQuartInOut },
-        { InterpType::QuintIn, easeQuintIn },
-        { InterpType::QuintOut, easeQuintOut },
-        { InterpType::QuintInOut, easeQuintInOut },
-        { InterpType::ExpoIn, easeExpoIn },
-        { InterpType::ExpoOut, easeExpoOut },
-        { InterpType::ExpoInOut, easeExpoInOut },
-        { InterpType::CircIn, easeCircIn },
-        { InterpType::CircOut, easeCircOut },
-        { InterpType::CircInOut, easeCircInOut },
-        { InterpType::BackIn, easeBackIn },
-        { InterpType::BackOut, easeBackOut },
-        { InterpType::BackInOut, easeBackInOut },
-        { InterpType::ElasticIn, easeElasticIn },
-        { InterpType::ElasticOut, easeElasticOut },
-        { InterpType::ElasticInOut, easeElasticInOut },
-        { InterpType::BounceIn, easeBounceIn },
-        { InterpType::BounceOut, easeBounceOut },
-        { InterpType::BounceInOut, easeBounceInOut },
-        // Unknown types default to linear in release.
-        { InterpType::Unknown, easeLinear },
-    };
+    /// @brief Array from InterpType to the corresponding easing function, indexed by enum value.
+    inline constexpr std::array<EaseFunction, 34> InterpFuncs{{
+        easeLinear,       // Unknown
+        easeStep,         // Step
+        easeLinear,       // Linear
+        easeSmooth,       // Smooth
+        easeSineIn,       // SineIn
+        easeSineOut,      // SineOut
+        easeSineInOut,    // SineInOut
+        easeQuadIn,       // QuadIn
+        easeQuadOut,      // QuadOut
+        easeQuadInOut,    // QuadInOut
+        easeCubicIn,      // CubicIn
+        easeCubicOut,     // CubicOut
+        easeCubicInOut,   // CubicInOut
+        easeQuartIn,      // QuartIn
+        easeQuartOut,     // QuartOut
+        easeQuartInOut,   // QuartInOut
+        easeQuintIn,      // QuintIn
+        easeQuintOut,     // QuintOut
+        easeQuintInOut,   // QuintInOut
+        easeExpoIn,       // ExpoIn
+        easeExpoOut,      // ExpoOut
+        easeExpoInOut,    // ExpoInOut
+        easeCircIn,       // CircIn
+        easeCircOut,      // CircOut
+        easeCircInOut,    // CircInOut
+        easeBackIn,       // BackIn
+        easeBackOut,      // BackOut
+        easeBackInOut,    // BackInOut
+        easeElasticIn,    // ElasticIn
+        easeElasticOut,   // ElasticOut
+        easeElasticInOut, // ElasticInOut
+        easeBounceIn,     // BounceIn
+        easeBounceOut,    // BounceOut
+        easeBounceInOut,  // BounceInOut
+    }};
+
+    // If the enum grows, the array must stay in sync.
+    static_assert(InterpFuncs.size() == static_cast<size_t>(InterpType::BounceInOut) + 1);
 
     /**
      * @brief Interpolates between two values using the specified easing curve.
@@ -350,7 +352,7 @@ namespace moth_ui {
     template <typename T>
     T Interp(T a, T b, float t, InterpType type) {
         assert(type != InterpType::Unknown && "Unknown interp type should never be used.");
-        auto const interpFunc = InterpFuncs.at(type);
+        auto const interpFunc = InterpFuncs[static_cast<size_t>(type)];
         return (t == 0.0f) ? a : (t == 1.0f) ? b : (a + (b - a) * interpFunc(t));
     }
 }

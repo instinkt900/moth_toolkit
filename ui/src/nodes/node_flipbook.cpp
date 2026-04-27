@@ -121,8 +121,8 @@ namespace moth_ui {
         m_accumulatedMs += static_cast<float>(ticks);
 
         while (m_playing) {
-            int const durationMs = m_currentClip->frames[m_currentFrame].durationMs;
-            if (durationMs <= 0 || m_accumulatedMs < static_cast<float>(durationMs)) {
+            int const durationMs = std::max(1, m_currentClip->frames[m_currentFrame].durationMs);
+            if (m_accumulatedMs < static_cast<float>(durationMs)) {
                 break;
             }
             m_accumulatedMs -= static_cast<float>(durationMs);

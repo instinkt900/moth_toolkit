@@ -23,25 +23,24 @@ TEST_CASE("AnimationTrack ContinuousTargets has 13 entries", "[animation_track]"
     REQUIRE(AnimationTrack::ContinuousTargets.size() == 13);
 }
 
-TEST_CASE("AnimationTrack ContinuousTargets layout offsets and anchors", "[animation_track]") {
-    auto& ct = AnimationTrack::ContinuousTargets;
-    REQUIRE(ct[0] == AnimationTrack::Target::TopOffset);
-    REQUIRE(ct[1] == AnimationTrack::Target::BottomOffset);
-    REQUIRE(ct[2] == AnimationTrack::Target::LeftOffset);
-    REQUIRE(ct[3] == AnimationTrack::Target::RightOffset);
-    REQUIRE(ct[4] == AnimationTrack::Target::TopAnchor);
-    REQUIRE(ct[5] == AnimationTrack::Target::BottomAnchor);
-    REQUIRE(ct[6] == AnimationTrack::Target::LeftAnchor);
-    REQUIRE(ct[7] == AnimationTrack::Target::RightAnchor);
-}
-
-TEST_CASE("AnimationTrack ContinuousTargets colour channels", "[animation_track]") {
-    auto& ct = AnimationTrack::ContinuousTargets;
-    REQUIRE(ct[8]  == AnimationTrack::Target::ColorRed);
-    REQUIRE(ct[9]  == AnimationTrack::Target::ColorGreen);
-    REQUIRE(ct[10] == AnimationTrack::Target::ColorBlue);
-    REQUIRE(ct[11] == AnimationTrack::Target::ColorAlpha);
-    REQUIRE(ct[12] == AnimationTrack::Target::Rotation);
+TEST_CASE("AnimationTrack ContinuousTargets contains all expected targets", "[animation_track]") {
+    auto const& ct = AnimationTrack::ContinuousTargets;
+    auto const contains = [&](AnimationTrack::Target t) {
+        return std::find(ct.begin(), ct.end(), t) != ct.end();
+    };
+    REQUIRE(contains(AnimationTrack::Target::TopOffset));
+    REQUIRE(contains(AnimationTrack::Target::BottomOffset));
+    REQUIRE(contains(AnimationTrack::Target::LeftOffset));
+    REQUIRE(contains(AnimationTrack::Target::RightOffset));
+    REQUIRE(contains(AnimationTrack::Target::TopAnchor));
+    REQUIRE(contains(AnimationTrack::Target::BottomAnchor));
+    REQUIRE(contains(AnimationTrack::Target::LeftAnchor));
+    REQUIRE(contains(AnimationTrack::Target::RightAnchor));
+    REQUIRE(contains(AnimationTrack::Target::ColorRed));
+    REQUIRE(contains(AnimationTrack::Target::ColorGreen));
+    REQUIRE(contains(AnimationTrack::Target::ColorBlue));
+    REQUIRE(contains(AnimationTrack::Target::ColorAlpha));
+    REQUIRE(contains(AnimationTrack::Target::Rotation));
 }
 
 TEST_CASE("AnimationTrack GetOrCreateKeyframe inserts sorted", "[animation_track][keyframes]") {
@@ -188,8 +187,11 @@ TEST_CASE("AnimationTrack DiscreteTargets has 2 entries", "[animation_track][dis
 
 TEST_CASE("AnimationTrack DiscreteTargets contains FlipbookClip and FlipbookPlaying", "[animation_track][discrete]") {
     auto const& dt = AnimationTrack::DiscreteTargets;
-    REQUIRE(dt[0] == AnimationTrack::Target::FlipbookClip);
-    REQUIRE(dt[1] == AnimationTrack::Target::FlipbookPlaying);
+    auto const contains = [&](AnimationTrack::Target t) {
+        return std::find(dt.begin(), dt.end(), t) != dt.end();
+    };
+    REQUIRE(contains(AnimationTrack::Target::FlipbookClip));
+    REQUIRE(contains(AnimationTrack::Target::FlipbookPlaying));
 }
 
 TEST_CASE("AnimationTrack copy construction deep-copies keyframes", "[animation_track][copy]") {

@@ -423,10 +423,10 @@ TEST_CASE("SetPlaying false pauses playback", "[flipbook][playing]") {
 // Tests — frame advancement
 // ---------------------------------------------------------------------------
 
-TEST_CASE("Update with zero durationMs does not advance and does not crash", "[flipbook][update][duration]") {
+TEST_CASE("Update with zero durationMs treats frame as 1 ms", "[flipbook][update][duration]") {
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
-    fb.clips["run"] = MakeClip({ 0, 1, 2, 3 }, 0, IFlipbook::LoopType::Loop); // zero duration
+    fb.clips["run"] = MakeClip({ 0, 1, 2, 3 }, 0, IFlipbook::LoopType::Loop);
     tc.flipbookFactory.nextFlipbook = &fb;
     auto node = std::make_shared<NodeFlipbook>(tc.context);
     node->Load("dummy.flipbook.json");
@@ -436,6 +436,8 @@ TEST_CASE("Update with zero durationMs does not advance and does not crash", "[f
     node->Update(1000);
 
     REQUIRE(node->IsPlaying());
+    // Zero-duration frames are clamped to 1 ms; 1000 ms advances through
+    // 250 complete loops of the 4-frame clip, landing back at frame 0.
     REQUIRE(node->GetCurrentFrame() == 0);
 }
 

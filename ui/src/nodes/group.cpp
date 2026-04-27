@@ -85,7 +85,7 @@ namespace moth_ui {
         m_children.insert(std::next(std::begin(m_children), toIndex), std::move(child));
     }
 
-    bool Group::HasAnimation(std::string_view const& name) const {
+    bool Group::HasAnimation(std::string_view name) const {
         if (m_layout) {
             auto& animationClips = m_typedLayout->m_clips;
             auto it = ranges::find_if(animationClips, [&name](auto& clip) { return clip->m_name == name; });
@@ -96,7 +96,7 @@ namespace moth_ui {
         return false;
     }
 
-    bool Group::SetAnimation(std::string_view const& name) {
+    bool Group::SetAnimation(std::string_view name) {
         if (m_layout) {
             auto& animationClips = m_typedLayout->m_clips;
             auto it = ranges::find_if(animationClips, [&name](auto& clip) { return clip->m_name == name; });

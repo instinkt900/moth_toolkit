@@ -88,7 +88,7 @@ namespace moth_ui {
          * @param name Clip name to look up.
          * @return @c true if the clip exists in the layout's clip list.
          */
-        bool HasAnimation(std::string_view const& name) const override;
+        bool HasAnimation(std::string_view name) const override;
 
         /**
          * @brief Switches the active animation clip by name.
@@ -99,7 +99,7 @@ namespace moth_ui {
          * @param name Name of the animation clip to play.
          * @return @c true if the clip was found and activated.
          */
-        bool SetAnimation(std::string_view const& name) override;
+        bool SetAnimation(std::string_view name) override;
 
         /// @brief Stops the currently playing animation clip.
         void StopAnimation() override;

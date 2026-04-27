@@ -56,7 +56,7 @@ TEST_CASE("Group method signatures are stable", "[api][nodes][group]") {
     int  (Group::*getCount)() const                          = &Group::GetChildCount;
     std::vector<std::shared_ptr<Node>> const& (Group::*getChildren)() const = &Group::GetChildren;
     std::shared_ptr<Node> (Group::*findTyped)(std::string_view) = &Group::FindChild;
-    bool (Group::*setAnim)(std::string_view const&)             = &Group::SetAnimation;
+    bool (Group::*setAnim)(std::string_view)                        = &Group::SetAnimation;
     void (Group::*stopAnim)()                                = &Group::StopAnimation;
     (void)addChild; (void)removeChild; (void)getCount; (void)getChildren;
     (void)findTyped; (void)setAnim; (void)stopAnim;

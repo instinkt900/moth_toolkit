@@ -1,5 +1,6 @@
 #include "mock_context.h"
 #include "moth_ui/nodes/node.h"
+#include "moth_ui/context.h"
 #include "moth_ui/events/event_mouse.h"
 #include "moth_ui/utils/color.h"
 #include "moth_ui/utils/rect.h"
@@ -7,10 +8,20 @@
 #include "moth_ui/layout/layout_rect.h"
 #include <catch2/catch_all.hpp>
 #include <memory>
+#include <stdexcept>
 
 using namespace moth_ui;
 
 // Node is not abstract — use make_shared to satisfy enable_shared_from_this.
+
+TEST_CASE("Context throws on null arguments", "[context][construction]") {
+    MockRenderer renderer;
+    MockImageFactory imageFactory;
+    MockFontFactory fontFactory;
+    REQUIRE_THROWS_AS(Context(nullptr, &fontFactory, &renderer), std::invalid_argument);
+    REQUIRE_THROWS_AS(Context(&imageFactory, nullptr, &renderer), std::invalid_argument);
+    REQUIRE_THROWS_AS(Context(&imageFactory, &fontFactory, nullptr), std::invalid_argument);
+}
 
 TEST_CASE("Node id get and set", "[node][properties]") {
     MockContext mc;

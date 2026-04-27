@@ -1,6 +1,6 @@
 #pragma once
 
-#include "event.h"
+#include "moth_ui/events/event.h"
 
 #include <memory>
 

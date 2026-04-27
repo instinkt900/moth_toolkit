@@ -38,7 +38,7 @@ namespace moth_ui {
          * @brief Pushes a new layer onto the top of the stack.
          * @param layer Layer to add; ownership is transferred to the stack.
          */
-        void PushLayer(std::unique_ptr<Layer>&& layer);
+        void PushLayer(std::unique_ptr<Layer> layer);
 
         /**
          * @brief Pops and returns the top layer, transferring ownership to the caller.

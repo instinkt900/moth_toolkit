@@ -25,6 +25,9 @@ namespace moth_ui {
 
     void AnimationClipController::Update(float deltaSeconds) {
         if (auto const clip = m_clip.lock()) {
+            if (clip->m_fps <= 0.0f) {
+                return;
+            }
             auto const clipStart = static_cast<float>(clip->m_startFrame);
             auto const clipEnd   = static_cast<float>(clip->m_endFrame);
             auto const clipLen   = clipEnd - clipStart;

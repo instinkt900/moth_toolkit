@@ -31,7 +31,7 @@ namespace moth_ui {
     }
 
     void from_json(nlohmann::json const& json, Keyframe& keyframe) {
-        nlohmann::json valueJson = json.at("value");
+        nlohmann::json valueJson = json.value("value", nlohmann::json{});
         if (valueJson.is_number_float()) {
             valueJson.get_to(keyframe.m_value);
         } else {

@@ -72,13 +72,8 @@ namespace moth_ui {
                 m_class = json.value("class", "");
                 m_blend = json.value("blend", BlendMode::Replace);
 
-                if (json.contains("clips")) {
-                    json.at("clips").get_to(m_clips);
-                }
-
-                if (json.contains("events")) {
-                    json.at("events").get_to(m_events);
-                }
+                m_clips = json.value("clips", decltype(m_clips){});
+                m_events = json.value("events", decltype(m_events){});
 
                 if (json.contains("children")) {
                     for (auto&& childJson : json["children"]) {

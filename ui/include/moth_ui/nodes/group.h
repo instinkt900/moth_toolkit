@@ -73,11 +73,15 @@ namespace moth_ui {
         /// @brief Returns the number of direct children.
         int GetChildCount() const { return static_cast<int>(m_children.size()); }
 
-        /// @brief Returns a mutable reference to the ordered list of children.
-        std::vector<std::shared_ptr<Node>>& GetChildren() { return m_children; }
-
         /// @brief Returns a const reference to the ordered list of children.
         std::vector<std::shared_ptr<Node>> const& GetChildren() const { return m_children; }
+
+        /**
+         * @brief Moves a child from one index to another.
+         * @param fromIndex Current index of the child.
+         * @param toIndex   Destination index.
+         */
+        void MoveChild(int fromIndex, int toIndex);
 
         /**
          * @brief Returns whether an animation clip with the given name exists.

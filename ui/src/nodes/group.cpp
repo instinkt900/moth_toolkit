@@ -74,6 +74,17 @@ namespace moth_ui {
         return -1;
     }
 
+    void Group::MoveChild(int fromIndex, int toIndex) {
+        if (fromIndex < 0 || toIndex < 0
+            || static_cast<size_t>(fromIndex) >= m_children.size()
+            || static_cast<size_t>(toIndex) >= m_children.size()) {
+            return;
+        }
+        auto child = m_children[fromIndex];
+        m_children.erase(std::next(std::begin(m_children), fromIndex));
+        m_children.insert(std::next(std::begin(m_children), toIndex), std::move(child));
+    }
+
     bool Group::HasAnimation(std::string_view const& name) const {
         if (m_layout) {
             auto& animationClips = m_typedLayout->m_clips;

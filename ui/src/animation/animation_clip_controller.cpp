@@ -16,7 +16,7 @@ namespace moth_ui {
         m_clip = clip;
         if (clip) {
             m_frame = static_cast<float>(clip->m_startFrame);
-            for (auto& child : m_group->GetChildren()) {
+            for (auto const& child : m_group->GetChildren()) {
                 child->GetAnimationController().SetFrame(m_frame);
             }
             m_group->SendEvent(EventAnimationStarted(m_group->shared_from_this(), clip->m_name), Node::EventDirection::Up);
@@ -67,7 +67,7 @@ namespace moth_ui {
             }
 
             // update each track's time to the final frame position
-            for (auto& child : m_group->GetChildren()) {
+            for (auto const& child : m_group->GetChildren()) {
                 child->GetAnimationController().SetFrame(m_frame);
             }
 

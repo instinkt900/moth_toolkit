@@ -102,6 +102,9 @@ namespace moth_ui {
 
         void ReapplyOverrides(LayoutEntity& childLayout);
 
+        /// @brief Returns the typed layout entity pointer for this group.
+        LayoutEntityGroup* GetTypedLayout() const { return m_typedLayout; }
+
         /**
          * @brief Returns the direct child whose identifier matches @p id.
          * @param id Identifier to look up.
@@ -139,6 +142,7 @@ namespace moth_ui {
         void DrawInternal() override;
 
     private:
+        LayoutEntityGroup* m_typedLayout = nullptr;
         void ReloadChildren();
     };
 }

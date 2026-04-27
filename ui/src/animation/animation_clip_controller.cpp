@@ -78,10 +78,7 @@ namespace moth_ui {
     }
 
     void AnimationClipController::CheckEvents(float startFrame, float endFrame) {
-        auto layout = std::static_pointer_cast<LayoutEntityGroup>(m_group->GetLayoutEntity());
-        if (!layout) {
-            return;
-        }
+        auto* layout = m_group->GetTypedLayout();
         for (auto& animEvent : layout->m_events) {
             if (static_cast<float>(animEvent->m_frame) > startFrame && static_cast<float>(animEvent->m_frame) <= endFrame) {
                 m_group->SendEvent(EventAnimation(m_group->shared_from_this(), animEvent->m_name), Node::EventDirection::Up);

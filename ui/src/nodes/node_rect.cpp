@@ -9,15 +9,14 @@ namespace moth_ui {
     }
 
     NodeRect::NodeRect(Context& context, std::shared_ptr<LayoutEntityRect> layoutEntity)
-        : Node(context, layoutEntity) {
-        auto const layoutEntityPtr = std::static_pointer_cast<LayoutEntityRect>(m_layout);
-        m_filled = layoutEntityPtr->m_filled;
+        : Node(context, layoutEntity)
+        , m_typedLayout(layoutEntity.get()) {
+        m_filled = m_typedLayout->m_filled;
     }
 
     void NodeRect::ReloadEntityInternal() {
         Node::ReloadEntityInternal();
-        auto const layoutEntityPtr = std::static_pointer_cast<LayoutEntityRect>(m_layout);
-        m_filled = layoutEntityPtr->m_filled;
+        m_filled = m_typedLayout->m_filled;
     }
 
     void NodeRect::DrawInternal() {

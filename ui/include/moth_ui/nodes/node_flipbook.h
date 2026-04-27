@@ -118,6 +118,7 @@ namespace moth_ui {
         void DrawInternal() override;
 
     private:
+        LayoutEntityFlipbook* m_typedLayout = nullptr;
         std::shared_ptr<NodeFlipbook> SharedFromThis();
     };
 }

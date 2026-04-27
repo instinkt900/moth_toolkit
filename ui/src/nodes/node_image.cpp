@@ -10,15 +10,15 @@ namespace moth_ui {
     }
 
     NodeImage::NodeImage(Context& context, std::shared_ptr<LayoutEntityImage> layoutEntity)
-        : Node(context, layoutEntity) {
-        auto const layoutEntityPtr = std::static_pointer_cast<LayoutEntityImage>(m_layout);
-        m_sourceRect = layoutEntityPtr->m_sourceRect;
-        m_imageScaleType = layoutEntityPtr->m_imageScaleType;
-        m_imageScale = layoutEntityPtr->m_imageScale;
-        m_textureFilter = layoutEntityPtr->m_textureFilter;
-        m_sourceBorders = layoutEntityPtr->m_sourceBorders;
-        m_targetBorders = layoutEntityPtr->m_targetBorders;
-        Load(layoutEntityPtr->m_imagePath);
+        : Node(context, layoutEntity)
+        , m_typedLayout(layoutEntity.get()) {
+        m_sourceRect = m_typedLayout->m_sourceRect;
+        m_imageScaleType = m_typedLayout->m_imageScaleType;
+        m_imageScale = m_typedLayout->m_imageScale;
+        m_textureFilter = m_typedLayout->m_textureFilter;
+        m_sourceBorders = m_typedLayout->m_sourceBorders;
+        m_targetBorders = m_typedLayout->m_targetBorders;
+        Load(m_typedLayout->m_imagePath);
     }
 
     void NodeImage::UpdateChildBounds() {
@@ -40,14 +40,13 @@ namespace moth_ui {
 
     void NodeImage::ReloadEntityInternal() {
         Node::ReloadEntityInternal();
-        auto const layoutEntityPtr = std::static_pointer_cast<LayoutEntityImage>(m_layout);
-        m_sourceRect = layoutEntityPtr->m_sourceRect;
-        m_imageScaleType = layoutEntityPtr->m_imageScaleType;
-        m_imageScale = layoutEntityPtr->m_imageScale;
-        m_textureFilter = layoutEntityPtr->m_textureFilter;
-        m_sourceBorders = layoutEntityPtr->m_sourceBorders;
-        m_targetBorders = layoutEntityPtr->m_targetBorders;
-        Load(layoutEntityPtr->m_imagePath);
+        m_sourceRect = m_typedLayout->m_sourceRect;
+        m_imageScaleType = m_typedLayout->m_imageScaleType;
+        m_imageScale = m_typedLayout->m_imageScale;
+        m_textureFilter = m_typedLayout->m_textureFilter;
+        m_sourceBorders = m_typedLayout->m_sourceBorders;
+        m_targetBorders = m_typedLayout->m_targetBorders;
+        Load(m_typedLayout->m_imagePath);
     }
 
     void NodeImage::DrawInternal() {

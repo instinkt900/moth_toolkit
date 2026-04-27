@@ -14,7 +14,8 @@ namespace moth_ui {
     }
 
     Group::Group(Context& context, std::shared_ptr<LayoutEntityGroup> layoutEntityGroup)
-        : Node(context, layoutEntityGroup) {
+        : Node(context, layoutEntityGroup)
+        , m_typedLayout(layoutEntityGroup.get()) {
         ReloadChildren();
     }
 
@@ -75,8 +76,7 @@ namespace moth_ui {
 
     bool Group::HasAnimation(std::string_view const& name) const {
         if (m_layout) {
-            auto layout = std::static_pointer_cast<LayoutEntityGroup>(m_layout);
-            auto& animationClips = layout->m_clips;
+            auto& animationClips = m_typedLayout->m_clips;
             auto it = ranges::find_if(animationClips, [&name](auto& clip) { return clip->m_name == name; });
             if (std::end(animationClips) != it) {
                 return true;
@@ -87,8 +87,7 @@ namespace moth_ui {
 
     bool Group::SetAnimation(std::string_view const& name) {
         if (m_layout) {
-            auto layout = std::static_pointer_cast<LayoutEntityGroup>(m_layout);
-            auto& animationClips = layout->m_clips;
+            auto& animationClips = m_typedLayout->m_clips;
             auto it = ranges::find_if(animationClips, [&name](auto& clip) { return clip->m_name == name; });
             if (std::end(animationClips) != it) {
                 m_animationClipController->SetClip(*it);
@@ -130,13 +129,12 @@ namespace moth_ui {
     }
 
     void Group::ReloadChildren() {
-        auto const layoutEntity = std::static_pointer_cast<LayoutEntityGroup>(m_layout);
         for (auto& child : m_children) {
             child->SetParent(nullptr);
         }
         m_children.clear();
         auto& nodeFactory = NodeFactory::Get();
-        for (auto&& childEntity : layoutEntity->m_children) {
+        for (auto&& childEntity : m_typedLayout->m_children) {
             AddChild(nodeFactory.Create(m_context, childEntity));
         }
         UpdateChildBounds();

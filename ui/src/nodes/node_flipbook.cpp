@@ -13,10 +13,10 @@ namespace moth_ui {
     }
 
     NodeFlipbook::NodeFlipbook(Context& context, std::shared_ptr<LayoutEntityFlipbook> layoutEntity)
-        : Node(context, layoutEntity) {
-        auto const layoutEntityPtr = std::static_pointer_cast<LayoutEntityFlipbook>(m_layout);
-        m_textureFilter = layoutEntityPtr->m_textureFilter;
-        Load(layoutEntityPtr->m_flipbookPath);
+        : Node(context, layoutEntity)
+        , m_typedLayout(layoutEntity.get()) {
+        m_textureFilter = m_typedLayout->m_textureFilter;
+        Load(m_typedLayout->m_flipbookPath);
 
         auto& controller = GetAnimationController();
         controller.ClearDiscreteCallbacks();
@@ -55,9 +55,8 @@ namespace moth_ui {
 
     void NodeFlipbook::ReloadEntityInternal() {
         Node::ReloadEntityInternal();
-        auto const layoutEntityPtr = std::static_pointer_cast<LayoutEntityFlipbook>(m_layout);
-        m_textureFilter = layoutEntityPtr->m_textureFilter;
-        Load(layoutEntityPtr->m_flipbookPath);
+        m_textureFilter = m_typedLayout->m_textureFilter;
+        Load(m_typedLayout->m_flipbookPath);
 
         auto& controller = GetAnimationController();
         controller.ClearDiscreteCallbacks();
@@ -185,6 +184,6 @@ namespace moth_ui {
     }
 
     std::shared_ptr<NodeFlipbook> NodeFlipbook::SharedFromThis() {
-        return std::static_pointer_cast<NodeFlipbook>(shared_from_this());
+        return std::dynamic_pointer_cast<NodeFlipbook>(shared_from_this());
     }
 }

@@ -79,5 +79,8 @@ namespace moth_ui {
 
         void ReloadEntityInternal() override;
         void DrawInternal() override;
+
+    private:
+        LayoutEntityText* m_typedLayout = nullptr;
     };
 }

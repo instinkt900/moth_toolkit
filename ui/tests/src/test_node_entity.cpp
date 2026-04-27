@@ -5,6 +5,7 @@
 #include "moth_ui/nodes/node_image.h"
 #include "moth_ui/layout/layout_entity_rect.h"
 #include "moth_ui/layout/layout_entity_text.h"
+#include "moth_ui/layout/layout_entity_clip.h"
 #include "moth_ui/layout/layout_entity_image.h"
 #include "moth_ui/graphics/text_alignment.h"
 #include "moth_ui/graphics/image_scale_type.h"
@@ -37,6 +38,34 @@ TEST_CASE("NodeClip default constructor provides a valid AnimationController", "
     MockContext mc;
     auto node = std::make_shared<NodeClip>(mc.context);
     REQUIRE_NOTHROW(node->GetAnimationController());
+}
+
+TEST_CASE("NodeClip loads layout rect from entity", "[node][entity][clip]") {
+    LayoutRect layoutRect;
+    layoutRect.offset.bottomRight = { 100.0f, 100.0f };
+    auto entity = std::make_shared<LayoutEntityClip>(layoutRect);
+
+    MockContext mc;
+    auto node = std::make_shared<NodeClip>(mc.context, entity);
+
+    auto const& lr = node->GetLayoutRect();
+    REQUIRE(lr.offset.bottomRight.x == 100.0f);
+    REQUIRE(lr.offset.bottomRight.y == 100.0f);
+}
+
+TEST_CASE("NodeClip set screen rect overrides layout", "[node][entity][clip]") {
+    auto entity = std::make_shared<LayoutEntityClip>(LayoutRect{});
+    MockContext mc;
+    auto node = std::make_shared<NodeClip>(mc.context, entity);
+
+    IntRect newRect{ { 10, 20 }, { 60, 80 } };
+    node->SetScreenRect(newRect);
+
+    auto const& sr = node->GetScreenRect();
+    REQUIRE(sr.topLeft.x == 10);
+    REQUIRE(sr.topLeft.y == 20);
+    REQUIRE(sr.bottomRight.x == 60);
+    REQUIRE(sr.bottomRight.y == 80);
 }
 
 // ---- NodeRect ---------------------------------------------------------------

@@ -100,15 +100,13 @@ TEST_CASE("InterpFuncs map contains all InterpType entries", "[interp][map]") {
     // One entry per InterpType enum value
     REQUIRE(InterpFuncs.size() == magic_enum::enum_count<InterpType>());
 
-    // Every mapped function must be non-null
-    for (auto const& [type, fn] : InterpFuncs) {
-        (void)type;
+    // Every function must be non-null
+    for (auto fn : InterpFuncs) {
         REQUIRE(fn != nullptr);
     }
 
     // Unknown defaults to linear
-    REQUIRE(InterpFuncs.count(InterpType::Unknown)    == 1);
-    REQUIRE(InterpFuncs.at(InterpType::Unknown)(0.5f) == Catch::Approx(0.5f));
+    REQUIRE(InterpFuncs[static_cast<size_t>(InterpType::Unknown)](0.5f) == Catch::Approx(0.5f));
 }
 
 TEST_CASE("Interp<float> linear interpolation", "[interp][interp_template]") {
@@ -125,8 +123,8 @@ TEST_CASE("Interp<float> step holds start value until t==1", "[interp][interp_te
 }
 
 TEST_CASE("Interp<float> t=0 always returns a, t=1 always returns b", "[interp][interp_template]") {
-    for (auto const& [type, fn] : InterpFuncs) {
-        (void)fn;
+    for (size_t i = 0; i < InterpFuncs.size(); ++i) {
+        auto const type = static_cast<InterpType>(i);
         if (type == InterpType::Unknown) continue; // Unknown is a programming error; assert fires in debug
         REQUIRE(Interp(1.0f, 9.0f, 0.0f, type) == Catch::Approx(1.0f));
         REQUIRE(Interp(1.0f, 9.0f, 1.0f, type) == Catch::Approx(9.0f));

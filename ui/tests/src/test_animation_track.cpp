@@ -201,3 +201,33 @@ TEST_CASE("AnimationTrack copy construction deep-copies keyframes", "[animation_
 
     REQUIRE(original.GetKeyframe(0)->m_value == Catch::Approx(7.0f));
 }
+
+TEST_CASE("AnimationTrack assignment operator copies target", "[animation_track][copy]") {
+    AnimationTrack original(AnimationTrack::Target::TopOffset);
+    original.GetOrCreateKeyframe(0).m_value = 7.0f;
+
+    AnimationTrack assigned(AnimationTrack::Target::ColorRed);
+    assigned = original;
+
+    REQUIRE(assigned.GetTarget() == AnimationTrack::Target::TopOffset);
+    REQUIRE(assigned.GetKeyframe(0)->m_value == Catch::Approx(7.0f));
+}
+
+TEST_CASE("AnimationTrack GetValueAtFrame before first keyframe with multiple keyframes", "[animation_track][value]") {
+    AnimationTrack track(AnimationTrack::Target::TopOffset);
+    track.GetOrCreateKeyframe(10).m_value = 10.0f;
+    track.GetOrCreateKeyframe(20).m_value = 20.0f;
+
+    REQUIRE(track.GetValueAtFrame(5.0f) == Catch::Approx(10.0f));
+}
+
+TEST_CASE("AnimationTrack GetValueAtFrame exact match on a keyframe", "[animation_track][value]") {
+    AnimationTrack track(AnimationTrack::Target::TopOffset);
+    track.GetOrCreateKeyframe(0).m_value = 0.0f;
+    track.GetOrCreateKeyframe(10).m_value = 10.0f;
+    track.GetOrCreateKeyframe(20).m_value = 20.0f;
+
+    REQUIRE(track.GetValueAtFrame(0.0f) == Catch::Approx(0.0f));
+    REQUIRE(track.GetValueAtFrame(10.0f) == Catch::Approx(10.0f));
+    REQUIRE(track.GetValueAtFrame(20.0f) == Catch::Approx(20.0f));
+}

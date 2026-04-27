@@ -163,3 +163,110 @@ TEST_CASE("Group inherits Node properties", "[group][node]") {
     REQUIRE(group->GetId() == "my_group");
     REQUIRE_FALSE(group->IsVisible());
 }
+
+TEST_CASE("Group MoveChild reorders children", "[group][children]") {
+    MockContext mc;
+    auto group = std::make_shared<Group>(mc.context);
+    auto a = std::make_shared<Node>(mc.context);
+    auto b = std::make_shared<Node>(mc.context);
+    auto c = std::make_shared<Node>(mc.context);
+
+    group->AddChild(a);
+    group->AddChild(b);
+    group->AddChild(c);
+
+    group->MoveChild(0, 2);
+
+    auto const& children = group->GetChildren();
+    REQUIRE(children[0] == b);
+    REQUIRE(children[1] == c);
+    REQUIRE(children[2] == a);
+}
+
+TEST_CASE("Group MoveChild forward preserves count", "[group][children]") {
+    MockContext mc;
+    auto group = std::make_shared<Group>(mc.context);
+    auto a = std::make_shared<Node>(mc.context);
+    auto b = std::make_shared<Node>(mc.context);
+
+    group->AddChild(a);
+    group->AddChild(b);
+
+    group->MoveChild(0, 1);
+
+    REQUIRE(group->GetChildCount() == 2);
+    auto const& children = group->GetChildren();
+    REQUIRE(children[0] == b);
+    REQUIRE(children[1] == a);
+}
+
+TEST_CASE("Group MoveChild same index is no-op", "[group][children]") {
+    MockContext mc;
+    auto group = std::make_shared<Group>(mc.context);
+    auto a = std::make_shared<Node>(mc.context);
+
+    group->AddChild(a);
+    REQUIRE_NOTHROW(group->MoveChild(0, 0));
+
+    REQUIRE(group->GetChildCount() == 1);
+    REQUIRE(group->GetChildren()[0] == a);
+}
+
+TEST_CASE("Group MoveChild out-of-range fromIndex is no-op", "[group][children]") {
+    MockContext mc;
+    auto group = std::make_shared<Group>(mc.context);
+    auto a = std::make_shared<Node>(mc.context);
+    group->AddChild(a);
+
+    REQUIRE_NOTHROW(group->MoveChild(-1, 0));
+    REQUIRE_NOTHROW(group->MoveChild(99, 0));
+
+    REQUIRE(group->GetChildren()[0] == a);
+}
+
+TEST_CASE("Group MoveChild out-of-range toIndex is no-op", "[group][children]") {
+    MockContext mc;
+    auto group = std::make_shared<Group>(mc.context);
+    auto a = std::make_shared<Node>(mc.context);
+    group->AddChild(a);
+
+    REQUIRE_NOTHROW(group->MoveChild(0, -1));
+    REQUIRE_NOTHROW(group->MoveChild(0, 99));
+
+    REQUIRE(group->GetChildren()[0] == a);
+}
+
+TEST_CASE("Group RemoveChild on non-member is no-op", "[group][children]") {
+    MockContext mc;
+    auto group = std::make_shared<Group>(mc.context);
+    auto child = std::make_shared<Node>(mc.context);
+    auto other = std::make_shared<Node>(mc.context);
+
+    group->AddChild(child);
+    REQUIRE_NOTHROW(group->RemoveChild(other));
+    REQUIRE(group->GetChildCount() == 1);
+}
+
+TEST_CASE("Group AddChild with index greater than size appends", "[group][children]") {
+    MockContext mc;
+    auto group = std::make_shared<Group>(mc.context);
+    auto a = std::make_shared<Node>(mc.context);
+    auto b = std::make_shared<Node>(mc.context);
+
+    group->AddChild(a);
+    group->AddChild(b, 99);
+
+    auto const& children = group->GetChildren();
+    REQUIRE(children[0] == a);
+    REQUIRE(children[1] == b);
+}
+
+TEST_CASE("Group GetChildren returns const reference from non-const object", "[group][children]") {
+    MockContext mc;
+    auto group = std::make_shared<Group>(mc.context);
+    group->AddChild(std::make_shared<Node>(mc.context));
+
+    // Verify that the returned reference can be read but not mutated via the const overload
+    auto const& children = group->GetChildren();
+    REQUIRE(children.size() == 1);
+}

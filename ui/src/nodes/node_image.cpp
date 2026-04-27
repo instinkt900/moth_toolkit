@@ -11,7 +11,14 @@ namespace moth_ui {
 
     NodeImage::NodeImage(Context& context, std::shared_ptr<LayoutEntityImage> layoutEntity)
         : Node(context, layoutEntity) {
-        ReloadEntityPrivate();
+        auto const layoutEntityPtr = std::static_pointer_cast<LayoutEntityImage>(m_layout);
+        m_sourceRect = layoutEntityPtr->m_sourceRect;
+        m_imageScaleType = layoutEntityPtr->m_imageScaleType;
+        m_imageScale = layoutEntityPtr->m_imageScale;
+        m_textureFilter = layoutEntityPtr->m_textureFilter;
+        m_sourceBorders = layoutEntityPtr->m_sourceBorders;
+        m_targetBorders = layoutEntityPtr->m_targetBorders;
+        Load(layoutEntityPtr->m_imagePath);
     }
 
     void NodeImage::UpdateChildBounds() {
@@ -33,7 +40,14 @@ namespace moth_ui {
 
     void NodeImage::ReloadEntityInternal() {
         Node::ReloadEntityInternal();
-        ReloadEntityPrivate();
+        auto const layoutEntityPtr = std::static_pointer_cast<LayoutEntityImage>(m_layout);
+        m_sourceRect = layoutEntityPtr->m_sourceRect;
+        m_imageScaleType = layoutEntityPtr->m_imageScaleType;
+        m_imageScale = layoutEntityPtr->m_imageScale;
+        m_textureFilter = layoutEntityPtr->m_textureFilter;
+        m_sourceBorders = layoutEntityPtr->m_sourceBorders;
+        m_targetBorders = layoutEntityPtr->m_targetBorders;
+        Load(layoutEntityPtr->m_imagePath);
     }
 
     void NodeImage::DrawInternal() {
@@ -77,16 +91,5 @@ namespace moth_ui {
             m_targetSlices[2] = static_cast<IntVec2>(screenDim * m_targetBorders.anchor.bottomRight + m_targetBorders.offset.bottomRight);
             m_targetSlices[3] = static_cast<IntVec2>(screenDim);
         }
-    }
-
-    void NodeImage::ReloadEntityPrivate() {
-        auto const layoutEntity = std::static_pointer_cast<LayoutEntityImage>(m_layout);
-        m_sourceRect = layoutEntity->m_sourceRect;
-        m_imageScaleType = layoutEntity->m_imageScaleType;
-        m_imageScale = layoutEntity->m_imageScale;
-        m_textureFilter = layoutEntity->m_textureFilter;
-        m_sourceBorders = layoutEntity->m_sourceBorders;
-        m_targetBorders = layoutEntity->m_targetBorders;
-        Load(layoutEntity->m_imagePath);
     }
 }

@@ -98,8 +98,5 @@ namespace moth_ui {
         void DrawInternal() override;
 
         void Slice();
-
-    private:
-        void ReloadEntityPrivate();
     };
 }

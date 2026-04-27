@@ -10,12 +10,14 @@ namespace moth_ui {
 
     NodeRect::NodeRect(Context& context, std::shared_ptr<LayoutEntityRect> layoutEntity)
         : Node(context, layoutEntity) {
-        ReloadEntityPrivate();
+        auto const layoutEntityPtr = std::static_pointer_cast<LayoutEntityRect>(m_layout);
+        m_filled = layoutEntityPtr->m_filled;
     }
 
     void NodeRect::ReloadEntityInternal() {
         Node::ReloadEntityInternal();
-        ReloadEntityPrivate();
+        auto const layoutEntityPtr = std::static_pointer_cast<LayoutEntityRect>(m_layout);
+        m_filled = layoutEntityPtr->m_filled;
     }
 
     void NodeRect::DrawInternal() {
@@ -25,10 +27,5 @@ namespace moth_ui {
         } else {
             m_context.GetRenderer().RenderRect(localRect);
         }
-    }
-
-    void NodeRect::ReloadEntityPrivate() {
-        auto layoutEntity = std::static_pointer_cast<LayoutEntityRect>(m_layout);
-        m_filled = layoutEntity->m_filled;
     }
 }

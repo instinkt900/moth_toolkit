@@ -19,7 +19,14 @@ namespace moth_ui {
         , m_horizontalAlignment(TextHorizAlignment::Left)
         , m_verticalAlignment(TextVertAlignment::Top)
         , m_dropShadow(false) {
-        ReloadEntityPrivate();
+        auto const layoutEntityPtr = std::static_pointer_cast<LayoutEntityText>(m_layout);
+        m_text = layoutEntityPtr->m_text;
+        m_horizontalAlignment = layoutEntityPtr->m_horizontalAlignment;
+        m_verticalAlignment = layoutEntityPtr->m_verticalAlignment;
+        m_dropShadow = layoutEntityPtr->m_dropShadow;
+        m_dropShadowOffset = layoutEntityPtr->m_dropShadowOffset;
+        m_dropShadowColor = layoutEntityPtr->m_dropShadowColor;
+        Load(layoutEntityPtr->m_fontName, layoutEntityPtr->m_fontSize);
     }
 
     void NodeText::Load(std::string_view fontName, int size) {
@@ -38,7 +45,14 @@ namespace moth_ui {
 
     void NodeText::ReloadEntityInternal() {
         Node::ReloadEntityInternal();
-        ReloadEntityPrivate();
+        auto const layoutEntityPtr = std::static_pointer_cast<LayoutEntityText>(m_layout);
+        m_text = layoutEntityPtr->m_text;
+        m_horizontalAlignment = layoutEntityPtr->m_horizontalAlignment;
+        m_verticalAlignment = layoutEntityPtr->m_verticalAlignment;
+        m_dropShadow = layoutEntityPtr->m_dropShadow;
+        m_dropShadowOffset = layoutEntityPtr->m_dropShadowOffset;
+        m_dropShadowColor = layoutEntityPtr->m_dropShadowColor;
+        Load(layoutEntityPtr->m_fontName, layoutEntityPtr->m_fontSize);
     }
 
     void NodeText::DrawInternal() {
@@ -58,22 +72,13 @@ namespace moth_ui {
             }
             renderer.RenderText(m_text, *m_font, m_horizontalAlignment, m_verticalAlignment, localRect);
         } else {
+#ifndef NDEBUG
             renderer.PopColor();
             renderer.PushColor({ 1.0f, 0.0f, 1.0f, 1.0f });
             renderer.RenderFilledRect(localRect);
             renderer.PopColor();
             renderer.PushColor(m_color);
+#endif
         }
-    }
-
-    void NodeText::ReloadEntityPrivate() {
-        auto const layoutEntity = std::static_pointer_cast<LayoutEntityText>(m_layout);
-        m_text = layoutEntity->m_text;
-        m_horizontalAlignment = layoutEntity->m_horizontalAlignment;
-        m_verticalAlignment = layoutEntity->m_verticalAlignment;
-        m_dropShadow = layoutEntity->m_dropShadow;
-        m_dropShadowOffset = layoutEntity->m_dropShadowOffset;
-        m_dropShadowColor = layoutEntity->m_dropShadowColor;
-        Load(layoutEntity->m_fontName, layoutEntity->m_fontSize);
     }
 }

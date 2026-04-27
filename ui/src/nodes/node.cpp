@@ -1,7 +1,6 @@
 #include "common.h"
 #include "moth_ui/nodes/node.h"
 #include "moth_ui/layout/layout_entity.h"
-#include "moth_ui/layout/layout_entity_ref.h"
 #include "moth_ui/animation/animation_controller.h"
 #include "moth_ui/nodes/group.h"
 #include "moth_ui/context.h"
@@ -140,16 +139,10 @@ namespace moth_ui {
     void Node::ReloadEntity() {
         ReloadEntityInternal();
 
-        // If this node's parent is a LayoutEntityRef, re-apply any property
-        // overrides the ref defines for this child. ReloadEntityInternal may
-        // reset the entity to its base values, which would otherwise silently
-        // drop overrides such as visibility or blend mode.
         if (m_parent != nullptr && m_layout) {
-            if (auto* ref = dynamic_cast<LayoutEntityRef*>(m_parent->m_layout.get())) {
-                ref->ReapplyOverrides(*m_layout);
-                m_visible = m_layout->m_visible;
-                m_blend = m_layout->m_blend;
-            }
+            m_parent->ReapplyOverrides(*m_layout);
+            m_visible = m_layout->m_visible;
+            m_blend = m_layout->m_blend;
         }
     }
 
@@ -173,10 +166,6 @@ namespace moth_ui {
     }
 
     void Node::ReloadEntityInternal() {
-        ReloadEntityPrivate();
-    }
-
-    void Node::ReloadEntityPrivate() {
         m_id = m_layout->m_id;
         m_layoutRect = m_layout->GetBoundsAtFrame(0);
         m_color = m_layout->GetColorAtFrame(0);

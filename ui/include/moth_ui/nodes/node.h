@@ -292,7 +292,6 @@ namespace moth_ui {
     private:
         friend class AnimationController;
 
-        void ReloadEntityPrivate();
         void UpdateLocalTransform();
     };
 }

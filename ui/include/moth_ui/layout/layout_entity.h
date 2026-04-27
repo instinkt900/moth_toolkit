@@ -102,7 +102,7 @@ namespace moth_ui {
          * @param context Serialisation context (version, root path).
          * @return JSON representation of this entity.
          */
-        virtual nlohmann::json Serialize(SerializeContext const& context) const;
+        virtual nlohmann::json Serialize(SerializeContext const& context) const = 0;
 
         /**
          * @brief Populates this entity from a JSON object.
@@ -110,7 +110,7 @@ namespace moth_ui {
          * @param context Serialisation context (version, root path).
          * @return @c true on success.
          */
-        virtual bool Deserialize(nlohmann::json const& json, SerializeContext const& context);
+        virtual bool Deserialize(nlohmann::json const& json, SerializeContext const& context) = 0;
 
         /**
          * @brief Serialises only the properties that differ from the hard reference.

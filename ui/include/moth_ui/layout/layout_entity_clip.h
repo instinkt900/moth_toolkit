@@ -30,6 +30,9 @@ namespace moth_ui {
 
         std::unique_ptr<Node> Instantiate(Context& context) override;
 
+        nlohmann::json Serialize(SerializeContext const& context) const override;
+        bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
+
         LayoutEntityClip(LayoutEntityClip const& other) = default;
         LayoutEntityClip(LayoutEntityClip&& other) = default;
         LayoutEntityClip& operator=(LayoutEntityClip const&) = delete;

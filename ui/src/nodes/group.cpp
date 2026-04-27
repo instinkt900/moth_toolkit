@@ -1,12 +1,11 @@
 #include "common.h"
 #include "moth_ui/nodes/group.h"
-#include "moth_ui/layout/layout_entity_group.h"
 #include "moth_ui/animation/animation_clip.h"
-#include "moth_ui/events/event_dispatch.h"
+#include "moth_ui/layout/layout_entity_group.h"
+#include "moth_ui/layout/layout_entity_ref.h"
 #include "moth_ui/nodes/node_clip.h"
 #include "moth_ui/context.h"
 #include "moth_ui/node_factory.h"
-#include "moth_ui/events/event_animation.h"
 
 namespace moth_ui {
     Group::Group(Context& context)
@@ -16,7 +15,7 @@ namespace moth_ui {
 
     Group::Group(Context& context, std::shared_ptr<LayoutEntityGroup> layoutEntityGroup)
         : Node(context, layoutEntityGroup) {
-        ReloadEntityPrivate();
+        ReloadChildren();
     }
 
     bool Group::Broadcast(Event const& event) {
@@ -127,7 +126,27 @@ namespace moth_ui {
 
     void Group::ReloadEntityInternal() {
         Node::ReloadEntityInternal();
-        ReloadEntityPrivate();
+        ReloadChildren();
+    }
+
+    void Group::ReloadChildren() {
+        auto const layoutEntity = std::static_pointer_cast<LayoutEntityGroup>(m_layout);
+        for (auto& child : m_children) {
+            child->SetParent(nullptr);
+        }
+        m_children.clear();
+        auto& nodeFactory = NodeFactory::Get();
+        for (auto&& childEntity : layoutEntity->m_children) {
+            AddChild(nodeFactory.Create(m_context, childEntity));
+        }
+        UpdateChildBounds();
+        m_animationClipController = std::make_unique<AnimationClipController>(this);
+    }
+
+    void Group::ReapplyOverrides(LayoutEntity& childLayout) {
+        if (auto* ref = dynamic_cast<LayoutEntityRef*>(m_layout.get())) {
+            ref->ReapplyOverrides(childLayout);
+        }
     }
 
     void Group::DrawInternal() {
@@ -143,19 +162,5 @@ namespace moth_ui {
                 child->Draw();
             }
         }
-    }
-
-    void Group::ReloadEntityPrivate() {
-        auto const layoutEntity = std::static_pointer_cast<LayoutEntityGroup>(m_layout);
-        for (auto& child : m_children) {
-            child->SetParent(nullptr);
-        }
-        m_children.clear();
-        auto& nodeFactory = NodeFactory::Get();
-        for (auto&& childEntity : layoutEntity->m_children) {
-            AddChild(nodeFactory.Create(m_context, childEntity));
-        }
-        UpdateChildBounds();
-        m_animationClipController = std::make_unique<AnimationClipController>(this);
     }
 }

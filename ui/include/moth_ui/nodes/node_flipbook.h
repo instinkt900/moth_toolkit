@@ -53,7 +53,7 @@ namespace moth_ui {
          * before loading. After a successful load the node has no active clip and is
          * not playing; clip selection and autoplay are driven by discrete animation
          * tracks (@c FlipbookClip and @c FlipbookPlaying) evaluated via
-         * @c ReloadEntityPrivate() when the node is instantiated from a
+         * @c ReloadEntityInternal() when the node is instantiated from a
          * @c LayoutEntityFlipbook, or by explicit calls to @c SetClip() and
          * @c SetPlaying() at runtime.
          *
@@ -118,7 +118,6 @@ namespace moth_ui {
         void DrawInternal() override;
 
     private:
-        void ReloadEntityPrivate();
         std::shared_ptr<NodeFlipbook> SharedFromThis();
     };
 }

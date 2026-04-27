@@ -100,6 +100,8 @@ namespace moth_ui {
         /// @brief Stops the currently playing animation clip.
         void StopAnimation() override;
 
+        void ReapplyOverrides(LayoutEntity& childLayout);
+
         /**
          * @brief Returns the direct child whose identifier matches @p id.
          * @param id Identifier to look up.
@@ -137,6 +139,6 @@ namespace moth_ui {
         void DrawInternal() override;
 
     private:
-        void ReloadEntityPrivate();
+        void ReloadChildren();
     };
 }

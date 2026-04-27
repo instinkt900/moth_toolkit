@@ -14,7 +14,19 @@ namespace moth_ui {
 
     NodeFlipbook::NodeFlipbook(Context& context, std::shared_ptr<LayoutEntityFlipbook> layoutEntity)
         : Node(context, layoutEntity) {
-        ReloadEntityPrivate();
+        auto const layoutEntityPtr = std::static_pointer_cast<LayoutEntityFlipbook>(m_layout);
+        m_textureFilter = layoutEntityPtr->m_textureFilter;
+        Load(layoutEntityPtr->m_flipbookPath);
+
+        auto& controller = GetAnimationController();
+        controller.ClearDiscreteCallbacks();
+        controller.RegisterDiscreteCallback(AnimationTrack::Target::FlipbookClip, [this](std::string_view value) {
+            SetClip(value);
+        });
+        controller.RegisterDiscreteCallback(AnimationTrack::Target::FlipbookPlaying, [this](std::string_view value) {
+            SetPlaying(value == "1");
+        });
+        controller.SetFrameDiscrete(0.0f);
     }
 
     void NodeFlipbook::UpdateChildBounds() {
@@ -43,13 +55,9 @@ namespace moth_ui {
 
     void NodeFlipbook::ReloadEntityInternal() {
         Node::ReloadEntityInternal();
-        ReloadEntityPrivate();
-    }
-
-    void NodeFlipbook::ReloadEntityPrivate() {
-        auto const layoutEntity = std::static_pointer_cast<LayoutEntityFlipbook>(m_layout);
-        m_textureFilter = layoutEntity->m_textureFilter;
-        Load(layoutEntity->m_flipbookPath);
+        auto const layoutEntityPtr = std::static_pointer_cast<LayoutEntityFlipbook>(m_layout);
+        m_textureFilter = layoutEntityPtr->m_textureFilter;
+        Load(layoutEntityPtr->m_flipbookPath);
 
         auto& controller = GetAnimationController();
         controller.ClearDiscreteCallbacks();
@@ -59,7 +67,6 @@ namespace moth_ui {
         controller.RegisterDiscreteCallback(AnimationTrack::Target::FlipbookPlaying, [this](std::string_view value) {
             SetPlaying(value == "1");
         });
-        // Apply initial state from discrete tracks at frame 0.
         controller.SetFrameDiscrete(0.0f);
     }
 

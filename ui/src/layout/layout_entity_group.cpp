@@ -36,14 +36,4 @@ namespace moth_ui {
     }
 
     LayoutEntityGroup::~LayoutEntityGroup() = default;
-
-    nlohmann::json LayoutEntityGroup::Serialize(SerializeContext const& context) const {
-        assert(false && "Group should never be serialized");
-        return {};
-    }
-
-    bool LayoutEntityGroup::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
-        assert(false && "Group should never be deserialized");
-        return false;
-    }
 }

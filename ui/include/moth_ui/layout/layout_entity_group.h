@@ -30,9 +30,6 @@ namespace moth_ui {
         /// @brief Returns @c LayoutEntityType::Group.
         LayoutEntityType GetType() const override { return LayoutEntityType::Group; }
 
-        nlohmann::json Serialize(SerializeContext const& context) const override;
-        bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
-
         std::vector<std::shared_ptr<LayoutEntity>> m_children; ///< Ordered child entities.
         std::vector<std::shared_ptr<AnimationClip>> m_clips;   ///< Named animation clips for this group.
         std::vector<std::unique_ptr<AnimationEvent>> m_events; ///< Frame-triggered animation event markers.

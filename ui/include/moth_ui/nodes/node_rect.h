@@ -39,8 +39,5 @@ namespace moth_ui {
 
         void ReloadEntityInternal() override;
         void DrawInternal() override;
-
-    private:
-        void ReloadEntityPrivate();
     };
 }

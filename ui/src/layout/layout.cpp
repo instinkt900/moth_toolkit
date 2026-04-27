@@ -21,6 +21,9 @@ namespace moth_ui {
             if (entity->Deserialize(json, context)) {
                 return entity;
             }
+            GetLogger().Warning("Failed to deserialize child entity of type '{}'", magic_enum::enum_name(type));
+        } else {
+            GetLogger().Warning("Unknown child entity type '{}'", magic_enum::enum_name(type));
         }
         return nullptr;
     }

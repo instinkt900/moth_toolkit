@@ -41,7 +41,21 @@ namespace moth_ui {
             return !(*this == other);
         }
 
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(AnimationClip, m_name, m_startFrame, m_endFrame, m_fps, m_loopType);
+        friend void to_json(nlohmann::json& j, AnimationClip const& clip) {
+            j["m_name"] = clip.m_name;
+            j["m_startFrame"] = clip.m_startFrame;
+            j["m_endFrame"] = clip.m_endFrame;
+            j["m_fps"] = clip.m_fps;
+            j["m_loopType"] = clip.m_loopType;
+        }
+
+        friend void from_json(nlohmann::json const& j, AnimationClip& clip) {
+            clip.m_name = j.value("m_name", "");
+            clip.m_startFrame = j.value("m_startFrame", 0);
+            clip.m_endFrame = j.value("m_endFrame", 0);
+            clip.m_fps = j.value("m_fps", DefaultFPS);
+            clip.m_loopType = j.value("m_loopType", LoopType::Stop);
+        }
 
         AnimationClip() = default;
         AnimationClip(AnimationClip const&) = default;

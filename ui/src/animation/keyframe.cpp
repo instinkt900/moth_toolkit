@@ -40,7 +40,7 @@ namespace moth_ui {
             keyframe.m_value = std::get<float>(oldValueType);
         }
 
-        json.at("frame").get_to(keyframe.m_frame);
-        json.at("interp").get_to(keyframe.m_interpType);
+        keyframe.m_frame = json.value("frame", 0);
+        keyframe.m_interpType = json.value("interp", InterpType::Linear);
     }
 }

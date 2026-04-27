@@ -104,6 +104,13 @@ namespace moth_ui {
         /// @brief Stops the currently playing animation clip.
         void StopAnimation() override;
 
+        /**
+         * @brief Re-applies property overrides from a LayoutEntityRef to a child's layout entity.
+         *
+         * Called by the child node during ReloadEntity when the parent is a layout reference.
+         *
+         * @param childLayout The child node's layout entity to apply overrides to.
+         */
         void ReapplyOverrides(LayoutEntity& childLayout);
 
         /// @brief Returns the typed layout entity pointer for this group.

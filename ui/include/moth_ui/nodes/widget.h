@@ -41,7 +41,7 @@ namespace moth_ui {
          * @return @c true; used only as an initialiser return value.
          */
         static bool SelfRegister() {
-            NodeFactory::Get().RegisterWidget(T::ClassName, [](Context& context, auto entity) -> std::unique_ptr<Group> { return std::make_unique<T>(context, entity); });
+            NodeFactory::Get().RegisterWidget(T::ClassName, [](Context& context, auto entity) -> std::shared_ptr<Group> { return std::make_shared<T>(context, entity); });
             return true;
         }
 

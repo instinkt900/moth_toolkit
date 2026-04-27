@@ -176,4 +176,12 @@ namespace moth_ui {
         m_animationController = std::make_unique<AnimationController>(*this);
         UpdateLocalTransform();
     }
+
+    std::shared_ptr<Node> Node::Create(Context& context) {
+        return std::shared_ptr<Node>(new Node(context));
+    }
+
+    std::shared_ptr<Node> Node::Create(Context& context, std::shared_ptr<LayoutEntity> layoutEntity) {
+        return std::shared_ptr<Node>(new Node(context, std::move(layoutEntity)));
+    }
 }

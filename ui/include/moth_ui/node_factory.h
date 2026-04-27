@@ -34,7 +34,7 @@ namespace moth_ui {
         }
 
         /// @brief Signature of a widget creation callback.
-        using CreationFunction = std::unique_ptr<Group> (*)(Context& context, std::shared_ptr<LayoutEntityGroup>);
+        using CreationFunction = std::shared_ptr<Group> (*)(Context& context, std::shared_ptr<LayoutEntityGroup>);
 
         /**
          * @brief Registers a custom widget class with a creation callback.
@@ -52,7 +52,7 @@ namespace moth_ui {
          * @param height  Desired height in pixels.
          * @return Root Group node, or @c nullptr on failure.
          */
-        std::unique_ptr<Group> Create(Context& context, std::filesystem::path const& path, int width, int height);
+        std::shared_ptr<Group> Create(Context& context, std::filesystem::path const& path, int width, int height);
 
         /**
          * @brief Instantiates a Group node tree from a LayoutEntityGroup.
@@ -60,7 +60,7 @@ namespace moth_ui {
          * @param group   Layout entity describing the group.
          * @return Instantiated Group node.
          */
-        std::unique_ptr<Group> Create(Context& context, std::shared_ptr<LayoutEntityGroup> group);
+        std::shared_ptr<Group> Create(Context& context, std::shared_ptr<LayoutEntityGroup> group);
 
         /**
          * @brief Instantiates a single Node from a LayoutEntity.
@@ -68,7 +68,7 @@ namespace moth_ui {
          * @param entity  Layout entity to instantiate.
          * @return Instantiated Node, or @c nullptr on failure.
          */
-        std::unique_ptr<Node> Create(Context& context, std::shared_ptr<LayoutEntity> entity);
+        std::shared_ptr<Node> Create(Context& context, std::shared_ptr<LayoutEntity> entity);
 
     private:
         NodeFactory() = default;

@@ -20,18 +20,6 @@ namespace moth_ui {
      */
     class Node : public EventListener, public std::enable_shared_from_this<Node> {
     public:
-        /**
-         * @brief Constructs a node with no associated layout entity.
-         * @param context Active rendering context.
-         */
-        Node(Context& context);
-
-        /**
-         * @brief Constructs a node from a serialised layout entity.
-         * @param context      Active rendering context.
-         * @param layoutEntity Deserialised description of this node.
-         */
-        Node(Context& context, std::shared_ptr<LayoutEntity> layoutEntity);
         Node(Node const& other) = delete;
         Node(Node&& other) = default;
         Node& operator=(Node const&) = delete;
@@ -40,6 +28,21 @@ namespace moth_ui {
         // an already-inserted node would corrupt the parent's child list.
         Node& operator=(Node&&) = delete;
         ~Node() override;
+
+        /**
+         * @brief Creates a Node with no layout entity.
+         * @param context Active rendering context.
+         * @return A shared_ptr managing the new node.
+         */
+        static std::shared_ptr<Node> Create(Context& context);
+
+        /**
+         * @brief Creates a Node from a serialised layout entity.
+         * @param context      Active rendering context.
+         * @param layoutEntity Deserialised description of this node.
+         * @return A shared_ptr managing the new node.
+         */
+        static std::shared_ptr<Node> Create(Context& context, std::shared_ptr<LayoutEntity> layoutEntity);
 
         /// @brief Direction in which an event travels through the scene graph.
         enum class EventDirection {
@@ -260,6 +263,19 @@ namespace moth_ui {
         AnimationController const& GetAnimationController() const { return *m_animationController; }
 
     protected:
+        /**
+         * @brief Constructs a node with no associated layout entity.
+         * @param context Active rendering context.
+         */
+        Node(Context& context);
+
+        /**
+         * @brief Constructs a node from a serialised layout entity.
+         * @param context      Active rendering context.
+         * @param layoutEntity Deserialised description of this node.
+         */
+        Node(Context& context, std::shared_ptr<LayoutEntity> layoutEntity);
+
         /// @brief Returns the fully composed local-to-world transform for this node.
         FloatMat4x4 GetWorldTransform() const;
 

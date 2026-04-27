@@ -12,23 +12,26 @@ namespace moth_ui {
      */
     class Group : public Node {
     public:
-        /**
-         * @brief Constructs an empty group with no layout entity.
-         * @param context Active rendering context.
-         */
-        Group(Context& context);
-
-        /**
-         * @brief Constructs a group from a serialised layout entity.
-         * @param context           Active rendering context.
-         * @param layoutEntityGroup Deserialised group description.
-         */
-        Group(Context& context, std::shared_ptr<LayoutEntityGroup> layoutEntityGroup);
         Group(Group const& other) = delete;
         Group(Group&& other) = default;
         Group& operator=(Group const&) = delete;
         Group& operator=(Group&&) = delete;
         ~Group() override = default;
+
+        /**
+         * @brief Creates an empty group with no layout entity.
+         * @param context Active rendering context.
+         * @return A shared_ptr managing the new group.
+         */
+        static std::shared_ptr<Group> Create(Context& context);
+
+        /**
+         * @brief Creates a group from a serialised layout entity.
+         * @param context           Active rendering context.
+         * @param layoutEntityGroup Deserialised group description.
+         * @return A shared_ptr managing the new group.
+         */
+        static std::shared_ptr<Group> Create(Context& context, std::shared_ptr<LayoutEntityGroup> layoutEntityGroup);
 
         /**
          * @brief Broadcasts an event across this subtree in depth-first order.
@@ -146,6 +149,19 @@ namespace moth_ui {
         }
 
     protected:
+        /**
+         * @brief Constructs an empty group with no layout entity.
+         * @param context Active rendering context.
+         */
+        Group(Context& context);
+
+        /**
+         * @brief Constructs a group from a serialised layout entity.
+         * @param context           Active rendering context.
+         * @param layoutEntityGroup Deserialised group description.
+         */
+        Group(Context& context, std::shared_ptr<LayoutEntityGroup> layoutEntityGroup);
+
         std::vector<std::shared_ptr<Node>> m_children;
         std::unique_ptr<AnimationClipController> m_animationClipController;
 

@@ -16,8 +16,8 @@ namespace moth_ui {
         return std::make_shared<LayoutEntityClip>(*this);
     }
 
-    std::unique_ptr<Node> LayoutEntityClip::Instantiate(Context& context) {
-        return std::make_unique<NodeClip>(context, std::static_pointer_cast<LayoutEntityClip>(shared_from_this()));
+    std::shared_ptr<Node> LayoutEntityClip::Instantiate(Context& context) {
+        return NodeClip::Create(context, std::static_pointer_cast<LayoutEntityClip>(shared_from_this()));
     }
 
     nlohmann::json LayoutEntityClip::Serialize(SerializeContext const& context) const {

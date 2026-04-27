@@ -137,6 +137,7 @@ namespace moth_ui {
     void Group::ReloadEntityInternal() {
         Node::ReloadEntityInternal();
         ReloadChildren();
+        UpdateChildBounds();
     }
 
     void Group::ReloadChildren() {
@@ -148,7 +149,6 @@ namespace moth_ui {
         for (auto&& childEntity : m_typedLayout->m_children) {
             AddChild(nodeFactory.Create(m_context, childEntity));
         }
-        UpdateChildBounds();
         m_animationClipController = std::make_unique<AnimationClipController>(this);
     }
 
@@ -171,5 +171,15 @@ namespace moth_ui {
                 child->Draw();
             }
         }
+    }
+
+    std::shared_ptr<Group> Group::Create(Context& context) {
+        return std::shared_ptr<Group>(new Group(context));
+    }
+
+    std::shared_ptr<Group> Group::Create(Context& context, std::shared_ptr<LayoutEntityGroup> layoutEntityGroup) {
+        auto group = std::shared_ptr<Group>(new Group(context, std::move(layoutEntityGroup)));
+        group->UpdateChildBounds();
+        return group;
     }
 }

@@ -27,4 +27,12 @@ namespace moth_ui {
             m_context.GetRenderer().RenderRect(localRect);
         }
     }
+
+    std::shared_ptr<NodeRect> NodeRect::Create(Context& context) {
+        return std::shared_ptr<NodeRect>(new NodeRect(context));
+    }
+
+    std::shared_ptr<NodeRect> NodeRect::Create(Context& context, std::shared_ptr<LayoutEntityRect> layoutEntity) {
+        return std::shared_ptr<NodeRect>(new NodeRect(context, std::move(layoutEntity)));
+    }
 }

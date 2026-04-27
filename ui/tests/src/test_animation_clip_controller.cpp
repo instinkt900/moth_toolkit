@@ -42,7 +42,7 @@ namespace {
             clip->m_loopType = loopType;
             layout->m_clips.push_back(clip);
 
-            group = std::make_shared<Group>(mc.context, layout);
+            group = Group::Create(mc.context, layout);
             group->SetEventHandler([this](Node* /*node*/, Event const& e) -> bool {
                 if (auto const* ev = event_cast<EventAnimationStarted>(e)) {
                     startedClips.push_back(ev->GetClipName());

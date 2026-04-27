@@ -91,4 +91,12 @@ namespace moth_ui {
             m_targetSlices[3] = static_cast<IntVec2>(screenDim);
         }
     }
+
+    std::shared_ptr<NodeImage> NodeImage::Create(Context& context) {
+        return std::shared_ptr<NodeImage>(new NodeImage(context));
+    }
+
+    std::shared_ptr<NodeImage> NodeImage::Create(Context& context, std::shared_ptr<LayoutEntityImage> layoutEntity) {
+        return std::shared_ptr<NodeImage>(new NodeImage(context, std::move(layoutEntity)));
+    }
 }

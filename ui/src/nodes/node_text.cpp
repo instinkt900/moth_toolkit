@@ -80,4 +80,12 @@ namespace moth_ui {
 #endif
         }
     }
+
+    std::shared_ptr<NodeText> NodeText::Create(Context& context) {
+        return std::shared_ptr<NodeText>(new NodeText(context));
+    }
+
+    std::shared_ptr<NodeText> NodeText::Create(Context& context, std::shared_ptr<LayoutEntityText> layoutEntity) {
+        return std::shared_ptr<NodeText>(new NodeText(context, std::move(layoutEntity)));
+    }
 }

@@ -62,7 +62,7 @@ namespace moth_ui {
          * @param context Active rendering context.
          * @return Newly allocated Node.
          */
-        virtual std::unique_ptr<Node> Instantiate(Context& context) = 0;
+        virtual std::shared_ptr<Node> Instantiate(Context& context) = 0;
 
         /**
          * @brief Sets the layout rect at a specific keyframe.

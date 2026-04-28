@@ -13,7 +13,7 @@ namespace moth_ui {
     class Group : public Node {
     public:
         Group(Group const& other) = delete;
-        Group(Group&& other) = default;
+        Group(Group&& other) = delete;
         Group& operator=(Group const&) = delete;
         Group& operator=(Group&&) = delete;
         ~Group() override = default; ///< Destroys the group and its children.

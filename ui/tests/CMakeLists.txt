@@ -18,8 +18,9 @@ set(SOURCES
     src/test_interp.cpp
     src/test_animation_clip.cpp
     src/test_animation_track.cpp
-    src/test_animation_event.cpp
+    src/test_animation_marker.cpp
     src/test_layout_rect.cpp
+    src/test_event_key.cpp
     src/test_event_dispatch.cpp
     src/test_node.cpp
     src/test_node_entity.cpp
@@ -30,6 +31,10 @@ set(SOURCES
     src/test_node_flipbook.cpp
     src/test_discrete_animation_track.cpp
     src/test_discrete_animation_track_controller.cpp
+    src/test_logger.cpp
+    src/test_node_factory.cpp
+    src/test_layout_cache.cpp
+    src/test_layer_stack.cpp
     # API surface tests — compile-time only, no runtime assertions
     src/api_surface_umbrella.cpp
     src/api_surface_fwd.cpp

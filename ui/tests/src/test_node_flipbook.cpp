@@ -132,13 +132,13 @@ static MockFlipbook MakeSimpleFlipbook() {
 TEST_CASE("Load with null factory clears all flipbook state", "[flipbook][load]") {
     // Context has no flipbook factory — Load should leave the node fully cleared.
     MockContext mc;
-    auto node = std::make_shared<NodeFlipbook>(mc.context);
+    auto node = NodeFlipbook::Create(mc.context);
 
     // Pre-load a valid flipbook so there is state to clear.
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
-    auto primed = std::make_shared<NodeFlipbook>(tc.context);
+    auto primed = NodeFlipbook::Create(tc.context);
     primed->Load("dummy.flipbook.json");
     primed->SetClip("run");
     REQUIRE(primed->GetFlipbook() != nullptr);
@@ -154,7 +154,7 @@ TEST_CASE("Load with null factory clears all flipbook state", "[flipbook][load]"
 TEST_CASE("Load with factory returning null clears all flipbook state", "[flipbook][load]") {
     FlipbookTestContext tc;
     // nextFlipbook is null — factory returns nullptr.
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load("nonexistent.flipbook.json");
 
     REQUIRE(node->GetFlipbook() == nullptr);
@@ -168,7 +168,7 @@ TEST_CASE("Load clears previous flipbook when factory returns null", "[flipbook]
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
 
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load("dummy.flipbook.json");
     node->SetClip("run");
     REQUIRE(node->GetFlipbook() != nullptr);
@@ -188,7 +188,7 @@ TEST_CASE("Load with zero frames clears flipbook", "[flipbook][load]") {
     MockFlipbook fb; // no frames added
     tc.flipbookFactory.nextFlipbook = &fb;
 
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load("dummy.flipbook.json");
 
     REQUIRE(node->GetFlipbook() == nullptr);
@@ -201,7 +201,7 @@ TEST_CASE("Load forwards path to flipbook factory", "[flipbook][load]") {
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
 
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load(std::filesystem::path{ "dummy.flipbook.json" });
 
     REQUIRE(tc.flipbookFactory.getFlipbookCalls == 1);
@@ -213,7 +213,7 @@ TEST_CASE("Load resets playback state before loading", "[flipbook][load]") {
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
 
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load("dummy.flipbook.json");
     node->SetClip("run");
     node->SetPlaying(true);
@@ -232,7 +232,7 @@ TEST_CASE("SetClip after Load activates the named clip", "[flipbook][load]") {
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
 
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load("dummy.flipbook.json");
     node->SetClip("run");
 
@@ -245,7 +245,7 @@ TEST_CASE("Load with no clip set leaves clip unset", "[flipbook][load]") {
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
 
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load("dummy.flipbook.json");
     // No SetClip call — clip stays empty.
 
@@ -262,8 +262,7 @@ TEST_CASE("Discrete track FlipbookPlaying=1 at frame 0 starts playback on instan
     entity->m_discreteTracks.at(AnimationTrack::Target::FlipbookClip).GetOrCreateKeyframe(0) = "run";
     entity->m_discreteTracks.at(AnimationTrack::Target::FlipbookPlaying).GetOrCreateKeyframe(0) = "1";
 
-    auto nodeBase = entity->Instantiate(tc.context);
-    auto* node = static_cast<NodeFlipbook*>(nodeBase.get());
+    auto node = std::dynamic_pointer_cast<NodeFlipbook>(entity->Instantiate(tc.context));
 
     REQUIRE(node->IsPlaying());
     REQUIRE(node->GetCurrentClipName() == "run");
@@ -278,8 +277,7 @@ TEST_CASE("Discrete track FlipbookPlaying=0 at frame 0 does not start playback o
     entity->m_discreteTracks.at(AnimationTrack::Target::FlipbookClip).GetOrCreateKeyframe(0) = "run";
     // FlipbookPlaying defaults to "0" at frame 0 from InitDiscreteFlipbookTracks.
 
-    auto nodeBase = entity->Instantiate(tc.context);
-    auto* node = static_cast<NodeFlipbook*>(nodeBase.get());
+    auto node = std::dynamic_pointer_cast<NodeFlipbook>(entity->Instantiate(tc.context));
 
     REQUIRE_FALSE(node->IsPlaying());
     REQUIRE(node->GetCurrentClipName() == "run");
@@ -294,8 +292,7 @@ TEST_CASE("Discrete track FlipbookPlaying=1 with no clip does not start playback
     entity->m_discreteTracks.at(AnimationTrack::Target::FlipbookPlaying).GetOrCreateKeyframe(0) = "1";
     // No clip name set in FlipbookClip track.
 
-    auto nodeBase = entity->Instantiate(tc.context);
-    auto* node = static_cast<NodeFlipbook*>(nodeBase.get());
+    auto node = std::dynamic_pointer_cast<NodeFlipbook>(entity->Instantiate(tc.context));
 
     REQUIRE_FALSE(node->IsPlaying());
 }
@@ -306,7 +303,7 @@ TEST_CASE("Discrete track FlipbookPlaying=1 with no clip does not start playback
 
 TEST_CASE("NodeFlipbook default state: no clip, not playing, frame 0", "[flipbook]") {
     FlipbookTestContext tc;
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
 
     REQUIRE(node->GetFlipbook() == nullptr);
     REQUIRE_FALSE(node->IsPlaying());
@@ -316,7 +313,7 @@ TEST_CASE("NodeFlipbook default state: no clip, not playing, frame 0", "[flipboo
 
 TEST_CASE("NodeFlipbook Update without flipbook does not crash", "[flipbook]") {
     FlipbookTestContext tc;
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Update(1000);
     REQUIRE(node->GetCurrentFrame() == 0);
 }
@@ -335,7 +332,7 @@ TEST_CASE("SetClip with valid name resets to first step of the clip", "[flipbook
     fb.clips["run"]  = MakeClip({ 3, 4, 5 }, 84,  IFlipbook::LoopType::Loop);
 
     tc.flipbookFactory.nextFlipbook = &fb;
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load("dummy.flipbook.json");
 
     node->SetClip("run");
@@ -347,7 +344,7 @@ TEST_CASE("SetClip with invalid name clears clip", "[flipbook][clip]") {
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load("dummy.flipbook.json");
     node->SetClip("run");
 
@@ -357,7 +354,7 @@ TEST_CASE("SetClip with invalid name clears clip", "[flipbook][clip]") {
 
 TEST_CASE("SetClip without flipbook does nothing", "[flipbook][clip]") {
     FlipbookTestContext tc;
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->SetClip("run");
     REQUIRE(node->GetCurrentClipName().empty());
     REQUIRE(node->GetCurrentFrame() == 0);
@@ -371,7 +368,7 @@ TEST_CASE("SetPlaying without a clip does not start playback", "[flipbook][playi
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load("dummy.flipbook.json");
     node->SetPlaying(true);
     REQUIRE_FALSE(node->IsPlaying());
@@ -379,7 +376,7 @@ TEST_CASE("SetPlaying without a clip does not start playback", "[flipbook][playi
 
 TEST_CASE("SetPlaying without a flipbook does not start playback", "[flipbook][playing]") {
     FlipbookTestContext tc;
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->SetPlaying(true);
     REQUIRE_FALSE(node->IsPlaying());
 }
@@ -388,7 +385,7 @@ TEST_CASE("SetPlaying false while already stopped is a no-op", "[flipbook][playi
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load("dummy.flipbook.json");
     node->SetClip("run");
     REQUIRE_FALSE(node->IsPlaying());
@@ -400,7 +397,7 @@ TEST_CASE("SetPlaying true after clip is set starts playback", "[flipbook][playi
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load("dummy.flipbook.json");
     node->SetClip("run");
     node->SetPlaying(true);
@@ -411,7 +408,7 @@ TEST_CASE("SetPlaying false pauses playback", "[flipbook][playing]") {
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load("dummy.flipbook.json");
     node->SetClip("run");
     node->SetPlaying(true);
@@ -423,12 +420,12 @@ TEST_CASE("SetPlaying false pauses playback", "[flipbook][playing]") {
 // Tests — frame advancement
 // ---------------------------------------------------------------------------
 
-TEST_CASE("Update with zero durationMs does not advance and does not crash", "[flipbook][update][duration]") {
+TEST_CASE("Update with zero durationMs treats frame as 1 ms", "[flipbook][update][duration]") {
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
-    fb.clips["run"] = MakeClip({ 0, 1, 2, 3 }, 0, IFlipbook::LoopType::Loop); // zero duration
+    fb.clips["run"] = MakeClip({ 0, 1, 2, 3 }, 0, IFlipbook::LoopType::Loop);
     tc.flipbookFactory.nextFlipbook = &fb;
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load("dummy.flipbook.json");
     node->SetClip("run");
     node->SetPlaying(true);
@@ -436,6 +433,8 @@ TEST_CASE("Update with zero durationMs does not advance and does not crash", "[f
     node->Update(1000);
 
     REQUIRE(node->IsPlaying());
+    // Zero-duration frames are clamped to 1 ms; 1000 ms advances through
+    // 250 complete loops of the 4-frame clip, landing back at frame 0.
     REQUIRE(node->GetCurrentFrame() == 0);
 }
 
@@ -444,7 +443,7 @@ TEST_CASE("Update advances frame at correct duration", "[flipbook][update]") {
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook(); // 84 ms per frame
     tc.flipbookFactory.nextFlipbook = &fb;
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load("dummy.flipbook.json");
     node->SetClip("run");
     node->SetPlaying(true);
@@ -464,7 +463,7 @@ TEST_CASE("Update does not advance frame when paused", "[flipbook][update]") {
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load("dummy.flipbook.json");
     node->SetClip("run");
     // Not calling SetPlaying — stays paused.
@@ -478,7 +477,7 @@ TEST_CASE("Update advances multiple frames in one large tick", "[flipbook][updat
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load("dummy.flipbook.json");
     node->SetClip("run");
     node->SetPlaying(true);
@@ -496,7 +495,7 @@ TEST_CASE("LoopType::Loop wraps back to first step", "[flipbook][loop]") {
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load("dummy.flipbook.json");
     node->SetClip("run");
     node->SetPlaying(true);
@@ -510,7 +509,7 @@ TEST_CASE("LoopType::Loop continues playing after wrap", "[flipbook][loop]") {
     FlipbookTestContext tc;
     MockFlipbook fb = MakeSimpleFlipbook();
     tc.flipbookFactory.nextFlipbook = &fb;
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load("dummy.flipbook.json");
     node->SetClip("run");
     node->SetPlaying(true);
@@ -532,7 +531,7 @@ TEST_CASE("LoopType::Stop freezes on last step and stops playing", "[flipbook][s
     fb.clips["hit"] = MakeClip({ 0, 1, 2, 3 }, 84, IFlipbook::LoopType::Stop);
     tc.flipbookFactory.nextFlipbook = &fb;
 
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load("dummy.flipbook.json");
     node->SetClip("hit");
     node->SetPlaying(true);
@@ -555,7 +554,7 @@ TEST_CASE("LoopType::Reset rewinds to first step and stops playing", "[flipbook]
     fb.clips["die"] = MakeClip({ 0, 1, 2, 3 }, 100, IFlipbook::LoopType::Reset);
     tc.flipbookFactory.nextFlipbook = &fb;
 
-    auto node = std::make_shared<NodeFlipbook>(tc.context);
+    auto node = NodeFlipbook::Create(tc.context);
     node->Load("dummy.flipbook.json");
     node->SetClip("die");
     node->SetPlaying(true);
@@ -573,8 +572,8 @@ TEST_CASE("LoopType::Reset rewinds to first step and stops playing", "[flipbook]
 static std::shared_ptr<Group> MakeGroupWithFlipbookChild(
     moth_ui::Context& ctx,
     std::shared_ptr<NodeFlipbook>& outFlipbook) {
-    auto group    = std::make_shared<Group>(ctx);
-    auto flipbook = std::make_shared<NodeFlipbook>(ctx);
+    auto group    = Group::Create(ctx);
+    auto flipbook = NodeFlipbook::Create(ctx);
     outFlipbook   = flipbook;
     group->AddChild(flipbook);
     return group;

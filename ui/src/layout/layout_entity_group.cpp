@@ -1,7 +1,7 @@
 #include "common.h"
 #include "moth_ui/layout/layout_entity_group.h"
 #include "moth_ui/animation/animation_clip.h"
-#include "moth_ui/animation/animation_event.h"
+#include "moth_ui/animation/animation_marker.h"
 
 namespace moth_ui {
     LayoutEntityGroup::LayoutEntityGroup(LayoutRect const& initialBounds)
@@ -21,7 +21,7 @@ namespace moth_ui {
             m_clips.push_back(std::make_shared<AnimationClip>(*clip));
         }
         for (auto&& event : other.m_events) {
-            m_events.push_back(std::make_unique<AnimationEvent>(*event));
+            m_events.push_back(std::make_unique<AnimationMarker>(*event));
         }
     }
 
@@ -36,14 +36,4 @@ namespace moth_ui {
     }
 
     LayoutEntityGroup::~LayoutEntityGroup() = default;
-
-    nlohmann::json LayoutEntityGroup::Serialize(SerializeContext const& context) const {
-        assert(false && "Group should never be serialized");
-        return {};
-    }
-
-    bool LayoutEntityGroup::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
-        assert(false && "Group should never be deserialized");
-        return false;
-    }
 }

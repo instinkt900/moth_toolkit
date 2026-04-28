@@ -2,8 +2,8 @@
 
 // NOLINTBEGIN
 
+#include <array>
 #include <cassert>
-#include <map>
 
 #undef M_PI
 #define _USE_MATH_DEFINES
@@ -83,107 +83,107 @@ namespace moth_ui {
     static float constexpr F_PI = static_cast<float>(M_PI);
 
     /// @brief Step easing: always returns 0 (value jumps at t==1).
-    inline float easeStep(float x) {
+    inline float interpStep(float x) {
         return 0.0f;
     }
 
     /// @brief Linear easing: returns @p x unchanged.
-    inline float easeLinear(float x) {
+    inline float interpLinear(float x) {
         return x;
     }
 
     /// @brief Smooth-step easing: cubic Hermite curve.
-    inline float easeSmooth(float x) {
+    inline float interpSmooth(float x) {
         return x * x * (3.0f - 2.0f * x);
     }
 
     /// @brief Sine ease-in.
-    inline float easeSineIn(float x) {
+    inline float interpSineIn(float x) {
         return 1.0f - std::cos((x * F_PI) / 2.0f);
     }
 
     /// @brief Sine ease-out.
-    inline float easeSineOut(float x) {
+    inline float interpSineOut(float x) {
         return std::sin((x * F_PI) / 2.0f);
     }
 
     /// @brief Sine ease-in-out.
-    inline float easeSineInOut(float x) {
+    inline float interpSineInOut(float x) {
         return -(std::cos(F_PI * x) - 1.0f) / 2.0f;
     }
 
     /// @brief Quadratic ease-in.
-    inline float easeQuadIn(float x) {
+    inline float interpQuadIn(float x) {
         return x * x;
     }
 
     /// @brief Quadratic ease-out.
-    inline float easeQuadOut(float x) {
+    inline float interpQuadOut(float x) {
         return 1.0f - (1.0f - x) * (1.0f - x);
     }
 
     /// @brief Quadratic ease-in-out.
-    inline float easeQuadInOut(float x) {
+    inline float interpQuadInOut(float x) {
         return (x < 0.5f) ? (2.0f * x * x) : (1.0f - std::pow(-2.0f * x + 2.0f, 2.0f) / 2.0f);
     }
 
     /// @brief Cubic ease-in.
-    inline float easeCubicIn(float x) {
+    inline float interpCubicIn(float x) {
         return x * x * x;
     }
 
     /// @brief Cubic ease-out.
-    inline float easeCubicOut(float x) {
+    inline float interpCubicOut(float x) {
         return 1.0f - std::pow(1.0f - x, 3.0f);
     }
 
     /// @brief Cubic ease-in-out.
-    inline float easeCubicInOut(float x) {
+    inline float interpCubicInOut(float x) {
         return (x < 0.5f) ? (4.0f * x * x * x) : (1.0f - std::pow(-2.0f * x + 2.0f, 3.0f) / 2.0f);
     }
 
     /// @brief Quartic ease-in.
-    inline float easeQuartIn(float x) {
+    inline float interpQuartIn(float x) {
         return x * x * x * x;
     }
 
     /// @brief Quartic ease-out.
-    inline float easeQuartOut(float x) {
+    inline float interpQuartOut(float x) {
         return 1.0f - std::pow(1.0f - x, 4.0f);
     }
 
     /// @brief Quartic ease-in-out.
-    inline float easeQuartInOut(float x) {
+    inline float interpQuartInOut(float x) {
         return (x < 0.5f) ? (8.0f * x * x * x * x) : (1.0f - std::pow(-2.0f * x + 2.0f, 4.0f) / 2.0f);
     }
 
     /// @brief Quintic ease-in.
-    inline float easeQuintIn(float x) {
+    inline float interpQuintIn(float x) {
         return x * x * x * x * x;
     }
 
     /// @brief Quintic ease-out.
-    inline float easeQuintOut(float x) {
+    inline float interpQuintOut(float x) {
         return 1.0f - std::pow(1.0f - x, 5.0f);
     }
 
     /// @brief Quintic ease-in-out.
-    inline float easeQuintInOut(float x) {
+    inline float interpQuintInOut(float x) {
         return (x < 0.5f) ? (16.0f * x * x * x * x * x) : (1.0f - std::pow(-2.0f * x + 2.0f, 5.0f) / 2.0f);
     }
 
     /// @brief Exponential ease-in.
-    inline float easeExpoIn(float x) {
+    inline float interpExpoIn(float x) {
         return x == 0.0f ? 0.0f : std::pow(2.0f, 10.0f * x - 10.0f);
     }
 
     /// @brief Exponential ease-out.
-    inline float easeExpoOut(float x) {
+    inline float interpExpoOut(float x) {
         return x == 1.0f ? 1.0f : 1.0f - std::pow(2.0f, -10.0f * x);
     }
 
     /// @brief Exponential ease-in-out.
-    inline float easeExpoInOut(float x) {
+    inline float interpExpoInOut(float x) {
         return x == 0.0f
                    ? 0.0f
                : x == 1.0f
@@ -193,38 +193,38 @@ namespace moth_ui {
     }
 
     /// @brief Circular ease-in.
-    inline float easeCircIn(float x) {
+    inline float interpCircIn(float x) {
         return 1.0f - std::sqrt(1.0f - std::pow(x, 2.0f));
     }
 
     /// @brief Circular ease-out.
-    inline float easeCircOut(float x) {
+    inline float interpCircOut(float x) {
         return std::sqrt(1.0f - std::pow(x - 1.0f, 2.0f));
     }
 
     /// @brief Circular ease-in-out.
-    inline float easeCircInOut(float x) {
+    inline float interpCircInOut(float x) {
         return x < 0.5f
                    ? (1.0f - std::sqrt(1.0f - std::pow(2.0f * x, 2.0f))) / 2.0f
                    : (std::sqrt(1.0f - std::pow(-2.0f * x + 2.0f, 2.0f)) + 1.0f) / 2.0f;
     }
 
     /// @brief Back ease-in (overshoots slightly at the start).
-    inline float easeBackIn(float x) {
+    inline float interpBackIn(float x) {
         float const c1 = 1.70158f;
         float const c3 = c1 + 1.0f;
         return c3 * x * x * x - c1 * x * x;
     }
 
     /// @brief Back ease-out (overshoots slightly at the end).
-    inline float easeBackOut(float x) {
+    inline float interpBackOut(float x) {
         float const c1 = 1.70158f;
         float const c3 = c1 + 1.0f;
         return 1.0f + c3 * std::pow(x - 1.0f, 3.0f) + c1 * std::pow(x - 1.0f, 2.0f);
     }
 
     /// @brief Back ease-in-out.
-    inline float easeBackInOut(float x) {
+    inline float interpBackInOut(float x) {
         float const c1 = 1.70158f;
         float const c2 = c1 * 1.525f;
         return x < 0.5f
@@ -233,7 +233,7 @@ namespace moth_ui {
     }
 
     /// @brief Elastic ease-in.
-    inline float easeElasticIn(float x) {
+    inline float interpElasticIn(float x) {
         float const c4 = (2.0f * F_PI) / 3.0f;
         return x == 0.0f
                    ? 0.0f
@@ -243,7 +243,7 @@ namespace moth_ui {
     }
 
     /// @brief Elastic ease-out.
-    inline float easeElasticOut(float x) {
+    inline float interpElasticOut(float x) {
         float const c4 = (2.0f * F_PI) / 3.0f;
         return x == 0.0f
                    ? 0.0f
@@ -253,7 +253,7 @@ namespace moth_ui {
     }
 
     /// @brief Elastic ease-in-out.
-    inline float easeElasticInOut(float x) {
+    inline float interpElasticInOut(float x) {
         float const c5 = (2.0f * F_PI) / 4.5f;
         return x == 0.0f
                    ? 0.0f
@@ -264,15 +264,15 @@ namespace moth_ui {
                    : (std::pow(2.0f, -20.0f * x + 10.0f) * std::sin((20.0f * x - 11.125f) * c5)) / 2.0f + 1.0f;
     }
 
-    float easeBounceOut(float x);
+    float interpBounceOut(float x);
 
     /// @brief Bounce ease-in.
-    inline float easeBounceIn(float x) {
-        return 1 - easeBounceOut(1.0f - x);
+    inline float interpBounceIn(float x) {
+        return 1 - interpBounceOut(1.0f - x);
     }
 
     /// @brief Bounce ease-out.
-    inline float easeBounceOut(float x) {
+    inline float interpBounceOut(float x) {
         float const n1 = 7.5625f;
         float const d1 = 2.75f;
 
@@ -291,53 +291,55 @@ namespace moth_ui {
     }
 
     /// @brief Bounce ease-in-out.
-    inline float easeBounceInOut(float x) {
+    inline float interpBounceInOut(float x) {
         return x < 0.5f
-                   ? (1.0f - easeBounceOut(1.0f - 2.0f * x)) / 2.0f
-                   : (1.0f + easeBounceOut(2.0f * x - 1.0f)) / 2.0f;
+                   ? (1.0f - interpBounceOut(1.0f - 2.0f * x)) / 2.0f
+                   : (1.0f + interpBounceOut(2.0f * x - 1.0f)) / 2.0f;
     }
 
     /// @brief Function pointer type for easing functions.
-    typedef float (*EaseFunction)(float);
+    typedef float (*InterpFunction)(float);
 
-    /// @brief Map from InterpType to the corresponding easing function.
-    inline std::map<InterpType, EaseFunction> const InterpFuncs{
-        { InterpType::Step, easeStep },
-        { InterpType::Linear, easeLinear },
-        { InterpType::Smooth, easeSmooth },
-        { InterpType::SineIn, easeSineIn },
-        { InterpType::SineOut, easeSineOut },
-        { InterpType::SineInOut, easeSineInOut },
-        { InterpType::QuadIn, easeQuadIn },
-        { InterpType::QuadOut, easeQuadOut },
-        { InterpType::QuadInOut, easeQuadInOut },
-        { InterpType::CubicIn, easeCubicIn },
-        { InterpType::CubicOut, easeCubicOut },
-        { InterpType::CubicInOut, easeCubicInOut },
-        { InterpType::QuartIn, easeQuartIn },
-        { InterpType::QuartOut, easeQuartOut },
-        { InterpType::QuartInOut, easeQuartInOut },
-        { InterpType::QuintIn, easeQuintIn },
-        { InterpType::QuintOut, easeQuintOut },
-        { InterpType::QuintInOut, easeQuintInOut },
-        { InterpType::ExpoIn, easeExpoIn },
-        { InterpType::ExpoOut, easeExpoOut },
-        { InterpType::ExpoInOut, easeExpoInOut },
-        { InterpType::CircIn, easeCircIn },
-        { InterpType::CircOut, easeCircOut },
-        { InterpType::CircInOut, easeCircInOut },
-        { InterpType::BackIn, easeBackIn },
-        { InterpType::BackOut, easeBackOut },
-        { InterpType::BackInOut, easeBackInOut },
-        { InterpType::ElasticIn, easeElasticIn },
-        { InterpType::ElasticOut, easeElasticOut },
-        { InterpType::ElasticInOut, easeElasticInOut },
-        { InterpType::BounceIn, easeBounceIn },
-        { InterpType::BounceOut, easeBounceOut },
-        { InterpType::BounceInOut, easeBounceInOut },
-        // Unknown types default to linear in release.
-        { InterpType::Unknown, easeLinear },
-    };
+    /// @brief Array from InterpType to the corresponding easing function, indexed by enum value.
+    inline constexpr std::array<InterpFunction, 34> InterpFuncs{{
+        interpLinear,       // Unknown
+        interpStep,         // Step
+        interpLinear,       // Linear
+        interpSmooth,       // Smooth
+        interpSineIn,       // SineIn
+        interpSineOut,      // SineOut
+        interpSineInOut,    // SineInOut
+        interpQuadIn,       // QuadIn
+        interpQuadOut,      // QuadOut
+        interpQuadInOut,    // QuadInOut
+        interpCubicIn,      // CubicIn
+        interpCubicOut,     // CubicOut
+        interpCubicInOut,   // CubicInOut
+        interpQuartIn,      // QuartIn
+        interpQuartOut,     // QuartOut
+        interpQuartInOut,   // QuartInOut
+        interpQuintIn,      // QuintIn
+        interpQuintOut,     // QuintOut
+        interpQuintInOut,   // QuintInOut
+        interpExpoIn,       // ExpoIn
+        interpExpoOut,      // ExpoOut
+        interpExpoInOut,    // ExpoInOut
+        interpCircIn,       // CircIn
+        interpCircOut,      // CircOut
+        interpCircInOut,    // CircInOut
+        interpBackIn,       // BackIn
+        interpBackOut,      // BackOut
+        interpBackInOut,    // BackInOut
+        interpElasticIn,    // ElasticIn
+        interpElasticOut,   // ElasticOut
+        interpElasticInOut, // ElasticInOut
+        interpBounceIn,     // BounceIn
+        interpBounceOut,    // BounceOut
+        interpBounceInOut,  // BounceInOut
+    }};
+
+    // If the enum grows, the array must stay in sync.
+    static_assert(InterpFuncs.size() == static_cast<size_t>(InterpType::BounceInOut) + 1);
 
     /**
      * @brief Interpolates between two values using the specified easing curve.
@@ -350,7 +352,7 @@ namespace moth_ui {
     template <typename T>
     T Interp(T a, T b, float t, InterpType type) {
         assert(type != InterpType::Unknown && "Unknown interp type should never be used.");
-        auto const interpFunc = InterpFuncs.at(type);
+        auto const interpFunc = InterpFuncs[static_cast<size_t>(type)];
         return (t == 0.0f) ? a : (t == 1.0f) ? b : (a + (b - a) * interpFunc(t));
     }
 }

@@ -15,8 +15,8 @@ namespace moth_ui {
         return std::make_shared<LayoutEntityText>(*this);
     }
 
-    std::unique_ptr<Node> LayoutEntityText::Instantiate(Context& context) {
-        return std::make_unique<NodeText>(context, std::static_pointer_cast<LayoutEntityText>(shared_from_this()));
+    std::shared_ptr<Node> LayoutEntityText::Instantiate(Context& context) {
+        return NodeText::Create(context, std::static_pointer_cast<LayoutEntityText>(shared_from_this()));
     }
 
     nlohmann::json LayoutEntityText::Serialize(SerializeContext const& context) const {
@@ -37,7 +37,7 @@ namespace moth_ui {
 
         if (success) {
             m_fontName = json.value("fontName", "");
-            m_fontSize = json.value("fontSize", DefaultFontSize);
+            m_fontSize = json.value("fontSize", kDefaultFontSize);
             m_text = json.value("text", "");
             m_horizontalAlignment = json.value("horizontalAlignment", TextHorizAlignment::Left);
             m_verticalAlignment = json.value("verticalAlignment", TextVertAlignment::Top);

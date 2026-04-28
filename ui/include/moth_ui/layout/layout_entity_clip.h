@@ -28,7 +28,10 @@ namespace moth_ui {
         /// @brief Returns @c LayoutEntityType::Clip.
         LayoutEntityType GetType() const override { return LayoutEntityType::Clip; }
 
-        std::unique_ptr<Node> Instantiate(Context& context) override;
+        std::shared_ptr<Node> Instantiate(Context& context) override;
+
+        nlohmann::json Serialize(SerializeContext const& context) const override;
+        bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
 
         LayoutEntityClip(LayoutEntityClip const& other) = default;
         LayoutEntityClip(LayoutEntityClip&& other) = default;

@@ -1,7 +1,7 @@
 #include "common.h"
 #include "moth_ui/layout/layout.h"
 #include "moth_ui/animation/animation_clip.h"
-#include "moth_ui/animation/animation_event.h"
+#include "moth_ui/animation/animation_marker.h"
 #include "moth_ui/context.h"
 #include "moth_ui/node_factory.h"
 #include "moth_ui/nodes/group.h"
@@ -21,6 +21,9 @@ namespace moth_ui {
             if (entity->Deserialize(json, context)) {
                 return entity;
             }
+            GetLogger().Warning("Failed to deserialize child entity of type '{}'", magic_enum::enum_name(type));
+        } else {
+            GetLogger().Warning("Unknown child entity type '{}'", magic_enum::enum_name(type));
         }
         return nullptr;
     }
@@ -33,8 +36,8 @@ namespace moth_ui {
         return std::make_shared<Layout>(*this);
     }
 
-    std::unique_ptr<Node> Layout::Instantiate(Context& context) {
-        return std::make_unique<Group>(context, std::static_pointer_cast<Layout>(shared_from_this()));
+    std::shared_ptr<Node> Layout::Instantiate(Context& context) {
+        return Group::Create(context, std::static_pointer_cast<Layout>(shared_from_this()));
     }
 
     nlohmann::json Layout::Serialize(SerializeContext const& context) const {
@@ -55,50 +58,40 @@ namespace moth_ui {
     }
 
     bool Layout::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
-        bool success = false;
+        SerializeContext loadedContext;
+        loadedContext.m_rootPath = context.m_rootPath;
+        loadedContext.m_version = json.value("mothui_version", 0);
 
-        if (json.contains("mothui_version")) {
-            SerializeContext loadedContext;
-            loadedContext.m_rootPath = context.m_rootPath;
-            loadedContext.m_version = json["mothui_version"];
+        auto const jsonType = json.value("type", LayoutEntityType::Unknown);
+        if (jsonType != LayoutEntityType::Layout) {
+            return false;
+        }
 
-            auto const jsonType = json.value("type", LayoutEntityType::Unknown);
-            assert(jsonType == LayoutEntityType::Layout);
+        m_class = json.value("class", "");
+        m_blend = json.value("blend", BlendMode::Replace);
 
-            if (jsonType == LayoutEntityType::Layout) {
-                m_class = json.value("class", "");
-                m_blend = json.value("blend", BlendMode::Replace);
+        m_clips = json.value("clips", decltype(m_clips){});
+        m_events = json.value("events", decltype(m_events){});
 
-                if (json.contains("clips")) {
-                    json.at("clips").get_to(m_clips);
+        m_children.clear();
+        if (auto childrenIt = json.find("children"); childrenIt != json.end()) {
+            for (auto&& childJson : *childrenIt) {
+                if (auto child = LoadEntity(childJson, this, loadedContext)) {
+                    m_children.push_back(std::move(child));
                 }
-
-                if (json.contains("events")) {
-                    json.at("events").get_to(m_events);
-                }
-
-                if (json.contains("children")) {
-                    for (auto&& childJson : json["children"]) {
-                        if (auto child = LoadEntity(childJson, this, loadedContext)) {
-                            m_children.push_back(std::move(child));
-                        }
-                    }
-                }
-
-                m_extraData = json.value("extra_data", nlohmann::json());
-
-                success = true;
             }
         }
 
-        return success;
+        m_extraData = json.value("extra_data", nlohmann::json());
+
+        return true;
     }
 
-    Layout::LoadResult Layout::Load(std::filesystem::path const& path, std::shared_ptr<Layout>* outLayout) {
-        return Load(path, {}, outLayout);
+    std::pair<std::shared_ptr<Layout>, Layout::LoadResult> Layout::Load(std::filesystem::path const& path) {
+        return Load(path, {});
     }
 
-    Layout::LoadResult Layout::Load(std::filesystem::path const& path, LoadOptions const& options, std::shared_ptr<Layout>* outLayout) {
+    std::pair<std::shared_ptr<Layout>, Layout::LoadResult> Layout::Load(std::filesystem::path const& path, LoadOptions const& options) {
         SerializeContext context;
         context.m_rootPath = path.parent_path();
 
@@ -108,36 +101,30 @@ namespace moth_ui {
                 std::ifstream ifile(path, std::ios::binary);
                 if (!ifile.is_open()) {
                     GetLogger().Error("Failed to load layout '{}': file not found", path.string());
-                    return LoadResult::DoesNotExist;
+                    return { nullptr, LoadResult::DoesNotExist };
                 }
                 json = nlohmann::json::from_msgpack(ifile);
             } else {
                 std::ifstream ifile(path);
                 if (!ifile.is_open()) {
                     GetLogger().Error("Failed to load layout '{}': file not found", path.string());
-                    return LoadResult::DoesNotExist;
+                    return { nullptr, LoadResult::DoesNotExist };
                 }
                 ifile >> json;
             }
         } catch (nlohmann::json::parse_error const&) {
             GetLogger().Error("Failed to load layout '{}': JSON parse error", path.string());
-            return LoadResult::IncorrectFormat;
+            return { nullptr, LoadResult::IncorrectFormat };
         }
 
-        auto const layout = std::make_shared<Layout>();
+        auto layout = std::make_shared<Layout>();
         if (!layout->Deserialize(json, context)) {
             GetLogger().Error("Failed to load layout '{}': deserialization failed", path.string());
-            return LoadResult::IncorrectFormat;
+            return { nullptr, LoadResult::IncorrectFormat };
         }
 
         layout->m_loadedPath = path;
-
-        if (outLayout == nullptr) {
-            return LoadResult::NoOutput;
-        }
-
-        *outLayout = layout;
-        return LoadResult::Success;
+        return { std::move(layout), LoadResult::Success };
     }
 
     bool Layout::Save(std::filesystem::path const& path) const {

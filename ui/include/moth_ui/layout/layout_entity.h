@@ -39,7 +39,9 @@ namespace moth_ui {
          * @param parent Owning group; provides context for default bounds.
          */
         explicit LayoutEntity(LayoutEntityGroup* parent);
+        /// @brief Deep-copies an entity and its tracks.
         LayoutEntity(LayoutEntity const& other);
+        /// @brief Move-constructs an entity, transferring ownership of tracks.
         LayoutEntity(LayoutEntity&& other) noexcept;
 
         /// @brief Controls how Clone() duplicates child entities.
@@ -62,7 +64,7 @@ namespace moth_ui {
          * @param context Active rendering context.
          * @return Newly allocated Node.
          */
-        virtual std::unique_ptr<Node> Instantiate(Context& context) = 0;
+        virtual std::shared_ptr<Node> Instantiate(Context& context) = 0;
 
         /**
          * @brief Sets the layout rect at a specific keyframe.
@@ -102,7 +104,7 @@ namespace moth_ui {
          * @param context Serialisation context (version, root path).
          * @return JSON representation of this entity.
          */
-        virtual nlohmann::json Serialize(SerializeContext const& context) const;
+        virtual nlohmann::json Serialize(SerializeContext const& context) const = 0;
 
         /**
          * @brief Populates this entity from a JSON object.
@@ -110,7 +112,7 @@ namespace moth_ui {
          * @param context Serialisation context (version, root path).
          * @return @c true on success.
          */
-        virtual bool Deserialize(nlohmann::json const& json, SerializeContext const& context);
+        virtual bool Deserialize(nlohmann::json const& json, SerializeContext const& context) = 0;
 
         /**
          * @brief Serialises only the properties that differ from the hard reference.
@@ -136,7 +138,7 @@ namespace moth_ui {
 
         LayoutEntity& operator=(LayoutEntity const&) = delete;
         LayoutEntity& operator=(LayoutEntity&&) = default;
-        virtual ~LayoutEntity() = default;
+        virtual ~LayoutEntity() = default; ///< Destroys the entity and its tracks.
 
     private:
         void InitTracks(LayoutRect const& initialRect);

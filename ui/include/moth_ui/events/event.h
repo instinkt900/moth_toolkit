@@ -8,6 +8,10 @@ namespace moth_ui {
      *
      * User-defined event types should use values starting at one of the
      * @c EVENTTYPE_USER* ranges.
+     *
+     * This is a plain @c enum (not @c enum class) because the values are
+     * passed as raw @c int to the @c Event base constructor and compared
+     * with @c GetStaticType() in @c event_cast.
      */
     enum EventType : int {
         EVENTTYPE_KEY = 0,                ///< EventKey.

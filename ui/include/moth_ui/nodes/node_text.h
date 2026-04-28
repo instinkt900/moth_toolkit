@@ -15,23 +15,26 @@ namespace moth_ui {
      */
     class NodeText : public Node {
     public:
-        /**
-         * @brief Constructs a NodeText with no layout entity.
-         * @param context Active rendering context.
-         */
-        NodeText(Context& context);
-
-        /**
-         * @brief Constructs a NodeText from a serialised layout entity.
-         * @param context      Active rendering context.
-         * @param layoutEntity Deserialised text description.
-         */
-        NodeText(Context& context, std::shared_ptr<LayoutEntityText> layoutEntity);
         NodeText(NodeText const& other) = delete;
         NodeText(NodeText&& other) = default;
         NodeText& operator=(NodeText const&) = delete;
         NodeText& operator=(NodeText&&) = delete;
         ~NodeText() override = default;
+
+        /**
+         * @brief Creates a NodeText with no layout entity.
+         * @param context Active rendering context.
+         * @return A shared_ptr managing the new node.
+         */
+        static std::shared_ptr<NodeText> Create(Context& context);
+
+        /**
+         * @brief Creates a NodeText from a serialised layout entity.
+         * @param context      Active rendering context.
+         * @param layoutEntity Deserialised text description.
+         * @return A shared_ptr managing the new node.
+         */
+        static std::shared_ptr<NodeText> Create(Context& context, std::shared_ptr<LayoutEntityText> layoutEntity);
 
         /**
          * @brief Loads a font by name and point size from the font factory.
@@ -69,6 +72,19 @@ namespace moth_ui {
         IntVec2 const& GetDropShadowOffset() const { return m_dropShadowOffset; }
 
     protected:
+        /**
+         * @brief Constructs a NodeText with no layout entity.
+         * @param context Active rendering context.
+         */
+        NodeText(Context& context);
+
+        /**
+         * @brief Constructs a NodeText from a serialised layout entity.
+         * @param context      Active rendering context.
+         * @param layoutEntity Deserialised text description.
+         */
+        NodeText(Context& context, std::shared_ptr<LayoutEntityText> layoutEntity);
+
         std::shared_ptr<IFont> m_font;
         std::string m_text;
         TextHorizAlignment m_horizontalAlignment;
@@ -81,6 +97,6 @@ namespace moth_ui {
         void DrawInternal() override;
 
     private:
-        void ReloadEntityPrivate();
+        LayoutEntityText* m_typedLayout = nullptr;
     };
 }

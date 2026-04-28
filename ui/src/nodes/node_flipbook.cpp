@@ -13,8 +13,20 @@ namespace moth_ui {
     }
 
     NodeFlipbook::NodeFlipbook(Context& context, std::shared_ptr<LayoutEntityFlipbook> layoutEntity)
-        : Node(context, layoutEntity) {
-        ReloadEntityPrivate();
+        : Node(context, layoutEntity)
+        , m_typedLayout(layoutEntity.get()) {
+        m_textureFilter = m_typedLayout->m_textureFilter;
+        Load(m_typedLayout->m_flipbookPath);
+
+        auto& controller = GetAnimationController();
+        controller.ClearDiscreteCallbacks();
+        controller.RegisterDiscreteCallback(AnimationTrack::Target::FlipbookClip, [this](std::string_view value) {
+            SetClip(value);
+        });
+        controller.RegisterDiscreteCallback(AnimationTrack::Target::FlipbookPlaying, [this](std::string_view value) {
+            SetPlaying(value == "1");
+        });
+        controller.SetFrameDiscrete(0.0f);
     }
 
     void NodeFlipbook::UpdateChildBounds() {
@@ -43,13 +55,8 @@ namespace moth_ui {
 
     void NodeFlipbook::ReloadEntityInternal() {
         Node::ReloadEntityInternal();
-        ReloadEntityPrivate();
-    }
-
-    void NodeFlipbook::ReloadEntityPrivate() {
-        auto const layoutEntity = std::static_pointer_cast<LayoutEntityFlipbook>(m_layout);
-        m_textureFilter = layoutEntity->m_textureFilter;
-        Load(layoutEntity->m_flipbookPath);
+        m_textureFilter = m_typedLayout->m_textureFilter;
+        Load(m_typedLayout->m_flipbookPath);
 
         auto& controller = GetAnimationController();
         controller.ClearDiscreteCallbacks();
@@ -59,7 +66,6 @@ namespace moth_ui {
         controller.RegisterDiscreteCallback(AnimationTrack::Target::FlipbookPlaying, [this](std::string_view value) {
             SetPlaying(value == "1");
         });
-        // Apply initial state from discrete tracks at frame 0.
         controller.SetFrameDiscrete(0.0f);
     }
 
@@ -115,8 +121,8 @@ namespace moth_ui {
         m_accumulatedMs += static_cast<float>(ticks);
 
         while (m_playing) {
-            int const durationMs = m_currentClip->frames[m_currentFrame].durationMs;
-            if (durationMs <= 0 || m_accumulatedMs < static_cast<float>(durationMs)) {
+            int const durationMs = std::max(1, m_currentClip->frames[m_currentFrame].durationMs);
+            if (m_accumulatedMs < static_cast<float>(durationMs)) {
                 break;
             }
             m_accumulatedMs -= static_cast<float>(durationMs);
@@ -179,5 +185,13 @@ namespace moth_ui {
 
     std::shared_ptr<NodeFlipbook> NodeFlipbook::SharedFromThis() {
         return std::static_pointer_cast<NodeFlipbook>(shared_from_this());
+    }
+
+    std::shared_ptr<NodeFlipbook> NodeFlipbook::Create(Context& context) {
+        return std::shared_ptr<NodeFlipbook>(new NodeFlipbook(context));
+    }
+
+    std::shared_ptr<NodeFlipbook> NodeFlipbook::Create(Context& context, std::shared_ptr<LayoutEntityFlipbook> layoutEntity) {
+        return std::shared_ptr<NodeFlipbook>(new NodeFlipbook(context, std::move(layoutEntity)));
     }
 }

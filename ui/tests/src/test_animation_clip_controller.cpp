@@ -1,6 +1,6 @@
 #include "mock_context.h"
 #include "moth_ui/animation/animation_clip.h"
-#include "moth_ui/animation/animation_event.h"
+#include "moth_ui/animation/animation_marker.h"
 #include "moth_ui/events/event_animation.h"
 #include "moth_ui/layout/layout.h"
 #include "moth_ui/nodes/group.h"
@@ -35,14 +35,14 @@ namespace {
             layout = std::make_shared<Layout>();
 
             clip = std::make_shared<AnimationClip>();
-            clip->m_name = "test";
-            clip->m_startFrame = startFrame;
-            clip->m_endFrame = endFrame;
-            clip->m_fps = fps;
-            clip->m_loopType = loopType;
+            clip->name = "test";
+            clip->startFrame = startFrame;
+            clip->endFrame = endFrame;
+            clip->fps = fps;
+            clip->loopType = loopType;
             layout->m_clips.push_back(clip);
 
-            group = std::make_shared<Group>(mc.context, layout);
+            group = Group::Create(mc.context, layout);
             group->SetEventHandler([this](Node* /*node*/, Event const& e) -> bool {
                 if (auto const* ev = event_cast<EventAnimationStarted>(e)) {
                     startedClips.push_back(ev->GetClipName());
@@ -56,7 +56,7 @@ namespace {
         }
 
         void addMarker(int frame, std::string const& name) {
-            layout->m_events.push_back(std::make_unique<AnimationEvent>(frame, name));
+            layout->m_events.push_back(std::make_unique<AnimationMarker>(frame, name));
         }
 
         void start() { group->SetAnimation("test"); }

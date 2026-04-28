@@ -13,15 +13,15 @@ namespace moth_ui {
         return className;
     }
 
-    std::unique_ptr<Group> NodeFactory::Create(Context& context, std::filesystem::path const& path, int width, int height) {
-        std::shared_ptr<Layout> layout;
-        auto const loadResult = Layout::Load(path, &layout);
+    std::shared_ptr<Group> NodeFactory::Create(Context& context, std::filesystem::path const& path, int width, int height) {
+        
+        auto [layout, loadResult] = Layout::Load(path);
         if (loadResult != Layout::LoadResult::Success) {
             GetLogger().Error("Failed to load layout '{}': {}", path.string(), magic_enum::enum_name(loadResult));
             return nullptr;
         }
 
-        std::unique_ptr<Group> resultNode = Create(context, std::static_pointer_cast<LayoutEntityGroup>(layout));
+        auto resultNode = Create(context, std::static_pointer_cast<LayoutEntityGroup>(layout));
 
         IntRect initialRect;
         initialRect.topLeft = { 0, 0 };
@@ -31,8 +31,8 @@ namespace moth_ui {
         return resultNode;
     }
 
-    std::unique_ptr<Group> NodeFactory::Create(Context& context, std::shared_ptr<LayoutEntityGroup> group) {
-        std::unique_ptr<Group> resultNode;
+    std::shared_ptr<Group> NodeFactory::Create(Context& context, std::shared_ptr<LayoutEntityGroup> group) {
+        std::shared_ptr<Group> resultNode;
 
         if (!group->m_class.empty()) {
             CreationFunction fn = nullptr;
@@ -49,17 +49,13 @@ namespace moth_ui {
         }
 
         if (!resultNode) {
-            auto tmp = group->Instantiate(context);
-            if (auto* asGroup = dynamic_cast<Group*>(tmp.get())) {
-                tmp.release();
-                resultNode.reset(asGroup);
-            }
+            resultNode = std::dynamic_pointer_cast<Group>(group->Instantiate(context));
         }
 
         return resultNode;
     }
 
-    std::unique_ptr<Node> NodeFactory::Create(Context& context, std::shared_ptr<LayoutEntity> entity) {
+    std::shared_ptr<Node> NodeFactory::Create(Context& context, std::shared_ptr<LayoutEntity> entity) {
         switch (entity->GetType()) {
         case LayoutEntityType::Group:
         case LayoutEntityType::Ref:

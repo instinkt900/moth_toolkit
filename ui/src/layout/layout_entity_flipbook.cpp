@@ -47,8 +47,8 @@ namespace moth_ui {
         return std::make_shared<LayoutEntityFlipbook>(*this);
     }
 
-    std::unique_ptr<Node> LayoutEntityFlipbook::Instantiate(Context& context) {
-        return std::make_unique<NodeFlipbook>(context, std::static_pointer_cast<LayoutEntityFlipbook>(shared_from_this()));
+    std::shared_ptr<Node> LayoutEntityFlipbook::Instantiate(Context& context) {
+        return NodeFlipbook::Create(context, std::static_pointer_cast<LayoutEntityFlipbook>(shared_from_this()));
     }
 
     nlohmann::json LayoutEntityFlipbook::Serialize(SerializeContext const& context) const {

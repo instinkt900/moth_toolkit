@@ -23,7 +23,6 @@ namespace moth_ui {
         /// @brief The layout property driven by this track.
         enum class Target {
             Unknown,       ///< Unrecognised or unset target.
-            Events,        ///< Event keyframe track (not a float value target; ignored by AnimationController).
             TopOffset,     ///< Top edge pixel offset.
             BottomOffset,  ///< Bottom edge pixel offset.
             LeftOffset,    ///< Left edge pixel offset.
@@ -64,6 +63,7 @@ namespace moth_ui {
             Target::FlipbookPlaying,
         };
 
+        /// @brief Deep-copies a track, including all keyframes.
         AnimationTrack(AnimationTrack const& other);
 
         /**
@@ -92,12 +92,18 @@ namespace moth_ui {
         /// @brief Returns a mutable reference to the keyframe list.
         KeyframeList& Keyframes() { return m_keyframes; }
 
+        /// @brief Returns a const reference to the keyframe list.
+        KeyframeList const& Keyframes() const { return m_keyframes; }
+
         /**
          * @brief Returns the keyframe at the given frame number, or @c nullptr.
          * @param frameNo Exact frame index to look up.
          * @return Pointer to the keyframe, or @c nullptr if none exists at @p frameNo.
          */
         Keyframe* GetKeyframe(int frameNo);
+
+        /// @brief Const overload of GetKeyframe.
+        Keyframe const* GetKeyframe(int frameNo) const;
 
         /**
          * @brief Returns the keyframe at @p frameNo, creating one if it does not exist.
@@ -136,13 +142,15 @@ namespace moth_ui {
         /// @brief Sorts keyframes by ascending frame index.
         void SortKeyframes();
 
+        /// @brief Serializes this track to JSON.
         friend void to_json(nlohmann::json& json, AnimationTrack const& track);
+        /// @brief Deserializes a track from JSON.
         friend void from_json(nlohmann::json const& json, AnimationTrack& track);
 
-        AnimationTrack() = default;
-        AnimationTrack(AnimationTrack&& other) = default;
-        AnimationTrack& operator=(AnimationTrack&&) = default;
-        ~AnimationTrack() = default;
+        AnimationTrack() = default;                                       ///< Default constructs an empty track with Unknown target.
+        AnimationTrack(AnimationTrack&& other) = default;                 ///< Move-constructs a track.
+        AnimationTrack& operator=(AnimationTrack&&) = default;            ///< Move-assigns a track.
+        ~AnimationTrack() = default;                                      ///< Destroys the track and its keyframes.
 
     private:
         Target m_target = Target::Unknown;

@@ -77,11 +77,11 @@ TEST_CASE("NodeFactory interface is stable", "[api][nodefactory]") {
     std::string (NodeFactory::*reg)(std::string const&, NodeFactory::CreationFunction const&)
         = &NodeFactory::RegisterWidget;
     // Create overloads
-    std::unique_ptr<Group> (NodeFactory::*createFromPath)(
+    std::shared_ptr<Group> (NodeFactory::*createFromPath)(
         Context&, std::filesystem::path const&, int, int) = &NodeFactory::Create;
-    std::unique_ptr<Group> (NodeFactory::*createFromGroup)(
+    std::shared_ptr<Group> (NodeFactory::*createFromGroup)(
         Context&, std::shared_ptr<LayoutEntityGroup>)     = &NodeFactory::Create;
-    std::unique_ptr<Node>  (NodeFactory::*createFromEntity)(
+    std::shared_ptr<Node>  (NodeFactory::*createFromEntity)(
         Context&, std::shared_ptr<LayoutEntity>)          = &NodeFactory::Create;
     (void)reg; (void)createFromPath; (void)createFromGroup; (void)createFromEntity;
     SUCCEED();

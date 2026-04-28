@@ -4,7 +4,7 @@
 #include "moth_ui/layout/layout_entity_text.h"
 #include "moth_ui/layout/layout_rect.h"
 #include "moth_ui/animation/animation_clip.h"
-#include "moth_ui/animation/animation_event.h"
+#include "moth_ui/animation/animation_marker.h"
 #include "moth_ui/graphics/text_alignment.h"
 #include <catch2/catch_all.hpp>
 #include <nlohmann/json.hpp>
@@ -37,8 +37,7 @@ static bool jsonEqual(Layout const& a, Layout const& b) {
 // ---- load result codes ------------------------------------------------------
 
 TEST_CASE("Layout::Load returns DoesNotExist for missing file", "[layout][load]") {
-    std::shared_ptr<Layout> out;
-    auto result = Layout::Load("/tmp/moth_no_such_file.mothui", &out);
+    auto [out, result] = Layout::Load("/tmp/moth_no_such_file.mothui");
     REQUIRE(result == Layout::LoadResult::DoesNotExist);
     REQUIRE(out == nullptr);
 }
@@ -47,8 +46,7 @@ TEST_CASE("Layout::Load returns IncorrectFormat for malformed JSON", "[layout][l
     TempFile tmp("moth_bad.mothui");
     { std::ofstream f(tmp.path); f << "this is not json {{{"; }
 
-    std::shared_ptr<Layout> out;
-    auto result = Layout::Load(tmp, &out);
+    auto [out, result] = Layout::Load(tmp);
     REQUIRE(result == Layout::LoadResult::IncorrectFormat);
 }
 
@@ -56,24 +54,17 @@ TEST_CASE("Layout::Load returns IncorrectFormat for valid JSON without mothui_ve
     TempFile tmp("moth_nover.mothui");
     { std::ofstream f(tmp.path); f << R"({"key":"value"})"; }
 
-    std::shared_ptr<Layout> out;
-    auto result = Layout::Load(tmp, &out);
+    auto [out, result] = Layout::Load(tmp);
     REQUIRE(result == Layout::LoadResult::IncorrectFormat);
 }
 
-TEST_CASE("Layout::Load with nullptr validates without populating", "[layout][load]") {
+TEST_CASE("Layout::Load succeeds for valid files", "[layout][load]") {
     TempFile tmp("moth_validate.mothui");
     auto layout = std::make_shared<Layout>();
     REQUIRE(layout->Save(tmp));
 
-    // nullptr means validate only — should succeed and return NoOutput
-    auto result = Layout::Load(tmp, nullptr);
-    REQUIRE(result == Layout::LoadResult::NoOutput);
-}
-
-TEST_CASE("Layout::Load with nullptr returns DoesNotExist for missing file", "[layout][load]") {
-    auto result = Layout::Load("/tmp/moth_no_such_file.mothui", nullptr);
-    REQUIRE(result == Layout::LoadResult::DoesNotExist);
+    auto result = Layout::Load(tmp).second;
+    REQUIRE(result == Layout::LoadResult::Success);
 }
 
 // ---- empty layout round-trip ------------------------------------------------
@@ -83,8 +74,7 @@ TEST_CASE("Empty layout save/load round-trip", "[layout][serialization]") {
     auto original = std::make_shared<Layout>();
     REQUIRE(original->Save(tmp));
 
-    std::shared_ptr<Layout> loaded;
-    REQUIRE(Layout::Load(tmp, &loaded) == Layout::LoadResult::Success);
+    auto [loaded, result] = Layout::Load(tmp); REQUIRE(result == Layout::LoadResult::Success);
     REQUIRE(loaded != nullptr);
 
     REQUIRE(jsonEqual(*original, *loaded));
@@ -95,8 +85,8 @@ TEST_CASE("Layout::Load sets the loaded path", "[layout][load]") {
     auto layout = std::make_shared<Layout>();
     REQUIRE(layout->Save(tmp));
 
-    std::shared_ptr<Layout> loaded;
-    Layout::Load(tmp, &loaded);
+    auto [loaded, result] = Layout::Load(tmp);
+    REQUIRE(result == Layout::LoadResult::Success);
     REQUIRE(loaded->GetLoadedPath() == tmp.path);
 }
 
@@ -113,8 +103,7 @@ TEST_CASE("Layout with LayoutEntityRect child round-trips", "[layout][serializat
 
     REQUIRE(original->Save(tmp));
 
-    std::shared_ptr<Layout> loaded;
-    REQUIRE(Layout::Load(tmp, &loaded) == Layout::LoadResult::Success);
+    auto [loaded, result] = Layout::Load(tmp); REQUIRE(result == Layout::LoadResult::Success);
 
     REQUIRE(loaded->m_children.size() == 1);
     REQUIRE(loaded->m_children[0]->GetType() == LayoutEntityType::Rect);
@@ -143,8 +132,7 @@ TEST_CASE("Layout with LayoutEntityText child round-trips", "[layout][serializat
 
     REQUIRE(original->Save(tmp));
 
-    std::shared_ptr<Layout> loaded;
-    REQUIRE(Layout::Load(tmp, &loaded) == Layout::LoadResult::Success);
+    auto [loaded, result] = Layout::Load(tmp); REQUIRE(result == Layout::LoadResult::Success);
 
     REQUIRE(loaded->m_children.size() == 1);
     REQUIRE(loaded->m_children[0]->GetType() == LayoutEntityType::Text);
@@ -172,8 +160,7 @@ TEST_CASE("Layout with LayoutEntityClip child round-trips", "[layout][serializat
 
     REQUIRE(original->Save(tmp));
 
-    std::shared_ptr<Layout> loaded;
-    REQUIRE(Layout::Load(tmp, &loaded) == Layout::LoadResult::Success);
+    auto [loaded, result] = Layout::Load(tmp); REQUIRE(result == Layout::LoadResult::Success);
 
     REQUIRE(loaded->m_children.size() == 1);
     REQUIRE(loaded->m_children[0]->GetType() == LayoutEntityType::Clip);
@@ -194,8 +181,7 @@ TEST_CASE("Layout preserves child ordering across round-trip", "[layout][seriali
 
     REQUIRE(original->Save(tmp));
 
-    std::shared_ptr<Layout> loaded;
-    REQUIRE(Layout::Load(tmp, &loaded) == Layout::LoadResult::Success);
+    auto [loaded, result] = Layout::Load(tmp); REQUIRE(result == Layout::LoadResult::Success);
 
     REQUIRE(loaded->m_children.size() == 5);
     for (int i = 0; i < 5; ++i) {
@@ -210,31 +196,30 @@ TEST_CASE("Layout animation clips round-trip", "[layout][serialization][animatio
     auto original = std::make_shared<Layout>();
 
     auto clip = std::make_unique<AnimationClip>();
-    clip->m_name = "walk";
-    clip->m_startFrame = 0;
-    clip->m_endFrame = 24;
-    clip->m_fps = 24.0f;
-    clip->m_loopType = AnimationClip::LoopType::Loop;
+    clip->name = "walk";
+    clip->startFrame = 0;
+    clip->endFrame = 24;
+    clip->fps = 24.0f;
+    clip->loopType = AnimationClip::LoopType::Loop;
     original->m_clips.push_back(std::move(clip));
 
     auto clip2 = std::make_unique<AnimationClip>();
-    clip2->m_name = "idle";
-    clip2->m_startFrame = 30;
-    clip2->m_endFrame = 60;
+    clip2->name = "idle";
+    clip2->startFrame = 30;
+    clip2->endFrame = 60;
     original->m_clips.push_back(std::move(clip2));
 
     REQUIRE(original->Save(tmp));
 
-    std::shared_ptr<Layout> loaded;
-    REQUIRE(Layout::Load(tmp, &loaded) == Layout::LoadResult::Success);
+    auto [loaded, result] = Layout::Load(tmp); REQUIRE(result == Layout::LoadResult::Success);
 
     REQUIRE(loaded->m_clips.size() == 2);
-    REQUIRE(loaded->m_clips[0]->m_name == "walk");
-    REQUIRE(loaded->m_clips[0]->m_startFrame == 0);
-    REQUIRE(loaded->m_clips[0]->m_endFrame == 24);
-    REQUIRE(loaded->m_clips[0]->m_fps == Catch::Approx(24.0f));
-    REQUIRE(loaded->m_clips[0]->m_loopType == AnimationClip::LoopType::Loop);
-    REQUIRE(loaded->m_clips[1]->m_name == "idle");
+    REQUIRE(loaded->m_clips[0]->name == "walk");
+    REQUIRE(loaded->m_clips[0]->startFrame == 0);
+    REQUIRE(loaded->m_clips[0]->endFrame == 24);
+    REQUIRE(loaded->m_clips[0]->fps == Catch::Approx(24.0f));
+    REQUIRE(loaded->m_clips[0]->loopType == AnimationClip::LoopType::Loop);
+    REQUIRE(loaded->m_clips[1]->name == "idle");
 
     REQUIRE(jsonEqual(*original, *loaded));
 }
@@ -245,19 +230,18 @@ TEST_CASE("Layout animation events round-trip", "[layout][serialization][animati
     TempFile tmp("moth_events.mothui");
     auto original = std::make_shared<Layout>();
 
-    original->m_events.push_back(std::make_unique<AnimationEvent>(5,  "footstep"));
-    original->m_events.push_back(std::make_unique<AnimationEvent>(12, "spawn"));
+    original->m_events.push_back(std::make_unique<AnimationMarker>(5,  "footstep"));
+    original->m_events.push_back(std::make_unique<AnimationMarker>(12, "spawn"));
 
     REQUIRE(original->Save(tmp));
 
-    std::shared_ptr<Layout> loaded;
-    REQUIRE(Layout::Load(tmp, &loaded) == Layout::LoadResult::Success);
+    auto [loaded, result] = Layout::Load(tmp); REQUIRE(result == Layout::LoadResult::Success);
 
     REQUIRE(loaded->m_events.size() == 2);
-    REQUIRE(loaded->m_events[0]->m_frame == 5);
-    REQUIRE(loaded->m_events[0]->m_name == "footstep");
-    REQUIRE(loaded->m_events[1]->m_frame == 12);
-    REQUIRE(loaded->m_events[1]->m_name == "spawn");
+    REQUIRE(loaded->m_events[0]->frame == 5);
+    REQUIRE(loaded->m_events[0]->name == "footstep");
+    REQUIRE(loaded->m_events[1]->frame == 12);
+    REQUIRE(loaded->m_events[1]->name == "spawn");
 
     REQUIRE(jsonEqual(*original, *loaded));
 }
@@ -284,8 +268,7 @@ TEST_CASE("Layout entity keyframe tracks round-trip", "[layout][serialization][a
 
     REQUIRE(original->Save(tmp));
 
-    std::shared_ptr<Layout> loaded;
-    REQUIRE(Layout::Load(tmp, &loaded) == Layout::LoadResult::Success);
+    auto [loaded, result] = Layout::Load(tmp); REQUIRE(result == Layout::LoadResult::Success);
 
     REQUIRE(loaded->m_children.size() == 1);
     auto* loadedRect = dynamic_cast<LayoutEntityRect*>(loaded->m_children[0].get());
@@ -311,8 +294,7 @@ TEST_CASE("Layout extra data round-trips", "[layout][serialization]") {
 
     REQUIRE(original->Save(tmp));
 
-    std::shared_ptr<Layout> loaded;
-    REQUIRE(Layout::Load(tmp, &loaded) == Layout::LoadResult::Success);
+    auto [loaded, result] = Layout::Load(tmp); REQUIRE(result == Layout::LoadResult::Success);
 
     REQUIRE(loaded->GetExtraData()["editor_zoom"].get<double>() == Catch::Approx(1.5));
     REQUIRE(loaded->GetExtraData()["last_frame"].get<int>() == 42);

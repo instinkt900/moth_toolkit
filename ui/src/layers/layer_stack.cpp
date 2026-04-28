@@ -14,12 +14,18 @@ namespace moth_ui {
 
     LayerStack::~LayerStack() = default;
 
-    void LayerStack::PushLayer(std::unique_ptr<Layer>&& layer) {
+    void LayerStack::PushLayer(std::unique_ptr<Layer> layer) {
+        if (!layer) {
+            return;
+        }
         m_layers.push_back(std::move(layer));
         m_layers.back()->OnAddedToStack(this);
     }
 
     std::unique_ptr<Layer> LayerStack::PopLayer() {
+        if (m_layers.empty()) {
+            return nullptr;
+        }
         auto oldLayer = std::move(m_layers.back());
         m_layers.pop_back();
         oldLayer->OnRemovedFromStack();

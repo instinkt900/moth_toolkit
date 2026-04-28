@@ -21,8 +21,8 @@ namespace moth_ui {
         return std::make_shared<LayoutEntityImage>(*this);
     }
 
-    std::unique_ptr<Node> LayoutEntityImage::Instantiate(Context& context) {
-        return std::make_unique<NodeImage>(context, std::static_pointer_cast<LayoutEntityImage>(shared_from_this()));
+    std::shared_ptr<Node> LayoutEntityImage::Instantiate(Context& context) {
+        return NodeImage::Create(context, std::static_pointer_cast<LayoutEntityImage>(shared_from_this()));
     }
 
     nlohmann::json LayoutEntityImage::Serialize(SerializeContext const& context) const {

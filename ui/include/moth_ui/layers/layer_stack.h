@@ -21,7 +21,7 @@ namespace moth_ui {
      *
      * @note LayerStack is non-copyable and non-movable.
      */
-    class LayerStack : public EventListener {
+    class LayerStack : public IEventListener {
     public:
         /**
          * @brief Constructs a LayerStack with separate render and window dimensions.
@@ -38,11 +38,12 @@ namespace moth_ui {
          * @brief Pushes a new layer onto the top of the stack.
          * @param layer Layer to add; ownership is transferred to the stack.
          */
-        void PushLayer(std::unique_ptr<Layer>&& layer);
+        void PushLayer(std::unique_ptr<Layer> layer);
 
         /**
          * @brief Pops and returns the top layer, transferring ownership to the caller.
-         * @return The removed top layer.
+         * @return The removed top layer, or @c nullptr if the stack is empty.
+         *         No exception is thrown.
          */
         std::unique_ptr<Layer> PopLayer();
 
@@ -102,7 +103,7 @@ namespace moth_ui {
          * @brief Installs the single external listener that receives @c FireEvent dispatches.
          * @param listener Listener to install, or @c nullptr to remove.
          */
-        void SetEventListener(EventListener* listener) { m_eventListener = listener; }
+        void SetEventListener(IEventListener* listener) { m_eventListener = listener; }
 
         /**
          * @brief Dispatches an event to the external listener.
@@ -122,7 +123,7 @@ namespace moth_ui {
     private:
         IRenderer& m_renderer;
         std::vector<std::unique_ptr<Layer>> m_layers;
-        EventListener* m_eventListener = nullptr;
+        IEventListener* m_eventListener = nullptr;
 
         int m_renderWidth = 0;
         int m_renderHeight = 0;

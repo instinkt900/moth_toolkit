@@ -21,7 +21,7 @@ namespace {
         (void)fontFactoryImpl; (void)nodeFactory; (void)logger; (void)nullLogger;
     }
 
-    void pin_events(moth_ui::Event* event, moth_ui::EventListener* listener,
+    void pin_events(moth_ui::Event* event, moth_ui::IEventListener* listener,
                     moth_ui::EventDispatch* dispatch,
                     moth_ui::EventMouseDown* mouseDown, moth_ui::EventMouseUp* mouseUp,
                     moth_ui::EventMouseMove* mouseMove, moth_ui::EventMouseWheel* mouseWheel,
@@ -61,17 +61,16 @@ namespace {
 
     void pin_animation(moth_ui::AnimationTrack* animationTrack,
                        moth_ui::AnimationClip* animationClip,
-                       moth_ui::AnimationEvent* animationEvent,
+                       moth_ui::AnimationMarker* animationEvent,
                        moth_ui::AnimationController* animationController,
                        moth_ui::AnimationTrackController* animationTrackController,
                        moth_ui::AnimationClipController* animationClipController,
                        moth_ui::DiscreteAnimationTrack* discreteTrack,
-                       moth_ui::DiscreteAnimationTrackController* discreteTrackController,
-                       moth_ui::ClipController* clipController) {
+                       moth_ui::DiscreteAnimationTrackController* discreteTrackController) {
         (void)animationTrack; (void)animationClip; (void)animationEvent;
         (void)animationController; (void)animationTrackController;
         (void)animationClipController; (void)discreteTrack;
-        (void)discreteTrackController; (void)clipController;
+        (void)discreteTrackController;
     }
 
     void pin_layers(moth_ui::Layer* layer, moth_ui::LayerStack* layerStack) {

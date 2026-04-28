@@ -7,7 +7,7 @@ using namespace moth_ui;
 
 // ---- helpers ----------------------------------------------------------------
 
-struct CountingListener : EventListener {
+struct CountingListener : IEventListener {
     int callCount = 0;
     bool returnValue = false;
     bool OnEvent(Event const&) override {
@@ -119,7 +119,7 @@ TEST_CASE("EventDispatch stops dispatching once handled", "[event_dispatch]") {
 TEST_CASE("EventDispatch Dispatch with null listener is safe", "[event_dispatch]") {
     EventMouseDown ev(MouseButton::Left, IntVec2{ 0, 0 });
     EventDispatch dispatch(ev);
-    dispatch.Dispatch(static_cast<EventListener*>(nullptr));
+    dispatch.Dispatch(static_cast<IEventListener*>(nullptr));
     REQUIRE_FALSE(dispatch.GetHandled());
 }
 

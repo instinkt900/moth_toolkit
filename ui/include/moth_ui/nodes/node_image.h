@@ -16,23 +16,26 @@ namespace moth_ui {
      */
     class NodeImage : public Node {
     public:
-        /**
-         * @brief Constructs a NodeImage with no layout entity.
-         * @param context Active rendering context.
-         */
-        NodeImage(Context& context);
-
-        /**
-         * @brief Constructs a NodeImage from a serialised layout entity.
-         * @param context      Active rendering context.
-         * @param layoutEntity Deserialised image description.
-         */
-        NodeImage(Context& context, std::shared_ptr<LayoutEntityImage> layoutEntity);
         NodeImage(NodeImage const& other) = delete;
         NodeImage(NodeImage&& other) = default;
         NodeImage& operator=(NodeImage const&) = delete;
         NodeImage& operator=(NodeImage&&) = delete;
         ~NodeImage() override = default;
+
+        /**
+         * @brief Creates a NodeImage with no layout entity.
+         * @param context Active rendering context.
+         * @return A shared_ptr managing the new node.
+         */
+        static std::shared_ptr<NodeImage> Create(Context& context);
+
+        /**
+         * @brief Creates a NodeImage from a serialised layout entity.
+         * @param context      Active rendering context.
+         * @param layoutEntity Deserialised image description.
+         * @return A shared_ptr managing the new node.
+         */
+        static std::shared_ptr<NodeImage> Create(Context& context, std::shared_ptr<LayoutEntityImage> layoutEntity);
 
         void UpdateChildBounds() override;
 
@@ -47,6 +50,9 @@ namespace moth_ui {
 
         /// @brief Returns a mutable reference to the source sampling rectangle.
         IntRect& GetSourceRect() { return m_sourceRect; }
+
+        /// @brief Returns a const reference to the source sampling rectangle.
+        IntRect const& GetSourceRect() const { return m_sourceRect; }
 
         /**
          * @brief Returns the four source slice points used in nine-slice rendering.
@@ -83,6 +89,19 @@ namespace moth_ui {
         void SetTextureFilter(TextureFilter filter) { m_textureFilter = (filter == TextureFilter::Invalid) ? TextureFilter::Linear : filter; }
 
     protected:
+        /**
+         * @brief Constructs a NodeImage with no layout entity.
+         * @param context Active rendering context.
+         */
+        NodeImage(Context& context);
+
+        /**
+         * @brief Constructs a NodeImage from a serialised layout entity.
+         * @param context      Active rendering context.
+         * @param layoutEntity Deserialised image description.
+         */
+        NodeImage(Context& context, std::shared_ptr<LayoutEntityImage> layoutEntity);
+
         std::unique_ptr<IImage> m_image;
         IntRect m_sourceRect;
         ImageScaleType m_imageScaleType = ImageScaleType::Stretch;
@@ -100,6 +119,6 @@ namespace moth_ui {
         void Slice();
 
     private:
-        void ReloadEntityPrivate();
+        LayoutEntityImage* m_typedLayout = nullptr;
     };
 }

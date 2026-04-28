@@ -31,8 +31,8 @@ namespace moth_ui {
         return cloned;
     }
 
-    std::unique_ptr<Node> LayoutEntityRef::Instantiate(Context& context) {
-        return std::make_unique<Group>(context, std::static_pointer_cast<LayoutEntityGroup>(shared_from_this()));
+    std::shared_ptr<Node> LayoutEntityRef::Instantiate(Context& context) {
+        return Group::Create(context, std::static_pointer_cast<LayoutEntityGroup>(shared_from_this()));
     }
 
     nlohmann::json LayoutEntityRef::Serialize(SerializeContext const& context) const {
@@ -66,8 +66,8 @@ namespace moth_ui {
         if (success) {
             std::string relativePath = json.value("layoutPath", "");
             m_layoutPath = context.m_rootPath / relativePath;
-            std::shared_ptr<Layout> targetLayout;
-            auto const loadResult = Layout::Load(m_layoutPath, &targetLayout);
+            
+            auto [targetLayout, loadResult] = Layout::Load(m_layoutPath);
             if (loadResult == Layout::LoadResult::Success) {
                 CopyLayout(*targetLayout);
 
@@ -110,6 +110,8 @@ namespace moth_ui {
 
     // clones a layout into this reference
     void LayoutEntityRef::CopyLayout(Layout const& other) {
+        m_children.clear();
+        m_clips.clear();
         m_class = other.m_class;
         for (auto&& child : other.m_children) {
             auto clone = child->Clone(CloneType::Deep);

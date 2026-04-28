@@ -26,23 +26,26 @@ namespace moth_ui {
      */
     class NodeFlipbook : public Node {
     public:
-        /**
-         * @brief Constructs a NodeFlipbook with no layout entity.
-         * @param context Active rendering context.
-         */
-        NodeFlipbook(Context& context);
-
-        /**
-         * @brief Constructs a NodeFlipbook from a serialised layout entity.
-         * @param context      Active rendering context.
-         * @param layoutEntity Deserialised flipbook description.
-         */
-        NodeFlipbook(Context& context, std::shared_ptr<LayoutEntityFlipbook> layoutEntity);
         NodeFlipbook(NodeFlipbook const& other) = delete;
         NodeFlipbook(NodeFlipbook&& other) = default;
         NodeFlipbook& operator=(NodeFlipbook const&) = delete;
         NodeFlipbook& operator=(NodeFlipbook&&) = delete;
         ~NodeFlipbook() override = default;
+
+        /**
+         * @brief Creates a NodeFlipbook with no layout entity.
+         * @param context Active rendering context.
+         * @return A shared_ptr managing the new node.
+         */
+        static std::shared_ptr<NodeFlipbook> Create(Context& context);
+
+        /**
+         * @brief Creates a NodeFlipbook from a serialised layout entity.
+         * @param context      Active rendering context.
+         * @param layoutEntity Deserialised flipbook description.
+         * @return A shared_ptr managing the new node.
+         */
+        static std::shared_ptr<NodeFlipbook> Create(Context& context, std::shared_ptr<LayoutEntityFlipbook> layoutEntity);
 
         void UpdateChildBounds() override;
 
@@ -53,7 +56,7 @@ namespace moth_ui {
          * before loading. After a successful load the node has no active clip and is
          * not playing; clip selection and autoplay are driven by discrete animation
          * tracks (@c FlipbookClip and @c FlipbookPlaying) evaluated via
-         * @c ReloadEntityPrivate() when the node is instantiated from a
+         * @c ReloadEntityInternal() when the node is instantiated from a
          * @c LayoutEntityFlipbook, or by explicit calls to @c SetClip() and
          * @c SetPlaying() at runtime.
          *
@@ -104,6 +107,19 @@ namespace moth_ui {
         void Update(uint32_t ticks) override;
 
     protected:
+        /**
+         * @brief Constructs a NodeFlipbook with no layout entity.
+         * @param context Active rendering context.
+         */
+        NodeFlipbook(Context& context);
+
+        /**
+         * @brief Constructs a NodeFlipbook from a serialised layout entity.
+         * @param context      Active rendering context.
+         * @param layoutEntity Deserialised flipbook description.
+         */
+        NodeFlipbook(Context& context, std::shared_ptr<LayoutEntityFlipbook> layoutEntity);
+
         TextureFilter m_textureFilter = TextureFilter::Linear; ///< Sampling filter applied when the flipbook is scaled.
         std::unique_ptr<IFlipbook> m_flipbook;            ///< Loaded flipbook, or null if none is set.
         std::optional<IFlipbook::ClipDesc> m_currentClip; ///< Active clip, empty if no clip is set.
@@ -118,7 +134,7 @@ namespace moth_ui {
         void DrawInternal() override;
 
     private:
-        void ReloadEntityPrivate();
+        LayoutEntityFlipbook* m_typedLayout = nullptr;
         std::shared_ptr<NodeFlipbook> SharedFromThis();
     };
 }

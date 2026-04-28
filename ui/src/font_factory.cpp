@@ -23,8 +23,8 @@ namespace moth_ui {
 
         std::filesystem::path rootPath = path.parent_path();
         std::map<std::string, std::filesystem::path> relativeList;
-        if (json.contains("fonts")) {
-            json.at("fonts").get_to(relativeList);
+        if (auto fontsIt = json.find("fonts"); fontsIt != json.end()) {
+            fontsIt->get_to(relativeList);
 
             for (auto& [name, relPath] : relativeList) {
                 AddFont(name, std::filesystem::absolute(rootPath / relPath));

@@ -13,6 +13,31 @@ namespace moth_ui {
      */
     class NodeRect : public Node {
     public:
+        NodeRect(NodeRect const& other) = delete;
+        NodeRect(NodeRect&& other) = default;
+        NodeRect& operator=(NodeRect const&) = delete;
+        NodeRect& operator=(NodeRect&&) = delete;
+        ~NodeRect() override = default;
+
+        /**
+         * @brief Creates a NodeRect with no layout entity.
+         * @param context Active rendering context.
+         * @return A shared_ptr managing the new node.
+         */
+        static std::shared_ptr<NodeRect> Create(Context& context);
+
+        /**
+         * @brief Creates a NodeRect from a serialised layout entity.
+         * @param context      Active rendering context.
+         * @param layoutEntity Deserialised rect description.
+         * @return A shared_ptr managing the new node.
+         */
+        static std::shared_ptr<NodeRect> Create(Context& context, std::shared_ptr<LayoutEntityRect> layoutEntity);
+
+        /// @brief Returns @c true if the rectangle is drawn filled.
+        bool IsFilled() const { return m_filled; }
+
+    protected:
         /**
          * @brief Constructs a NodeRect with no layout entity.
          * @param context Active rendering context.
@@ -25,22 +50,13 @@ namespace moth_ui {
          * @param layoutEntity Deserialised rect description.
          */
         NodeRect(Context& context, std::shared_ptr<LayoutEntityRect> layoutEntity);
-        NodeRect(NodeRect const& other) = delete;
-        NodeRect(NodeRect&& other) = default;
-        NodeRect& operator=(NodeRect const&) = delete;
-        NodeRect& operator=(NodeRect&&) = delete;
-        ~NodeRect() override = default;
 
-        /// @brief Returns @c true if the rectangle is drawn filled.
-        bool IsFilled() const { return m_filled; }
-
-    protected:
         bool m_filled = true; ///< When @c true, the rectangle is drawn filled; otherwise as an outline.
 
         void ReloadEntityInternal() override;
         void DrawInternal() override;
 
     private:
-        void ReloadEntityPrivate();
+        LayoutEntityRect* m_typedLayout = nullptr;
     };
 }

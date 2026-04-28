@@ -10,8 +10,15 @@ namespace moth_ui {
     }
 
     NodeImage::NodeImage(Context& context, std::shared_ptr<LayoutEntityImage> layoutEntity)
-        : Node(context, layoutEntity) {
-        ReloadEntityPrivate();
+        : Node(context, layoutEntity)
+        , m_typedLayout(layoutEntity.get()) {
+        m_sourceRect = m_typedLayout->m_sourceRect;
+        m_imageScaleType = m_typedLayout->m_imageScaleType;
+        m_imageScale = m_typedLayout->m_imageScale;
+        m_textureFilter = m_typedLayout->m_textureFilter;
+        m_sourceBorders = m_typedLayout->m_sourceBorders;
+        m_targetBorders = m_typedLayout->m_targetBorders;
+        Load(m_typedLayout->m_imagePath);
     }
 
     void NodeImage::UpdateChildBounds() {
@@ -33,7 +40,13 @@ namespace moth_ui {
 
     void NodeImage::ReloadEntityInternal() {
         Node::ReloadEntityInternal();
-        ReloadEntityPrivate();
+        m_sourceRect = m_typedLayout->m_sourceRect;
+        m_imageScaleType = m_typedLayout->m_imageScaleType;
+        m_imageScale = m_typedLayout->m_imageScale;
+        m_textureFilter = m_typedLayout->m_textureFilter;
+        m_sourceBorders = m_typedLayout->m_sourceBorders;
+        m_targetBorders = m_typedLayout->m_targetBorders;
+        Load(m_typedLayout->m_imagePath);
     }
 
     void NodeImage::DrawInternal() {
@@ -79,14 +92,11 @@ namespace moth_ui {
         }
     }
 
-    void NodeImage::ReloadEntityPrivate() {
-        auto const layoutEntity = std::static_pointer_cast<LayoutEntityImage>(m_layout);
-        m_sourceRect = layoutEntity->m_sourceRect;
-        m_imageScaleType = layoutEntity->m_imageScaleType;
-        m_imageScale = layoutEntity->m_imageScale;
-        m_textureFilter = layoutEntity->m_textureFilter;
-        m_sourceBorders = layoutEntity->m_sourceBorders;
-        m_targetBorders = layoutEntity->m_targetBorders;
-        Load(layoutEntity->m_imagePath);
+    std::shared_ptr<NodeImage> NodeImage::Create(Context& context) {
+        return std::shared_ptr<NodeImage>(new NodeImage(context));
+    }
+
+    std::shared_ptr<NodeImage> NodeImage::Create(Context& context, std::shared_ptr<LayoutEntityImage> layoutEntity) {
+        return std::shared_ptr<NodeImage>(new NodeImage(context, std::move(layoutEntity)));
     }
 }

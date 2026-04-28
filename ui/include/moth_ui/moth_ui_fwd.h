@@ -29,7 +29,7 @@ namespace moth_ui {
     // Events
     // -------------------------------------------------------------------------
     class Event;
-    class EventListener;
+    class IEventListener;
     class EventDispatch;
     class EventMouseDown;
     class EventMouseUp;
@@ -78,13 +78,12 @@ namespace moth_ui {
     using KeyframeValue = float;
     struct AnimationClip;
     class AnimationTrack;
-    class AnimationEvent;
+    class AnimationMarker;
     class AnimationController;
     class AnimationTrackController;
     class AnimationClipController;
     class DiscreteAnimationTrack;
     class DiscreteAnimationTrackController;
-    struct ClipController;
 
     // -------------------------------------------------------------------------
     // Layers

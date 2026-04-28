@@ -35,7 +35,6 @@ namespace moth_ui {
             return node->m_color.a;
         case AnimationTrack::Target::Rotation:
             return node->m_rotation;
-        case AnimationTrack::Target::Events:
         case AnimationTrack::Target::FlipbookClip:
         case AnimationTrack::Target::FlipbookPlaying:
         case AnimationTrack::Target::Unknown:

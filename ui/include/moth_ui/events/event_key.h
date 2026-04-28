@@ -1,6 +1,6 @@
 #pragma once
 
-#include "event.h"
+#include "moth_ui/events/event.h"
 
 #include <memory>
 
@@ -11,16 +11,16 @@ namespace moth_ui {
         Up    ///< Key was released.
     };
 
-    static int constexpr KeyMod_LeftShift  = 1 << 0; ///< Left Shift modifier.
-    static int constexpr KeyMod_RightShift = 1 << 1; ///< Right Shift modifier.
-    static int constexpr KeyMod_LeftCtrl   = 1 << 2; ///< Left Ctrl modifier.
-    static int constexpr KeyMod_RightCtrl  = 1 << 3; ///< Right Ctrl modifier.
-    static int constexpr KeyMod_LeftAlt    = 1 << 4; ///< Left Alt modifier.
-    static int constexpr KeyMod_RightAlt   = 1 << 5; ///< Right Alt modifier.
+    static constexpr int KeyMod_LeftShift  = 1 << 0; ///< Left Shift modifier.
+    static constexpr int KeyMod_RightShift = 1 << 1; ///< Right Shift modifier.
+    static constexpr int KeyMod_LeftCtrl   = 1 << 2; ///< Left Ctrl modifier.
+    static constexpr int KeyMod_RightCtrl  = 1 << 3; ///< Right Ctrl modifier.
+    static constexpr int KeyMod_LeftAlt    = 1 << 4; ///< Left Alt modifier.
+    static constexpr int KeyMod_RightAlt   = 1 << 5; ///< Right Alt modifier.
 
-    static int constexpr KeyMod_Shift = KeyMod_LeftShift | KeyMod_RightShift; ///< Either Shift key.
-    static int constexpr KeyMod_Ctrl  = KeyMod_LeftCtrl  | KeyMod_RightCtrl;  ///< Either Ctrl key.
-    static int constexpr KeyMod_Alt   = KeyMod_LeftAlt   | KeyMod_RightAlt;   ///< Either Alt key.
+    static constexpr int KeyMod_Shift = KeyMod_LeftShift | KeyMod_RightShift; ///< Either Shift key.
+    static constexpr int KeyMod_Ctrl  = KeyMod_LeftCtrl  | KeyMod_RightCtrl;  ///< Either Ctrl key.
+    static constexpr int KeyMod_Alt   = KeyMod_LeftAlt   | KeyMod_RightAlt;   ///< Either Alt key.
 
     /// @brief Platform-independent key codes.
     enum class Key {

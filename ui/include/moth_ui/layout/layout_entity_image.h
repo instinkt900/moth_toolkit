@@ -41,7 +41,7 @@ namespace moth_ui {
         /// @brief Returns @c LayoutEntityType::Image.
         LayoutEntityType GetType() const override { return LayoutEntityType::Image; }
 
-        std::unique_ptr<Node> Instantiate(Context& context) override;
+        std::shared_ptr<Node> Instantiate(Context& context) override;
 
         nlohmann::json Serialize(SerializeContext const& context) const override;
         bool Deserialize(nlohmann::json const& json, SerializeContext const& context) override;
@@ -53,8 +53,8 @@ namespace moth_ui {
         TextureFilter m_textureFilter = TextureFilter::Linear; ///< Sampling filter applied when the image is scaled.
 
         // 9slice only
-        static int constexpr DefaultBorderSize = 15;                                               ///< Default nine-slice border width in pixels.
-        IntRect m_sourceBorders = { { DefaultBorderSize, DefaultBorderSize }, { DefaultBorderSize, DefaultBorderSize } }; ///< Source-space border insets for nine-slice.
+        static int constexpr kDefaultBorderSize = 15;                                               ///< Default nine-slice border width in pixels.
+        IntRect m_sourceBorders = { { kDefaultBorderSize, kDefaultBorderSize }, { kDefaultBorderSize, kDefaultBorderSize } }; ///< Source-space border insets for nine-slice.
         LayoutRect m_targetBorders = MakeDefaultLayoutRect();                                      ///< Target-space border fractions for nine-slice.
 
         LayoutEntityImage(LayoutEntityImage const& other) = default;

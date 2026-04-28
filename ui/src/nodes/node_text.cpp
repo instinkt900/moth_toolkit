@@ -18,8 +18,15 @@ namespace moth_ui {
         : Node(context, layoutEntity)
         , m_horizontalAlignment(TextHorizAlignment::Left)
         , m_verticalAlignment(TextVertAlignment::Top)
-        , m_dropShadow(false) {
-        ReloadEntityPrivate();
+        , m_dropShadow(false)
+        , m_typedLayout(layoutEntity.get()) {
+        m_text = m_typedLayout->m_text;
+        m_horizontalAlignment = m_typedLayout->m_horizontalAlignment;
+        m_verticalAlignment = m_typedLayout->m_verticalAlignment;
+        m_dropShadow = m_typedLayout->m_dropShadow;
+        m_dropShadowOffset = m_typedLayout->m_dropShadowOffset;
+        m_dropShadowColor = m_typedLayout->m_dropShadowColor;
+        Load(m_typedLayout->m_fontName, m_typedLayout->m_fontSize);
     }
 
     void NodeText::Load(std::string_view fontName, int size) {
@@ -38,7 +45,13 @@ namespace moth_ui {
 
     void NodeText::ReloadEntityInternal() {
         Node::ReloadEntityInternal();
-        ReloadEntityPrivate();
+        m_text = m_typedLayout->m_text;
+        m_horizontalAlignment = m_typedLayout->m_horizontalAlignment;
+        m_verticalAlignment = m_typedLayout->m_verticalAlignment;
+        m_dropShadow = m_typedLayout->m_dropShadow;
+        m_dropShadowOffset = m_typedLayout->m_dropShadowOffset;
+        m_dropShadowColor = m_typedLayout->m_dropShadowColor;
+        Load(m_typedLayout->m_fontName, m_typedLayout->m_fontSize);
     }
 
     void NodeText::DrawInternal() {
@@ -58,22 +71,21 @@ namespace moth_ui {
             }
             renderer.RenderText(m_text, *m_font, m_horizontalAlignment, m_verticalAlignment, localRect);
         } else {
+#ifndef NDEBUG
             renderer.PopColor();
             renderer.PushColor({ 1.0f, 0.0f, 1.0f, 1.0f });
             renderer.RenderFilledRect(localRect);
             renderer.PopColor();
             renderer.PushColor(m_color);
+#endif
         }
     }
 
-    void NodeText::ReloadEntityPrivate() {
-        auto const layoutEntity = std::static_pointer_cast<LayoutEntityText>(m_layout);
-        m_text = layoutEntity->m_text;
-        m_horizontalAlignment = layoutEntity->m_horizontalAlignment;
-        m_verticalAlignment = layoutEntity->m_verticalAlignment;
-        m_dropShadow = layoutEntity->m_dropShadow;
-        m_dropShadowOffset = layoutEntity->m_dropShadowOffset;
-        m_dropShadowColor = layoutEntity->m_dropShadowColor;
-        Load(layoutEntity->m_fontName, layoutEntity->m_fontSize);
+    std::shared_ptr<NodeText> NodeText::Create(Context& context) {
+        return std::shared_ptr<NodeText>(new NodeText(context));
+    }
+
+    std::shared_ptr<NodeText> NodeText::Create(Context& context, std::shared_ptr<LayoutEntityText> layoutEntity) {
+        return std::shared_ptr<NodeText>(new NodeText(context, std::move(layoutEntity)));
     }
 }

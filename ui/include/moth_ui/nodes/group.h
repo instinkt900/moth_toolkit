@@ -12,23 +12,26 @@ namespace moth_ui {
      */
     class Group : public Node {
     public:
-        /**
-         * @brief Constructs an empty group with no layout entity.
-         * @param context Active rendering context.
-         */
-        Group(Context& context);
-
-        /**
-         * @brief Constructs a group from a serialised layout entity.
-         * @param context           Active rendering context.
-         * @param layoutEntityGroup Deserialised group description.
-         */
-        Group(Context& context, std::shared_ptr<LayoutEntityGroup> layoutEntityGroup);
         Group(Group const& other) = delete;
-        Group(Group&& other) = default;
+        Group(Group&& other) = delete;
         Group& operator=(Group const&) = delete;
         Group& operator=(Group&&) = delete;
-        ~Group() override = default;
+        ~Group() override = default; ///< Destroys the group and its children.
+
+        /**
+         * @brief Creates an empty group with no layout entity.
+         * @param context Active rendering context.
+         * @return A shared_ptr managing the new group.
+         */
+        static std::shared_ptr<Group> Create(Context& context);
+
+        /**
+         * @brief Creates a group from a serialised layout entity.
+         * @param context           Active rendering context.
+         * @param layoutEntityGroup Deserialised group description. May be @c nullptr.
+         * @return A shared_ptr managing the new group, or @c nullptr if @p layoutEntityGroup is null.
+         */
+        static std::shared_ptr<Group> Create(Context& context, std::shared_ptr<LayoutEntityGroup> layoutEntityGroup);
 
         /**
          * @brief Broadcasts an event across this subtree in depth-first order.
@@ -73,18 +76,22 @@ namespace moth_ui {
         /// @brief Returns the number of direct children.
         int GetChildCount() const { return static_cast<int>(m_children.size()); }
 
-        /// @brief Returns a mutable reference to the ordered list of children.
-        std::vector<std::shared_ptr<Node>>& GetChildren() { return m_children; }
-
         /// @brief Returns a const reference to the ordered list of children.
         std::vector<std::shared_ptr<Node>> const& GetChildren() const { return m_children; }
+
+        /**
+         * @brief Moves a child from one index to another.
+         * @param fromIndex Current index of the child.
+         * @param toIndex   Destination index.
+         */
+        void MoveChild(int fromIndex, int toIndex);
 
         /**
          * @brief Returns whether an animation clip with the given name exists.
          * @param name Clip name to look up.
          * @return @c true if the clip exists in the layout's clip list.
          */
-        bool HasAnimation(std::string_view const& name) const override;
+        bool HasAnimation(std::string_view name) const override;
 
         /**
          * @brief Switches the active animation clip by name.
@@ -95,10 +102,24 @@ namespace moth_ui {
          * @param name Name of the animation clip to play.
          * @return @c true if the clip was found and activated.
          */
-        bool SetAnimation(std::string_view const& name) override;
+        bool SetAnimation(std::string_view name) override;
 
         /// @brief Stops the currently playing animation clip.
         void StopAnimation() override;
+
+        /**
+         * @brief Re-applies property overrides from a LayoutEntityRef to a child's layout entity.
+         *
+         * Called by the child node during ReloadEntity when the parent is a layout reference.
+         *
+         * @param childLayout The child node's layout entity to apply overrides to.
+         */
+        void ReapplyOverrides(LayoutEntity& childLayout);
+
+        /// @brief Returns the typed layout entity pointer for this group.
+        LayoutEntityGroup* GetTypedLayout() { return m_typedLayout; }
+        /// @brief Returns a const typed layout entity pointer for this group.
+        LayoutEntityGroup const* GetTypedLayout() const { return m_typedLayout; }
 
         /**
          * @brief Returns the direct child whose identifier matches @p id.
@@ -130,6 +151,19 @@ namespace moth_ui {
         }
 
     protected:
+        /**
+         * @brief Constructs an empty group with no layout entity.
+         * @param context Active rendering context.
+         */
+        Group(Context& context);
+
+        /**
+         * @brief Constructs a group from a serialised layout entity.
+         * @param context           Active rendering context.
+         * @param layoutEntityGroup Deserialised group description.
+         */
+        Group(Context& context, std::shared_ptr<LayoutEntityGroup> layoutEntityGroup);
+
         std::vector<std::shared_ptr<Node>> m_children;
         std::unique_ptr<AnimationClipController> m_animationClipController;
 
@@ -137,6 +171,7 @@ namespace moth_ui {
         void DrawInternal() override;
 
     private:
-        void ReloadEntityPrivate();
+        LayoutEntityGroup* m_typedLayout = nullptr;
+        void ReloadChildren();
     };
 }

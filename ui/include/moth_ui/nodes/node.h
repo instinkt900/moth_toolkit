@@ -18,20 +18,8 @@ namespace moth_ui {
      * It participates in the event system as both a listener and a dispatcher.
      * Subclasses override DrawInternal() to provide rendering behaviour.
      */
-    class Node : public EventListener, public std::enable_shared_from_this<Node> {
+    class Node : public IEventListener, public std::enable_shared_from_this<Node> {
     public:
-        /**
-         * @brief Constructs a node with no associated layout entity.
-         * @param context Active rendering context.
-         */
-        Node(Context& context);
-
-        /**
-         * @brief Constructs a node from a serialised layout entity.
-         * @param context      Active rendering context.
-         * @param layoutEntity Deserialised description of this node.
-         */
-        Node(Context& context, std::shared_ptr<LayoutEntity> layoutEntity);
         Node(Node const& other) = delete;
         Node(Node&& other) = default;
         Node& operator=(Node const&) = delete;
@@ -39,7 +27,22 @@ namespace moth_ui {
         // m_parent/shared_from_this ties a live node into the scene graph — overwriting
         // an already-inserted node would corrupt the parent's child list.
         Node& operator=(Node&&) = delete;
-        ~Node() override;
+        ~Node() override; ///< Destroys the node and its animation controller.
+
+        /**
+         * @brief Creates a Node with no layout entity.
+         * @param context Active rendering context.
+         * @return A shared_ptr managing the new node.
+         */
+        static std::shared_ptr<Node> Create(Context& context);
+
+        /**
+         * @brief Creates a Node from a serialised layout entity.
+         * @param context      Active rendering context.
+         * @param layoutEntity Deserialised description of this node.
+         * @return A shared_ptr managing the new node.
+         */
+        static std::shared_ptr<Node> Create(Context& context, std::shared_ptr<LayoutEntity> layoutEntity);
 
         /// @brief Direction in which an event travels through the scene graph.
         enum class EventDirection {
@@ -134,6 +137,9 @@ namespace moth_ui {
         /// @brief Returns the node's anchor/offset layout rectangle.
         LayoutRect& GetLayoutRect() { return m_layoutRect; }
 
+        /// @brief Returns a const reference to the node's anchor/offset layout rectangle.
+        LayoutRect const& GetLayoutRect() const { return m_layoutRect; }
+
         /// @brief Returns the node's computed screen-space rectangle.
         IntRect const& GetScreenRect() const { return m_screenRect; }
 
@@ -219,7 +225,7 @@ namespace moth_ui {
          * @param name Clip name to look up.
          * @return @c true if the clip exists.
          */
-        virtual bool HasAnimation(std::string_view const& name) const { return false; }
+        virtual bool HasAnimation(std::string_view name) const { return false; }
 
         /**
          * @brief Switches the active animation clip by name.
@@ -228,7 +234,7 @@ namespace moth_ui {
          * @note Base implementation is a no-op returning @c false; @c Group overrides
          *       this to drive its @c AnimationClipController.
          */
-        virtual bool SetAnimation(std::string_view const& name) { return false; }
+        virtual bool SetAnimation(std::string_view name) { return false; }
 
         /// @brief Stops the currently playing animation clip.
         /// @note Base implementation is a no-op; @c Group overrides this.
@@ -254,13 +260,25 @@ namespace moth_ui {
         virtual std::shared_ptr<Node> FindChild(std::string_view id);
 
         /// @brief Returns the AnimationController that drives this node's tracks.
-        /// @brief Returns the AnimationController that drives this node's tracks.
         AnimationController& GetAnimationController() { return *m_animationController; }
 
         /// @brief Returns a const reference to the AnimationController.
         AnimationController const& GetAnimationController() const { return *m_animationController; }
 
     protected:
+        /**
+         * @brief Constructs a node with no associated layout entity.
+         * @param context Active rendering context.
+         */
+        Node(Context& context);
+
+        /**
+         * @brief Constructs a node from a serialised layout entity.
+         * @param context      Active rendering context.
+         * @param layoutEntity Deserialised description of this node.
+         */
+        Node(Context& context, std::shared_ptr<LayoutEntity> layoutEntity);
+
         /// @brief Returns the fully composed local-to-world transform for this node.
         FloatMat4x4 GetWorldTransform() const;
 
@@ -292,7 +310,6 @@ namespace moth_ui {
     private:
         friend class AnimationController;
 
-        void ReloadEntityPrivate();
         void UpdateLocalTransform();
     };
 }

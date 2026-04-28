@@ -13,7 +13,12 @@ namespace moth_ui {
     }
 
     void from_json(nlohmann::json const& json, AnimationTrack& track) {
-        track.m_target = json.value("target", AnimationTrack::Target::Unknown);
+        if (json.value("target", "") == "Events") {
+            // Target::Events was removed. Silently discard legacy event tracks.
+            track.m_target = AnimationTrack::Target::Unknown;
+        } else {
+            track.m_target = json.value("target", AnimationTrack::Target::Unknown);
+        }
         auto keyframes = json.value("keyframes", std::vector<Keyframe>{});
         track.m_keyframes.clear();
         for (auto& keyframe : keyframes) {
@@ -54,9 +59,16 @@ namespace moth_ui {
     }
 
     Keyframe* AnimationTrack::GetKeyframe(int frameNo) {
-        auto keyframeIt = ranges::find_if(m_keyframes, [&](auto const& keyf) { return keyf->m_frame == frameNo; });
+        auto keyframeIt = ranges::find_if(m_keyframes, [&](auto const& keyf) { return keyf->frame == frameNo; });
         if (std::end(m_keyframes) != keyframeIt) {
-            // found an existing frame
+            return keyframeIt->get();
+        }
+        return nullptr;
+    }
+
+    Keyframe const* AnimationTrack::GetKeyframe(int frameNo) const {
+        auto keyframeIt = ranges::find_if(m_keyframes, [&](auto const& keyf) { return keyf->frame == frameNo; });
+        if (std::end(m_keyframes) != keyframeIt) {
             return keyframeIt->get();
         }
         return nullptr;
@@ -64,8 +76,8 @@ namespace moth_ui {
 
     Keyframe& AnimationTrack::GetOrCreateKeyframe(int frameNo) {
         // find the frame or the first iterator after where it would be
-        auto keyframeIt = ranges::find_if(m_keyframes, [&](auto const& keyf) { return keyf->m_frame >= frameNo; });
-        if (std::end(m_keyframes) != keyframeIt && (*keyframeIt)->m_frame == frameNo) {
+        auto keyframeIt = ranges::find_if(m_keyframes, [&](auto const& keyf) { return keyf->frame >= frameNo; });
+        if (std::end(m_keyframes) != keyframeIt && (*keyframeIt)->frame == frameNo) {
             // found an existing frame
             return *(*keyframeIt);
         }
@@ -76,7 +88,7 @@ namespace moth_ui {
     }
 
     void AnimationTrack::DeleteKeyframe(int frameNo) {
-        auto keyframeIt = ranges::find_if(m_keyframes, [&](auto const& keyf) { return keyf->m_frame == frameNo; });
+        auto keyframeIt = ranges::find_if(m_keyframes, [&](auto const& keyf) { return keyf->frame == frameNo; });
         if (std::end(m_keyframes) != keyframeIt) {
             m_keyframes.erase(keyframeIt);
         }
@@ -93,47 +105,38 @@ namespace moth_ui {
         for (auto& keyframe : m_keyframes) {
             int const startF = static_cast<int>(startFrame);
             int const endF = static_cast<int>(endFrame);
-            if (keyframe->m_frame > startF && keyframe->m_frame <= endF) {
+            if (keyframe->frame > startF && keyframe->frame <= endF) {
                 callback(*keyframe);
             }
         }
     }
 
     float AnimationTrack::GetValueAtFrame(float frame) const {
-        float value = 0;
-
-        auto endKeyframeIt = std::end(m_keyframes);
-        auto firstKeyframeIt = std::begin(m_keyframes);
-        auto secondKeyframeIt = firstKeyframeIt;
-
-        // find the possible two keyframes bounding the current time
-        while (secondKeyframeIt != endKeyframeIt && static_cast<float>((*secondKeyframeIt)->m_frame) < frame) {
-            firstKeyframeIt = secondKeyframeIt;
-            ++secondKeyframeIt;
+        if (m_keyframes.empty()) {
+            return 0.0f;
         }
 
-        if (endKeyframeIt == firstKeyframeIt && endKeyframeIt == secondKeyframeIt) {
-            // did not find any frames
-        } else if (endKeyframeIt != firstKeyframeIt && endKeyframeIt != secondKeyframeIt) {
-            // found a start and end keyframe
-            float const deltaFrames = frame - static_cast<float>((*firstKeyframeIt)->m_frame);
-            float const totalFrames = static_cast<float>((*secondKeyframeIt)->m_frame - (*firstKeyframeIt)->m_frame);
-            float const factor = totalFrames == 0.0f ? 0.0f : deltaFrames / totalFrames;
-            float const startValue = (*firstKeyframeIt)->m_value;
-            float const endValue = (*secondKeyframeIt)->m_value;
-            value = Interp(startValue, endValue, factor, (*firstKeyframeIt)->m_interpType);
-        } else {
-            // found one keyframe
-            auto validKeyframeIt = firstKeyframeIt != endKeyframeIt ? firstKeyframeIt : secondKeyframeIt;
-            value = (*validKeyframeIt)->m_value;
+        auto second = std::lower_bound(std::begin(m_keyframes), std::end(m_keyframes), frame,
+            [](auto const& kf, float f) { return static_cast<float>(kf->frame) < f; });
+
+        if (second == std::begin(m_keyframes)) {
+            return (*second)->value;
         }
 
-        return value;
+        if (second == std::end(m_keyframes)) {
+            return m_keyframes.back()->value;
+        }
+
+        auto first = std::prev(second);
+        float const deltaFrames = frame - static_cast<float>((*first)->frame);
+        float const totalFrames = static_cast<float>((*second)->frame - (*first)->frame);
+        float const factor = totalFrames == 0.0f ? 0.0f : deltaFrames / totalFrames;
+        return Interp((*first)->value, (*second)->value, factor, (*first)->interpType);
     }
 
     void AnimationTrack::SortKeyframes() {
         ranges::sort(m_keyframes, [](auto const& kfa, auto const& kfb) {
-            return kfa->m_frame < kfb->m_frame;
+            return kfa->frame < kfb->frame;
         });
     }
 }

@@ -12,20 +12,18 @@ namespace moth_ui {
     static std::string const s_emptyString;
 
     std::string const& DiscreteAnimationTrack::GetValueAtFrame(int frame) const {
-        // Walk backwards to find the last keyframe at or before frame.
-        for (auto it = m_keyframes.rbegin(); it != m_keyframes.rend(); ++it) {
-            if (it->first <= frame) {
-                return it->second;
-            }
+        // Find the last keyframe at or before frame.
+        auto it = std::upper_bound(m_keyframes.begin(), m_keyframes.end(), frame,
+            [](int f, auto const& kv) { return f < kv.first; });
+        if (it != m_keyframes.begin()) {
+            return std::prev(it)->second;
         }
         return s_emptyString;
     }
 
     std::string& DiscreteAnimationTrack::GetOrCreateKeyframe(int frame) {
-        // Find or insert in sorted order.
-        auto it = std::find_if(m_keyframes.begin(), m_keyframes.end(), [frame](auto const& kf) {
-            return kf.first >= frame;
-        });
+        auto it = std::lower_bound(m_keyframes.begin(), m_keyframes.end(), frame,
+            [](auto const& kv, int f) { return kv.first < f; });
         if (it != m_keyframes.end() && it->first == frame) {
             return it->second;
         }
@@ -34,20 +32,18 @@ namespace moth_ui {
     }
 
     std::string* DiscreteAnimationTrack::GetKeyframe(int frame) {
-        auto it = std::find_if(m_keyframes.begin(), m_keyframes.end(), [frame](auto const& kf) {
-            return kf.first == frame;
-        });
-        if (it != m_keyframes.end()) {
+        auto it = std::lower_bound(m_keyframes.begin(), m_keyframes.end(), frame,
+            [](auto const& kv, int f) { return kv.first < f; });
+        if (it != m_keyframes.end() && it->first == frame) {
             return &it->second;
         }
         return nullptr;
     }
 
     void DiscreteAnimationTrack::DeleteKeyframe(int frame) {
-        auto it = std::find_if(m_keyframes.begin(), m_keyframes.end(), [frame](auto const& kf) {
-            return kf.first == frame;
-        });
-        if (it != m_keyframes.end()) {
+        auto it = std::lower_bound(m_keyframes.begin(), m_keyframes.end(), frame,
+            [](auto const& kv, int f) { return kv.first < f; });
+        if (it != m_keyframes.end() && it->first == frame) {
             m_keyframes.erase(it);
         }
     }

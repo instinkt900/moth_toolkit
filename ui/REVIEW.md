@@ -2,26 +2,7 @@
 
 Full-scope review of the public API, source implementations, and test suite. Focus: simplicity, ease of use, documentation quality, and correctness for a C++17 game UI library.
 
-## High-Severity Issues
-
-### H3: `shared_from_this()` throws `std::bad_weak_ptr` with no diagnostic
-`src/nodes/node.cpp:163`, `src/nodes/group.cpp:125`, `src/animation/animation_clip_controller.cpp:22,75`, `src/nodes/node_flipbook.cpp:187` — If a Node is constructed outside a `shared_ptr`, these calls throw with a cryptic error. Consider asserting that the node is in a shared_ptr at construction time, or documenting that Nodes must always be managed via `shared_ptr`.
-
 ## API Design Issues
-
-### A2: Missing `const` overloads
-- `AnimationTrack::Keyframes()` — no `const` overload (contrast: `DiscreteAnimationTrack` has both)
-- `AnimationTrack::GetKeyframe(int)` — returns `Keyframe*`, no `const Keyframe*` overload
-- `Node::GetLayoutRect()` — returns `LayoutRect&`, no `const LayoutRect&` overload
-- `NodeImage::GetSourceRect()` — returns `IntRect&`, no `const` overload
-- `ITarget::GetImage()` — returns `IImage*`, no `const` overload
-
-### A3: Internal classes have public constructors
-These classes are only constructed by their owners. Their constructors should be private with `friend`:
-- `AnimationController(Node&)` — constructed only by `Node`
-- `AnimationTrackController(float&, AnimationTrack&)` — constructed only by `AnimationController`
-- `DiscreteAnimationTrackController(DiscreteAnimationTrack const&, ...)` — constructed only by `AnimationController`
-- `AnimationClipController(Group*)` — constructed only by `Group`
 
 ### A4: `EventListener` lacks `I` prefix
 Every other abstract interface uses `I`-prefix (`IRenderer`, `IImage`, `IFont`, `ILogger`, `IImageFactory`, `IFontFactory`, `IFlipbookFactory`). `EventListener` is the lone exception.
@@ -153,18 +134,10 @@ The enum is `InterpType`, the function pointer type is `EaseFunction`, individua
 
 ## Prioritized Action Plan
 
-### Before next release
-
-| # | Issue | Effort |
-|---|-------|--------|
-| A2 | Missing `const` overloads | Small |
-
 ### Short-term
 
 | # | Issue | Effort |
 |---|-------|--------|
-| H3 | `shared_from_this()` diagnostic hardening | Small |
-| A3 | Private constructors + friend for internal classes | Small |
 | D1 | `ILogger`/`NullLogger` documentation | Medium |
 | D3 | Friend `to_json`/`from_json` documentation | Small |
 | D5 | Special member docstrings | Medium |

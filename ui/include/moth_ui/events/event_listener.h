@@ -9,7 +9,7 @@ namespace moth_ui {
      * Implement OnEvent() to process incoming events.  Return @c true to
      * indicate the event has been consumed and should not propagate further.
      */
-    class EventListener {
+    class IEventListener {
     public:
         /**
          * @brief Called when an event is dispatched to this listener.
@@ -18,11 +18,11 @@ namespace moth_ui {
          */
         virtual bool OnEvent(Event const& event) = 0;
 
-        EventListener() = default;
-        EventListener(EventListener const&) = default;
-        EventListener(EventListener&&) = default;
-        EventListener& operator=(EventListener const&) = default;
-        EventListener& operator=(EventListener&&) = default;
-        virtual ~EventListener() = default;
+        IEventListener() = default;
+        IEventListener(IEventListener const&) = default;
+        IEventListener(IEventListener&&) = default;
+        IEventListener& operator=(IEventListener const&) = default;
+        IEventListener& operator=(IEventListener&&) = default;
+        virtual ~IEventListener() = default;
     };
 }

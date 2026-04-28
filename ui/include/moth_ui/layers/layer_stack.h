@@ -21,7 +21,7 @@ namespace moth_ui {
      *
      * @note LayerStack is non-copyable and non-movable.
      */
-    class LayerStack : public EventListener {
+    class LayerStack : public IEventListener {
     public:
         /**
          * @brief Constructs a LayerStack with separate render and window dimensions.
@@ -102,7 +102,7 @@ namespace moth_ui {
          * @brief Installs the single external listener that receives @c FireEvent dispatches.
          * @param listener Listener to install, or @c nullptr to remove.
          */
-        void SetEventListener(EventListener* listener) { m_eventListener = listener; }
+        void SetEventListener(IEventListener* listener) { m_eventListener = listener; }
 
         /**
          * @brief Dispatches an event to the external listener.
@@ -122,7 +122,7 @@ namespace moth_ui {
     private:
         IRenderer& m_renderer;
         std::vector<std::unique_ptr<Layer>> m_layers;
-        EventListener* m_eventListener = nullptr;
+        IEventListener* m_eventListener = nullptr;
 
         int m_renderWidth = 0;
         int m_renderHeight = 0;

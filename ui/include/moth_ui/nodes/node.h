@@ -18,7 +18,7 @@ namespace moth_ui {
      * It participates in the event system as both a listener and a dispatcher.
      * Subclasses override DrawInternal() to provide rendering behaviour.
      */
-    class Node : public EventListener, public std::enable_shared_from_this<Node> {
+    class Node : public IEventListener, public std::enable_shared_from_this<Node> {
     public:
         Node(Node const& other) = delete;
         Node(Node&& other) = default;

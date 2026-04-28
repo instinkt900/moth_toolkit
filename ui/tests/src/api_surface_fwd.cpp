@@ -21,7 +21,7 @@ namespace {
         (void)fontFactoryImpl; (void)nodeFactory; (void)logger; (void)nullLogger;
     }
 
-    void pin_events(moth_ui::Event* event, moth_ui::EventListener* listener,
+    void pin_events(moth_ui::Event* event, moth_ui::IEventListener* listener,
                     moth_ui::EventDispatch* dispatch,
                     moth_ui::EventMouseDown* mouseDown, moth_ui::EventMouseUp* mouseUp,
                     moth_ui::EventMouseMove* mouseMove, moth_ui::EventMouseWheel* mouseWheel,

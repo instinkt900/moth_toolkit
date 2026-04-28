@@ -29,7 +29,7 @@ namespace moth_ui {
     // Events
     // -------------------------------------------------------------------------
     class Event;
-    class EventListener;
+    class IEventListener;
     class EventDispatch;
     class EventMouseDown;
     class EventMouseUp;

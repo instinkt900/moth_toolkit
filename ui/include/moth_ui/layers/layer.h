@@ -13,7 +13,7 @@ namespace moth_ui {
      * and/or OnEvent() to implement layer behaviour.  OnAddedToStack() and
      * OnRemovedFromStack() are called when the stack membership changes.
      */
-    class Layer : public EventListener {
+    class Layer : public IEventListener {
     public:
         /**
          * @brief Default event handler. Returns @c false — override to handle events.

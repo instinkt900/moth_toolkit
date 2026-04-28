@@ -34,10 +34,10 @@ namespace moth_ui {
         bool GetHandled() const { return m_handled; }
 
         /**
-         * @brief Forwards the event to an EventListener if not already handled.
+         * @brief Forwards the event to an IEventListener if not already handled.
          * @param listener Listener to call; does nothing if @c nullptr.
          */
-        void Dispatch(EventListener* listener) {
+        void Dispatch(IEventListener* listener) {
             if (m_handled) {
                 return;
             }

@@ -26,7 +26,7 @@ namespace moth_ui {
         case LayoutEntityType::Flipbook:
             return std::make_unique<LayoutEntityFlipbook>(nullptr);
         default:
-            GetLogger().Error("Unknown layout entity type: {}", magic_enum::enum_name(type));
+            log::error("Unknown layout entity type: {}", magic_enum::enum_name(type));
             assert(false && "unknown entity type");
             return nullptr;
         }

@@ -21,9 +21,9 @@ namespace moth_ui {
             if (entity->Deserialize(json, context)) {
                 return entity;
             }
-            GetLogger().Warning("Failed to deserialize child entity of type '{}'", magic_enum::enum_name(type));
+            log::warn("Failed to deserialize child entity of type '{}'", magic_enum::enum_name(type));
         } else {
-            GetLogger().Warning("Unknown child entity type '{}'", magic_enum::enum_name(type));
+            log::warn("Unknown child entity type '{}'", magic_enum::enum_name(type));
         }
         return nullptr;
     }
@@ -100,26 +100,26 @@ namespace moth_ui {
             if (options.binary) {
                 std::ifstream ifile(path, std::ios::binary);
                 if (!ifile.is_open()) {
-                    GetLogger().Error("Failed to load layout '{}': file not found", path.string());
+                    log::error("Failed to load layout '{}': file not found", path.string());
                     return { nullptr, LoadResult::DoesNotExist };
                 }
                 json = nlohmann::json::from_msgpack(ifile);
             } else {
                 std::ifstream ifile(path);
                 if (!ifile.is_open()) {
-                    GetLogger().Error("Failed to load layout '{}': file not found", path.string());
+                    log::error("Failed to load layout '{}': file not found", path.string());
                     return { nullptr, LoadResult::DoesNotExist };
                 }
                 ifile >> json;
             }
         } catch (nlohmann::json::parse_error const&) {
-            GetLogger().Error("Failed to load layout '{}': JSON parse error", path.string());
+            log::error("Failed to load layout '{}': JSON parse error", path.string());
             return { nullptr, LoadResult::IncorrectFormat };
         }
 
         auto layout = std::make_shared<Layout>();
         if (!layout->Deserialize(json, context)) {
-            GetLogger().Error("Failed to load layout '{}': deserialization failed", path.string());
+            log::error("Failed to load layout '{}': deserialization failed", path.string());
             return { nullptr, LoadResult::IncorrectFormat };
         }
 

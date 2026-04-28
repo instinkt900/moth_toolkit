@@ -33,12 +33,12 @@ namespace moth_ui {
         if (fontName.empty()) {
             m_font = m_context.GetFontFactory().GetDefaultFont(size);
             if (!m_font) {
-                GetLogger().Warning("NodeText: no default font available (size {})", size);
+                log::warn("NodeText: no default font available (size {})", size);
             }
         } else {
             m_font = m_context.GetFontFactory().GetFont(std::string(fontName), size);
             if (!m_font) {
-                GetLogger().Warning("NodeText: failed to load font '{}' (size {})", fontName, size);
+                log::warn("NodeText: failed to load font '{}' (size {})", fontName, size);
             }
         }
     }

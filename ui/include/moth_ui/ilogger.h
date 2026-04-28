@@ -75,4 +75,23 @@ namespace moth_ui {
 
     /// @brief Returns the active logger, or a NullLogger if none has been set. Thread-safe.
     ILogger& GetLogger();
+
+    namespace log {
+        template <typename... Args>
+        void debug(fmt::format_string<Args...> fmt, Args&&... args) {
+            GetLogger().Debug(fmt, std::forward<Args>(args)...);
+        }
+        template <typename... Args>
+        void info(fmt::format_string<Args...> fmt, Args&&... args) {
+            GetLogger().Info(fmt, std::forward<Args>(args)...);
+        }
+        template <typename... Args>
+        void warn(fmt::format_string<Args...> fmt, Args&&... args) {
+            GetLogger().Warning(fmt, std::forward<Args>(args)...);
+        }
+        template <typename... Args>
+        void error(fmt::format_string<Args...> fmt, Args&&... args) {
+            GetLogger().Error(fmt, std::forward<Args>(args)...);
+        }
+    }
 }

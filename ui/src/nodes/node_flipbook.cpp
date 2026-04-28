@@ -45,9 +45,9 @@ namespace moth_ui {
         if (factory != nullptr) {
             m_flipbook = factory->GetFlipbook(path);
             if (m_flipbook == nullptr) {
-                GetLogger().Warning("NodeFlipbook: failed to load flipbook '{}'", path.string());
+                log::warn("NodeFlipbook: failed to load flipbook '{}'", path.string());
             } else if (m_flipbook->GetFrameCount() <= 0) {
-                GetLogger().Error("NodeFlipbook: flipbook '{}' has no frames", path.string());
+                log::error("NodeFlipbook: flipbook '{}' has no frames", path.string());
                 m_flipbook.reset();
             }
         }
@@ -82,7 +82,7 @@ namespace moth_ui {
                 m_currentClip = std::move(clipDesc);
                 m_currentClipName = name;
             } else if (!name.empty()) {
-                GetLogger().Warning("NodeFlipbook: clip '{}' not found", name);
+                log::warn("NodeFlipbook: clip '{}' not found", name);
             }
         }
         if (!m_currentClip.has_value()) {

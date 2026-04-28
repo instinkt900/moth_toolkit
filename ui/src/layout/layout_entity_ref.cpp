@@ -88,7 +88,7 @@ namespace moth_ui {
                     }
                 }
             } else {
-                GetLogger().Error("Failed to load referenced layout '{}': {}", m_layoutPath.string(), magic_enum::enum_name(loadResult));
+                log::error("Failed to load referenced layout '{}': {}", m_layoutPath.string(), magic_enum::enum_name(loadResult));
                 success = false;
             }
         }

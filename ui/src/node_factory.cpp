@@ -17,7 +17,7 @@ namespace moth_ui {
         
         auto [layout, loadResult] = Layout::Load(path);
         if (loadResult != Layout::LoadResult::Success) {
-            GetLogger().Error("Failed to load layout '{}': {}", path.string(), magic_enum::enum_name(loadResult));
+            log::error("Failed to load layout '{}': {}", path.string(), magic_enum::enum_name(loadResult));
             return nullptr;
         }
 

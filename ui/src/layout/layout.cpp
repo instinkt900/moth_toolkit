@@ -75,6 +75,7 @@ namespace moth_ui {
                 m_clips = json.value("clips", decltype(m_clips){});
                 m_events = json.value("events", decltype(m_events){});
 
+                m_children.clear();
                 if (auto childrenIt = json.find("children"); childrenIt != json.end()) {
                     for (auto&& childJson : *childrenIt) {
                         if (auto child = LoadEntity(childJson, this, loadedContext)) {

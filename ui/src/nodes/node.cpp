@@ -137,9 +137,12 @@ namespace moth_ui {
     }
 
     void Node::ReloadEntity() {
+        if (!m_layout) {
+            return;
+        }
         ReloadEntityInternal();
 
-        if (m_parent != nullptr && m_layout) {
+        if (m_parent != nullptr) {
             m_parent->ReapplyOverrides(*m_layout);
             m_visible = m_layout->m_visible;
             m_blend = m_layout->m_blend;

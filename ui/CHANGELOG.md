@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 Entries are generated automatically from git history using [git-cliff](https://github.com/orhun/git-cliff).
 
-## [1.0.0-rc.1] - 2026-04-26
+## [1.0.0-rc.1] - 2026-04-28
 ### Features
 - Add moth_ui.h aggregate header and moth_ui_fwd.h forward declaration header
 - Add binary and pretty-print options to Layout::Save, detect binary on Load
@@ -55,6 +55,21 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Clip rects now correctly clip nodes below them not above
 - Resolve four bugs from technical review
 - Update test signatures for string_view refactor
+- Address trivial issues from 2026-04-27 technical review
+- Replace json::at() with json::value() in deserialization paths
+- Add missing const overloads for Keyframes, GetKeyframe, GetLayoutRect, GetSourceRect, GetImage
+- Guard ReloadEntity against null layout
+- Clear children before repopulating in Deserialize
+- Delete Group move constructor to prevent dangling controller pointer
+- Null-guard GetTypedLayout in CheckEvents
+- Harden keyframe from_json against integers, missing values, and variant errors
+- Null-guard PushLayer against empty unique_ptr
+- Synchronize m_root read in LoadLayout with mutex
+- Clear children and clips in CopyLayout before repopulating
+- Remove mothui_version gate so legacy layouts deserialize correctly
+- Reject null layoutEntityGroup in Group::Create
+- Reject null layoutEntity in Node::Create factory
+- Use empty JSON object instead of null in marker missing-keys test
 
 ### Refactoring
 - Update all ui_fwd.h includes to moth_ui_fwd.h
@@ -66,10 +81,27 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Remove FlushCache from IImageFactory and IFlipbookFactory
 - Use string_view for string parameters in public API
 - Replace SendEventDown with Broadcast, children-first dispatch
+- Clean up layering violations and ReloadEntity indirection
+- Store typed layout entity pointer in node subclasses to eliminate casts
+- Add Group::MoveChild, make GetChildren return const& only
+- Standardize JSON deserialization on lenient json.value()
+- Enforce shared_ptr ownership for all Nodes
+- Rename EventListener to IEventListener
+- Remove m_ prefix from public members of Keyframe, AnimationClip, AnimationEvent
+- Modernize Layout::Load to return pair<Layout, LoadResult>
+- Rename DefaultFPS/DefaultFontSize/DefaultBorderSize to k-prefix
+- Remove dead Target::Events enum value with backward-compat
+- Rename ease* functions to interp* for consistency with InterpType
+- Rename AnimationEvent to AnimationMarker for clarity
 
 ### Performance
 - Cache local transform on Node to avoid per-frame trig
 - Avoid holding mutex during disk I/O in LayoutCache::GetLayout
+- Replace linear scan in GetValueAtFrame with std::lower_bound
+- Replace std::map lookup in Interp() with constexpr std::array
+- Replace linear scan with binary search in DiscreteAnimationTrack
+- Eliminate double JSON lookups with find() and value()
+- Use static_pointer_cast instead of dynamic_pointer_cast in SharedFromThis
 
 ### Documentation
 - Overhaul README and add MIT LICENSE
@@ -82,6 +114,16 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Add Doxygen cmake target and document it in README
 - Add Doxygen Awesome theme via FetchContent
 - Clarify docstrings for pre-1.0 API review findings
+- Add docstring for Group::ReapplyOverrides
+- Explain why EventType is a plain enum, not enum class
+- Mark Rect::left() and top() as aliases for x() and y()
+- Warn that Color arithmetic is per-component, not alpha blending
+- Add docstrings for ILogger, NullLogger, and LogLevel
+- Add docstrings for friend to_json/from_json declarations
+- Add docstrings for special members on AnimationTrack, LayoutEntity, Group, Node, Layout
+- Explain that PushTransform replaces, not composes — composition lives in Node
+- Document logger lifetime requirement in SetLogger
+- Fix contradictory Group::Create param comment
 
 ### Testing
 - Add tests for FloatMat4x4 and node rotation/hit-testing
@@ -89,6 +131,15 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Update and extend flipbook and discrete track test suite
 - Add API surface tests and clean up stale planning docs
 - Apply code-review fixes to API surface tests and NodeFlipbook
+- Add tests for review gaps and update for API changes
+- Add T2 error path tests, T5 static_assert cleanup, and EventKey tests
+- Add LayerStack, LayoutCache tests and instrument MockRenderer
+- Rename animation_event tags to animation_marker
+- Delete copy/move operations on TempDir to prevent double-delete
+- Check Load result before dereferencing in path test
+- Extend test coverage for layer stack, node factory, and animation marker
+- Replace magic number in TestEvent with named constant
+- Assert OnEvent return value; fix: short-circuit MoveChild on equal indices
 
 ### Miscellaneous
 - Add git-cliff changelog automation
@@ -109,6 +160,10 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Removed old todo
 - Exposing version info in api
 - Const-correctness, docstring, and loop cleanup
+- Remove dead commented-out code from serialize_utils.h
+- Remove unused ClipController struct
+- Removing review document that shouldn't have been committed
+- Apply review nitpick fixes
 
 ### Changes
 - Pushing for v1.0
@@ -118,6 +173,7 @@ Entries are generated automatically from git history using [git-cliff](https://g
 - Bump version from 1.5.0 to 1.6.0
 - Bump version from 1.6.0 to 1.7.0
 - Delete CHANGELOG.md
+- Use east-const for KeyMod constants
 
 ## [0.3.0] - 2025-08-14
 ### Changes

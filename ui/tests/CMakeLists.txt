@@ -33,6 +33,8 @@ set(SOURCES
     src/test_discrete_animation_track_controller.cpp
     src/test_logger.cpp
     src/test_node_factory.cpp
+    src/test_layout_cache.cpp
+    src/test_layer_stack.cpp
     # API surface tests — compile-time only, no runtime assertions
     src/api_surface_umbrella.cpp
     src/api_surface_fwd.cpp

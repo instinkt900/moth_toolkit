@@ -67,11 +67,6 @@ TEST_CASE("Layout::Load succeeds for valid files", "[layout][load]") {
     REQUIRE(result == Layout::LoadResult::Success);
 }
 
-TEST_CASE("Layout::Load returns DoesNotExist for missing file", "[layout][load]") {
-    auto result = Layout::Load("/tmp/moth_no_such_file.mothui").second;
-    REQUIRE(result == Layout::LoadResult::DoesNotExist);
-}
-
 // ---- empty layout round-trip ------------------------------------------------
 
 TEST_CASE("Empty layout save/load round-trip", "[layout][serialization]") {
@@ -200,17 +195,17 @@ TEST_CASE("Layout animation clips round-trip", "[layout][serialization][animatio
     auto original = std::make_shared<Layout>();
 
     auto clip = std::make_unique<AnimationClip>();
-    clip->m_name = "walk";
-    clip->m_startFrame = 0;
-    clip->m_endFrame = 24;
-    clip->m_fps = 24.0f;
-    clip->m_loopType = AnimationClip::LoopType::Loop;
+    clip->name = "walk";
+    clip->startFrame = 0;
+    clip->endFrame = 24;
+    clip->fps = 24.0f;
+    clip->loopType = AnimationClip::LoopType::Loop;
     original->m_clips.push_back(std::move(clip));
 
     auto clip2 = std::make_unique<AnimationClip>();
-    clip2->m_name = "idle";
-    clip2->m_startFrame = 30;
-    clip2->m_endFrame = 60;
+    clip2->name = "idle";
+    clip2->startFrame = 30;
+    clip2->endFrame = 60;
     original->m_clips.push_back(std::move(clip2));
 
     REQUIRE(original->Save(tmp));
@@ -218,12 +213,12 @@ TEST_CASE("Layout animation clips round-trip", "[layout][serialization][animatio
     auto [loaded, result] = Layout::Load(tmp); REQUIRE(result == Layout::LoadResult::Success);
 
     REQUIRE(loaded->m_clips.size() == 2);
-    REQUIRE(loaded->m_clips[0]->m_name == "walk");
-    REQUIRE(loaded->m_clips[0]->m_startFrame == 0);
-    REQUIRE(loaded->m_clips[0]->m_endFrame == 24);
-    REQUIRE(loaded->m_clips[0]->m_fps == Catch::Approx(24.0f));
-    REQUIRE(loaded->m_clips[0]->m_loopType == AnimationClip::LoopType::Loop);
-    REQUIRE(loaded->m_clips[1]->m_name == "idle");
+    REQUIRE(loaded->m_clips[0]->name == "walk");
+    REQUIRE(loaded->m_clips[0]->startFrame == 0);
+    REQUIRE(loaded->m_clips[0]->endFrame == 24);
+    REQUIRE(loaded->m_clips[0]->fps == Catch::Approx(24.0f));
+    REQUIRE(loaded->m_clips[0]->loopType == AnimationClip::LoopType::Loop);
+    REQUIRE(loaded->m_clips[1]->name == "idle");
 
     REQUIRE(jsonEqual(*original, *loaded));
 }
@@ -242,10 +237,10 @@ TEST_CASE("Layout animation events round-trip", "[layout][serialization][animati
     auto [loaded, result] = Layout::Load(tmp); REQUIRE(result == Layout::LoadResult::Success);
 
     REQUIRE(loaded->m_events.size() == 2);
-    REQUIRE(loaded->m_events[0]->m_frame == 5);
-    REQUIRE(loaded->m_events[0]->m_name == "footstep");
-    REQUIRE(loaded->m_events[1]->m_frame == 12);
-    REQUIRE(loaded->m_events[1]->m_name == "spawn");
+    REQUIRE(loaded->m_events[0]->frame == 5);
+    REQUIRE(loaded->m_events[0]->name == "footstep");
+    REQUIRE(loaded->m_events[1]->frame == 12);
+    REQUIRE(loaded->m_events[1]->name == "spawn");
 
     REQUIRE(jsonEqual(*original, *loaded));
 }

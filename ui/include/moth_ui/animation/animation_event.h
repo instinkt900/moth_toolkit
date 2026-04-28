@@ -35,7 +35,9 @@ namespace moth_ui {
             return !(*this == other);
         }
 
+        /// @brief Serializes this event to JSON.
         friend void to_json(nlohmann::json& json, AnimationEvent const& event);
+        /// @brief Deserializes an event from JSON.
         friend void from_json(nlohmann::json const& json, AnimationEvent& event);
 
         AnimationEvent() = default;

@@ -142,7 +142,9 @@ namespace moth_ui {
         /// @brief Sorts keyframes by ascending frame index.
         void SortKeyframes();
 
+        /// @brief Serializes this track to JSON.
         friend void to_json(nlohmann::json& json, AnimationTrack const& track);
+        /// @brief Deserializes a track from JSON.
         friend void from_json(nlohmann::json const& json, AnimationTrack& track);
 
         AnimationTrack() = default;

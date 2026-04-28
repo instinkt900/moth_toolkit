@@ -26,7 +26,9 @@ namespace moth_ui {
         KeyframeValue value = 0;                    ///< Scalar value at this keyframe.
         InterpType interpType = InterpType::Linear; ///< Easing curve used to reach the next keyframe.
 
+        /// @brief Serializes this keyframe to JSON.
         friend void to_json(nlohmann::json& json, Keyframe const& keyframe);
+        /// @brief Deserializes a keyframe from JSON.
         friend void from_json(nlohmann::json const& json, Keyframe& keyframe);
 
         Keyframe() = default;

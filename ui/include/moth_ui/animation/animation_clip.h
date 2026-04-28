@@ -41,6 +41,7 @@ namespace moth_ui {
             return !(*this == other);
         }
 
+        /// @brief Serializes this clip to JSON.
         friend void to_json(nlohmann::json& j, AnimationClip const& clip) {
             j["name"] = clip.name;
             j["startFrame"] = clip.startFrame;
@@ -49,6 +50,7 @@ namespace moth_ui {
             j["loopType"] = clip.loopType;
         }
 
+        /// @brief Deserializes a clip from JSON.
         friend void from_json(nlohmann::json const& j, AnimationClip& clip) {
             // TODO: Remove m_-prefixed fallback keys in a future version.
             clip.name = j.value("name", j.value("m_name", ""));

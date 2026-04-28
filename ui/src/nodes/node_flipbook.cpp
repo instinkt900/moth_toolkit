@@ -184,7 +184,7 @@ namespace moth_ui {
     }
 
     std::shared_ptr<NodeFlipbook> NodeFlipbook::SharedFromThis() {
-        return std::dynamic_pointer_cast<NodeFlipbook>(shared_from_this());
+        return std::static_pointer_cast<NodeFlipbook>(shared_from_this());
     }
 
     std::shared_ptr<NodeFlipbook> NodeFlipbook::Create(Context& context) {

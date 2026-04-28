@@ -15,6 +15,10 @@ namespace {
             std::filesystem::create_directories(tmp);
             path = tmp;
         }
+        TempDir(TempDir const&) = delete;
+        TempDir(TempDir&&) = delete;
+        TempDir& operator=(TempDir const&) = delete;
+        TempDir& operator=(TempDir&&) = delete;
         ~TempDir() { std::filesystem::remove_all(path); }
     };
 

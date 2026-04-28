@@ -37,7 +37,7 @@ namespace moth_ui {
 
         if (success) {
             m_fontName = json.value("fontName", "");
-            m_fontSize = json.value("fontSize", DefaultFontSize);
+            m_fontSize = json.value("fontSize", kDefaultFontSize);
             m_text = json.value("text", "");
             m_horizontalAlignment = json.value("horizontalAlignment", TextHorizAlignment::Left);
             m_verticalAlignment = json.value("verticalAlignment", TextVertAlignment::Top);

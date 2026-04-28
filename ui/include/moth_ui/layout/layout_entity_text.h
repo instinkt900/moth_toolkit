@@ -41,10 +41,10 @@ namespace moth_ui {
         nlohmann::json SerializeOverrides() const override;
         void DeserializeOverrides(nlohmann::json const& overridesJson) override;
 
-        static int constexpr DefaultFontSize = 16; ///< Default font point size.
+        static int constexpr kDefaultFontSize = 16; ///< Default font point size.
 
         std::string m_fontName;                                                     ///< Registered font name used to load the font.
-        int m_fontSize = DefaultFontSize;                                           ///< Font point size.
+        int m_fontSize = kDefaultFontSize;                                           ///< Font point size.
         std::string m_text = "Text Element";                                        ///< Text content to display.
         TextHorizAlignment m_horizontalAlignment = TextHorizAlignment::Left;        ///< Horizontal text alignment.
         TextVertAlignment m_verticalAlignment = TextVertAlignment::Top;             ///< Vertical text alignment.

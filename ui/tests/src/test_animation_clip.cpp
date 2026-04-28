@@ -9,12 +9,12 @@ TEST_CASE("AnimationClip default construction", "[animation_clip][initialization
     REQUIRE(clip.name.empty());
     REQUIRE(clip.startFrame == 0);
     REQUIRE(clip.endFrame == 0);
-    REQUIRE(clip.fps == Catch::Approx(AnimationClip::DefaultFPS));
+    REQUIRE(clip.fps == Catch::Approx(AnimationClip::kDefaultFPS));
     REQUIRE(clip.loopType == AnimationClip::LoopType::Stop);
 }
 
-TEST_CASE("AnimationClip DefaultFPS is 30", "[animation_clip]") {
-    REQUIRE(AnimationClip::DefaultFPS == Catch::Approx(30.0f));
+TEST_CASE("AnimationClip kDefaultFPS is 30", "[animation_clip]") {
+    REQUIRE(AnimationClip::kDefaultFPS == Catch::Approx(30.0f));
 }
 
 TEST_CASE("AnimationClip FrameCount is inclusive", "[animation_clip][frame_count]") {

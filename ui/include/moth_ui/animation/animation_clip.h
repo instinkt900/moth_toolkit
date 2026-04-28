@@ -22,12 +22,12 @@ namespace moth_ui {
             Reset, ///< Playback stops and the node resets to frame 0.
         };
 
-        static constexpr float DefaultFPS = 30; ///< Default playback rate in frames per second.
+        static constexpr float kDefaultFPS = 30; ///< Default playback rate in frames per second.
 
         std::string name;                   ///< Unique name identifying this clip.
         int startFrame = 0;                 ///< Inclusive start frame index.
         int endFrame = 0;                   ///< Inclusive end frame index.
-        float fps = DefaultFPS;             ///< Playback rate in frames per second.
+        float fps = kDefaultFPS;             ///< Playback rate in frames per second.
         LoopType loopType = LoopType::Stop; ///< What to do when the clip ends.
 
         /// @brief Returns the number of frames in this clip (inclusive of both endpoints).
@@ -56,7 +56,7 @@ namespace moth_ui {
             clip.name = j.value("name", j.value("m_name", ""));
             clip.startFrame = j.value("startFrame", j.value("m_startFrame", 0));
             clip.endFrame = j.value("endFrame", j.value("m_endFrame", 0));
-            clip.fps = j.value("fps", j.value("m_fps", DefaultFPS));
+            clip.fps = j.value("fps", j.value("m_fps", kDefaultFPS));
             clip.loopType = j.value("loopType", j.value("m_loopType", LoopType::Stop));
         }
 

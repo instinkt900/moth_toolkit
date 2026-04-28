@@ -24,7 +24,9 @@ namespace moth_ui {
          * @param parent Owning group.
          */
         explicit LayoutEntityGroup(LayoutEntityGroup* parent);
+        /// @brief Deep-copies a group entity.
         LayoutEntityGroup(LayoutEntityGroup const& other);
+        /// @brief Move-constructs a group entity.
         LayoutEntityGroup(LayoutEntityGroup&& other) noexcept;
 
         /// @brief Returns @c LayoutEntityType::Group.
@@ -36,6 +38,6 @@ namespace moth_ui {
 
         LayoutEntityGroup& operator=(LayoutEntityGroup const&) = delete;
         LayoutEntityGroup& operator=(LayoutEntityGroup&&) = default;
-        ~LayoutEntityGroup() override;
+        ~LayoutEntityGroup() override; ///< Destroys the group entity and its children.
     };
 }

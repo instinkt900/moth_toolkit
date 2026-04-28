@@ -64,6 +64,7 @@ namespace moth_ui {
             Target::FlipbookPlaying,
         };
 
+        /// @brief Deep-copies a track, including all keyframes.
         AnimationTrack(AnimationTrack const& other);
 
         /**
@@ -147,10 +148,10 @@ namespace moth_ui {
         /// @brief Deserializes a track from JSON.
         friend void from_json(nlohmann::json const& json, AnimationTrack& track);
 
-        AnimationTrack() = default;
-        AnimationTrack(AnimationTrack&& other) = default;
-        AnimationTrack& operator=(AnimationTrack&&) = default;
-        ~AnimationTrack() = default;
+        AnimationTrack() = default;                                       ///< Default constructs an empty track with Unknown target.
+        AnimationTrack(AnimationTrack&& other) = default;                 ///< Move-constructs a track.
+        AnimationTrack& operator=(AnimationTrack&&) = default;            ///< Move-assigns a track.
+        ~AnimationTrack() = default;                                      ///< Destroys the track and its keyframes.
 
     private:
         Target m_target = Target::Unknown;

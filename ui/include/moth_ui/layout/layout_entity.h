@@ -39,7 +39,9 @@ namespace moth_ui {
          * @param parent Owning group; provides context for default bounds.
          */
         explicit LayoutEntity(LayoutEntityGroup* parent);
+        /// @brief Deep-copies an entity and its tracks.
         LayoutEntity(LayoutEntity const& other);
+        /// @brief Move-constructs an entity, transferring ownership of tracks.
         LayoutEntity(LayoutEntity&& other) noexcept;
 
         /// @brief Controls how Clone() duplicates child entities.
@@ -136,7 +138,7 @@ namespace moth_ui {
 
         LayoutEntity& operator=(LayoutEntity const&) = delete;
         LayoutEntity& operator=(LayoutEntity&&) = default;
-        virtual ~LayoutEntity() = default;
+        virtual ~LayoutEntity() = default; ///< Destroys the entity and its tracks.
 
     private:
         void InitTracks(LayoutRect const& initialRect);

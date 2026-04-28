@@ -16,7 +16,7 @@ namespace moth_ui {
         Group(Group&& other) = default;
         Group& operator=(Group const&) = delete;
         Group& operator=(Group&&) = delete;
-        ~Group() override = default;
+        ~Group() override = default; ///< Destroys the group and its children.
 
         /**
          * @brief Creates an empty group with no layout entity.

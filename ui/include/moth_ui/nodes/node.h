@@ -27,7 +27,7 @@ namespace moth_ui {
         // m_parent/shared_from_this ties a live node into the scene graph — overwriting
         // an already-inserted node would corrupt the parent's child list.
         Node& operator=(Node&&) = delete;
-        ~Node() override;
+        ~Node() override; ///< Destroys the node and its animation controller.
 
         /**
          * @brief Creates a Node with no layout entity.

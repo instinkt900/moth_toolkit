@@ -17,11 +17,13 @@ namespace moth_ui {
     public:
         Layout();
 
+        /// @brief Deep-copies the layout and its entity tree.
         std::shared_ptr<LayoutEntity> Clone(CloneType cloneType) override;
 
         /// @brief Returns @c LayoutEntityType::Layout.
         LayoutEntityType GetType() const override { return LayoutEntityType::Layout; }
 
+        /// @brief Instantiates the layout's entity tree as a live node hierarchy.
         std::shared_ptr<Node> Instantiate(Context& context) override;
 
         nlohmann::json Serialize(SerializeContext const& context) const override;

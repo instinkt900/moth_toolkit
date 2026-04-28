@@ -82,6 +82,9 @@ namespace moth_ui {
 
     void AnimationClipController::CheckEvents(float startFrame, float endFrame) {
         auto* layout = m_group->GetTypedLayout();
+        if (layout == nullptr) {
+            return;
+        }
         for (auto& animEvent : layout->m_events) {
             if (static_cast<float>(animEvent->frame) > startFrame && static_cast<float>(animEvent->frame) <= endFrame) {
                 m_group->SendEvent(EventAnimation(m_group->shared_from_this(), animEvent->name), Node::EventDirection::Up);

@@ -39,10 +39,13 @@ namespace moth_ui {
         virtual void PopColor() = 0;
 
         /**
-         * @brief Pushes a 2D affine transform. Draw calls use local-space rects;
-         *        the renderer maps them to screen space via this transform.
-         *        Transforms are not composed — each push replaces the active transform
-         *        until the matching PopTransform.
+         * @brief Pushes a 2D affine transform onto the renderer state stack.
+         *
+         * The transform is @em already composed by the caller (@c Node::GetWorldTransform()
+         * multiplies the parent chain). The renderer replaces its active transform with
+         * the given one — it does not compose with the previous top. Composition lives
+         * in the node tree, keeping the renderer hierarchy-agnostic.
+         *
          * @param transform The absolute local-to-screen transform for the current node.
          */
         virtual void PushTransform(FloatMat4x4 const& transform) = 0;

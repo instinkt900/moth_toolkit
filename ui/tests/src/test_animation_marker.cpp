@@ -64,7 +64,7 @@ TEST_CASE("AnimationMarker JSON has expected keys", "[animation_marker][json]") 
 
 TEST_CASE("AnimationMarker JSON missing keys default to zero values", "[animation_marker][json]") {
     AnimationMarker restored;
-    from_json(nlohmann::json{}, restored);
+    from_json(nlohmann::json::object({}), restored);
     REQUIRE(restored.frame == 0);
     REQUIRE(restored.name.empty());
 }

@@ -30,8 +30,10 @@ namespace {
         void Draw() override { drawCalled = true; }
     };
 
+    constexpr int kTestEventType = 100;
+
     struct TestEvent : Event {
-        TestEvent() : Event(100) {}
+        TestEvent() : Event(kTestEventType) {}
         std::unique_ptr<Event> Clone() const override { return std::make_unique<TestEvent>(*this); }
     };
 }

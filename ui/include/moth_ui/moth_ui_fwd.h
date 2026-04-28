@@ -78,7 +78,7 @@ namespace moth_ui {
     using KeyframeValue = float;
     struct AnimationClip;
     class AnimationTrack;
-    class AnimationEvent;
+    class AnimationMarker;
     class AnimationController;
     class AnimationTrackController;
     class AnimationClipController;

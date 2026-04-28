@@ -4,7 +4,7 @@
 #include "moth_ui/layout/layout_entity_text.h"
 #include "moth_ui/layout/layout_rect.h"
 #include "moth_ui/animation/animation_clip.h"
-#include "moth_ui/animation/animation_event.h"
+#include "moth_ui/animation/animation_marker.h"
 #include "moth_ui/graphics/text_alignment.h"
 #include <catch2/catch_all.hpp>
 #include <nlohmann/json.hpp>
@@ -234,8 +234,8 @@ TEST_CASE("Layout animation events round-trip", "[layout][serialization][animati
     TempFile tmp("moth_events.mothui");
     auto original = std::make_shared<Layout>();
 
-    original->m_events.push_back(std::make_unique<AnimationEvent>(5,  "footstep"));
-    original->m_events.push_back(std::make_unique<AnimationEvent>(12, "spawn"));
+    original->m_events.push_back(std::make_unique<AnimationMarker>(5,  "footstep"));
+    original->m_events.push_back(std::make_unique<AnimationMarker>(12, "spawn"));
 
     REQUIRE(original->Save(tmp));
 

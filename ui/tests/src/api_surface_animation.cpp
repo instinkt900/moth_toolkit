@@ -1,4 +1,4 @@
-// Pins the animation system types: Keyframe, AnimationTrack, AnimationClip, AnimationEvent.
+// Pins the animation system types: Keyframe, AnimationTrack, AnimationClip, AnimationMarker.
 
 #include "moth_ui/moth_ui.h"
 
@@ -92,8 +92,8 @@ TEST_CASE("AnimationClip fields and methods are stable", "[api][animation][clip]
     SUCCEED();
 }
 
-TEST_CASE("AnimationEvent fields are stable", "[api][animation][event]") {
-    static_assert(std::is_same_v<decltype(AnimationEvent::frame), int>);
-    static_assert(std::is_same_v<decltype(AnimationEvent::name),  std::string>);
+TEST_CASE("AnimationMarker fields are stable", "[api][animation][event]") {
+    static_assert(std::is_same_v<decltype(AnimationMarker::frame), int>);
+    static_assert(std::is_same_v<decltype(AnimationMarker::name),  std::string>);
     SUCCEED();
 }

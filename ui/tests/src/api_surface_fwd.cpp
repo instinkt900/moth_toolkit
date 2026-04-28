@@ -61,7 +61,7 @@ namespace {
 
     void pin_animation(moth_ui::AnimationTrack* animationTrack,
                        moth_ui::AnimationClip* animationClip,
-                       moth_ui::AnimationEvent* animationEvent,
+                       moth_ui::AnimationMarker* animationEvent,
                        moth_ui::AnimationController* animationController,
                        moth_ui::AnimationTrackController* animationTrackController,
                        moth_ui::AnimationClipController* animationClipController,

@@ -4,15 +4,6 @@ Full-scope review of the public API, source implementations, and test suite. Foc
 
 ## Naming & Consistency
 
-### N3: `AnimationTrack::Target::Events` is a dead enum value
-`Events` is "ignored by AnimationController" and "not a float value target." It exists only as a discriminant for serialization but pollutes the target enum.
-
-### N4: `InterpType` naming vs `ease` function prefix
-The enum is `InterpType`, the function pointer type is `EaseFunction`, individual functions use `ease` prefix. Pick one scheme.
-
-### N5: `AnimationEvent` vs `EventAnimation` naming
-`AnimationEvent` is a marker struct (a named frame). `EventAnimation` is an event class (fires when a marker is crossed). Rename `AnimationEvent` → `AnimationMarker` for clarity.
-
 ## Implementation Quality
 
 ### I1: `json.contains()` + `json["key"]` double lookup
@@ -99,6 +90,5 @@ The enum is `InterpType`, the function pointer type is `EaseFunction`, individua
 | T1 | Binary serialization tests | Small |
 | T1 | Widget CRTP tests | Small |
 | A10 | Document `EventType` plain-enum rationale | Trivial |
-| N3 | `AnimationTrack::Target::Events` removal | Medium |
 | I3 | `LayoutEntityRef` JSON store-don't-serialize | Small |
 | I7 | RAII renderer state guards | Small |

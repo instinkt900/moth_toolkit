@@ -1,6 +1,6 @@
 #include "mock_context.h"
 #include "moth_ui/animation/animation_clip.h"
-#include "moth_ui/animation/animation_event.h"
+#include "moth_ui/animation/animation_marker.h"
 #include "moth_ui/events/event_animation.h"
 #include "moth_ui/layout/layout.h"
 #include "moth_ui/nodes/group.h"
@@ -56,7 +56,7 @@ namespace {
         }
 
         void addMarker(int frame, std::string const& name) {
-            layout->m_events.push_back(std::make_unique<AnimationEvent>(frame, name));
+            layout->m_events.push_back(std::make_unique<AnimationMarker>(frame, name));
         }
 
         void start() { group->SetAnimation("test"); }

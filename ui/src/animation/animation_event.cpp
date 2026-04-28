@@ -3,12 +3,12 @@
 
 namespace moth_ui {
     void to_json(nlohmann::json& json, AnimationEvent const& event) {
-        json["frame"] = event.m_frame;
-        json["name"] = event.m_name;
+        json["frame"] = event.frame;
+        json["name"] = event.name;
     }
 
     void from_json(nlohmann::json const& json, AnimationEvent& event) {
-        event.m_frame = json.value("frame", 0);
-        event.m_name = json.value("name", std::string{});
+        event.frame = json.value("frame", 0);
+        event.name = json.value("name", std::string{});
     }
 }

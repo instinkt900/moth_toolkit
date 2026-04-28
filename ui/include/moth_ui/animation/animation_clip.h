@@ -24,17 +24,17 @@ namespace moth_ui {
 
         static constexpr float DefaultFPS = 30; ///< Default playback rate in frames per second.
 
-        std::string m_name;                   ///< Unique name identifying this clip.
-        int m_startFrame = 0;                 ///< Inclusive start frame index.
-        int m_endFrame = 0;                   ///< Inclusive end frame index.
-        float m_fps = DefaultFPS;             ///< Playback rate in frames per second.
-        LoopType m_loopType = LoopType::Stop; ///< What to do when the clip ends.
+        std::string name;                   ///< Unique name identifying this clip.
+        int startFrame = 0;                 ///< Inclusive start frame index.
+        int endFrame = 0;                   ///< Inclusive end frame index.
+        float fps = DefaultFPS;             ///< Playback rate in frames per second.
+        LoopType loopType = LoopType::Stop; ///< What to do when the clip ends.
 
         /// @brief Returns the number of frames in this clip (inclusive of both endpoints).
-        int FrameCount() const { return m_endFrame - m_startFrame + 1; }
+        int FrameCount() const { return endFrame - startFrame + 1; }
 
         bool operator==(AnimationClip const& other) const {
-            return m_name == other.m_name && m_startFrame == other.m_startFrame && m_endFrame == other.m_endFrame && m_fps == other.m_fps && m_loopType == other.m_loopType;
+            return name == other.name && startFrame == other.startFrame && endFrame == other.endFrame && fps == other.fps && loopType == other.loopType;
         }
 
         bool operator!=(AnimationClip const& other) const {
@@ -42,19 +42,20 @@ namespace moth_ui {
         }
 
         friend void to_json(nlohmann::json& j, AnimationClip const& clip) {
-            j["m_name"] = clip.m_name;
-            j["m_startFrame"] = clip.m_startFrame;
-            j["m_endFrame"] = clip.m_endFrame;
-            j["m_fps"] = clip.m_fps;
-            j["m_loopType"] = clip.m_loopType;
+            j["name"] = clip.name;
+            j["startFrame"] = clip.startFrame;
+            j["endFrame"] = clip.endFrame;
+            j["fps"] = clip.fps;
+            j["loopType"] = clip.loopType;
         }
 
         friend void from_json(nlohmann::json const& j, AnimationClip& clip) {
-            clip.m_name = j.value("m_name", "");
-            clip.m_startFrame = j.value("m_startFrame", 0);
-            clip.m_endFrame = j.value("m_endFrame", 0);
-            clip.m_fps = j.value("m_fps", DefaultFPS);
-            clip.m_loopType = j.value("m_loopType", LoopType::Stop);
+            // TODO: Remove m_-prefixed fallback keys in a future version.
+            clip.name = j.value("name", j.value("m_name", ""));
+            clip.startFrame = j.value("startFrame", j.value("m_startFrame", 0));
+            clip.endFrame = j.value("endFrame", j.value("m_endFrame", 0));
+            clip.fps = j.value("fps", j.value("m_fps", DefaultFPS));
+            clip.loopType = j.value("loopType", j.value("m_loopType", LoopType::Stop));
         }
 
         AnimationClip() = default;

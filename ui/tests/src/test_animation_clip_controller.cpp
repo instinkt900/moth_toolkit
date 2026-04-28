@@ -35,11 +35,11 @@ namespace {
             layout = std::make_shared<Layout>();
 
             clip = std::make_shared<AnimationClip>();
-            clip->m_name = "test";
-            clip->m_startFrame = startFrame;
-            clip->m_endFrame = endFrame;
-            clip->m_fps = fps;
-            clip->m_loopType = loopType;
+            clip->name = "test";
+            clip->startFrame = startFrame;
+            clip->endFrame = endFrame;
+            clip->fps = fps;
+            clip->loopType = loopType;
             layout->m_clips.push_back(clip);
 
             group = Group::Create(mc.context, layout);

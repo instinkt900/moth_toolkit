@@ -15,32 +15,32 @@ namespace moth_ui {
     void AnimationClipController::SetClip(std::shared_ptr<AnimationClip> clip) {
         m_clip = clip;
         if (clip) {
-            m_frame = static_cast<float>(clip->m_startFrame);
+            m_frame = static_cast<float>(clip->startFrame);
             for (auto const& child : m_group->GetChildren()) {
                 child->GetAnimationController().SetFrame(m_frame);
             }
-            m_group->SendEvent(EventAnimationStarted(m_group->shared_from_this(), clip->m_name), Node::EventDirection::Up);
+            m_group->SendEvent(EventAnimationStarted(m_group->shared_from_this(), clip->name), Node::EventDirection::Up);
         }
     }
 
     void AnimationClipController::Update(float deltaSeconds) {
         if (auto const clip = m_clip.lock()) {
-            if (clip->m_fps <= 0.0f) {
+            if (clip->fps <= 0.0f) {
                 return;
             }
-            auto const clipStart = static_cast<float>(clip->m_startFrame);
-            auto const clipEnd   = static_cast<float>(clip->m_endFrame);
+            auto const clipStart = static_cast<float>(clip->startFrame);
+            auto const clipEnd   = static_cast<float>(clip->endFrame);
             auto const clipLen   = clipEnd - clipStart;
 
             auto const startFrame    = m_frame;
-            auto const deltaFrames = deltaSeconds * clip->m_fps;
+            auto const deltaFrames = deltaSeconds * clip->fps;
             m_frame += deltaFrames;
 
             bool animationEnded = false;
-            std::string const animationName = clip->m_name;
+            std::string const animationName = clip->name;
 
             if (m_frame >= clipEnd) {
-                switch (clip->m_loopType) {
+                switch (clip->loopType) {
                 case AnimationClip::LoopType::Stop:
                     CheckEvents(startFrame, clipEnd);
                     m_frame = clipEnd;
@@ -83,8 +83,8 @@ namespace moth_ui {
     void AnimationClipController::CheckEvents(float startFrame, float endFrame) {
         auto* layout = m_group->GetTypedLayout();
         for (auto& animEvent : layout->m_events) {
-            if (static_cast<float>(animEvent->m_frame) > startFrame && static_cast<float>(animEvent->m_frame) <= endFrame) {
-                m_group->SendEvent(EventAnimation(m_group->shared_from_this(), animEvent->m_name), Node::EventDirection::Up);
+            if (static_cast<float>(animEvent->frame) > startFrame && static_cast<float>(animEvent->frame) <= endFrame) {
+                m_group->SendEvent(EventAnimation(m_group->shared_from_this(), animEvent->name), Node::EventDirection::Up);
             }
         }
     }

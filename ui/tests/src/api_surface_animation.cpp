@@ -31,9 +31,9 @@ namespace {
 }
 
 TEST_CASE("Keyframe fields are stable", "[api][animation][keyframe]") {
-    static_assert(std::is_same_v<decltype(Keyframe::m_frame),     int>);
-    static_assert(std::is_same_v<decltype(Keyframe::m_value),     float>);
-    static_assert(std::is_same_v<decltype(Keyframe::m_interpType), InterpType>);
+    static_assert(std::is_same_v<decltype(Keyframe::frame),     int>);
+    static_assert(std::is_same_v<decltype(Keyframe::value),     float>);
+    static_assert(std::is_same_v<decltype(Keyframe::interpType), InterpType>);
     SUCCEED();
 }
 
@@ -78,11 +78,11 @@ TEST_CASE("AnimationTrack method signatures are stable", "[api][animation][track
 }
 
 TEST_CASE("AnimationClip fields and methods are stable", "[api][animation][clip]") {
-    static_assert(std::is_same_v<decltype(AnimationClip::m_name),      std::string>);
-    static_assert(std::is_same_v<decltype(AnimationClip::m_startFrame), int>);
-    static_assert(std::is_same_v<decltype(AnimationClip::m_endFrame),   int>);
-    static_assert(std::is_same_v<decltype(AnimationClip::m_fps),        float>);
-    static_assert(std::is_same_v<decltype(AnimationClip::m_loopType),   AnimationClip::LoopType>);
+    static_assert(std::is_same_v<decltype(AnimationClip::name),      std::string>);
+    static_assert(std::is_same_v<decltype(AnimationClip::startFrame), int>);
+    static_assert(std::is_same_v<decltype(AnimationClip::endFrame),   int>);
+    static_assert(std::is_same_v<decltype(AnimationClip::fps),        float>);
+    static_assert(std::is_same_v<decltype(AnimationClip::loopType),   AnimationClip::LoopType>);
 
     static_assert(AnimationClip::LoopType::Stop  != AnimationClip::LoopType::Loop);
     static_assert(AnimationClip::LoopType::Loop  != AnimationClip::LoopType::Reset);
@@ -93,7 +93,7 @@ TEST_CASE("AnimationClip fields and methods are stable", "[api][animation][clip]
 }
 
 TEST_CASE("AnimationEvent fields are stable", "[api][animation][event]") {
-    static_assert(std::is_same_v<decltype(AnimationEvent::m_frame), int>);
-    static_assert(std::is_same_v<decltype(AnimationEvent::m_name),  std::string>);
+    static_assert(std::is_same_v<decltype(AnimationEvent::frame), int>);
+    static_assert(std::is_same_v<decltype(AnimationEvent::name),  std::string>);
     SUCCEED();
 }

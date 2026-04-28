@@ -25,22 +25,22 @@ namespace nlohmann {
 
 namespace moth_ui {
     void to_json(nlohmann::json& json, Keyframe const& keyframe) {
-        json["frame"] = keyframe.m_frame;
-        json["value"] = keyframe.m_value;
-        json["interp"] = keyframe.m_interpType;
+        json["frame"] = keyframe.frame;
+        json["value"] = keyframe.value;
+        json["interp"] = keyframe.interpType;
     }
 
     void from_json(nlohmann::json const& json, Keyframe& keyframe) {
         nlohmann::json valueJson = json.value("value", nlohmann::json{});
         if (valueJson.is_number_float()) {
-            valueJson.get_to(keyframe.m_value);
+            valueJson.get_to(keyframe.value);
         } else {
             std::variant<float, std::string> oldValueType;
             valueJson.get_to(oldValueType);
-            keyframe.m_value = std::get<float>(oldValueType);
+            keyframe.value = std::get<float>(oldValueType);
         }
 
-        keyframe.m_frame = json.value("frame", 0);
-        keyframe.m_interpType = json.value("interp", InterpType::Linear);
+        keyframe.frame = json.value("frame", 0);
+        keyframe.interpType = json.value("interp", InterpType::Linear);
     }
 }

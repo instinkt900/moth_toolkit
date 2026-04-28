@@ -4,9 +4,6 @@ Full-scope review of the public API, source implementations, and test suite. Foc
 
 ## API Design Issues
 
-### A4: `EventListener` lacks `I` prefix
-Every other abstract interface uses `I`-prefix (`IRenderer`, `IImage`, `IFont`, `ILogger`, `IImageFactory`, `IFontFactory`, `IFlipbookFactory`). `EventListener` is the lone exception.
-
 ### A5: `m_` prefix on public data members
 `AnimationClip`, `AnimationEvent`, `Keyframe`, `LayoutEntity` and its subclasses all expose public members with `m_` prefix. The `m_` prefix conventionally signals private/protected members.
 
@@ -153,7 +150,6 @@ The enum is `InterpType`, the function pointer type is `EaseFunction`, individua
 
 | # | Issue | Effort |
 |---|-------|--------|
-| A4 | `EventListener` → `IEventListener` rename (or convention documentation) | Large (breaking) |
 | A5 | `m_` prefix on public members — document or change | Large (breaking) |
 | A6 | `Color` vector arithmetic misuse protection | Medium |
 | T3 | Instrumented mock renderer | Medium |

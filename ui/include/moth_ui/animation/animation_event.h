@@ -21,14 +21,14 @@ namespace moth_ui {
          * @param name  Name dispatched with the EventAnimation.
          */
         AnimationEvent(int frame, std::string_view name)
-            : m_frame(frame)
-            , m_name(name) {}
+            : frame(frame)
+            , name(name) {}
 
-        int m_frame = 0;   ///< Frame at which this event fires.
-        std::string m_name; ///< Name sent with the EventAnimation.
+        int frame = 0;   ///< Frame at which this event fires.
+        std::string name; ///< Name sent with the EventAnimation.
 
         bool operator==(AnimationEvent const& other) const {
-            return m_frame == other.m_frame && m_name == other.m_name;
+            return frame == other.frame && name == other.name;
         }
 
         bool operator!=(AnimationEvent const& other) const {

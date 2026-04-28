@@ -6,14 +6,14 @@ using namespace moth_ui;
 
 TEST_CASE("AnimationEvent construction", "[animation_event][initialization]") {
     AnimationEvent ev(5, "hit");
-    REQUIRE(ev.m_frame == 5);
-    REQUIRE(ev.m_name == "hit");
+    REQUIRE(ev.frame == 5);
+    REQUIRE(ev.name == "hit");
 }
 
 TEST_CASE("AnimationEvent default construction", "[animation_event][initialization]") {
     AnimationEvent ev;
-    REQUIRE(ev.m_frame == 0);
-    REQUIRE(ev.m_name.empty());
+    REQUIRE(ev.frame == 0);
+    REQUIRE(ev.name.empty());
 }
 
 TEST_CASE("AnimationEvent equality operators", "[animation_event][operators]") {

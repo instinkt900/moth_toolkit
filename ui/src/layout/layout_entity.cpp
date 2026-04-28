@@ -73,7 +73,7 @@ namespace moth_ui {
         auto SetValue = [&](AnimationTrack::Target target, float value) {
             auto& track = m_tracks.at(target);
             auto& keyframe = track->GetOrCreateKeyframe(frame);
-            keyframe.m_value = value;
+            keyframe.value = value;
         };
 
         SetValue(AnimationTrack::Target::LeftAnchor, bounds.anchor.topLeft.x);

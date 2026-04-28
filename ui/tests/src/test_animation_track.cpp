@@ -15,8 +15,8 @@ TEST_CASE("AnimationTrack initial value construction", "[animation_track][initia
     AnimationTrack track(AnimationTrack::Target::ColorAlpha, 0.5f);
     REQUIRE(track.GetTarget() == AnimationTrack::Target::ColorAlpha);
     REQUIRE(track.Keyframes().size() == 1);
-    REQUIRE(track.Keyframes()[0]->m_frame == 0);
-    REQUIRE(track.Keyframes()[0]->m_value == Catch::Approx(0.5f));
+    REQUIRE(track.Keyframes()[0]->frame == 0);
+    REQUIRE(track.Keyframes()[0]->value == Catch::Approx(0.5f));
 }
 
 TEST_CASE("AnimationTrack ContinuousTargets has 13 entries", "[animation_track]") {
@@ -46,34 +46,34 @@ TEST_CASE("AnimationTrack ContinuousTargets contains all expected targets", "[an
 TEST_CASE("AnimationTrack GetOrCreateKeyframe inserts sorted", "[animation_track][keyframes]") {
     AnimationTrack track(AnimationTrack::Target::LeftOffset);
 
-    track.GetOrCreateKeyframe(10).m_value = 10.0f;
-    track.GetOrCreateKeyframe(0).m_value  = 0.0f;
-    track.GetOrCreateKeyframe(5).m_value  = 5.0f;
+    track.GetOrCreateKeyframe(10).value = 10.0f;
+    track.GetOrCreateKeyframe(0).value  = 0.0f;
+    track.GetOrCreateKeyframe(5).value  = 5.0f;
 
     auto& kfs = track.Keyframes();
     REQUIRE(kfs.size() == 3);
-    REQUIRE(kfs[0]->m_frame == 0);
-    REQUIRE(kfs[1]->m_frame == 5);
-    REQUIRE(kfs[2]->m_frame == 10);
+    REQUIRE(kfs[0]->frame == 0);
+    REQUIRE(kfs[1]->frame == 5);
+    REQUIRE(kfs[2]->frame == 10);
 }
 
 TEST_CASE("AnimationTrack GetOrCreateKeyframe returns existing", "[animation_track][keyframes]") {
     AnimationTrack track(AnimationTrack::Target::TopOffset);
-    track.GetOrCreateKeyframe(5).m_value = 42.0f;
+    track.GetOrCreateKeyframe(5).value = 42.0f;
 
     REQUIRE(track.Keyframes().size() == 1);
     auto& again = track.GetOrCreateKeyframe(5);
-    REQUIRE(again.m_value == Catch::Approx(42.0f));
+    REQUIRE(again.value == Catch::Approx(42.0f));
     REQUIRE(track.Keyframes().size() == 1);
 }
 
 TEST_CASE("AnimationTrack GetKeyframe finds by frame number", "[animation_track][keyframes]") {
     AnimationTrack track(AnimationTrack::Target::TopOffset);
-    track.GetOrCreateKeyframe(3).m_value = 99.0f;
+    track.GetOrCreateKeyframe(3).value = 99.0f;
 
     auto* kf = track.GetKeyframe(3);
     REQUIRE(kf != nullptr);
-    REQUIRE(kf->m_value == Catch::Approx(99.0f));
+    REQUIRE(kf->value == Catch::Approx(99.0f));
 }
 
 TEST_CASE("AnimationTrack GetKeyframe returns null for missing frame", "[animation_track][keyframes]") {
@@ -113,9 +113,9 @@ TEST_CASE("AnimationTrack SortKeyframes reorders by frame", "[animation_track][s
 
     track.SortKeyframes();
 
-    REQUIRE(kfs[0]->m_frame == 0);
-    REQUIRE(kfs[1]->m_frame == 5);
-    REQUIRE(kfs[2]->m_frame == 10);
+    REQUIRE(kfs[0]->frame == 0);
+    REQUIRE(kfs[1]->frame == 5);
+    REQUIRE(kfs[2]->frame == 10);
 }
 
 TEST_CASE("AnimationTrack GetValueAtFrame no keyframes returns 0", "[animation_track][value]") {
@@ -125,7 +125,7 @@ TEST_CASE("AnimationTrack GetValueAtFrame no keyframes returns 0", "[animation_t
 
 TEST_CASE("AnimationTrack GetValueAtFrame single keyframe", "[animation_track][value]") {
     AnimationTrack track(AnimationTrack::Target::TopOffset);
-    track.GetOrCreateKeyframe(5).m_value = 42.0f;
+    track.GetOrCreateKeyframe(5).value = 42.0f;
 
     REQUIRE(track.GetValueAtFrame(0.0f)   == Catch::Approx(42.0f));
     REQUIRE(track.GetValueAtFrame(5.0f)   == Catch::Approx(42.0f));
@@ -134,8 +134,8 @@ TEST_CASE("AnimationTrack GetValueAtFrame single keyframe", "[animation_track][v
 
 TEST_CASE("AnimationTrack GetValueAtFrame linear interpolation between two keyframes", "[animation_track][value]") {
     AnimationTrack track(AnimationTrack::Target::TopOffset);
-    track.GetOrCreateKeyframe(0).m_value  = 0.0f;
-    track.GetOrCreateKeyframe(10).m_value = 10.0f;
+    track.GetOrCreateKeyframe(0).value  = 0.0f;
+    track.GetOrCreateKeyframe(10).value = 10.0f;
     // Default interpType is Linear
 
     REQUIRE(track.GetValueAtFrame(0.0f)  == Catch::Approx(0.0f));
@@ -147,10 +147,10 @@ TEST_CASE("AnimationTrack GetValueAtFrame linear interpolation between two keyfr
 TEST_CASE("AnimationTrack GetValueAtFrame step interpolation", "[animation_track][value]") {
     AnimationTrack track(AnimationTrack::Target::TopOffset);
     auto& kf0 = track.GetOrCreateKeyframe(0);
-    kf0.m_value = 0.0f;
-    kf0.m_interpType = InterpType::Step;
+    kf0.value = 0.0f;
+    kf0.interpType = InterpType::Step;
 
-    track.GetOrCreateKeyframe(10).m_value = 100.0f;
+    track.GetOrCreateKeyframe(10).value = 100.0f;
 
     // Step holds start value until we reach the next keyframe
     REQUIRE(track.GetValueAtFrame(5.0f) == Catch::Approx(0.0f));
@@ -158,21 +158,21 @@ TEST_CASE("AnimationTrack GetValueAtFrame step interpolation", "[animation_track
 
 TEST_CASE("AnimationTrack GetValueAtFrame holds last keyframe value beyond end", "[animation_track][value]") {
     AnimationTrack track(AnimationTrack::Target::TopOffset);
-    track.GetOrCreateKeyframe(0).m_value  = 0.0f;
-    track.GetOrCreateKeyframe(10).m_value = 50.0f;
+    track.GetOrCreateKeyframe(0).value  = 0.0f;
+    track.GetOrCreateKeyframe(10).value = 50.0f;
 
     REQUIRE(track.GetValueAtFrame(20.0f) == Catch::Approx(50.0f));
 }
 
 TEST_CASE("AnimationTrack ForKeyframesOverFrames visits correct keyframes", "[animation_track][iteration]") {
     AnimationTrack track(AnimationTrack::Target::TopOffset);
-    track.GetOrCreateKeyframe(0).m_value  = 0.0f;
-    track.GetOrCreateKeyframe(5).m_value  = 5.0f;
-    track.GetOrCreateKeyframe(10).m_value = 10.0f;
+    track.GetOrCreateKeyframe(0).value  = 0.0f;
+    track.GetOrCreateKeyframe(5).value  = 5.0f;
+    track.GetOrCreateKeyframe(10).value = 10.0f;
 
     std::vector<int> visited;
     track.ForKeyframesOverFrames(0.0f, 10.0f, [&](Keyframe const& kf) {
-        visited.push_back(kf.m_frame);
+        visited.push_back(kf.frame);
     });
 
     // ForKeyframesOverFrames visits frames strictly after startFrame and up to/including endFrame
@@ -196,38 +196,38 @@ TEST_CASE("AnimationTrack DiscreteTargets contains FlipbookClip and FlipbookPlay
 
 TEST_CASE("AnimationTrack copy construction deep-copies keyframes", "[animation_track][copy]") {
     AnimationTrack original(AnimationTrack::Target::TopOffset);
-    original.GetOrCreateKeyframe(0).m_value = 7.0f;
+    original.GetOrCreateKeyframe(0).value = 7.0f;
 
     AnimationTrack copy = original;
-    copy.GetOrCreateKeyframe(0).m_value = 99.0f;
+    copy.GetOrCreateKeyframe(0).value = 99.0f;
 
-    REQUIRE(original.GetKeyframe(0)->m_value == Catch::Approx(7.0f));
+    REQUIRE(original.GetKeyframe(0)->value == Catch::Approx(7.0f));
 }
 
 TEST_CASE("AnimationTrack assignment operator copies target", "[animation_track][copy]") {
     AnimationTrack original(AnimationTrack::Target::TopOffset);
-    original.GetOrCreateKeyframe(0).m_value = 7.0f;
+    original.GetOrCreateKeyframe(0).value = 7.0f;
 
     AnimationTrack assigned(AnimationTrack::Target::ColorRed);
     assigned = original;
 
     REQUIRE(assigned.GetTarget() == AnimationTrack::Target::TopOffset);
-    REQUIRE(assigned.GetKeyframe(0)->m_value == Catch::Approx(7.0f));
+    REQUIRE(assigned.GetKeyframe(0)->value == Catch::Approx(7.0f));
 }
 
 TEST_CASE("AnimationTrack GetValueAtFrame before first keyframe with multiple keyframes", "[animation_track][value]") {
     AnimationTrack track(AnimationTrack::Target::TopOffset);
-    track.GetOrCreateKeyframe(10).m_value = 10.0f;
-    track.GetOrCreateKeyframe(20).m_value = 20.0f;
+    track.GetOrCreateKeyframe(10).value = 10.0f;
+    track.GetOrCreateKeyframe(20).value = 20.0f;
 
     REQUIRE(track.GetValueAtFrame(5.0f) == Catch::Approx(10.0f));
 }
 
 TEST_CASE("AnimationTrack GetValueAtFrame exact match on a keyframe", "[animation_track][value]") {
     AnimationTrack track(AnimationTrack::Target::TopOffset);
-    track.GetOrCreateKeyframe(0).m_value = 0.0f;
-    track.GetOrCreateKeyframe(10).m_value = 10.0f;
-    track.GetOrCreateKeyframe(20).m_value = 20.0f;
+    track.GetOrCreateKeyframe(0).value = 0.0f;
+    track.GetOrCreateKeyframe(10).value = 10.0f;
+    track.GetOrCreateKeyframe(20).value = 20.0f;
 
     REQUIRE(track.GetValueAtFrame(0.0f) == Catch::Approx(0.0f));
     REQUIRE(track.GetValueAtFrame(10.0f) == Catch::Approx(10.0f));

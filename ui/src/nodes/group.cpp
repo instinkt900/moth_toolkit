@@ -88,7 +88,7 @@ namespace moth_ui {
     bool Group::HasAnimation(std::string_view name) const {
         if (m_layout) {
             auto& animationClips = m_typedLayout->m_clips;
-            auto it = ranges::find_if(animationClips, [&name](auto& clip) { return clip->m_name == name; });
+            auto it = ranges::find_if(animationClips, [&name](auto& clip) { return clip->name == name; });
             if (std::end(animationClips) != it) {
                 return true;
             }
@@ -99,7 +99,7 @@ namespace moth_ui {
     bool Group::SetAnimation(std::string_view name) {
         if (m_layout) {
             auto& animationClips = m_typedLayout->m_clips;
-            auto it = ranges::find_if(animationClips, [&name](auto& clip) { return clip->m_name == name; });
+            auto it = ranges::find_if(animationClips, [&name](auto& clip) { return clip->name == name; });
             if (std::end(animationClips) != it) {
                 m_animationClipController->SetClip(*it);
                 return true;

@@ -32,12 +32,14 @@ namespace moth_ui {
 
     void from_json(nlohmann::json const& json, Keyframe& keyframe) {
         nlohmann::json valueJson = json.value("value", nlohmann::json{});
-        if (valueJson.is_number_float()) {
+        if (valueJson.is_number()) {
             valueJson.get_to(keyframe.value);
-        } else {
+        } else if (valueJson.is_object() && valueJson.contains("index")) {
             std::variant<float, std::string> oldValueType;
             valueJson.get_to(oldValueType);
-            keyframe.value = std::get<float>(oldValueType);
+            if (auto* f = std::get_if<float>(&oldValueType)) {
+                keyframe.value = *f;
+            }
         }
 
         keyframe.frame = json.value("frame", 0);

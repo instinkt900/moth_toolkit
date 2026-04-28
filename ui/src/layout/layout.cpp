@@ -92,11 +92,11 @@ namespace moth_ui {
         return success;
     }
 
-    Layout::LoadResult Layout::Load(std::filesystem::path const& path, std::shared_ptr<Layout>* outLayout) {
-        return Load(path, {}, outLayout);
+    std::pair<std::shared_ptr<Layout>, Layout::LoadResult> Layout::Load(std::filesystem::path const& path) {
+        return Load(path, {});
     }
 
-    Layout::LoadResult Layout::Load(std::filesystem::path const& path, LoadOptions const& options, std::shared_ptr<Layout>* outLayout) {
+    std::pair<std::shared_ptr<Layout>, Layout::LoadResult> Layout::Load(std::filesystem::path const& path, LoadOptions const& options) {
         SerializeContext context;
         context.m_rootPath = path.parent_path();
 
@@ -106,36 +106,30 @@ namespace moth_ui {
                 std::ifstream ifile(path, std::ios::binary);
                 if (!ifile.is_open()) {
                     GetLogger().Error("Failed to load layout '{}': file not found", path.string());
-                    return LoadResult::DoesNotExist;
+                    return { nullptr, LoadResult::DoesNotExist };
                 }
                 json = nlohmann::json::from_msgpack(ifile);
             } else {
                 std::ifstream ifile(path);
                 if (!ifile.is_open()) {
                     GetLogger().Error("Failed to load layout '{}': file not found", path.string());
-                    return LoadResult::DoesNotExist;
+                    return { nullptr, LoadResult::DoesNotExist };
                 }
                 ifile >> json;
             }
         } catch (nlohmann::json::parse_error const&) {
             GetLogger().Error("Failed to load layout '{}': JSON parse error", path.string());
-            return LoadResult::IncorrectFormat;
+            return { nullptr, LoadResult::IncorrectFormat };
         }
 
-        auto const layout = std::make_shared<Layout>();
+        auto layout = std::make_shared<Layout>();
         if (!layout->Deserialize(json, context)) {
             GetLogger().Error("Failed to load layout '{}': deserialization failed", path.string());
-            return LoadResult::IncorrectFormat;
+            return { nullptr, LoadResult::IncorrectFormat };
         }
 
         layout->m_loadedPath = path;
-
-        if (outLayout == nullptr) {
-            return LoadResult::NoOutput;
-        }
-
-        *outLayout = layout;
-        return LoadResult::Success;
+        return { std::move(layout), LoadResult::Success };
     }
 
     bool Layout::Save(std::filesystem::path const& path) const {

@@ -66,8 +66,8 @@ namespace moth_ui {
         if (success) {
             std::string relativePath = json.value("layoutPath", "");
             m_layoutPath = context.m_rootPath / relativePath;
-            std::shared_ptr<Layout> targetLayout;
-            auto const loadResult = Layout::Load(m_layoutPath, &targetLayout);
+            
+            auto [targetLayout, loadResult] = Layout::Load(m_layoutPath);
             if (loadResult == Layout::LoadResult::Success) {
                 CopyLayout(*targetLayout);
 

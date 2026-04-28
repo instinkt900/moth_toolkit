@@ -14,8 +14,8 @@ namespace moth_ui {
     }
 
     std::shared_ptr<Group> NodeFactory::Create(Context& context, std::filesystem::path const& path, int width, int height) {
-        std::shared_ptr<Layout> layout;
-        auto const loadResult = Layout::Load(path, &layout);
+        
+        auto [layout, loadResult] = Layout::Load(path);
         if (loadResult != Layout::LoadResult::Success) {
             GetLogger().Error("Failed to load layout '{}': {}", path.string(), magic_enum::enum_name(loadResult));
             return nullptr;

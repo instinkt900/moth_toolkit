@@ -4,9 +4,6 @@ Full-scope review of the public API, source implementations, and test suite. Foc
 
 ## API Design Issues
 
-### A5: `m_` prefix on public data members
-`AnimationClip`, `AnimationEvent`, `Keyframe`, `LayoutEntity` and its subclasses all expose public members with `m_` prefix. The `m_` prefix conventionally signals private/protected members.
-
 ### A6: `Color` exposes full vector arithmetic
 `Color` is `Vector<float, 4>` with `operator*`, `operator+`, etc. Component-wise multiplication is not alpha blending, but users might reasonably expect it to be.
 
@@ -150,7 +147,6 @@ The enum is `InterpType`, the function pointer type is `EaseFunction`, individua
 
 | # | Issue | Effort |
 |---|-------|--------|
-| A5 | `m_` prefix on public members — document or change | Large (breaking) |
 | A6 | `Color` vector arithmetic misuse protection | Medium |
 | T3 | Instrumented mock renderer | Medium |
 | T1 | Binary serialization tests | Small |

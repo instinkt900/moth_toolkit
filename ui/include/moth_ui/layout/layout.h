@@ -3,6 +3,8 @@
 #include "moth_ui/layout/layout_entity_group.h"
 #include "moth_ui/moth_ui_fwd.h"
 
+#include <utility>
+
 namespace moth_ui {
     /**
      * @brief The root LayoutEntityGroup that represents a complete saved layout file.
@@ -34,7 +36,6 @@ namespace moth_ui {
         /// @brief Result codes returned by Load().
         enum class LoadResult {
             Success,         ///< Layout loaded successfully.
-            NoOutput,        ///< @p outLayout was @c nullptr; load was still attempted.
             DoesNotExist,    ///< The specified file does not exist.
             IncorrectFormat, ///< The file exists but could not be parsed.
         };
@@ -50,21 +51,20 @@ namespace moth_ui {
             bool pretty = false; ///< Pretty-print JSON output (ignored when binary is true).
         };
 
-        /// @brief Loads a layout from a file as JSON (default format). Equivalent to Load(path, LoadOptions{}, outLayout).
-        static LoadResult Load(std::filesystem::path const& path, std::shared_ptr<Layout>* outLayout = nullptr);
+        /**
+         * @brief Loads a layout from a file as JSON (default format).
+         * @param path Path to the layout file.
+         * @return A pair of the loaded layout (or nullptr on failure) and the result code.
+         */
+        static std::pair<std::shared_ptr<Layout>, LoadResult> Load(std::filesystem::path const& path);
 
         /**
-         * @brief Loads a layout from a file.
-         *
-         * The caller is responsible for specifying the correct format via @p options.
-         * No inference is performed from the file extension.
-         *
-         * @param path      Path to the layout file.
-         * @param options   Specifies whether to read as binary (MessagePack) or text (JSON).
-         * @param outLayout If non-null, receives the loaded Layout on success.
-         * @return A LoadResult indicating success or the reason for failure.
+         * @brief Loads a layout from a file with explicit format options.
+         * @param path    Path to the layout file.
+         * @param options Specifies whether to read as binary (MessagePack) or text (JSON).
+         * @return A pair of the loaded layout (or nullptr on failure) and the result code.
          */
-        static LoadResult Load(std::filesystem::path const& path, LoadOptions const& options, std::shared_ptr<Layout>* outLayout = nullptr);
+        static std::pair<std::shared_ptr<Layout>, LoadResult> Load(std::filesystem::path const& path, LoadOptions const& options);
 
         /// @brief Saves this layout to a file using default SaveOptions (JSON, non-pretty).
         ///        Equivalent to calling Save(path, SaveOptions{}).

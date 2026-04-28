@@ -36,18 +36,16 @@ TEST_CASE("Layout static constants and Load/Save signatures are stable", "[api][
     static_assert(std::is_same_v<decltype(Layout::FullBinaryExtension), std::string const>);
     static_assert(std::is_same_v<decltype(Layout::Version),             int const>);
 
-    // Load: two overloads, both static
-    Layout::LoadResult (*load1)(std::filesystem::path const&,
-                                std::shared_ptr<Layout>*) = &Layout::Load;
-    Layout::LoadResult (*load2)(std::filesystem::path const&,
-                                Layout::LoadOptions const&,
-                                std::shared_ptr<Layout>*) = &Layout::Load;
+    // Load: single overload returning pair
+    std::pair<std::shared_ptr<Layout>, Layout::LoadResult> (*load)(
+        std::filesystem::path const&,
+        Layout::LoadOptions const&) = &Layout::Load;
     // Save: two overloads, both const member
     bool (Layout::*save1)(std::filesystem::path const&) const = &Layout::Save;
     bool (Layout::*save2)(std::filesystem::path const&,
                           Layout::SaveOptions const&) const   = &Layout::Save;
 
-    (void)load1; (void)load2; (void)save1; (void)save2;
+    (void)load; (void)save1; (void)save2;
     SUCCEED();
 }
 

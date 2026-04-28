@@ -38,8 +38,8 @@ namespace moth_ui {
 
     std::shared_ptr<Layout> LayoutCache::LoadLayout(std::string_view name) {
         std::string const filename = fmt::format("{}/{}.json", m_root, name);
-        std::shared_ptr<moth_ui::Layout> newLayout;
-        auto const loadResult = Layout::Load(filename.c_str(), &newLayout);
+        
+        auto [newLayout, loadResult] = Layout::Load(filename.c_str());
         if (loadResult == moth_ui::Layout::LoadResult::Success) {
             return newLayout;
         }

@@ -42,7 +42,8 @@ namespace moth_ui {
 
         /**
          * @brief Pops and returns the top layer, transferring ownership to the caller.
-         * @return The removed top layer.
+         * @return The removed top layer, or @c nullptr if the stack is empty.
+         *         No exception is thrown.
          */
         std::unique_ptr<Layer> PopLayer();
 

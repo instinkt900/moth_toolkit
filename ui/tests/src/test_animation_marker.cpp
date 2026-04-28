@@ -61,3 +61,22 @@ TEST_CASE("AnimationMarker JSON has expected keys", "[animation_marker][json]") 
     REQUIRE(j["frame"].get<int>() == 2);
     REQUIRE(j["name"].get<std::string>() == "explosion");
 }
+
+TEST_CASE("AnimationMarker JSON missing keys default to zero values", "[animation_marker][json]") {
+    AnimationMarker restored;
+    from_json(nlohmann::json{}, restored);
+    REQUIRE(restored.frame == 0);
+    REQUIRE(restored.name.empty());
+}
+
+TEST_CASE("AnimationMarker JSON partial keys use defaults for missing", "[animation_marker][json]") {
+    AnimationMarker restored;
+    from_json(nlohmann::json{{"frame", 12}}, restored);
+    REQUIRE(restored.frame == 12);
+    REQUIRE(restored.name.empty());
+
+    AnimationMarker restored2;
+    from_json(nlohmann::json{{"name", "spawn"}}, restored2);
+    REQUIRE(restored2.frame == 0);
+    REQUIRE(restored2.name == "spawn");
+}

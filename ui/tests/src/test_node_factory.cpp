@@ -9,9 +9,14 @@
 #include "moth_ui/nodes/node_rect.h"
 #include "moth_ui/nodes/node_text.h"
 #include "moth_ui/nodes/group.h"
+#include "moth_ui/layout/layout.h"
 #include <catch2/catch_all.hpp>
 
 using namespace moth_ui;
+
+namespace {
+    bool s_registerWidgetInvoked = false;
+}
 
 TEST_CASE("NodeFactory Create returns NodeRect from LayoutEntityRect", "[nodefactory][create]") {
     MockContext mc;
@@ -45,9 +50,18 @@ TEST_CASE("NodeFactory Create returns NodeClip from LayoutEntityClip", "[nodefac
     REQUIRE(dynamic_cast<NodeClip*>(node.get()) != nullptr);
 }
 
-TEST_CASE("NodeFactory RegisterWidget returns class name", "[nodefactory][register]") {
-    auto name = NodeFactory::Get().RegisterWidget("TestWidget", [](Context& ctx, std::shared_ptr<LayoutEntityGroup> entity) -> std::shared_ptr<Group> {
-        return Group::Create(ctx, std::move(entity));
+TEST_CASE("NodeFactory RegisterWidget routes creation through registered factory", "[nodefactory][register]") {
+    MockContext mc;
+    s_registerWidgetInvoked = false;
+    auto name = NodeFactory::Get().RegisterWidget("TestWidget_Factory", [](Context& ctx, std::shared_ptr<LayoutEntityGroup>) -> std::shared_ptr<Group> {
+        s_registerWidgetInvoked = true;
+        return Group::Create(ctx);
     });
-    REQUIRE(name == "TestWidget");
+    REQUIRE(name == "TestWidget_Factory");
+
+    auto entity = std::make_shared<Layout>();
+    entity->m_class = "TestWidget_Factory";
+    auto result = NodeFactory::Get().Create(mc.context, std::static_pointer_cast<LayoutEntityGroup>(entity));
+    REQUIRE(result != nullptr);
+    REQUIRE(s_registerWidgetInvoked);
 }

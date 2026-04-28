@@ -15,8 +15,17 @@ namespace {
         bool drawCalled = false;
         uint32_t lastTicks = 0;
         bool returnValue = false;
+        std::string layerName;
+        std::shared_ptr<std::vector<std::string>> eventLog;
 
-        bool OnEvent(Event const& event) override { (void)event; onEventCalled = true; return returnValue; }
+        bool OnEvent(Event const& event) override {
+            (void)event;
+            onEventCalled = true;
+            if (eventLog) {
+                eventLog->push_back(layerName);
+            }
+            return returnValue;
+        }
         void Update(uint32_t ticks) override { updateCalled = true; lastTicks = ticks; }
         void Draw() override { drawCalled = true; }
     };
@@ -47,6 +56,14 @@ TEST_CASE("LayerStack PushLayer and PopLayer", "[layer_stack]") {
     REQUIRE(popped.get() == rawPtr);
 }
 
+TEST_CASE("LayerStack PushLayer with null is a no-op", "[layer_stack]") {
+    MockRenderer renderer;
+    LayerStack stack(renderer, 800, 600, 800, 600);
+    std::unique_ptr<Layer> nullLayer;
+    stack.PushLayer(std::move(nullLayer));
+    REQUIRE(stack.PopLayer() == nullptr);
+}
+
 TEST_CASE("LayerStack PopLayer on empty returns nullptr", "[layer_stack]") {
     MockRenderer renderer;
     LayerStack stack(renderer, 800, 600, 800, 600);
@@ -66,8 +83,13 @@ TEST_CASE("LayerStack RemoveLayer by pointer", "[layer_stack]") {
 TEST_CASE("LayerStack OnEvent dispatches to layers in reverse order", "[layer_stack]") {
     MockRenderer renderer;
     LayerStack stack(renderer, 800, 600, 800, 600);
+    auto log = std::make_shared<std::vector<std::string>>();
     auto top = std::make_unique<TestLayer>();
+    top->layerName = "top";
+    top->eventLog = log;
     auto bottom = std::make_unique<TestLayer>();
+    bottom->layerName = "bottom";
+    bottom->eventLog = log;
     auto* topPtr = top.get();
     auto* bottomPtr = bottom.get();
 
@@ -76,8 +98,12 @@ TEST_CASE("LayerStack OnEvent dispatches to layers in reverse order", "[layer_st
 
     TestEvent ev;
     stack.OnEvent(ev);
-    // Top layer gets event first
+    // Top layer (last pushed) receives event first
     REQUIRE(topPtr->onEventCalled);
+    REQUIRE(bottomPtr->onEventCalled);
+    REQUIRE(log->size() == 2);
+    REQUIRE((*log)[0] == "top");
+    REQUIRE((*log)[1] == "bottom");
 }
 
 TEST_CASE("LayerStack OnEvent stops when handled", "[layer_stack]") {

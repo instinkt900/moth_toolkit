@@ -10,7 +10,13 @@
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
 namespace moth_ui {
-    /// @brief RGBA colour represented as four @c float components in the range [0, 1].
+    /**
+     * @brief RGBA colour represented as four @c float components in the range [0, 1].
+     *
+     * @c Color inherits the full arithmetic of @c Vector (operator+, operator*, etc.).
+     * These operate per-component and are @em not alpha blending. For proper colour
+     * compositing, use the free function @c Blend() with an explicit @c BlendMode.
+     */
     using Color = Vector<float, 4>;
 
     /// @brief Predefined basic colours for convenience.

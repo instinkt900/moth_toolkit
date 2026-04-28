@@ -63,7 +63,7 @@ namespace moth_ui {
         if (json.contains("mothui_version")) {
             SerializeContext loadedContext;
             loadedContext.m_rootPath = context.m_rootPath;
-            loadedContext.m_version = json["mothui_version"];
+            loadedContext.m_version = json.value("mothui_version", 0);
 
             auto const jsonType = json.value("type", LayoutEntityType::Unknown);
             assert(jsonType == LayoutEntityType::Layout);
@@ -75,8 +75,8 @@ namespace moth_ui {
                 m_clips = json.value("clips", decltype(m_clips){});
                 m_events = json.value("events", decltype(m_events){});
 
-                if (json.contains("children")) {
-                    for (auto&& childJson : json["children"]) {
+                if (auto childrenIt = json.find("children"); childrenIt != json.end()) {
+                    for (auto&& childJson : *childrenIt) {
                         if (auto child = LoadEntity(childJson, this, loadedContext)) {
                             m_children.push_back(std::move(child));
                         }

@@ -110,6 +110,8 @@ namespace moth_ui {
 
     // clones a layout into this reference
     void LayoutEntityRef::CopyLayout(Layout const& other) {
+        m_children.clear();
+        m_clips.clear();
         m_class = other.m_class;
         for (auto&& child : other.m_children) {
             auto clone = child->Clone(CloneType::Deep);

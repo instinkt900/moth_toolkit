@@ -178,6 +178,9 @@ namespace moth_ui {
     }
 
     std::shared_ptr<Group> Group::Create(Context& context, std::shared_ptr<LayoutEntityGroup> layoutEntityGroup) {
+        if (!layoutEntityGroup) {
+            return nullptr;
+        }
         auto group = std::shared_ptr<Group>(new Group(context, std::move(layoutEntityGroup)));
         group->UpdateChildBounds();
         return group;

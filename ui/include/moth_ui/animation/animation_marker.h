@@ -36,9 +36,9 @@ namespace moth_ui {
         }
 
         /// @brief Serializes this event to JSON.
-        friend void to_json(nlohmann::json& json, AnimationMarker const& event);
+        friend void to_json(nlohmann::json& json, AnimationMarker const& marker);
         /// @brief Deserializes an event from JSON.
-        friend void from_json(nlohmann::json const& json, AnimationMarker& event);
+        friend void from_json(nlohmann::json const& json, AnimationMarker& marker);
 
         AnimationMarker() = default;
         AnimationMarker(AnimationMarker const&) = default;

@@ -28,4 +28,5 @@ TEST_CASE("SetLogger with NullLogger does not throw", "[logger][global]") {
     NullLogger null;
     REQUIRE_NOTHROW(SetLogger(&null));
     REQUIRE_NOTHROW(SetLogger(nullptr));
+    REQUIRE(dynamic_cast<NullLogger*>(&GetLogger()) != nullptr);
 }

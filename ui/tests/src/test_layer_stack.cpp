@@ -16,7 +16,7 @@ namespace {
         uint32_t lastTicks = 0;
         bool returnValue = false;
 
-        bool OnEvent(Event const&) override { onEventCalled = true; return returnValue; }
+        bool OnEvent(Event const& event) override { (void)event; onEventCalled = true; return returnValue; }
         void Update(uint32_t ticks) override { updateCalled = true; lastTicks = ticks; }
         void Draw() override { drawCalled = true; }
     };

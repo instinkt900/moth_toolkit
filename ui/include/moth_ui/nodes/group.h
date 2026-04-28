@@ -117,7 +117,9 @@ namespace moth_ui {
         void ReapplyOverrides(LayoutEntity& childLayout);
 
         /// @brief Returns the typed layout entity pointer for this group.
-        LayoutEntityGroup* GetTypedLayout() const { return m_typedLayout; }
+        LayoutEntityGroup* GetTypedLayout() { return m_typedLayout; }
+        /// @brief Returns a const typed layout entity pointer for this group.
+        LayoutEntityGroup const* GetTypedLayout() const { return m_typedLayout; }
 
         /**
          * @brief Returns the direct child whose identifier matches @p id.

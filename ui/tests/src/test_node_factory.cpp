@@ -8,6 +8,7 @@
 #include "moth_ui/nodes/node_image.h"
 #include "moth_ui/nodes/node_rect.h"
 #include "moth_ui/nodes/node_text.h"
+#include "moth_ui/nodes/group.h"
 #include <catch2/catch_all.hpp>
 
 using namespace moth_ui;
@@ -45,6 +46,8 @@ TEST_CASE("NodeFactory Create returns NodeClip from LayoutEntityClip", "[nodefac
 }
 
 TEST_CASE("NodeFactory RegisterWidget returns class name", "[nodefactory][register]") {
-    auto name = NodeFactory::Get().RegisterWidget("TestWidget", nullptr);
+    auto name = NodeFactory::Get().RegisterWidget("TestWidget", [](Context& ctx, std::shared_ptr<LayoutEntityGroup> entity) -> std::shared_ptr<Group> {
+        return Group::Create(ctx, std::move(entity));
+    });
     REQUIRE(name == "TestWidget");
 }

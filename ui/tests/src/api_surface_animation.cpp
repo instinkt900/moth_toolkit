@@ -101,6 +101,6 @@ TEST_CASE("AnimationClip fields and methods are stable", "[api][animation][clip]
     SUCCEED();
 }
 
-TEST_CASE("AnimationMarker fields are stable", "[api][animation][event]") {
+TEST_CASE("AnimationMarker fields are stable", "[api][animation][marker]") {
     SUCCEED();
 }

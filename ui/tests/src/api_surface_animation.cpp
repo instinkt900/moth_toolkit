@@ -17,8 +17,7 @@ namespace {
         return true;
     }
 
-    // Namespace-scope static_assert: evaluated at translation-unit level, no
-    // function-scope ambiguity about whether the expression is a constant expression.
+    // ContinuousTargets
     using Target = AnimationTrack::Target;
     constexpr std::array expectedContinuous = {
         Target::TopOffset,    Target::BottomOffset, Target::LeftOffset,  Target::RightOffset,
@@ -28,38 +27,57 @@ namespace {
     };
     static_assert(arrays_equal(AnimationTrack::ContinuousTargets, expectedContinuous),
                   "AnimationTrack::ContinuousTargets contents or order changed");
-}
 
-TEST_CASE("Keyframe fields are stable", "[api][animation][keyframe]") {
+    // DiscreteTargets
+    constexpr std::array expectedDiscrete = {
+        Target::FlipbookClip,
+        Target::FlipbookPlaying,
+    };
+    static_assert(arrays_equal(AnimationTrack::DiscreteTargets, expectedDiscrete),
+                  "AnimationTrack::DiscreteTargets contents or order changed");
+
+    // Keyframe fields
     static_assert(std::is_same_v<decltype(Keyframe::frame),     int>);
     static_assert(std::is_same_v<decltype(Keyframe::value),     float>);
     static_assert(std::is_same_v<decltype(Keyframe::interpType), InterpType>);
+
+    // AnimationClip fields
+    static_assert(std::is_same_v<decltype(AnimationClip::name),      std::string>);
+    static_assert(std::is_same_v<decltype(AnimationClip::startFrame), int>);
+    static_assert(std::is_same_v<decltype(AnimationClip::endFrame),   int>);
+    static_assert(std::is_same_v<decltype(AnimationClip::fps),        float>);
+    static_assert(std::is_same_v<decltype(AnimationClip::loopType),   AnimationClip::LoopType>);
+
+    // AnimationMarker fields
+    static_assert(std::is_same_v<decltype(AnimationMarker::frame), int>);
+    static_assert(std::is_same_v<decltype(AnimationMarker::name),  std::string>);
+
+    // Target enum distinctness
+    static_assert(Target::TopOffset    != Target::BottomOffset);
+    static_assert(Target::LeftOffset   != Target::RightOffset);
+    static_assert(Target::TopAnchor    != Target::BottomAnchor);
+    static_assert(Target::LeftAnchor   != Target::RightAnchor);
+    static_assert(Target::ColorRed     != Target::ColorGreen);
+    static_assert(Target::ColorGreen   != Target::ColorBlue);
+    static_assert(Target::ColorBlue    != Target::ColorAlpha);
+    static_assert(Target::Rotation     != Target::Unknown);
+    static_assert(Target::FlipbookClip    != Target::Unknown);
+    static_assert(Target::FlipbookPlaying != Target::FlipbookClip);
+
+    // AnimationClip::LoopType distinctness
+    static_assert(AnimationClip::LoopType::Stop  != AnimationClip::LoopType::Loop);
+    static_assert(AnimationClip::LoopType::Loop  != AnimationClip::LoopType::Reset);
+}
+
+TEST_CASE("Keyframe fields are stable", "[api][animation][keyframe]") {
     SUCCEED();
 }
 
 TEST_CASE("AnimationTrack::Target enum values are stable", "[api][animation][track]") {
-    using T = AnimationTrack::Target;
-    // Verify each enumerator exists and is distinct from Unknown
-    static_assert(T::Unknown      != T::Events);
-    static_assert(T::TopOffset    != T::BottomOffset);
-    static_assert(T::LeftOffset   != T::RightOffset);
-    static_assert(T::TopAnchor    != T::BottomAnchor);
-    static_assert(T::LeftAnchor   != T::RightAnchor);
-    static_assert(T::ColorRed     != T::ColorGreen);
-    static_assert(T::ColorGreen   != T::ColorBlue);
-    static_assert(T::ColorBlue    != T::ColorAlpha);
-    static_assert(T::Rotation     != T::Unknown);
-    static_assert(T::FlipbookClip    != T::Unknown);
-    static_assert(T::FlipbookPlaying != T::FlipbookClip);
     SUCCEED();
 }
 
 TEST_CASE("AnimationTrack static arrays are stable", "[api][animation][track]") {
-    // ContinuousTargets: pinned at namespace scope above (arrays_equal, expectedContinuous).
-    // DiscreteTargets covers FlipbookClip and FlipbookPlaying.
-    static_assert(AnimationTrack::DiscreteTargets.size()   == 2);
-    static_assert(AnimationTrack::DiscreteTargets[0] == AnimationTrack::Target::FlipbookClip);
-    static_assert(AnimationTrack::DiscreteTargets[1] == AnimationTrack::Target::FlipbookPlaying);
     SUCCEED();
 }
 
@@ -78,22 +96,11 @@ TEST_CASE("AnimationTrack method signatures are stable", "[api][animation][track
 }
 
 TEST_CASE("AnimationClip fields and methods are stable", "[api][animation][clip]") {
-    static_assert(std::is_same_v<decltype(AnimationClip::name),      std::string>);
-    static_assert(std::is_same_v<decltype(AnimationClip::startFrame), int>);
-    static_assert(std::is_same_v<decltype(AnimationClip::endFrame),   int>);
-    static_assert(std::is_same_v<decltype(AnimationClip::fps),        float>);
-    static_assert(std::is_same_v<decltype(AnimationClip::loopType),   AnimationClip::LoopType>);
-
-    static_assert(AnimationClip::LoopType::Stop  != AnimationClip::LoopType::Loop);
-    static_assert(AnimationClip::LoopType::Loop  != AnimationClip::LoopType::Reset);
-
     int (AnimationClip::*frameCount)() const = &AnimationClip::FrameCount;
     (void)frameCount;
     SUCCEED();
 }
 
 TEST_CASE("AnimationMarker fields are stable", "[api][animation][event]") {
-    static_assert(std::is_same_v<decltype(AnimationMarker::frame), int>);
-    static_assert(std::is_same_v<decltype(AnimationMarker::name),  std::string>);
     SUCCEED();
 }

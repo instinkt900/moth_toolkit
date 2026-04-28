@@ -233,3 +233,12 @@ TEST_CASE("AnimationTrack GetValueAtFrame exact match on a keyframe", "[animatio
     REQUIRE(track.GetValueAtFrame(10.0f) == Catch::Approx(10.0f));
     REQUIRE(track.GetValueAtFrame(20.0f) == Catch::Approx(20.0f));
 }
+
+TEST_CASE("AnimationTrack GetOrCreateKeyframe with negative frame", "[animation_track][keyframes]") {
+    AnimationTrack track(AnimationTrack::Target::TopOffset);
+    auto& kf = track.GetOrCreateKeyframe(-5);
+    kf.value = 3.0f;
+    REQUIRE(track.Keyframes().size() == 1);
+    REQUIRE(track.GetKeyframe(-5) != nullptr);
+    REQUIRE(track.GetKeyframe(-5)->value == Catch::Approx(3.0f));
+}

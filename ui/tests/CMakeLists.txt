@@ -18,8 +18,9 @@ set(SOURCES
     src/test_interp.cpp
     src/test_animation_clip.cpp
     src/test_animation_track.cpp
-    src/test_animation_event.cpp
+    src/test_animation_marker.cpp
     src/test_layout_rect.cpp
+    src/test_event_key.cpp
     src/test_event_dispatch.cpp
     src/test_node.cpp
     src/test_node_entity.cpp

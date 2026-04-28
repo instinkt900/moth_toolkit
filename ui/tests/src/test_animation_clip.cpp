@@ -109,3 +109,10 @@ TEST_CASE("AnimationClip LoopType JSON round-trip", "[animation_clip][json]") {
         REQUIRE(restored.loopType == loopType);
     }
 }
+
+TEST_CASE("AnimationClip FrameCount returns negative when startFrame > endFrame", "[animation_clip]") {
+    AnimationClip clip;
+    clip.startFrame = 10;
+    clip.endFrame = 5;
+    REQUIRE(clip.FrameCount() == -4);
+}

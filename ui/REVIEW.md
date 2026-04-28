@@ -2,27 +2,7 @@
 
 Full-scope review of the public API, source implementations, and test suite. Focus: simplicity, ease of use, documentation quality, and correctness for a C++17 game UI library.
 
-## Naming & Consistency
-
 ## Implementation Quality
-
-### I1: `json.contains()` + `json["key"]` double lookup
-`src/layout/layout.cpp:75-76, 79-81, 83-88` and `src/font_factory.cpp:26-31` — `contains()` followed by `operator[]` or `at()` does two hash lookups. Use `json.find()` or `json.value()` with defaults.
-
-### I2: `json["mothui_version"]` uses `operator[]` which inserts null on missing key
-`src/layout/layout.cpp:66` — If the version key is absent, `operator[]` inserts a null value. Use `json.value("mothui_version", 0)`.
-
-### I3: `LayoutEntityRef` serializes then re-parses override JSON
-`src/layout/layout_entity_ref.cpp:84, 104` — Overrides are `dump()`'d to string then `parse()`'d back. Store the `nlohmann::json` object directly.
-
-### I4: `NodeFlipbook::SharedFromThis` uses `dynamic_pointer_cast` unnecessarily
-`src/nodes/node_flipbook.cpp:187` — `dynamic_pointer_cast<NodeFlipbook>(shared_from_this())` when `this` is statically `NodeFlipbook*`. Use `std::static_pointer_cast<NodeFlipbook>`.
-
-### I7: Renderer state push/pop has no RAII guards
-`Node::Draw()` and `NodeText::DrawInternal()` manually call `PushColor`/`PopColor` etc. A scoped RAII guard would provide exception safety.
-
-### I8: Logger raw pointer with no invalidation mechanism
-`src/logger.cpp:6-20` — `s_logger` is `std::atomic<ILogger*>`. If the pointed-to logger is destroyed, `GetLogger()` returns a dangling reference.
 
 ## Testing Gaps
 
@@ -33,7 +13,7 @@ Full-scope review of the public API, source implementations, and test suite. Foc
 - **LayoutEntityGroup** — standalone serialization
 - **LayoutEntityImage** — standalone serialization, nine-slice fields
 - **LayoutEntityFlipbook** — standalone serialization
-- **EventKey** — key event construction and accessors
+- **LayoutCache** — `SetLayoutRoot`, `GetLayout`, `FlushCache`
 - **IFont / IFontFactory** — concrete font usage
 - **IImage / IImageFactory** — concrete image usage
 - **FontFactory** — concrete implementation
@@ -42,16 +22,8 @@ Full-scope review of the public API, source implementations, and test suite. Foc
 - **AnimationTrackController** — direct unit tests
 - **AnimationController** — direct unit tests (only tested via fixtures)
 
-### T2: Critical untested error paths
-- `AnimationTrack::GetOrCreateKeyframe` with negative frame
-- `Node::SetEventHandler` with null function
-- `AnimationClip` with `m_startFrame > m_endFrame` (negative FrameCount)
-
 ### T3: Mock renderer is a no-op
 `MockRenderer` has 17 empty methods (`{}`). No recording of calls, no parameter capture. The rendering pipeline is completely untestable at the unit level without an instrumented mock.
-
-### T5: `static_assert` inside `TEST_CASE` is misleading
-`api_surface_animation.cpp` uses `static_assert` inside `TEST_CASE` bodies. `static_assert` fires at compile time regardless of test selection. Move to namespace scope.
 
 ## What's Good
 
@@ -78,9 +50,6 @@ Full-scope review of the public API, source implementations, and test suite. Foc
 | T1 | Layer/LayerStack tests | Medium |
 | T1 | LayoutCache tests | Small |
 | T1 | LayoutEntityRef tests | Medium |
-| T1 | EventKey tests | Small |
-| T2 | Remaining critical untested error path tests | Small |
-| N5 | `AnimationEvent` → `AnimationMarker` rename | Medium |
 
 ### Medium-term
 
@@ -89,6 +58,3 @@ Full-scope review of the public API, source implementations, and test suite. Foc
 | T3 | Instrumented mock renderer | Medium |
 | T1 | Binary serialization tests | Small |
 | T1 | Widget CRTP tests | Small |
-| A10 | Document `EventType` plain-enum rationale | Trivial |
-| I3 | `LayoutEntityRef` JSON store-don't-serialize | Small |
-| I7 | RAII renderer state guards | Small |

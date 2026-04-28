@@ -201,3 +201,11 @@ TEST_CASE("Node TranslatePosition maps world point to local space", "[node][rota
     REQUIRE(local.x == Catch::Approx(20.0f).margin(1.0f));
     REQUIRE(local.y == Catch::Approx(30.0f).margin(1.0f));
 }
+
+TEST_CASE("Node SetEventHandler with null function does not crash", "[node][events]") {
+    MockContext mc;
+    auto node = Node::Create(mc.context);
+    node->SetEventHandler(nullptr);
+    EventMouseDown ev(MouseButton::Left, IntVec2{ 0, 0 });
+    REQUIRE_FALSE(node->OnEvent(ev));
+}

@@ -86,6 +86,7 @@ TEST_CASE("Layout::Load sets the loaded path", "[layout][load]") {
     REQUIRE(layout->Save(tmp));
 
     auto [loaded, result] = Layout::Load(tmp);
+    REQUIRE(result == Layout::LoadResult::Success);
     REQUIRE(loaded->GetLoadedPath() == tmp.path);
 }
 

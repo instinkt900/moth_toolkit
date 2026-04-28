@@ -23,7 +23,6 @@ namespace moth_ui {
         /// @brief The layout property driven by this track.
         enum class Target {
             Unknown,       ///< Unrecognised or unset target.
-            Events,        ///< Event keyframe track (not a float value target; ignored by AnimationController).
             TopOffset,     ///< Top edge pixel offset.
             BottomOffset,  ///< Bottom edge pixel offset.
             LeftOffset,    ///< Left edge pixel offset.

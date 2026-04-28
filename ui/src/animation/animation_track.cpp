@@ -13,7 +13,12 @@ namespace moth_ui {
     }
 
     void from_json(nlohmann::json const& json, AnimationTrack& track) {
-        track.m_target = json.value("target", AnimationTrack::Target::Unknown);
+        if (json.value("target", "") == "Events") {
+            // Target::Events was removed. Silently discard legacy event tracks.
+            track.m_target = AnimationTrack::Target::Unknown;
+        } else {
+            track.m_target = json.value("target", AnimationTrack::Target::Unknown);
+        }
         auto keyframes = json.value("keyframes", std::vector<Keyframe>{});
         track.m_keyframes.clear();
         for (auto& keyframe : keyframes) {

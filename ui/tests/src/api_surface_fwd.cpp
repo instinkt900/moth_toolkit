@@ -66,12 +66,11 @@ namespace {
                        moth_ui::AnimationTrackController* animationTrackController,
                        moth_ui::AnimationClipController* animationClipController,
                        moth_ui::DiscreteAnimationTrack* discreteTrack,
-                       moth_ui::DiscreteAnimationTrackController* discreteTrackController,
-                       moth_ui::ClipController* clipController) {
+                       moth_ui::DiscreteAnimationTrackController* discreteTrackController) {
         (void)animationTrack; (void)animationClip; (void)animationEvent;
         (void)animationController; (void)animationTrackController;
         (void)animationClipController; (void)discreteTrack;
-        (void)discreteTrackController; (void)clipController;
+        (void)discreteTrackController;
     }
 
     void pin_layers(moth_ui::Layer* layer, moth_ui::LayerStack* layerStack) {

@@ -12,7 +12,6 @@
 #include "moth_ui/animation/animation_event.h"
 #include "moth_ui/animation/animation_track.h"
 #include "moth_ui/animation/animation_track_controller.h"
-#include "moth_ui/animation/clip_controller.h"
 #include "moth_ui/animation/keyframe.h"
 
 // events

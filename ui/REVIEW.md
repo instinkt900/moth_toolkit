@@ -2,55 +2,7 @@
 
 Full-scope review of the public API, source implementations, and test suite. Focus: simplicity, ease of use, documentation quality, and correctness for a C++17 game UI library.
 
-## API Design Issues
-
-### A6: `Color` exposes full vector arithmetic
-`Color` is `Vector<float, 4>` with `operator*`, `operator+`, etc. Component-wise multiplication is not alpha blending, but users might reasonably expect it to be.
-
-### A7: `Layout::Load` uses out-parameter pattern
-```cpp
-static LoadResult Load(const path&, std::shared_ptr<Layout>* outLayout = nullptr);
-```
-In C++17 this is antiquated. Consider `std::optional<std::shared_ptr<Layout>>` or a struct return.
-
-### A8: `KeyAction` enum is in `event_key.h` but `Key` enum has no docstring
-The `Key` enum (100+ values) has no enum-level docstring. Also `static int constexpr KeyMod_*` should be `static constexpr int`.
-
-### A9: `IFlipbook::LoopType` duplicates `AnimationClip::LoopType`
-Both define `Stop`, `Loop`, `Reset` but in different orders and with slightly different semantics.
-
-### A10: `EventType` is the only plain `enum` (not `enum class`)
-Every other enum uses `enum class`. `EventType` is a C-style `enum` because it's used as `int` type codes. This is pragmatic but should be documented.
-
-### A11: `Rect` has redundant accessors
-`Rect::x()` and `Rect::left()` both return the same value. Same for `y()` and `top()`.
-
-## Documentation Gaps
-
-### D1: `ILogger` and `NullLogger` entirely undocumented
-No class-level docstrings, no method docstrings on `Log`, `Debug`, `Info`, `Warning`, `Error`, or `NullLogger::Log`. The `LogLevel` enum is also undocumented.
-
-### D2: `ILogger` template methods force `fmt` dependency
-`Debug/Info/Warning/Error` are defined inline in the header and call `fmt::format`. Every includer of `ilogger.h` must have `<fmt/core.h>`.
-
-### D3: Friend `to_json`/`from_json` declarations undocumented
-In `AnimationClip`, `AnimationEvent`, `AnimationTrack`, `Keyframe`, `DiscreteAnimationTrack` — none of the friend declarations have docstrings.
-
-### D5: Missing docstrings on special members
-Copy/move constructors and destructors on `AnimationTrack`, `LayoutEntity`, `LayoutEntityGroup`, `Node`, `Group`, `Layout` lack docstrings. Several `Layout` overrides (`Clone`, `Instantiate`, `Serialize`, `Deserialize`) are also undocumented.
-
-### D6: `IRenderer::PushTransform` doc says "not composed"
-The docstring says transforms are *replaced* per push rather than composed with parent. This contradicts standard transform stack semantics and needs prominent documentation.
-
 ## Naming & Consistency
-
-### N1: Constant naming prefix inconsistency
-- `k` prefix used: `kDefaultPivot`, `kDegToRad`, `kRadToDeg`
-- `k` prefix NOT used: `DefaultFPS`, `DefaultFontSize`, `DefaultBorderSize`
-- C-style SCREAMING_CASE: `VersionMajor`, `VersionMinor`, `VersionPatch`, `Version`
-
-### N2: `ClipController` vs `AnimationClipController` naming collision
-`ClipController` is a two-pointer struct; `AnimationClipController` is the full playback controller. Consider renaming `ClipController` to `ClipBinding`.
 
 ### N3: `AnimationTrack::Target::Events` is a dead enum value
 `Events` is "ignored by AnimationController" and "not a float value target." It exists only as a discriminant for serialization but pollutes the target enum.
@@ -132,10 +84,6 @@ The enum is `InterpType`, the function pointer type is `EaseFunction`, individua
 
 | # | Issue | Effort |
 |---|-------|--------|
-| D1 | `ILogger`/`NullLogger` documentation | Medium |
-| D3 | Friend `to_json`/`from_json` documentation | Small |
-| D5 | Special member docstrings | Medium |
-| A7 | `Layout::Load` return type modernization | Medium |
 | T1 | Layer/LayerStack tests | Medium |
 | T1 | LayoutCache tests | Small |
 | T1 | LayoutEntityRef tests | Medium |
@@ -147,12 +95,10 @@ The enum is `InterpType`, the function pointer type is `EaseFunction`, individua
 
 | # | Issue | Effort |
 |---|-------|--------|
-| A6 | `Color` vector arithmetic misuse protection | Medium |
 | T3 | Instrumented mock renderer | Medium |
 | T1 | Binary serialization tests | Small |
 | T1 | Widget CRTP tests | Small |
 | A10 | Document `EventType` plain-enum rationale | Trivial |
-| N1 | Constant naming convention standardization | Small |
 | N3 | `AnimationTrack::Target::Events` removal | Medium |
 | I3 | `LayoutEntityRef` JSON store-don't-serialize | Small |
 | I7 | RAII renderer state guards | Small |

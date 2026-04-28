@@ -137,6 +137,9 @@ namespace moth_ui {
         /// @brief Returns the node's anchor/offset layout rectangle.
         LayoutRect& GetLayoutRect() { return m_layoutRect; }
 
+        /// @brief Returns a const reference to the node's anchor/offset layout rectangle.
+        LayoutRect const& GetLayoutRect() const { return m_layoutRect; }
+
         /// @brief Returns the node's computed screen-space rectangle.
         IntRect const& GetScreenRect() const { return m_screenRect; }
 

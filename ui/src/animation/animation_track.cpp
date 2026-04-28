@@ -56,7 +56,14 @@ namespace moth_ui {
     Keyframe* AnimationTrack::GetKeyframe(int frameNo) {
         auto keyframeIt = ranges::find_if(m_keyframes, [&](auto const& keyf) { return keyf->m_frame == frameNo; });
         if (std::end(m_keyframes) != keyframeIt) {
-            // found an existing frame
+            return keyframeIt->get();
+        }
+        return nullptr;
+    }
+
+    Keyframe const* AnimationTrack::GetKeyframe(int frameNo) const {
+        auto keyframeIt = ranges::find_if(m_keyframes, [&](auto const& keyf) { return keyf->m_frame == frameNo; });
+        if (std::end(m_keyframes) != keyframeIt) {
             return keyframeIt->get();
         }
         return nullptr;

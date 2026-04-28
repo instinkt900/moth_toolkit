@@ -51,6 +51,9 @@ namespace moth_ui {
         /// @brief Returns a mutable reference to the source sampling rectangle.
         IntRect& GetSourceRect() { return m_sourceRect; }
 
+        /// @brief Returns a const reference to the source sampling rectangle.
+        IntRect const& GetSourceRect() const { return m_sourceRect; }
+
         /**
          * @brief Returns the four source slice points used in nine-slice rendering.
          * @return Pointer to the first of four IntVec2 slice points (always non-null).

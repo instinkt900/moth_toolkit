@@ -92,12 +92,18 @@ namespace moth_ui {
         /// @brief Returns a mutable reference to the keyframe list.
         KeyframeList& Keyframes() { return m_keyframes; }
 
+        /// @brief Returns a const reference to the keyframe list.
+        KeyframeList const& Keyframes() const { return m_keyframes; }
+
         /**
          * @brief Returns the keyframe at the given frame number, or @c nullptr.
          * @param frameNo Exact frame index to look up.
          * @return Pointer to the keyframe, or @c nullptr if none exists at @p frameNo.
          */
         Keyframe* GetKeyframe(int frameNo);
+
+        /// @brief Const overload of GetKeyframe.
+        Keyframe const* GetKeyframe(int frameNo) const;
 
         /**
          * @brief Returns the keyframe at @p frameNo, creating one if it does not exist.

@@ -21,6 +21,9 @@ namespace moth_ui {
          */
         virtual IImage* GetImage() = 0;
 
+        /// @brief Returns the target's content as a const IImage, if supported.
+        virtual IImage const* GetImage() const = 0;
+
         ITarget() = default;
         ITarget(ITarget const&) = default;
         ITarget(ITarget&&) = default;

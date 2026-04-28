@@ -80,6 +80,9 @@ namespace moth_ui {
             || static_cast<size_t>(toIndex) >= m_children.size()) {
             return;
         }
+        if (fromIndex == toIndex) {
+            return;
+        }
         auto child = m_children[fromIndex];
         m_children.erase(std::next(std::begin(m_children), fromIndex));
         m_children.insert(std::next(std::begin(m_children), toIndex), std::move(child));

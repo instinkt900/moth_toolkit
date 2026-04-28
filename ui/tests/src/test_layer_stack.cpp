@@ -99,8 +99,9 @@ TEST_CASE("LayerStack OnEvent dispatches to layers in reverse order", "[layer_st
     stack.PushLayer(std::move(top));
 
     TestEvent ev;
-    stack.OnEvent(ev);
+    bool handled = stack.OnEvent(ev);
     // Top layer (last pushed) receives event first
+    REQUIRE_FALSE(handled);
     REQUIRE(topPtr->onEventCalled);
     REQUIRE(bottomPtr->onEventCalled);
     REQUIRE(log->size() == 2);
@@ -121,7 +122,8 @@ TEST_CASE("LayerStack OnEvent stops when handled", "[layer_stack]") {
     stack.PushLayer(std::move(top));
 
     TestEvent ev;
-    stack.OnEvent(ev);
+    bool handled = stack.OnEvent(ev);
+    REQUIRE(handled);
     REQUIRE(topPtr->onEventCalled);
     REQUIRE_FALSE(bottomPtr->onEventCalled);
 }

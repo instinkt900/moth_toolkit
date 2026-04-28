@@ -58,39 +58,33 @@ namespace moth_ui {
     }
 
     bool Layout::Deserialize(nlohmann::json const& json, SerializeContext const& context) {
-        bool success = false;
+        SerializeContext loadedContext;
+        loadedContext.m_rootPath = context.m_rootPath;
+        loadedContext.m_version = json.value("mothui_version", 0);
 
-        if (json.contains("mothui_version")) {
-            SerializeContext loadedContext;
-            loadedContext.m_rootPath = context.m_rootPath;
-            loadedContext.m_version = json.value("mothui_version", 0);
+        auto const jsonType = json.value("type", LayoutEntityType::Unknown);
+        if (jsonType != LayoutEntityType::Layout) {
+            return false;
+        }
 
-            auto const jsonType = json.value("type", LayoutEntityType::Unknown);
-            assert(jsonType == LayoutEntityType::Layout);
+        m_class = json.value("class", "");
+        m_blend = json.value("blend", BlendMode::Replace);
 
-            if (jsonType == LayoutEntityType::Layout) {
-                m_class = json.value("class", "");
-                m_blend = json.value("blend", BlendMode::Replace);
+        m_clips = json.value("clips", decltype(m_clips){});
+        m_events = json.value("events", decltype(m_events){});
 
-                m_clips = json.value("clips", decltype(m_clips){});
-                m_events = json.value("events", decltype(m_events){});
-
-                m_children.clear();
-                if (auto childrenIt = json.find("children"); childrenIt != json.end()) {
-                    for (auto&& childJson : *childrenIt) {
-                        if (auto child = LoadEntity(childJson, this, loadedContext)) {
-                            m_children.push_back(std::move(child));
-                        }
-                    }
+        m_children.clear();
+        if (auto childrenIt = json.find("children"); childrenIt != json.end()) {
+            for (auto&& childJson : *childrenIt) {
+                if (auto child = LoadEntity(childJson, this, loadedContext)) {
+                    m_children.push_back(std::move(child));
                 }
-
-                m_extraData = json.value("extra_data", nlohmann::json());
-
-                success = true;
             }
         }
 
-        return success;
+        m_extraData = json.value("extra_data", nlohmann::json());
+
+        return true;
     }
 
     std::pair<std::shared_ptr<Layout>, Layout::LoadResult> Layout::Load(std::filesystem::path const& path) {

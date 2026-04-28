@@ -28,7 +28,7 @@ namespace moth_ui {
         /**
          * @brief Creates a group from a serialised layout entity.
          * @param context           Active rendering context.
-         * @param layoutEntityGroup Deserialised group description. Must not be @c nullptr.
+         * @param layoutEntityGroup Deserialised group description. May be @c nullptr.
          * @return A shared_ptr managing the new group, or @c nullptr if @p layoutEntityGroup is null.
          */
         static std::shared_ptr<Group> Create(Context& context, std::shared_ptr<LayoutEntityGroup> layoutEntityGroup);

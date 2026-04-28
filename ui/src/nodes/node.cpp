@@ -185,6 +185,9 @@ namespace moth_ui {
     }
 
     std::shared_ptr<Node> Node::Create(Context& context, std::shared_ptr<LayoutEntity> layoutEntity) {
+        if (!layoutEntity) {
+            return nullptr;
+        }
         return std::shared_ptr<Node>(new Node(context, std::move(layoutEntity)));
     }
 }

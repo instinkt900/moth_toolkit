@@ -35,11 +35,11 @@ namespace moth_ui {
         /// @brief Returns the height of the rectangle.
         T h() const { return bottomRight.y - topLeft.y; }
 
-        /// @brief Returns the x-coordinate of the left edge.
+        /// @brief Alias for @c x(). Returns the x-coordinate of the left edge.
         T left() const { return topLeft.x; }
         /// @brief Returns the x-coordinate of the right edge.
         T right() const { return bottomRight.x; }
-        /// @brief Returns the y-coordinate of the top edge.
+        /// @brief Alias for @c y(). Returns the y-coordinate of the top edge.
         T top() const { return topLeft.y; }
         /// @brief Returns the y-coordinate of the bottom edge.
         T bottom() const { return bottomRight.y; }

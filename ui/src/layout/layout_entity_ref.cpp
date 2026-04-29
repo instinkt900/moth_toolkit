@@ -3,6 +3,7 @@
 #include "moth_ui/nodes/group.h"
 #include "moth_ui/layout/layout.h"
 #include "moth_ui/animation/animation_clip.h"
+#include "moth_ui/animation/animation_marker.h"
 
 namespace moth_ui {
     LayoutEntityRef::LayoutEntityRef(LayoutRect const& initialBounds, Layout const& layoutRef)
@@ -112,6 +113,7 @@ namespace moth_ui {
     void LayoutEntityRef::CopyLayout(Layout const& other) {
         m_children.clear();
         m_clips.clear();
+        m_events.clear();
         m_class = other.m_class;
         for (auto&& child : other.m_children) {
             auto clone = child->Clone(CloneType::Deep);
@@ -122,6 +124,10 @@ namespace moth_ui {
 
         for (auto&& clip : other.m_clips) {
             m_clips.push_back(std::make_shared<AnimationClip>(*clip));
+        }
+
+        for (auto&& event : other.m_events) {
+            m_events.push_back(std::make_unique<AnimationMarker>(*event));
         }
     }
 }

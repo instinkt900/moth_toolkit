@@ -6,9 +6,9 @@
 
 namespace moth_ui {
     namespace {
-        constexpr std::array<AnimationTrack::Target, 2> kFlipbookDiscreteTargets{
-            AnimationTrack::Target::FlipbookClip,
-            AnimationTrack::Target::FlipbookPlaying,
+        constexpr std::array<AnimationTarget, 2> kFlipbookDiscreteTargets{
+            AnimationTarget::FlipbookClip,
+            AnimationTarget::FlipbookPlaying,
         };
 
         void InitDiscreteFlipbookTracks(LayoutEntity& entity, bool seedFrame0) {
@@ -17,7 +17,7 @@ namespace moth_ui {
                     auto [it, ok] = entity.m_discreteTracks.emplace(target, DiscreteAnimationTrack(target));
                     if (seedFrame0) {
                         std::string defaultValue;
-                        if (target == AnimationTrack::Target::FlipbookPlaying) {
+                        if (target == AnimationTarget::FlipbookPlaying) {
                             defaultValue = "0";
                         }
                         it->second.GetOrCreateKeyframe(0) = std::move(defaultValue);
@@ -81,13 +81,13 @@ namespace moth_ui {
             bool legacyAutoplay = json.value("autoplay", false);
             InitDiscreteFlipbookTracks(*this, false);
             if (!legacyClipName.empty()) {
-                auto& clipTrack = m_discreteTracks.at(AnimationTrack::Target::FlipbookClip);
+                auto& clipTrack = m_discreteTracks.at(AnimationTarget::FlipbookClip);
                 if (clipTrack.Keyframes().empty()) {
                     clipTrack.GetOrCreateKeyframe(0) = legacyClipName;
                 }
             }
             if (legacyAutoplay) {
-                auto& playingTrack = m_discreteTracks.at(AnimationTrack::Target::FlipbookPlaying);
+                auto& playingTrack = m_discreteTracks.at(AnimationTarget::FlipbookPlaying);
                 if (playingTrack.Keyframes().empty()) {
                     playingTrack.GetOrCreateKeyframe(0) = "1";
                 }

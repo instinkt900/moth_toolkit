@@ -5,7 +5,7 @@
 #include <algorithm>
 
 namespace moth_ui {
-    DiscreteAnimationTrack::DiscreteAnimationTrack(AnimationTrack::Target target)
+    DiscreteAnimationTrack::DiscreteAnimationTrack(AnimationTarget target)
         : m_target(target) {
     }
 
@@ -64,7 +64,7 @@ namespace moth_ui {
     }
 
     void from_json(nlohmann::json const& json, DiscreteAnimationTrack& track) {
-        track.m_target = json.value("target", AnimationTrack::Target::Unknown);
+        track.m_target = json.value("target", AnimationTarget::Unknown);
         track.m_keyframes.clear();
         if (json.contains("keyframes")) {
             for (auto const& kfJson : json["keyframes"]) {

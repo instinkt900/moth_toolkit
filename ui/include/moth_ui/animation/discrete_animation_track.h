@@ -1,6 +1,6 @@
 #pragma once
 
-#include "moth_ui/animation/animation_track.h"
+#include "moth_ui/animation/animation_target.h"
 
 #include <nlohmann/json_fwd.hpp>
 #include <string>
@@ -25,7 +25,7 @@ namespace moth_ui {
          * @brief Constructs a discrete track for the given animation target.
          * @param target The property this track animates.
          */
-        explicit DiscreteAnimationTrack(AnimationTrack::Target target);
+        explicit DiscreteAnimationTrack(AnimationTarget target);
         DiscreteAnimationTrack(DiscreteAnimationTrack const& other) = default;
         DiscreteAnimationTrack(DiscreteAnimationTrack&&) = default;
         DiscreteAnimationTrack& operator=(DiscreteAnimationTrack const&) = default;
@@ -33,7 +33,7 @@ namespace moth_ui {
         ~DiscreteAnimationTrack() = default;
 
         /// @brief Returns the property this track animates.
-        AnimationTrack::Target GetTarget() const { return m_target; }
+        AnimationTarget GetTarget() const { return m_target; }
 
         /// @brief Returns a mutable reference to the keyframe list.
         KeyframeList& Keyframes() { return m_keyframes; }
@@ -79,7 +79,7 @@ namespace moth_ui {
         friend void from_json(nlohmann::json const& json, DiscreteAnimationTrack& track);
 
     private:
-        AnimationTrack::Target m_target = AnimationTrack::Target::Unknown;
+        AnimationTarget m_target = AnimationTarget::Unknown;
         KeyframeList m_keyframes;
     };
 }

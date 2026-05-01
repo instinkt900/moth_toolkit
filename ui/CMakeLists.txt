@@ -25,6 +25,7 @@ set(PUBLIC_HEADERS
 	include/moth_ui/animation/animation_controller.h
 	include/moth_ui/animation/animation_marker.h
 	include/moth_ui/animation/animation_track_controller.h
+	include/moth_ui/animation/animation_target.h
 	include/moth_ui/animation/animation_track.h
 	include/moth_ui/animation/discrete_animation_track.h
 	include/moth_ui/animation/discrete_animation_track_controller.h

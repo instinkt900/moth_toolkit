@@ -1,9 +1,9 @@
 #pragma once
 
+#include "moth_ui/animation/animation_target.h"
 #include "moth_ui/moth_ui_fwd.h"
 
 #include <nlohmann/json.hpp>
-#include <array>
 #include <functional>
 #include <memory>
 #include <vector>
@@ -21,47 +21,14 @@ namespace moth_ui {
         using KeyframeList = std::vector<std::shared_ptr<Keyframe>>;
 
         /// @brief The layout property driven by this track.
-        enum class Target {
-            Unknown,       ///< Unrecognised or unset target.
-            TopOffset,     ///< Top edge pixel offset.
-            BottomOffset,  ///< Bottom edge pixel offset.
-            LeftOffset,    ///< Left edge pixel offset.
-            RightOffset,   ///< Right edge pixel offset.
-            TopAnchor,     ///< Top anchor fraction [0,1].
-            BottomAnchor,  ///< Bottom anchor fraction [0,1].
-            LeftAnchor,    ///< Left anchor fraction [0,1].
-            RightAnchor,   ///< Right anchor fraction [0,1].
-            ColorRed,      ///< Red colour component [0,1].
-            ColorGreen,    ///< Green colour component [0,1].
-            ColorBlue,     ///< Blue colour component [0,1].
-            ColorAlpha,    ///< Alpha colour component [0,1].
-            Rotation,      ///< Clockwise rotation in degrees.
-            FlipbookClip,    ///< Flipbook clip name (discrete string, step-interpolated).
-            FlipbookPlaying, ///< Flipbook play/pause state as "1"/"0" (discrete, step-interpolated).
-        };
+        /// @deprecated Use @c AnimationTarget directly in new code; retained for backward compatibility.
+        using Target = AnimationTarget;
 
         /// @brief All targets that are continuously interpolated (excludes Unknown).
-        static constexpr std::array<Target, 13> ContinuousTargets{
-            Target::TopOffset,
-            Target::BottomOffset,
-            Target::LeftOffset,
-            Target::RightOffset,
-            Target::TopAnchor,
-            Target::BottomAnchor,
-            Target::LeftAnchor,
-            Target::RightAnchor,
-            Target::ColorRed,
-            Target::ColorGreen,
-            Target::ColorBlue,
-            Target::ColorAlpha,
-            Target::Rotation,
-        };
+        static constexpr auto& ContinuousTargets = kContinuousTargets;
 
         /// @brief All targets that are step-interpolated string values (discrete tracks).
-        static constexpr std::array<Target, 2> DiscreteTargets{
-            Target::FlipbookClip,
-            Target::FlipbookPlaying,
-        };
+        static constexpr auto& DiscreteTargets = kDiscreteTargets;
 
         /// @brief Deep-copies a track, including all keyframes.
         AnimationTrack(AnimationTrack const& other);

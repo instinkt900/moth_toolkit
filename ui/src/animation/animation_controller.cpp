@@ -6,38 +6,38 @@
 #include "moth_ui/nodes/node.h"
 
 namespace moth_ui {
-    float& AnimationController::GetTargetReference(Node* node, AnimationTrack::Target target) {
+    float& AnimationController::GetTargetReference(Node* node, AnimationTarget target) {
         auto& layoutRect = node->GetLayoutRect();
         switch (target) {
-        case AnimationTrack::Target::TopOffset:
+        case AnimationTarget::TopOffset:
             return layoutRect.offset.topLeft.y;
-        case AnimationTrack::Target::BottomOffset:
+        case AnimationTarget::BottomOffset:
             return layoutRect.offset.bottomRight.y;
-        case AnimationTrack::Target::LeftOffset:
+        case AnimationTarget::LeftOffset:
             return layoutRect.offset.topLeft.x;
-        case AnimationTrack::Target::RightOffset:
+        case AnimationTarget::RightOffset:
             return layoutRect.offset.bottomRight.x;
-        case AnimationTrack::Target::TopAnchor:
+        case AnimationTarget::TopAnchor:
             return layoutRect.anchor.topLeft.y;
-        case AnimationTrack::Target::BottomAnchor:
+        case AnimationTarget::BottomAnchor:
             return layoutRect.anchor.bottomRight.y;
-        case AnimationTrack::Target::LeftAnchor:
+        case AnimationTarget::LeftAnchor:
             return layoutRect.anchor.topLeft.x;
-        case AnimationTrack::Target::RightAnchor:
+        case AnimationTarget::RightAnchor:
             return layoutRect.anchor.bottomRight.x;
-        case AnimationTrack::Target::ColorRed:
+        case AnimationTarget::ColorRed:
             return node->m_color.r;
-        case AnimationTrack::Target::ColorGreen:
+        case AnimationTarget::ColorGreen:
             return node->m_color.g;
-        case AnimationTrack::Target::ColorBlue:
+        case AnimationTarget::ColorBlue:
             return node->m_color.b;
-        case AnimationTrack::Target::ColorAlpha:
+        case AnimationTarget::ColorAlpha:
             return node->m_color.a;
-        case AnimationTrack::Target::Rotation:
+        case AnimationTarget::Rotation:
             return node->m_rotation;
-        case AnimationTrack::Target::FlipbookClip:
-        case AnimationTrack::Target::FlipbookPlaying:
-        case AnimationTrack::Target::Unknown:
+        case AnimationTarget::FlipbookClip:
+        case AnimationTarget::FlipbookPlaying:
+        case AnimationTarget::Unknown:
             break;
         }
 
@@ -81,7 +81,7 @@ namespace moth_ui {
         m_discreteControllers.clear();
     }
 
-    void AnimationController::RegisterDiscreteCallback(AnimationTrack::Target target, std::function<void(std::string_view)> callback) {
+    void AnimationController::RegisterDiscreteCallback(AnimationTarget target, std::function<void(std::string_view)> callback) {
         if (auto const layout = m_node->GetLayoutEntity()) {
             auto it = layout->m_discreteTracks.find(target);
             if (it != layout->m_discreteTracks.end()) {

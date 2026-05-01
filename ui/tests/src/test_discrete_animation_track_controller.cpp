@@ -8,7 +8,7 @@
 using namespace moth_ui;
 
 TEST_CASE("DiscreteAnimationTrackController fires callback on first SetFrame", "[discrete_controller]") {
-    DiscreteAnimationTrack track(AnimationTrack::Target::FlipbookClip);
+    DiscreteAnimationTrack track(AnimationTarget::FlipbookClip);
     track.GetOrCreateKeyframe(0) = "idle";
 
     std::vector<std::string> calls;
@@ -22,7 +22,7 @@ TEST_CASE("DiscreteAnimationTrackController fires callback on first SetFrame", "
 }
 
 TEST_CASE("DiscreteAnimationTrackController fires callback on value change", "[discrete_controller]") {
-    DiscreteAnimationTrack track(AnimationTrack::Target::FlipbookClip);
+    DiscreteAnimationTrack track(AnimationTarget::FlipbookClip);
     track.GetOrCreateKeyframe(0) = "idle";
     track.GetOrCreateKeyframe(10) = "run";
 
@@ -41,7 +41,7 @@ TEST_CASE("DiscreteAnimationTrackController fires callback on value change", "[d
 }
 
 TEST_CASE("DiscreteAnimationTrackController does not re-fire on unchanged value", "[discrete_controller]") {
-    DiscreteAnimationTrack track(AnimationTrack::Target::FlipbookClip);
+    DiscreteAnimationTrack track(AnimationTarget::FlipbookClip);
     track.GetOrCreateKeyframe(0) = "idle";
 
     int count = 0;
@@ -54,7 +54,7 @@ TEST_CASE("DiscreteAnimationTrackController does not re-fire on unchanged value"
 }
 
 TEST_CASE("DiscreteAnimationTrackController Reset forces re-fire on next SetFrame", "[discrete_controller]") {
-    DiscreteAnimationTrack track(AnimationTrack::Target::FlipbookClip);
+    DiscreteAnimationTrack track(AnimationTarget::FlipbookClip);
     track.GetOrCreateKeyframe(0) = "idle";
 
     int count = 0;
@@ -69,7 +69,7 @@ TEST_CASE("DiscreteAnimationTrackController Reset forces re-fire on next SetFram
 }
 
 TEST_CASE("DiscreteAnimationTrackController fires empty string before first keyframe", "[discrete_controller]") {
-    DiscreteAnimationTrack track(AnimationTrack::Target::FlipbookClip);
+    DiscreteAnimationTrack track(AnimationTarget::FlipbookClip);
     track.GetOrCreateKeyframe(10) = "idle";
 
     std::vector<std::string> calls;
@@ -87,7 +87,7 @@ TEST_CASE("DiscreteAnimationTrackController fires empty string before first keyf
 }
 
 TEST_CASE("DiscreteAnimationTrackController handles backward scrub with value change", "[discrete_controller]") {
-    DiscreteAnimationTrack track(AnimationTrack::Target::FlipbookClip);
+    DiscreteAnimationTrack track(AnimationTarget::FlipbookClip);
     track.GetOrCreateKeyframe(0) = "idle";
     track.GetOrCreateKeyframe(10) = "run";
 

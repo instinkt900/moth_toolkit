@@ -1,6 +1,6 @@
 #pragma once
 
-#include "moth_ui/animation/animation_track.h"
+#include "moth_ui/animation/animation_target.h"
 #include "moth_ui/moth_ui_fwd.h"
 
 #include <functional>
@@ -50,7 +50,7 @@ namespace moth_ui {
          * @param target   The discrete track target to observe.
          * @param callback Called with the new string value when it changes at a new frame.
          */
-        void RegisterDiscreteCallback(AnimationTrack::Target target, std::function<void(std::string_view)> callback);
+        void RegisterDiscreteCallback(AnimationTarget target, std::function<void(std::string_view)> callback);
 
         AnimationController(AnimationController const&) = delete;
         AnimationController(AnimationController&&) = default;
@@ -58,7 +58,7 @@ namespace moth_ui {
         AnimationController& operator=(AnimationController&&) = default;
 
     private:
-        static float& GetTargetReference(Node* node, AnimationTrack::Target target);
+        static float& GetTargetReference(Node* node, AnimationTarget target);
 
         Node* m_node = nullptr;
         std::vector<std::unique_ptr<AnimationTrackController>> m_trackControllers;

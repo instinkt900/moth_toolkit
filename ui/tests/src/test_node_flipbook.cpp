@@ -259,8 +259,8 @@ TEST_CASE("Discrete track FlipbookPlaying=1 at frame 0 starts playback on instan
     tc.flipbookFactory.nextFlipbook = &fb;
 
     auto entity = std::make_shared<LayoutEntityFlipbook>(MakeDefaultLayoutRect(), "dummy.flipbook.json");
-    entity->m_discreteTracks.at(AnimationTrack::Target::FlipbookClip).GetOrCreateKeyframe(0) = "run";
-    entity->m_discreteTracks.at(AnimationTrack::Target::FlipbookPlaying).GetOrCreateKeyframe(0) = "1";
+    entity->m_discreteTracks.at(AnimationTarget::FlipbookClip).GetOrCreateKeyframe(0) = "run";
+    entity->m_discreteTracks.at(AnimationTarget::FlipbookPlaying).GetOrCreateKeyframe(0) = "1";
 
     auto node = std::dynamic_pointer_cast<NodeFlipbook>(entity->Instantiate(tc.context));
 
@@ -274,7 +274,7 @@ TEST_CASE("Discrete track FlipbookPlaying=0 at frame 0 does not start playback o
     tc.flipbookFactory.nextFlipbook = &fb;
 
     auto entity = std::make_shared<LayoutEntityFlipbook>(MakeDefaultLayoutRect(), "dummy.flipbook.json");
-    entity->m_discreteTracks.at(AnimationTrack::Target::FlipbookClip).GetOrCreateKeyframe(0) = "run";
+    entity->m_discreteTracks.at(AnimationTarget::FlipbookClip).GetOrCreateKeyframe(0) = "run";
     // FlipbookPlaying defaults to "0" at frame 0 from InitDiscreteFlipbookTracks.
 
     auto node = std::dynamic_pointer_cast<NodeFlipbook>(entity->Instantiate(tc.context));
@@ -289,7 +289,7 @@ TEST_CASE("Discrete track FlipbookPlaying=1 with no clip does not start playback
     tc.flipbookFactory.nextFlipbook = &fb;
 
     auto entity = std::make_shared<LayoutEntityFlipbook>(MakeDefaultLayoutRect(), "dummy.flipbook.json");
-    entity->m_discreteTracks.at(AnimationTrack::Target::FlipbookPlaying).GetOrCreateKeyframe(0) = "1";
+    entity->m_discreteTracks.at(AnimationTarget::FlipbookPlaying).GetOrCreateKeyframe(0) = "1";
     // No clip name set in FlipbookClip track.
 
     auto node = std::dynamic_pointer_cast<NodeFlipbook>(entity->Instantiate(tc.context));

@@ -20,10 +20,10 @@ namespace moth_ui {
 
         auto& controller = GetAnimationController();
         controller.ClearDiscreteCallbacks();
-        controller.RegisterDiscreteCallback(AnimationTrack::Target::FlipbookClip, [this](std::string_view value) {
+        controller.RegisterDiscreteCallback(AnimationTarget::FlipbookClip, [this](std::string_view value) {
             SetClip(value);
         });
-        controller.RegisterDiscreteCallback(AnimationTrack::Target::FlipbookPlaying, [this](std::string_view value) {
+        controller.RegisterDiscreteCallback(AnimationTarget::FlipbookPlaying, [this](std::string_view value) {
             SetPlaying(value == "1");
         });
         controller.SetFrameDiscrete(0.0f);
@@ -60,10 +60,10 @@ namespace moth_ui {
 
         auto& controller = GetAnimationController();
         controller.ClearDiscreteCallbacks();
-        controller.RegisterDiscreteCallback(AnimationTrack::Target::FlipbookClip, [this](std::string_view value) {
+        controller.RegisterDiscreteCallback(AnimationTarget::FlipbookClip, [this](std::string_view value) {
             SetClip(value);
         });
-        controller.RegisterDiscreteCallback(AnimationTrack::Target::FlipbookPlaying, [this](std::string_view value) {
+        controller.RegisterDiscreteCallback(AnimationTarget::FlipbookPlaying, [this](std::string_view value) {
             SetPlaying(value == "1");
         });
         controller.SetFrameDiscrete(0.0f);

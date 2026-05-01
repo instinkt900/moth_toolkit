@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 Entries are generated automatically from git history using [git-cliff](https://github.com/orhun/git-cliff).
 
+## [1.0.0] - 2026-05-01
+### Bug Fixes
+- CopyLayout now copies events from source layout
+- Use inline const for BasicColors, document GetClipName lifetime
+- Update LayerStack test construction to use IntVec2 constructor
+
+### Refactoring
+- Replace GetLogger().Method() calls with moth_ui::log free functions
+- Polish API surface ahead of 1.0 release
+- Extract AnimationTarget enum to standalone header
+
+### Documentation
+- Update README references from canyon to moth_graphics and add NodeFlipbook
+
+### Changes
+- Update version from 1.0.0-rc.1 to 1.0.0
+
 ## [1.0.0-rc.1] - 2026-04-28
 ### Features
 - Add moth_ui.h aggregate header and moth_ui_fwd.h forward declaration header

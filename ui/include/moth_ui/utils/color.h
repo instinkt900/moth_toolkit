@@ -21,11 +21,11 @@ namespace moth_ui {
 
     /// @brief Predefined basic colours for convenience.
     namespace BasicColors {
-        static Color const Red{ 1.0f, 0.0f, 0.0f, 1.0f };
-        static Color const Green{ 0.0f, 1.0f, 0.0f, 1.0f };
-        static Color const Blue{ 0.0f, 0.0f, 1.0f, 1.0f };
-        static Color const White{ 1.0f, 1.0f, 1.0f, 1.0f };
-        static Color const Black{ 0.0f, 0.0f, 0.0f, 1.0f };
+        inline const Color Red{ 1.0f, 0.0f, 0.0f, 1.0f };
+        inline const Color Green{ 0.0f, 1.0f, 0.0f, 1.0f };
+        inline const Color Blue{ 0.0f, 0.0f, 1.0f, 1.0f };
+        inline const Color White{ 1.0f, 1.0f, 1.0f, 1.0f };
+        inline const Color Black{ 0.0f, 0.0f, 0.0f, 1.0f };
     }
 
     /**

@@ -79,6 +79,8 @@ namespace moth_ui {
          * @brief Returns the name of the clip at the given index.
          * @param index Zero-based clip index; must be in [0, GetClipCount()).
          * @return Clip name, or an empty string_view if the index is out of range.
+         * @note The returned view references implementation-owned storage and is
+         *       valid only for the lifetime of this @c IFlipbook.
          */
         virtual std::string_view GetClipName(int index) const = 0;
 

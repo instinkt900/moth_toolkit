@@ -40,7 +40,7 @@ namespace {
 
 TEST_CASE("LayerStack construction with render and window sizes", "[layer_stack]") {
     MockRenderer renderer;
-    LayerStack stack(renderer, 800, 600, 1024, 768);
+    LayerStack stack(renderer, {800, 600}, {1024, 768});
     REQUIRE(stack.GetRenderWidth() == 800);
     REQUIRE(stack.GetRenderHeight() == 600);
     REQUIRE(stack.GetWindowWidth() == 1024);
@@ -49,7 +49,7 @@ TEST_CASE("LayerStack construction with render and window sizes", "[layer_stack]
 
 TEST_CASE("LayerStack PushLayer and PopLayer", "[layer_stack]") {
     MockRenderer renderer;
-    LayerStack stack(renderer, 800, 600, 800, 600);
+    LayerStack stack(renderer, {800, 600}, {800, 600});
     auto layer = std::make_unique<TestLayer>();
     auto* rawPtr = layer.get();
 
@@ -60,7 +60,7 @@ TEST_CASE("LayerStack PushLayer and PopLayer", "[layer_stack]") {
 
 TEST_CASE("LayerStack PushLayer with null is a no-op", "[layer_stack]") {
     MockRenderer renderer;
-    LayerStack stack(renderer, 800, 600, 800, 600);
+    LayerStack stack(renderer, {800, 600}, {800, 600});
     std::unique_ptr<Layer> nullLayer;
     stack.PushLayer(std::move(nullLayer));
     REQUIRE(stack.PopLayer() == nullptr);
@@ -68,13 +68,13 @@ TEST_CASE("LayerStack PushLayer with null is a no-op", "[layer_stack]") {
 
 TEST_CASE("LayerStack PopLayer on empty returns nullptr", "[layer_stack]") {
     MockRenderer renderer;
-    LayerStack stack(renderer, 800, 600, 800, 600);
+    LayerStack stack(renderer, {800, 600}, {800, 600});
     REQUIRE(stack.PopLayer() == nullptr);
 }
 
 TEST_CASE("LayerStack RemoveLayer by pointer", "[layer_stack]") {
     MockRenderer renderer;
-    LayerStack stack(renderer, 800, 600, 800, 600);
+    LayerStack stack(renderer, {800, 600}, {800, 600});
     auto layer = std::make_unique<TestLayer>();
     auto* rawPtr = layer.get();
     stack.PushLayer(std::move(layer));
@@ -84,7 +84,7 @@ TEST_CASE("LayerStack RemoveLayer by pointer", "[layer_stack]") {
 
 TEST_CASE("LayerStack OnEvent dispatches to layers in reverse order", "[layer_stack]") {
     MockRenderer renderer;
-    LayerStack stack(renderer, 800, 600, 800, 600);
+    LayerStack stack(renderer, {800, 600}, {800, 600});
     auto log = std::make_shared<std::vector<std::string>>();
     auto top = std::make_unique<TestLayer>();
     top->layerName = "top";
@@ -111,7 +111,7 @@ TEST_CASE("LayerStack OnEvent dispatches to layers in reverse order", "[layer_st
 
 TEST_CASE("LayerStack OnEvent stops when handled", "[layer_stack]") {
     MockRenderer renderer;
-    LayerStack stack(renderer, 800, 600, 800, 600);
+    LayerStack stack(renderer, {800, 600}, {800, 600});
     auto top = std::make_unique<TestLayer>();
     auto bottom = std::make_unique<TestLayer>();
     top->returnValue = true;
@@ -130,7 +130,7 @@ TEST_CASE("LayerStack OnEvent stops when handled", "[layer_stack]") {
 
 TEST_CASE("LayerStack Update calls all layers", "[layer_stack]") {
     MockRenderer renderer;
-    LayerStack stack(renderer, 800, 600, 800, 600);
+    LayerStack stack(renderer, {800, 600}, {800, 600});
     auto top = std::make_unique<TestLayer>();
     auto bottom = std::make_unique<TestLayer>();
     auto* topPtr = top.get();
@@ -147,7 +147,7 @@ TEST_CASE("LayerStack Update calls all layers", "[layer_stack]") {
 
 TEST_CASE("LayerStack Draw calls all layers", "[layer_stack]") {
     MockRenderer renderer;
-    LayerStack stack(renderer, 800, 600, 800, 600);
+    LayerStack stack(renderer, {800, 600}, {800, 600});
     auto top = std::make_unique<TestLayer>();
     auto bottom = std::make_unique<TestLayer>();
     auto* topPtr = top.get();
@@ -163,7 +163,7 @@ TEST_CASE("LayerStack Draw calls all layers", "[layer_stack]") {
 
 TEST_CASE("LayerStack FireEvent to external listener", "[layer_stack]") {
     MockRenderer renderer;
-    LayerStack stack(renderer, 800, 600, 800, 600);
+    LayerStack stack(renderer, {800, 600}, {800, 600});
     TestLayer listener;
     stack.SetEventListener(&listener);
 
@@ -174,7 +174,7 @@ TEST_CASE("LayerStack FireEvent to external listener", "[layer_stack]") {
 
 TEST_CASE("LayerStack size changes are reflected", "[layer_stack]") {
     MockRenderer renderer;
-    LayerStack stack(renderer, 800, 600, 800, 600);
+    LayerStack stack(renderer, {800, 600}, {800, 600});
     stack.SetRenderSize({ 1920, 1080 });
     stack.SetWindowSize({ 3840, 2160 });
     REQUIRE(stack.GetRenderWidth() == 1920);

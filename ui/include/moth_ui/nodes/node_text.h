@@ -46,7 +46,7 @@ namespace moth_ui {
         /**
          * @brief Returns the currently loaded font, or @c nullptr.
          */
-        IFont* GetFont() const {
+        IFont const* GetFont() const {
             return m_font.get();
         }
 

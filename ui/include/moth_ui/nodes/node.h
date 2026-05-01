@@ -153,8 +153,16 @@ namespace moth_ui {
         virtual void UpdateChildBounds() {}
 
         /**
-         * @brief Applies keyframe data from the given frame to this node's properties.
-         * @param frame Animation frame index.
+         * @brief Evaluates keyframe tracks at @p frame and applies them directly to this node.
+         *
+         * Sets the layout rect, color, and rotation from the interpolated track values,
+         * then fires discrete track callbacks. Recalculates screen-space bounds afterward.
+         *
+         * This is the editor scrubbing path — called directly with an explicit frame index.
+         * Runtime animation playback routes through @c AnimationClipController (which calls
+         * @c AnimationController::SetFrame), not through this method.
+         *
+         * @param frame Animation frame index (may be fractional).
          */
         void Refresh(float frame);
 

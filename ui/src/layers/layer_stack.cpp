@@ -4,12 +4,12 @@
 #include "moth_ui/graphics/irenderer.h"
 
 namespace moth_ui {
-    LayerStack::LayerStack(IRenderer& renderer, int renderWidth, int renderHeight, int windowWidth, int windowHeight)
+    LayerStack::LayerStack(IRenderer& renderer, IntVec2 const& renderSize, IntVec2 const& windowSize)
         : m_renderer(renderer)
-        , m_renderWidth(renderWidth)
-        , m_renderHeight(renderHeight)
-        , m_windowWidth(windowWidth)
-        , m_windowHeight(windowHeight) {
+        , m_renderWidth(renderSize.x)
+        , m_renderHeight(renderSize.y)
+        , m_windowWidth(windowSize.x)
+        , m_windowHeight(windowSize.y) {
     }
 
     LayerStack::~LayerStack() = default;

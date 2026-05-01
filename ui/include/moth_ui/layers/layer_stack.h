@@ -25,13 +25,11 @@ namespace moth_ui {
     public:
         /**
          * @brief Constructs a LayerStack with separate render and window dimensions.
-         * @param renderer     Renderer used for drawing.
-         * @param renderWidth  Logical render width in pixels.
-         * @param renderHeight Logical render height in pixels.
-         * @param windowWidth  Physical window width in pixels.
-         * @param windowHeight Physical window height in pixels.
+         * @param renderer   Renderer used for drawing.
+         * @param renderSize Logical render dimensions in pixels.
+         * @param windowSize Physical window dimensions in pixels.
          */
-        LayerStack(IRenderer& renderer, int renderWidth, int renderHeight, int windowWidth, int windowHeight);
+        LayerStack(IRenderer& renderer, IntVec2 const& renderSize, IntVec2 const& windowSize);
         ~LayerStack() override;
 
         /**

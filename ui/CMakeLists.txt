@@ -26,7 +26,6 @@ set(PUBLIC_HEADERS
 	include/moth_ui/animation/animation_marker.h
 	include/moth_ui/animation/animation_track_controller.h
 	include/moth_ui/animation/animation_track.h
-	include/moth_ui/animation/clip_controller.h
 	include/moth_ui/animation/discrete_animation_track.h
 	include/moth_ui/animation/discrete_animation_track_controller.h
 	include/moth_ui/animation/keyframe.h
@@ -81,6 +80,12 @@ set(PUBLIC_HEADERS
 	include/moth_ui/utils/serialize_utils.h
 	include/moth_ui/utils/vector.h
 	include/moth_ui/utils/vector_serialization.h
+	include/moth_ui/graphics/texture_filter.h
+	include/moth_ui/moth_ui.h
+	include/moth_ui/moth_ui_fwd.h
+	include/moth_ui/utils/transform.h
+	include/moth_ui/utils/vector_utils.h
+	include/moth_ui/version.h
 )
 set(SOURCES ${SOURCES}
 	src/animation/animation_clip_controller.cpp

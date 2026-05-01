@@ -35,7 +35,7 @@ Moth UI separates the **layout/animation data model** from the **rendering backe
 
 Key features:
 
-- Node-based scene graph (`Group`, `NodeRect`, `NodeImage`, `NodeText`, `NodeClip`)
+- Node-based scene graph (`Group`, `NodeRect`, `NodeImage`, `NodeText`, `NodeClip`, `NodeFlipbook`)
 - Flash-style keyframe animation with per-property tracks and 30+ easing curves
 - Custom animation events fired during playback for UI/game synchronisation
 - Graphics-backend agnostic — bring your own renderer
@@ -63,7 +63,7 @@ Consumers must provide concrete implementations of:
 - `moth_ui::IImage` / `moth_ui::IImageFactory` — image asset loading
 - `moth_ui::IFont` / `moth_ui::IFontFactory` — font asset loading
 
-See [canyon](https://github.com/instinkt900/canyon) for a reference implementation built on SDL2 and Vulkan.
+See [moth_graphics](https://github.com/instinkt900/moth_graphics) for a reference implementation built on SDL2 and Vulkan.
 
 ---
 
@@ -228,7 +228,7 @@ root->Update(deltaMs);
 root->Draw();
 ```
 
-See the [canyon](https://github.com/instinkt900/canyon) project for a complete reference implementation.
+See the [moth_graphics](https://github.com/instinkt900/moth_graphics) project for a complete reference implementation.
 
 ---
 

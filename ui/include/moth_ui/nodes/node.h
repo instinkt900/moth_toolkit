@@ -44,20 +44,6 @@ namespace moth_ui {
          */
         static std::shared_ptr<Node> Create(Context& context, std::shared_ptr<LayoutEntity> layoutEntity);
 
-        /// @brief Direction in which an event travels through the scene graph.
-        enum class EventDirection {
-            Up,   ///< Event travels from child toward root.
-            Down, ///< Event travels from root toward leaves.
-        };
-
-        /**
-         * @brief Sends an event either up or down the scene graph.
-         * @param event     Event to dispatch.
-         * @param direction Travel direction.
-         * @return @c true if the event was handled.
-         */
-        bool SendEvent(Event const& event, EventDirection direction);
-
         /**
          * @brief Sends an event upward toward the root.
          * @param event Event to dispatch.

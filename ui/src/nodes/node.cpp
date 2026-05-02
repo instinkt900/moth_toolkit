@@ -19,17 +19,6 @@ namespace moth_ui {
         Node::ReloadEntityInternal();
     }
 
-    bool Node::SendEvent(Event const& event, EventDirection direction) {
-        if (direction == EventDirection::Up) {
-            return SendEventUp(event);
-        }
-        if (direction == EventDirection::Down) {
-            return Broadcast(event);
-        }
-        assert(false && "Bad event direction.");
-        return false;
-    }
-
     bool Node::SendEventUp(Event const& event) {
         auto* currentNode = this;
         while (currentNode != nullptr) {

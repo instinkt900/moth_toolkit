@@ -568,7 +568,7 @@ TEST_CASE("LoopType::Reset rewinds to first step and stops playing", "[flipbook]
 // Tests — events
 // ---------------------------------------------------------------------------
 
-// Helper: attaches a Group as parent so SendEventUp has somewhere to go.
+// Helper: attaches a Group as parent so SendEvent has somewhere to go.
 static std::shared_ptr<Group> MakeGroupWithFlipbookChild(
     moth_ui::Context& ctx,
     std::shared_ptr<NodeFlipbook>& outFlipbook) {

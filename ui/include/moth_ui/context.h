@@ -42,9 +42,9 @@ namespace moth_ui {
             return m_flipbookFactory;
         }
 
-        Context(Context const&) = default;
+        Context(Context const&) = delete;
+        Context& operator=(Context const&) = delete;
         Context(Context&&) = default;
-        Context& operator=(Context const&) = default;
         Context& operator=(Context&&) = default;
         ~Context() = default;
 

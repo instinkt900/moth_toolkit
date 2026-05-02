@@ -58,7 +58,7 @@ namespace moth_ui {
         AnimationController& operator=(AnimationController&&) = default;
 
     private:
-        static float& GetTargetReference(Node* node, AnimationTarget target);
+        static float* GetTargetReference(Node* node, AnimationTarget target);
 
         Node* m_node = nullptr;
         std::vector<std::unique_ptr<AnimationTrackController>> m_trackControllers;

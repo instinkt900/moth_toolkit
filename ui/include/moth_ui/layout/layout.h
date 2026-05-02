@@ -37,9 +37,10 @@ namespace moth_ui {
 
         /// @brief Result codes returned by Load().
         enum class LoadResult {
-            Success,         ///< Layout loaded successfully.
-            DoesNotExist,    ///< The specified file does not exist.
-            IncorrectFormat, ///< The file exists but could not be parsed.
+            Success,            ///< Layout loaded successfully.
+            DoesNotExist,       ///< The specified file does not exist.
+            IncorrectFormat,    ///< The file exists but could not be parsed.
+            InstantiationFailed, ///< The layout was parsed but could not be instantiated into a node.
         };
 
         /// @brief Options controlling how a layout is read from disk.

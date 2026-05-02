@@ -21,6 +21,10 @@ namespace moth_ui {
         }
 
         auto resultNode = Create(context, std::static_pointer_cast<LayoutEntityGroup>(layout));
+        if (!resultNode) {
+            log::error("Failed to instantiate layout '{}'", path.string());
+            return { nullptr, Layout::LoadResult::InstantiationFailed };
+        }
 
         IntRect initialRect;
         initialRect.topLeft = { 0, 0 };

@@ -19,7 +19,7 @@ namespace moth_ui {
         Node::ReloadEntityInternal();
     }
 
-    bool Node::SendEventUp(Event const& event) {
+    bool Node::SendEvent(Event const& event) {
         auto* currentNode = this;
         while (currentNode != nullptr) {
             if (currentNode->OnEvent(event)) {

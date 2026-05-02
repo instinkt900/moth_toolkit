@@ -49,7 +49,7 @@ namespace moth_ui {
          * @param event Event to dispatch.
          * @return @c true if the event was handled.
          */
-        bool SendEventUp(Event const& event);
+        bool SendEvent(Event const& event);
 
         /**
          * @brief Broadcasts an event across the full subtree in depth-first order.

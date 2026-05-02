@@ -99,7 +99,7 @@ namespace moth_ui {
                     m_pendingStartedEvent = true;
                     m_pendingStartedClipName = m_currentClipName;
                 } else {
-                    SendEventUp(EventFlipbookStarted(SharedFromThis(), m_currentClipName));
+                    SendEvent(EventFlipbookStarted(SharedFromThis(), m_currentClipName));
                 }
             }
         }
@@ -110,7 +110,7 @@ namespace moth_ui {
 
         if (m_pendingStartedEvent) {
             m_pendingStartedEvent = false;
-            SendEventUp(EventFlipbookStarted(SharedFromThis(), m_pendingStartedClipName));
+            SendEvent(EventFlipbookStarted(SharedFromThis(), m_pendingStartedClipName));
             m_pendingStartedClipName.clear();
         }
 
@@ -137,13 +137,13 @@ namespace moth_ui {
                     m_accumulatedMs = 0;
                     m_currentFrame = 0;
                     m_playing = false;
-                    SendEventUp(EventFlipbookStopped(SharedFromThis(), m_currentClipName));
+                    SendEvent(EventFlipbookStopped(SharedFromThis(), m_currentClipName));
                     break;
                 case IFlipbook::LoopType::Stop:
                     m_accumulatedMs = 0;
                     m_currentFrame = lastStep;
                     m_playing = false;
-                    SendEventUp(EventFlipbookStopped(SharedFromThis(), m_currentClipName));
+                    SendEvent(EventFlipbookStopped(SharedFromThis(), m_currentClipName));
                     break;
                 }
             }

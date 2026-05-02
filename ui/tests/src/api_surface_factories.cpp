@@ -77,7 +77,7 @@ TEST_CASE("NodeFactory interface is stable", "[api][nodefactory]") {
     std::string (NodeFactory::*reg)(std::string const&, NodeFactory::CreationFunction const&)
         = &NodeFactory::RegisterWidget;
     // Create overloads
-    std::shared_ptr<Group> (NodeFactory::*createFromPath)(
+    std::pair<std::shared_ptr<Group>, Layout::LoadResult> (NodeFactory::*createFromPath)(
         Context&, std::filesystem::path const&, int, int) = &NodeFactory::Create;
     std::shared_ptr<Group> (NodeFactory::*createFromGroup)(
         Context&, std::shared_ptr<LayoutEntityGroup>)     = &NodeFactory::Create;

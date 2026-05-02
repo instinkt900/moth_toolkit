@@ -1,12 +1,14 @@
 #pragma once
 
 #include "moth_ui/context.h"
+#include "moth_ui/layout/layout.h"
 #include "moth_ui/moth_ui_fwd.h"
 
 #include <filesystem>
 #include <map>
 #include <memory>
 #include <shared_mutex>
+#include <utility>
 
 namespace moth_ui {
     /**
@@ -50,9 +52,10 @@ namespace moth_ui {
          * @param path    Path to the layout file.
          * @param width   Desired width in pixels.
          * @param height  Desired height in pixels.
-         * @return Root Group node, or @c nullptr on failure.
+         * @return Pair of the root Group (nullptr on failure) and the load result code.
+         *         The result code is @c Layout::LoadResult::Success on success.
          */
-        std::shared_ptr<Group> Create(Context& context, std::filesystem::path const& path, int width, int height);
+        std::pair<std::shared_ptr<Group>, Layout::LoadResult> Create(Context& context, std::filesystem::path const& path, int width, int height);
 
         /**
          * @brief Instantiates a Group node tree from a LayoutEntityGroup.

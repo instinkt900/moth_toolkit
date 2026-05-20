@@ -479,6 +479,14 @@ namespace moth_graphics::graphics::vulkan {
         if (context == nullptr) {
             return;
         }
+        if (logicalSize.x <= 0 || logicalSize.y <= 0) {
+            return;
+        }
+
+        // Flush any queued geometry under the previous viewport/scissor state
+        // before mutating it, so existing batches still render with the
+        // settings they were authored against.
+        FlushPendingBatch();
 
         // Letterbox: fit the logical aspect inside the physical extent and
         // centre it. Bars outside the viewport stay black via the render pass

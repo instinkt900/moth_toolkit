@@ -16,6 +16,12 @@ namespace moth_graphics::graphics::sdl {
     Graphics::~Graphics() = default;
 
     void Graphics::Begin() {
+        // Clear the full physical window with black before any logical-size
+        // letterboxing kicks in. With a logical size set, SDL_RenderClear only
+        // clears the logical viewport, leaving the letterbox bars uninitialised.
+        SDL_RenderSetLogicalSize(m_surfaceContext.GetRenderer(), 0, 0);
+        SDL_SetRenderDrawColor(m_surfaceContext.GetRenderer(), 0, 0, 0, 255);
+        SDL_RenderClear(m_surfaceContext.GetRenderer());
     }
 
     void Graphics::End() {

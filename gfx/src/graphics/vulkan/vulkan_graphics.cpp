@@ -284,6 +284,82 @@ namespace moth_graphics::graphics::vulkan {
         SubmitVertices(vertices, 6, ETopologyType::Triangles);
     }
 
+    void Graphics::DrawGradientRect(FloatRect const& destRect,
+                                    Color startColor, Color endColor,
+                                    FloatVec2 midpoint,
+                                    float angle,
+                                    float transitionLength) {
+        auto* context = CurrentContext();
+        if (context == nullptr) {
+            return;
+        }
+        float const w = destRect.bottomRight.x - destRect.topLeft.x;
+        float const h = destRect.bottomRight.y - destRect.topLeft.y;
+        if (w <= 0.0f || h <= 0.0f) {
+            return;
+        }
+
+        FloatVec2 const mp{
+            destRect.topLeft.x + (midpoint.x * w),
+            destRect.topLeft.y + (midpoint.y * h),
+        };
+        float const c = std::cos(angle);
+        float const s = std::sin(angle);
+        FloatVec2 const dir{ c, s };
+        FloatVec2 const perp{ -s, c };
+
+        float const projExtent = (std::abs(w * c) + std::abs(h * s));
+        float const transitionPixels = std::max(0.0f, transitionLength) * projExtent;
+        float const halfL = transitionPixels * 0.5f;
+
+        float const cover = std::sqrt((w * w) + (h * h));
+
+        auto const t = CurrentTransform();
+        auto toWorld = [&](float lx, float ly) {
+            FloatVec2 const local{
+                mp.x + (dir.x * lx) + (perp.x * ly),
+                mp.y + (dir.y * lx) + (perp.y * ly),
+            };
+            return t.TransformPoint(local);
+        };
+
+        auto submitQuad = [&](float x0, float x1, Color const& c0, Color const& c1) {
+            if (x0 >= x1) {
+                return;
+            }
+            auto const tl = toWorld(x0, -cover);
+            auto const tr = toWorld(x1, -cover);
+            auto const bl = toWorld(x0, +cover);
+            auto const br = toWorld(x1, +cover);
+
+            Vertex vertices[6];
+            vertices[0].xy = tl;
+            vertices[0].uv = { 0, 0 };
+            vertices[0].color = c0;
+            vertices[1].xy = tr;
+            vertices[1].uv = { 0, 0 };
+            vertices[1].color = c1;
+            vertices[2].xy = bl;
+            vertices[2].uv = { 0, 0 };
+            vertices[2].color = c0;
+            vertices[3].xy = bl;
+            vertices[3].uv = { 0, 0 };
+            vertices[3].color = c0;
+            vertices[4].xy = tr;
+            vertices[4].uv = { 0, 0 };
+            vertices[4].color = c1;
+            vertices[5].xy = br;
+            vertices[5].uv = { 0, 0 };
+            vertices[5].color = c1;
+
+            SubmitVertices(vertices, 6, ETopologyType::Triangles);
+        };
+
+        submitQuad(-cover, -halfL, startColor, startColor);
+        submitQuad(-halfL, +halfL, startColor, endColor);
+        submitQuad(+halfL, +cover, endColor, endColor);
+    }
+
     void Graphics::DrawLineF(FloatVec2 const& p0, FloatVec2 const& p1) {
         auto* context = CurrentContext();
         if (context == nullptr) {

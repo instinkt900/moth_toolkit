@@ -39,6 +39,11 @@ namespace moth_graphics::graphics::sdl {
         void DrawImageTiled(Image const& image, IntRect const& destRect, IntRect const* sourceRect, float scale) override;
         void DrawRectF(FloatRect const& rect) override;
         void DrawFillRectF(FloatRect const& rect) override;
+        void DrawGradientRect(FloatRect const& destRect,
+                              Color startColor, Color endColor,
+                              FloatVec2 midpoint,
+                              float angle,
+                              float transitionLength) override;
         void DrawLineF(FloatVec2 const& p0, FloatVec2 const& p1) override;
         void DrawText(std::string_view text, IFont& font, IntRect const& destRect, TextHorizAlignment horizontalAlignment = TextHorizAlignment::Left, TextVertAlignment verticalAlignment = TextVertAlignment::Top) override;
         void SetClip(IntRect const* rect) override;

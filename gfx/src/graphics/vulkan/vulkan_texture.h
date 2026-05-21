@@ -41,6 +41,7 @@ namespace moth_graphics::graphics::vulkan {
         void SetAddressMode(TextureAddressMode u, TextureAddressMode v) override;
         void DrawImGui(IntVec2 const& size, FloatVec2 const& uv0, FloatVec2 const& uv1) const override;
         void SaveToPNG(std::filesystem::path const& path, IntRect const& sourceRect) override;
+        void UpdatePixels(IntRect const& destRect, uint8_t const* pixels) override;
 
     protected:
         uint32_t m_id;

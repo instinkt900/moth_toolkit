@@ -5,6 +5,7 @@
 #include "moth_graphics/utils/rect.h"
 #include "moth_graphics/utils/vector.h"
 
+#include <cstdint>
 #include <filesystem>
 
 namespace moth_graphics::graphics {
@@ -45,5 +46,17 @@ namespace moth_graphics::graphics {
         ///        image dimensions; @c sourceRect.topLeft is the offset within
         ///        the texture to start reading from.
         virtual void SaveToPNG(std::filesystem::path const& path, IntRect const& sourceRect) = 0;
+
+        /// @brief Replace a sub-region of the texture with new RGBA pixel data.
+        ///
+        /// Only supported on textures created via
+        /// @c AssetContext::TextureFromPixels (i.e. CPU-writable textures).
+        /// @c pixels must point to a tightly packed RGBA buffer of size
+        /// @c destRect.w() * destRect.h() * 4 bytes, with row pitch equal to
+        /// @c destRect.w() * 4. The destination rect must lie fully within the
+        /// texture's bounds.
+        /// @param destRect Region of the texture to overwrite.
+        /// @param pixels   Source pixel data, RGBA8 tightly packed.
+        virtual void UpdatePixels(IntRect const& destRect, uint8_t const* pixels) = 0;
     };
 }

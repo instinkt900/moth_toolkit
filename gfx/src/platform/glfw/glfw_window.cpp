@@ -6,10 +6,59 @@
 #include "moth_graphics/platform/glfw/glfw_events.h"
 #include "moth_graphics/events/event_window.h"
 #include <moth_ui/events/event_mouse.h>
+#include <moth_ui/layers/layer_stack.h>
 
 #include <cassert>
 
 namespace moth_graphics::platform::glfw {
+    namespace {
+        // Translate a raw window-pixel position (and optional delta) into
+        // logical/render coordinates, accounting for the letterbox introduced
+        // when window aspect differs from the render aspect. SDL does this
+        // automatically via SDL_RenderSetLogicalSize; GLFW does not.
+        struct LogicalScale {
+            float scaleX;
+            float scaleY;
+            float offsetX;
+            float offsetY;
+        };
+
+        LogicalScale ComputeLogicalScale(moth_ui::LayerStack const& stack) {
+            float const ww = static_cast<float>(stack.GetWindowWidth());
+            float const wh = static_cast<float>(stack.GetWindowHeight());
+            float const lw = static_cast<float>(stack.GetRenderWidth());
+            float const lh = static_cast<float>(stack.GetRenderHeight());
+            if (ww <= 0.0f || wh <= 0.0f || lw <= 0.0f || lh <= 0.0f) {
+                return { 1.0f, 1.0f, 0.0f, 0.0f };
+            }
+            float const logicalAspect = lw / lh;
+            float const windowAspect = ww / wh;
+            float fitWidth = ww;
+            float fitHeight = wh;
+            if (windowAspect > logicalAspect) {
+                fitWidth = wh * logicalAspect;
+            } else {
+                fitHeight = ww / logicalAspect;
+            }
+            float const offsetX = (ww - fitWidth) * 0.5f;
+            float const offsetY = (wh - fitHeight) * 0.5f;
+            return { lw / fitWidth, lh / fitHeight, offsetX, offsetY };
+        }
+
+        moth_ui::IntVec2 ToLogicalPos(moth_ui::LayerStack const& stack, FloatVec2 const& windowPos) {
+            auto const s = ComputeLogicalScale(stack);
+            return moth_ui::IntVec2{
+                static_cast<int>((windowPos.x - s.offsetX) * s.scaleX),
+                static_cast<int>((windowPos.y - s.offsetY) * s.scaleY),
+            };
+        }
+
+        FloatVec2 ToLogicalDelta(moth_ui::LayerStack const& stack, FloatVec2 const& windowDelta) {
+            auto const s = ComputeLogicalScale(stack);
+            return FloatVec2{ windowDelta.x * s.scaleX, windowDelta.y * s.scaleY };
+        }
+    }
+
     Window::Window(graphics::vulkan::Context& context, std::string_view title, int width, int height)
         : moth_graphics::platform::Window(title, width, height)
         , m_context(context) {
@@ -122,14 +171,15 @@ namespace moth_graphics::platform::glfw {
                 return;
             }
             auto const newMousePos = FloatVec2{ xpos, ypos };
-            FloatVec2 mouseDelta{ 0, 0 };
+            FloatVec2 windowDelta{ 0, 0 };
             if (app->m_haveMousePos) {
-                mouseDelta = newMousePos - app->m_lastMousePos;
+                windowDelta = newMousePos - app->m_lastMousePos;
             }
             app->m_lastMousePos = newMousePos;
             app->m_haveMousePos = true;
-            auto lastMousePos = static_cast<moth_ui::IntVec2>(app->m_lastMousePos);
-            auto const translatedEvent = std::make_unique<moth_ui::EventMouseMove>(lastMousePos, mouseDelta);
+            auto const logicalPos = ToLogicalPos(app->GetLayerStack(), newMousePos);
+            auto const logicalDelta = ToLogicalDelta(app->GetLayerStack(), windowDelta);
+            auto const translatedEvent = std::make_unique<moth_ui::EventMouseMove>(logicalPos, logicalDelta);
             app->OnEvent(*translatedEvent);
         });
 
@@ -138,7 +188,8 @@ namespace moth_graphics::platform::glfw {
             if (app == nullptr) {
                 return;
             }
-            if (auto const translatedEvent = FromGLFW(button, action, mods, static_cast<moth_ui::IntVec2>(app->m_lastMousePos))) {
+            auto const logicalPos = ToLogicalPos(app->GetLayerStack(), app->m_lastMousePos);
+            if (auto const translatedEvent = FromGLFW(button, action, mods, logicalPos)) {
                 app->OnEvent(*translatedEvent);
             }
         });

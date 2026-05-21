@@ -479,7 +479,50 @@ namespace moth_graphics::graphics::vulkan {
         if (context == nullptr) {
             return;
         }
+        if (logicalSize.x <= 0 || logicalSize.y <= 0) {
+            return;
+        }
+
+        // Flush any queued geometry under the previous viewport/scissor state
+        // before mutating it, so existing batches still render with the
+        // settings they were authored against.
+        FlushPendingBatch();
+
+        // Letterbox: fit the logical aspect inside the physical extent and
+        // centre it. Bars outside the viewport stay black via the render pass
+        // clear.
+        VkExtent2D const physical = context->m_target->GetVkExtent();
+        float const logicalAspect = static_cast<float>(logicalSize.x) / static_cast<float>(logicalSize.y);
+        float const physicalAspect = static_cast<float>(physical.width) / static_cast<float>(physical.height);
+
+        float fitWidth = static_cast<float>(physical.width);
+        float fitHeight = static_cast<float>(physical.height);
+        if (physicalAspect > logicalAspect) {
+            fitWidth = fitHeight * logicalAspect;
+        } else {
+            fitHeight = fitWidth / logicalAspect;
+        }
+        float const offsetX = (static_cast<float>(physical.width) - fitWidth) * 0.5f;
+        float const offsetY = (static_cast<float>(physical.height) - fitHeight) * 0.5f;
+
         auto& commandBuffer = context->m_target->GetCommandBuffer();
+
+        VkViewport viewport;
+        viewport.x = offsetX;
+        viewport.y = offsetY;
+        viewport.width = fitWidth;
+        viewport.height = fitHeight;
+        viewport.minDepth = 0.0f;
+        viewport.maxDepth = 1.0f;
+        commandBuffer.SetViewport(viewport);
+
+        VkRect2D scissor;
+        scissor.offset.x = static_cast<int32_t>(offsetX);
+        scissor.offset.y = static_cast<int32_t>(offsetY);
+        scissor.extent.width = static_cast<uint32_t>(fitWidth);
+        scissor.extent.height = static_cast<uint32_t>(fitHeight);
+        commandBuffer.SetScissor(scissor);
+
         PushConstants constants;
         constants.xyScale = { 2.0f / static_cast<float>(logicalSize.x), 2.0f / static_cast<float>(logicalSize.y) };
         constants.xyOffset = { -1.0f, -1.0f };

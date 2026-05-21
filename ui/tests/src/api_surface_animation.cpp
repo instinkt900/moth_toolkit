@@ -23,7 +23,11 @@ namespace {
         Target::TopOffset,    Target::BottomOffset, Target::LeftOffset,  Target::RightOffset,
         Target::TopAnchor,    Target::BottomAnchor, Target::LeftAnchor,  Target::RightAnchor,
         Target::ColorRed,     Target::ColorGreen,   Target::ColorBlue,   Target::ColorAlpha,
-        Target::Rotation
+        Target::Rotation,
+        Target::GradientStartRed,   Target::GradientStartGreen, Target::GradientStartBlue,  Target::GradientStartAlpha,
+        Target::GradientEndRed,     Target::GradientEndGreen,   Target::GradientEndBlue,    Target::GradientEndAlpha,
+        Target::GradientMidpointX,  Target::GradientMidpointY,
+        Target::GradientAngle,      Target::GradientTransition,
     };
     static_assert(arrays_equal(AnimationTrack::ContinuousTargets, expectedContinuous),
                   "AnimationTrack::ContinuousTargets contents or order changed");

@@ -171,6 +171,81 @@ namespace moth_graphics::graphics::sdl {
         SDL_RenderGeometry(m_surfaceContext.GetRenderer(), nullptr, sdlVertices, 6, nullptr, 0);
     }
 
+    void Graphics::DrawGradientRect(FloatRect const& destRect,
+                                    Color startColor, Color endColor,
+                                    FloatVec2 midpoint,
+                                    float angle,
+                                    float transitionLength) {
+        float const w = destRect.bottomRight.x - destRect.topLeft.x;
+        float const h = destRect.bottomRight.y - destRect.topLeft.y;
+        if (w <= 0.0f || h <= 0.0f) {
+            return;
+        }
+
+        // Pixel-space midpoint, gradient axis direction + perpendicular.
+        FloatVec2 const mp{
+            destRect.topLeft.x + (midpoint.x * w),
+            destRect.topLeft.y + (midpoint.y * h),
+        };
+        float const c = std::cos(angle);
+        float const s = std::sin(angle);
+        FloatVec2 const dir{ c, s };
+        FloatVec2 const perp{ -s, c };
+
+        // Rect's extent projected onto the gradient axis. This is what
+        // transitionLength is a factor of, so a value of 1.0 fills the rect
+        // along the axis for any angle.
+        float const projExtent = (std::abs(w * c) + std::abs(h * s));
+        float const transitionPixels = std::max(0.0f, transitionLength) * projExtent;
+        float const halfL = transitionPixels * 0.5f;
+
+        // Perpendicular extent large enough that the rotated band covers the
+        // entire dest rect regardless of angle. The scissor (set by the
+        // caller, or by moth_ui::IRenderer::RenderGradientRect) trims the
+        // visible portion to destRect.
+        float const cover = std::sqrt((w * w) + (h * h));
+
+        auto const t = CurrentTransform();
+        auto toWorld = [&](float lx, float ly) {
+            FloatVec2 const local{
+                mp.x + (dir.x * lx) + (perp.x * ly),
+                mp.y + (dir.y * lx) + (perp.y * ly),
+            };
+            return t.TransformPoint(local);
+        };
+
+        ColorComponents const startComp{ startColor };
+        ColorComponents const endComp{ endColor };
+        SDL_Color const sdlStart{ startComp.r, startComp.g, startComp.b, startComp.a };
+        SDL_Color const sdlEnd{ endComp.r, endComp.g, endComp.b, endComp.a };
+
+        auto submitQuad = [&](float x0, float x1, SDL_Color c0, SDL_Color c1) {
+            if (x0 >= x1) {
+                return;
+            }
+            auto const tl = toWorld(x0, -cover);
+            auto const tr = toWorld(x1, -cover);
+            auto const bl = toWorld(x0, +cover);
+            auto const br = toWorld(x1, +cover);
+            SDL_Vertex const verts[6] = {
+                { { tl.x, tl.y }, c0, { 0.0f, 0.0f } },
+                { { tr.x, tr.y }, c1, { 0.0f, 0.0f } },
+                { { bl.x, bl.y }, c0, { 0.0f, 0.0f } },
+                { { tr.x, tr.y }, c1, { 0.0f, 0.0f } },
+                { { br.x, br.y }, c1, { 0.0f, 0.0f } },
+                { { bl.x, bl.y }, c0, { 0.0f, 0.0f } },
+            };
+            SDL_RenderGeometry(m_surfaceContext.GetRenderer(), nullptr, verts, 6, nullptr, 0);
+        };
+
+        // Left flank (clamped to startColor) → transition band → right flank
+        // (clamped to endColor). If transitionPixels == 0 the middle is
+        // skipped and we get a sharp step where the two flanks meet.
+        submitQuad(-cover, -halfL, sdlStart, sdlStart);
+        submitQuad(-halfL, +halfL, sdlStart, sdlEnd);
+        submitQuad(+halfL, +cover, sdlEnd, sdlEnd);
+    }
+
     void Graphics::DrawLineF(FloatVec2 const& p0, FloatVec2 const& p1) {
         auto const t = CurrentTransform();
         auto const wp0 = t.TransformPoint(p0);

@@ -79,6 +79,38 @@ namespace moth_graphics::graphics {
         /// @param rect Rectangle in logical pixels.
         virtual void DrawFillRectF(FloatRect const& rect) = 0;
 
+        /// @brief Draw a linear gradient inside @p destRect.
+        ///
+        /// The transition runs along an axis at @p angle radians, centred at
+        /// the midpoint (specified as a 0..1 factor of @p destRect), and lerps
+        /// from @p startColor to @p endColor over a length of
+        /// @p transitionLength × (the rect's projected extent along the
+        /// gradient axis). Outside the transition band, colour is clamped.
+        ///
+        /// **Clip:** this call does NOT manage the scissor. Geometry outside
+        /// @p destRect may be drawn unless the caller has set an appropriate
+        /// clip — typically via @c SetClip in moth_graphics, or
+        /// @c PushClip/PopClip when going through @c moth_ui::IRenderer.
+        ///
+        /// @param destRect          Destination rectangle in logical pixels.
+        /// @param startColor        Colour at the start side of the axis.
+        /// @param endColor          Colour at the end side of the axis.
+        /// @param midpoint          Normalised 0..1 location of the t=0.5
+        ///                          point inside @p destRect. (0.5, 0.5) =
+        ///                          centre of the rect.
+        /// @param angle             Direction of the gradient in radians;
+        ///                          0 = +x (towards endColor side), π/2 = +y.
+        /// @param transitionLength  Factor of the rect's projected extent
+        ///                          along the gradient axis. 1.0 = fills the
+        ///                          rect; 0.0 = sharp step at the midpoint;
+        ///                          values > 1 leave the lerp partially
+        ///                          outside the rect.
+        virtual void DrawGradientRect(FloatRect const& destRect,
+                                      Color startColor, Color endColor,
+                                      FloatVec2 midpoint,
+                                      float angle,
+                                      float transitionLength) = 0;
+
         /// @brief Draw a line segment using the current color.
         /// @param p0 Start point in logical pixels.
         /// @param p1 End point in logical pixels.

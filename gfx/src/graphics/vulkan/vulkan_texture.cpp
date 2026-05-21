@@ -285,11 +285,24 @@ namespace moth_graphics::graphics::vulkan {
         if (pixels == nullptr) {
             return;
         }
-        auto const regionWidth = static_cast<uint32_t>(destRect.w());
-        auto const regionHeight = static_cast<uint32_t>(destRect.h());
-        if (regionWidth == 0 || regionHeight == 0) {
+        // Validate signed dimensions before casting — a negative value would
+        // wrap to a huge unsigned and bypass the zero check, leading to a huge
+        // staging allocation. Also bounds-check against the texture extent so
+        // vkCmdCopyBufferToImage never sees an out-of-range region.
+        int const signedW = destRect.w();
+        int const signedH = destRect.h();
+        if (signedW <= 0 || signedH <= 0) {
             return;
         }
+        if (destRect.topLeft.x < 0 || destRect.topLeft.y < 0) {
+            return;
+        }
+        if (static_cast<uint32_t>(destRect.bottomRight.x) > m_vkExtent.width
+         || static_cast<uint32_t>(destRect.bottomRight.y) > m_vkExtent.height) {
+            return;
+        }
+        auto const regionWidth = static_cast<uint32_t>(signedW);
+        auto const regionHeight = static_cast<uint32_t>(signedH);
 
         VkDeviceSize const regionSize = static_cast<VkDeviceSize>(regionWidth) * regionHeight * 4;
         auto stagingBuffer = std::make_unique<Buffer>(m_context, regionSize,

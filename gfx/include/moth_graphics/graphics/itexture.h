@@ -5,6 +5,7 @@
 #include "moth_graphics/utils/rect.h"
 #include "moth_graphics/utils/vector.h"
 
+#include <cstdint>
 #include <filesystem>
 
 namespace moth_graphics::graphics {

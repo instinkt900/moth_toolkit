@@ -67,6 +67,9 @@ namespace moth_graphics::graphics::sdl {
             return;
         }
         SDL_Rect const sdlRect = ToSDL(destRect);
+        if (sdlRect.w <= 0 || sdlRect.h <= 0) {
+            return;
+        }
         int const pitch = sdlRect.w * 4;
         if (SDL_UpdateTexture(m_texture->GetImpl(), &sdlRect, pixels, pitch) != 0) {
             spdlog::error("Texture::UpdatePixels: SDL_UpdateTexture failed: {}", SDL_GetError());

@@ -3,6 +3,9 @@
 #include "moth_graphics/graphics/moth_ui/moth_font.h"
 #include "moth_graphics/graphics/moth_ui/moth_image.h"
 
+#include <algorithm>
+#include <cmath>
+
 namespace moth_graphics::graphics {
     namespace {
         TextureFilter ToGraphicsFilter(moth_ui::TextureFilter f) {
@@ -111,6 +114,48 @@ namespace moth_graphics::graphics {
         m_graphics.SetBlendMode(m_blendMode.top());
         m_graphics.SetColor(m_drawColor.top());
         m_graphics.DrawFillRectF(static_cast<FloatRect>(rect));
+    }
+
+    void MothRenderer::RenderGradientRect(moth_ui::IntRect const& rect, moth_ui::LinearGradient const& gradient) {
+        m_graphics.SetBlendMode(m_blendMode.top());
+        // Modulate gradient stop colours by the current renderer colour stack so
+        // ancestor SetColor / alpha overrides compose with the gradient the same
+        // way they do with RenderFilledRect.
+        moth_ui::Color const tint = m_drawColor.top();
+
+        // The backend gradient implementation rasterises rotated quads that may
+        // extend beyond the destination rect. Push a scissor matching the rect's
+        // screen-space AABB so the visible gradient stays inside the node.
+        auto const& transform = m_transform.top();
+        moth_ui::FloatVec2 const corners[4] = {
+            transform.TransformPoint({ static_cast<float>(rect.topLeft.x),     static_cast<float>(rect.topLeft.y) }),
+            transform.TransformPoint({ static_cast<float>(rect.bottomRight.x), static_cast<float>(rect.topLeft.y) }),
+            transform.TransformPoint({ static_cast<float>(rect.topLeft.x),     static_cast<float>(rect.bottomRight.y) }),
+            transform.TransformPoint({ static_cast<float>(rect.bottomRight.x), static_cast<float>(rect.bottomRight.y) }),
+        };
+        float minX = corners[0].x;
+        float maxX = corners[0].x;
+        float minY = corners[0].y;
+        float maxY = corners[0].y;
+        for (int i = 1; i < 4; ++i) {
+            minX = std::min(minX, corners[i].x);
+            maxX = std::max(maxX, corners[i].x);
+            minY = std::min(minY, corners[i].y);
+            maxY = std::max(maxY, corners[i].y);
+        }
+        moth_ui::IntRect const screenAabb{
+            { static_cast<int>(std::floor(minX)), static_cast<int>(std::floor(minY)) },
+            { static_cast<int>(std::ceil(maxX)),  static_cast<int>(std::ceil(maxY)) },
+        };
+
+        PushClip(screenAabb);
+        m_graphics.DrawGradientRect(static_cast<FloatRect>(rect),
+                                    gradient.startColor * tint,
+                                    gradient.endColor * tint,
+                                    gradient.midpoint,
+                                    gradient.angle,
+                                    gradient.transitionLength);
+        PopClip();
     }
 
     void MothRenderer::RenderImage(moth_ui::IImage const& image, moth_ui::IntRect const& sourceRect, moth_ui::IntRect const& destRect, moth_ui::ImageScaleType scaleType, float scale) {

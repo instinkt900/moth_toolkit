@@ -62,6 +62,17 @@ namespace moth_graphics::graphics::sdl {
         SDL_SetRenderTarget(m_renderer, prevTarget);
     }
 
+    void Texture::UpdatePixels(IntRect const& destRect, uint8_t const* pixels) {
+        if (pixels == nullptr) {
+            return;
+        }
+        SDL_Rect const sdlRect = ToSDL(destRect);
+        int const pitch = sdlRect.w * 4;
+        if (SDL_UpdateTexture(m_texture->GetImpl(), &sdlRect, pixels, pitch) != 0) {
+            spdlog::error("Texture::UpdatePixels: SDL_UpdateTexture failed: {}", SDL_GetError());
+        }
+    }
+
     std::unique_ptr<Texture> Texture::FromFile(SDL_Renderer* renderer, std::filesystem::path const& path) {
         auto surface = CreateSurfaceRef(path);
         if (!surface) {

@@ -281,6 +281,51 @@ namespace moth_graphics::graphics::vulkan {
         stagingImage->Unmap();
     }
 
+    void Texture::UpdatePixels(IntRect const& destRect, uint8_t const* pixels) {
+        if (pixels == nullptr) {
+            return;
+        }
+        auto const regionWidth = static_cast<uint32_t>(destRect.w());
+        auto const regionHeight = static_cast<uint32_t>(destRect.h());
+        if (regionWidth == 0 || regionHeight == 0) {
+            return;
+        }
+
+        VkDeviceSize const regionSize = static_cast<VkDeviceSize>(regionWidth) * regionHeight * 4;
+        auto stagingBuffer = std::make_unique<Buffer>(m_context, regionSize,
+            VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+        void* mapped = stagingBuffer->Map();
+        memcpy(mapped, pixels, static_cast<size_t>(regionSize));
+        stagingBuffer->Unmap();
+
+        // Texture is assumed to be in SHADER_READ_ONLY_OPTIMAL between frames —
+        // that's how FromRGBA leaves it and how sampling expects it. Transition
+        // through TRANSFER_DST_OPTIMAL for the copy, then back.
+        VkImageLayout const srcLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+        auto commandBuffer = std::make_unique<CommandBuffer>(m_context);
+        commandBuffer->BeginRecord();
+        commandBuffer->TransitionImageLayout(*this, m_vkFormat, srcLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+        VkBufferImageCopy region{};
+        region.bufferOffset = 0;
+        region.bufferRowLength = 0;     // tightly packed
+        region.bufferImageHeight = 0;
+        region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        region.imageSubresource.mipLevel = 0;
+        region.imageSubresource.baseArrayLayer = 0;
+        region.imageSubresource.layerCount = 1;
+        region.imageOffset = { static_cast<int32_t>(destRect.topLeft.x), static_cast<int32_t>(destRect.topLeft.y), 0 };
+        region.imageExtent = { regionWidth, regionHeight, 1 };
+        vkCmdCopyBufferToImage(commandBuffer->GetVkCommandBuffer(),
+            stagingBuffer->GetVKBuffer(), m_vkImage,
+            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+
+        commandBuffer->TransitionImageLayout(*this, m_vkFormat, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, srcLayout);
+        commandBuffer->SubmitAndWait();
+    }
+
     void Texture::SetAddressMode(TextureAddressMode u, TextureAddressMode v) {
         VkSamplerAddressMode const newU = ToVkAddressMode(u);
         VkSamplerAddressMode const newV = ToVkAddressMode(v);

@@ -21,6 +21,7 @@ namespace moth_graphics::graphics::sdl {
         void SetAddressMode(TextureAddressMode u, TextureAddressMode v) override {} // not supported in SDL2
         void DrawImGui(IntVec2 const& size, FloatVec2 const& uv0, FloatVec2 const& uv1) const override;
         void SaveToPNG(std::filesystem::path const& path, IntRect const& sourceRect) override;
+        void UpdatePixels(IntRect const& destRect, uint8_t const* pixels) override;
 
         SDLTextureRef GetSDLTexture() const { return m_texture; }
 

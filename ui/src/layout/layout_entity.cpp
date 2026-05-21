@@ -2,6 +2,7 @@
 #include "moth_ui/layout/layout_entity.h"
 #include "moth_ui/animation/discrete_animation_track.h"
 #include "moth_ui/layout/layout_entity_flipbook.h"
+#include "moth_ui/layout/layout_entity_gradient.h"
 #include "moth_ui/layout/layout_entity_group.h"
 #include "moth_ui/layout/layout_entity_text.h"
 #include "moth_ui/layout/layout_entity_image.h"
@@ -25,6 +26,8 @@ namespace moth_ui {
             return std::make_unique<LayoutEntityClip>(nullptr);
         case LayoutEntityType::Flipbook:
             return std::make_unique<LayoutEntityFlipbook>(nullptr);
+        case LayoutEntityType::Gradient:
+            return std::make_unique<LayoutEntityGradient>(nullptr);
         default:
             log::error("Unknown layout entity type: {}", magic_enum::enum_name(type));
             assert(false && "unknown entity type");

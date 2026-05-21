@@ -27,6 +27,7 @@ public:
     int popTextureFilterCalls = 0;
     int renderRectCalls = 0;
     int renderFilledRectCalls = 0;
+    int renderGradientRectCalls = 0;
     int renderImageCalls = 0;
     int renderTextCalls = 0;
     int setLogicalSizeCalls = 0;
@@ -51,6 +52,7 @@ public:
     void PopTextureFilter() override { ++popTextureFilterCalls; }
     void RenderRect(moth_ui::IntRect const& rect) override { ++renderRectCalls; lastRenderRect = rect; }
     void RenderFilledRect(moth_ui::IntRect const& rect) override { ++renderFilledRectCalls; lastRenderRect = rect; }
+    void RenderGradientRect(moth_ui::IntRect const& rect, moth_ui::LinearGradient const&) override { ++renderGradientRectCalls; lastRenderRect = rect; }
     void RenderImage(moth_ui::IImage const&, moth_ui::IntRect const&, moth_ui::IntRect const&, moth_ui::ImageScaleType, float) override { ++renderImageCalls; }
     void RenderText(std::string_view, moth_ui::IFont&, moth_ui::TextHorizAlignment, moth_ui::TextVertAlignment, moth_ui::IntRect const&) override { ++renderTextCalls; }
     void SetRendererLogicalSize(moth_ui::IntVec2 const& size) override { ++setLogicalSizeCalls; lastLogicalSize = size; }

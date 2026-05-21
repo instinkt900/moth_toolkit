@@ -29,6 +29,7 @@
 #include "moth_ui/graphics/iimage.h"
 #include "moth_ui/graphics/image_scale_type.h"
 #include "moth_ui/graphics/irenderer.h"
+#include "moth_ui/graphics/linear_gradient.h"
 #include "moth_ui/graphics/itarget.h"
 #include "moth_ui/graphics/text_alignment.h"
 #include "moth_ui/graphics/texture_filter.h"
@@ -47,6 +48,7 @@
 #include "moth_ui/layout/layout_entity_type.h"
 #include "moth_ui/layout/layout_rect.h"
 #include "moth_ui/layout/layout_entity_flipbook.h"
+#include "moth_ui/layout/layout_entity_gradient.h"
 
 // layers
 #include "moth_ui/layers/layer.h"
@@ -61,6 +63,7 @@
 #include "moth_ui/nodes/node_text.h"
 #include "moth_ui/nodes/widget.h"
 #include "moth_ui/nodes/node_flipbook.h"
+#include "moth_ui/nodes/node_gradient.h"
 
 // utils
 #include "moth_ui/utils/color.h"

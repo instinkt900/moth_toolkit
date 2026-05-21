@@ -53,6 +53,7 @@ namespace moth_ui {
     class NodeText;
     class NodeClip;
     class NodeFlipbook;
+    class NodeGradient;
 
     template <typename T, typename BaseType>
     class Widget;
@@ -68,9 +69,11 @@ namespace moth_ui {
     class LayoutEntityClip;
     class LayoutEntityRef;
     class LayoutEntityFlipbook;
+    class LayoutEntityGradient;
     class Layout;
     class LayoutCache;
     struct LayoutRect;
+    struct LinearGradient;
 
     // -------------------------------------------------------------------------
     // Animation

@@ -59,6 +59,7 @@ namespace moth_ui {
 
     private:
         static float* GetTargetReference(Node* node, AnimationTarget target);
+        static float* GradientTargetReference(NodeGradient* node, AnimationTarget target);
 
         Node* m_node = nullptr;
         std::vector<std::unique_ptr<AnimationTrackController>> m_trackControllers;

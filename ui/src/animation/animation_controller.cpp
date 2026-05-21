@@ -4,8 +4,31 @@
 #include "moth_ui/animation/discrete_animation_track_controller.h"
 #include "moth_ui/layout/layout_entity.h"
 #include "moth_ui/nodes/node.h"
+#include "moth_ui/nodes/node_gradient.h"
 
 namespace moth_ui {
+    float* AnimationController::GradientTargetReference(NodeGradient* node, AnimationTarget target) {
+        if (node == nullptr) {
+            return nullptr;
+        }
+        switch (target) {
+        case AnimationTarget::GradientStartRed:    return &node->m_gradient.startColor.r;
+        case AnimationTarget::GradientStartGreen:  return &node->m_gradient.startColor.g;
+        case AnimationTarget::GradientStartBlue:   return &node->m_gradient.startColor.b;
+        case AnimationTarget::GradientStartAlpha:  return &node->m_gradient.startColor.a;
+        case AnimationTarget::GradientEndRed:      return &node->m_gradient.endColor.r;
+        case AnimationTarget::GradientEndGreen:    return &node->m_gradient.endColor.g;
+        case AnimationTarget::GradientEndBlue:     return &node->m_gradient.endColor.b;
+        case AnimationTarget::GradientEndAlpha:    return &node->m_gradient.endColor.a;
+        case AnimationTarget::GradientMidpointX:   return &node->m_gradient.midpoint.x;
+        case AnimationTarget::GradientMidpointY:   return &node->m_gradient.midpoint.y;
+        case AnimationTarget::GradientAngle:       return &node->m_gradient.angle;
+        case AnimationTarget::GradientTransition:  return &node->m_gradient.transitionLength;
+        default:
+            return nullptr;
+        }
+    }
+
     float* AnimationController::GetTargetReference(Node* node, AnimationTarget target) {
         auto& layoutRect = node->GetLayoutRect();
         switch (target) {
@@ -35,6 +58,19 @@ namespace moth_ui {
             return &node->m_color.a;
         case AnimationTarget::Rotation:
             return &node->m_rotation;
+        case AnimationTarget::GradientStartRed:
+        case AnimationTarget::GradientStartGreen:
+        case AnimationTarget::GradientStartBlue:
+        case AnimationTarget::GradientStartAlpha:
+        case AnimationTarget::GradientEndRed:
+        case AnimationTarget::GradientEndGreen:
+        case AnimationTarget::GradientEndBlue:
+        case AnimationTarget::GradientEndAlpha:
+        case AnimationTarget::GradientMidpointX:
+        case AnimationTarget::GradientMidpointY:
+        case AnimationTarget::GradientAngle:
+        case AnimationTarget::GradientTransition:
+            return GradientTargetReference(dynamic_cast<NodeGradient*>(node), target);
         case AnimationTarget::FlipbookClip:
         case AnimationTarget::FlipbookPlaying:
         case AnimationTarget::Unknown:

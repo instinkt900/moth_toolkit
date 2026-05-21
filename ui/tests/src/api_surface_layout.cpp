@@ -19,6 +19,7 @@ TEST_CASE("LayoutEntityType enum values are stable", "[api][layout][type]") {
     static_assert(T::Image    != T::Text);
     static_assert(T::Text     != T::Clip);
     static_assert(T::Clip     != T::Flipbook);
+    static_assert(T::Flipbook != T::Gradient);
     SUCCEED();
 }
 

@@ -108,6 +108,20 @@ namespace moth_ui {
         void StopAnimation() override;
 
         /**
+         * @brief Freezes the named clip at a normalized progress point.
+         *
+         * Computes the frame as @c lerp(clip.startFrame, clip.endFrame, factor)
+         * and applies it to all direct children via @c AnimationController::SetFrame.
+         * Unlike @c SetAnimation this does not start playback — the frame stays
+         * fixed until another scrub or a @c SetAnimation call.
+         *
+         * @param name   Name of the clip to scrub.
+         * @param factor Normalized position in [0, 1]; clamped if outside.
+         * @return @c true if the clip was found and applied.
+         */
+        bool SetAnimationProgress(std::string_view name, float factor);
+
+        /**
          * @brief Re-applies property overrides from a LayoutEntityRef to a child's layout entity.
          *
          * Called by the child node during ReloadEntity when the parent is a layout reference.

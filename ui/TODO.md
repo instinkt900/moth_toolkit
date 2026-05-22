@@ -63,3 +63,46 @@ The work is substantial and touches every primitive draw path. Until then, **cli
 gradient nodes should be treated as non-rotatable** — the editor still permits setting
 rotation on them but the visual result will be wrong (gradient leaks past rotated edges;
 clip masks revert to AABB of the rotated bounds).
+
+---
+
+### NodePainter — CPU "fragment shader" node
+
+**Effort:** Medium
+
+Now that `IGraphics::UpdateTexture` lets us push pixel buffers per frame, we can run
+arbitrary per-pixel fill functions on the CPU and treat the result as a texture — a
+backend-agnostic substitute for fragment shaders. Use cases: plasma/fire explosions,
+energy fields, animated dithers, noise washes, palette-cycled effects. Footprints stay
+small (typically 64²–128² stretched onto the node rect), so cost stays well under a
+frame budget even with several instances on screen.
+
+**Sketch:**
+
+- New `Node` subclass `NodePainter` with a swappable `IFillFunction`:
+  ```cpp
+  struct IFillFunction {
+      virtual void Fill(uint32_t* pixels, int w, int h, float t, void* params) = 0;
+  };
+  ```
+- Owns an `IImage` sized to a configurable internal resolution (independent of node
+  rect size); rebuilds when resolution changes.
+- `DrawInternal` calls `fillFn->Fill(...)`, uploads via `UpdateTexture`, then draws
+  the image stretched into the node bounds.
+- Animatable scalars exposed as `AnimationTarget` entries for `t` and a few generic
+  `paramN` floats, so the fill can be keyframed in the editor.
+
+**Design notes:**
+
+- Keep the fill function a **plain C++ function over a pixel buffer** — same shape as
+  a GLSL/SPIR-V fragment shader. That way a Vulkan-only GPU path can later compile
+  the same logic into a real shader without changing call sites.
+- One internal texture **per painter instance**, sized to the effect; do not share a
+  scratch buffer. Lifetime-bound to the node.
+- Palette-LUT pattern is the cheap default: compute greyscale intensity, index a
+  `Color[256]`, cycle the offset for colour-cycling effects.
+- Streaming-access texture path: confirm `UpdateTexture` routes through
+  `SDL_TEXTUREACCESS_STREAMING` lock/unlock (not a copy onto a static texture) for the
+  hot per-frame case; if not, add a streaming variant.
+- Sample fills shipped with moth_ui (gradient is already a node; plasma, dither,
+  scanlines could ship as reference `IFillFunction`s) or leave entirely to consumers.

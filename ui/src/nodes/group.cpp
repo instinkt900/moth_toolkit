@@ -1,7 +1,10 @@
 #include "common.h"
 #include "moth_ui/nodes/group.h"
 #include "moth_ui/animation/animation_clip.h"
+#include "moth_ui/animation/animation_controller.h"
 #include "moth_ui/layout/layout_entity_group.h"
+
+#include <algorithm>
 #include "moth_ui/layout/layout_entity_ref.h"
 #include "moth_ui/nodes/node_clip.h"
 #include "moth_ui/context.h"
@@ -113,6 +116,24 @@ namespace moth_ui {
 
     void Group::StopAnimation() {
         m_animationClipController->SetClip(nullptr);
+    }
+
+    bool Group::SetAnimationProgress(std::string_view name, float factor) {
+        if (!m_layout) {
+            return false;
+        }
+        auto& animationClips = m_typedLayout->m_clips;
+        auto it = ranges::find_if(animationClips, [&name](auto& clip) { return clip->name == name; });
+        if (it == std::end(animationClips)) {
+            return false;
+        }
+        float const f = std::clamp(factor, 0.0f, 1.0f);
+        float const span = static_cast<float>((*it)->endFrame - (*it)->startFrame);
+        float const frame = static_cast<float>((*it)->startFrame) + (f * span);
+        for (auto const& child : m_children) {
+            child->GetAnimationController().SetFrame(frame);
+        }
+        return true;
     }
 
     std::shared_ptr<Node> Group::GetChild(std::string_view id) {

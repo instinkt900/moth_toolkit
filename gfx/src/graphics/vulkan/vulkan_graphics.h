@@ -71,6 +71,7 @@ namespace moth_graphics::graphics::vulkan {
         void DrawImageTiled(Image const& image, IntRect const& destRect, IntRect const* sourceRect, float scale) override;
         void DrawRectF(FloatRect const& rect) override;
         void DrawFillRectF(FloatRect const& rect) override;
+        void DrawFillCircleF(FloatVec2 const& center, float radius) override;
         void DrawGradientRect(FloatRect const& destRect,
                               Color startColor, Color endColor,
                               FloatVec2 midpoint,

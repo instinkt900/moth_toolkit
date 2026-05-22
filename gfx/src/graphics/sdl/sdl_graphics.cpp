@@ -7,6 +7,8 @@
 #include "moth_graphics/platform/sdl/sdl_window.h"
 #include "../utils.h"
 
+#include "moth_graphics/utils/circle_tessellation.h"
+
 namespace moth_graphics::graphics::sdl {
     Graphics::Graphics(SurfaceContext& context)
         : m_surfaceContext(context)
@@ -169,6 +171,36 @@ namespace moth_graphics::graphics::sdl {
             { { bl.x, bl.y }, sdlColor, { 0.0f, 0.0f } },
         };
         SDL_RenderGeometry(m_surfaceContext.GetRenderer(), nullptr, sdlVertices, 6, nullptr, 0);
+    }
+
+    void Graphics::DrawFillCircleF(FloatVec2 const& center, float radius) {
+        if (radius <= 0.0f) {
+            return;
+        }
+        int const segments = detail::CircleSegmentCount(radius);
+        auto const t = CurrentTransform();
+        auto const centerW = t.TransformPoint(center);
+        ColorComponents const comp{ m_drawColor };
+        SDL_Color const sdlColor{ comp.r, comp.g, comp.b, comp.a };
+        constexpr float kTwoPi = 6.28318530718f;
+
+        std::vector<SDL_Vertex> vertices(static_cast<size_t>(segments) * 3);
+        FloatVec2 prev = t.TransformPoint({ center.x + radius, center.y });
+        for (int i = 0; i < segments; ++i) {
+            float const a = (kTwoPi * static_cast<float>(i + 1)) / static_cast<float>(segments);
+            FloatVec2 const next = t.TransformPoint({
+                center.x + (std::cos(a) * radius),
+                center.y + (std::sin(a) * radius),
+            });
+            auto const base = static_cast<size_t>(i) * 3;
+            vertices[base + 0] = { { centerW.x, centerW.y }, sdlColor, { 0.0f, 0.0f } };
+            vertices[base + 1] = { { prev.x,    prev.y    }, sdlColor, { 0.0f, 0.0f } };
+            vertices[base + 2] = { { next.x,    next.y    }, sdlColor, { 0.0f, 0.0f } };
+            prev = next;
+        }
+        SDL_RenderGeometry(m_surfaceContext.GetRenderer(), nullptr,
+                           vertices.data(), static_cast<int>(vertices.size()),
+                           nullptr, 0);
     }
 
     void Graphics::DrawGradientRect(FloatRect const& destRect,

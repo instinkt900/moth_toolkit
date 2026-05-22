@@ -6,6 +6,8 @@
 #include "vulkan_utils.h"
 #include "stb_image_write.h"
 
+#include "moth_graphics/utils/circle_tessellation.h"
+
 namespace moth_graphics::graphics::vulkan {
     Graphics::Graphics(SurfaceContext& context, VkSurfaceKHR surface, uint32_t surfaceWidth, uint32_t surfaceHeight)
         : m_surfaceContext(context)
@@ -282,6 +284,39 @@ namespace moth_graphics::graphics::vulkan {
         vertices[5].color = context->m_currentColor;
 
         SubmitVertices(vertices, 6, ETopologyType::Triangles);
+    }
+
+    void Graphics::DrawFillCircleF(FloatVec2 const& center, float radius) {
+        auto* context = CurrentContext();
+        if (context == nullptr || radius <= 0.0f) {
+            return;
+        }
+        int const segments = detail::CircleSegmentCount(radius);
+        auto const t = CurrentTransform();
+        auto const centerW = t.TransformPoint(center);
+        constexpr float kTwoPi = 6.28318530718f;
+
+        std::vector<Vertex> vertices(static_cast<size_t>(segments) * 3);
+        FloatVec2 prev = t.TransformPoint({ center.x + radius, center.y });
+        for (int i = 0; i < segments; ++i) {
+            float const a = (kTwoPi * static_cast<float>(i + 1)) / static_cast<float>(segments);
+            FloatVec2 const next = t.TransformPoint({
+                center.x + (std::cos(a) * radius),
+                center.y + (std::sin(a) * radius),
+            });
+            auto const base = static_cast<size_t>(i) * 3;
+            vertices[base + 0].xy = centerW;
+            vertices[base + 0].uv = { 0, 0 };
+            vertices[base + 0].color = context->m_currentColor;
+            vertices[base + 1].xy = prev;
+            vertices[base + 1].uv = { 0, 0 };
+            vertices[base + 1].color = context->m_currentColor;
+            vertices[base + 2].xy = next;
+            vertices[base + 2].uv = { 0, 0 };
+            vertices[base + 2].color = context->m_currentColor;
+            prev = next;
+        }
+        SubmitVertices(vertices.data(), static_cast<uint32_t>(vertices.size()), ETopologyType::Triangles);
     }
 
     void Graphics::DrawGradientRect(FloatRect const& destRect,

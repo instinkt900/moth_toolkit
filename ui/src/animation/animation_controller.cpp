@@ -69,8 +69,15 @@ namespace moth_ui {
         case AnimationTarget::GradientMidpointX:
         case AnimationTarget::GradientMidpointY:
         case AnimationTarget::GradientAngle:
-        case AnimationTarget::GradientTransition:
-            return GradientTargetReference(dynamic_cast<NodeGradient*>(node), target);
+        case AnimationTarget::GradientTransition: {
+            auto* gradient = dynamic_cast<NodeGradient*>(node);
+            if (gradient == nullptr) {
+                log::warn("AnimationController: gradient target '{}' on non-gradient node (id='{}')",
+                          magic_enum::enum_name(target), node->GetId());
+                return nullptr;
+            }
+            return GradientTargetReference(gradient, target);
+        }
         case AnimationTarget::FlipbookClip:
         case AnimationTarget::FlipbookPlaying:
         case AnimationTarget::Unknown:

@@ -15,5 +15,6 @@ namespace moth_ui {
         Text,    ///< LayoutEntityText.
         Clip,    ///< LayoutEntityClip (scissor region).
         Flipbook,///< LayoutEntityFlipbook.
+        Gradient,///< LayoutEntityGradient (two-stop linear gradient).
     };
 }

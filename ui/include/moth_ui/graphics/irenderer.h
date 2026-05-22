@@ -3,6 +3,7 @@
 #include "moth_ui/moth_ui_fwd.h"
 #include "moth_ui/graphics/blend_mode.h"
 #include "moth_ui/graphics/image_scale_type.h"
+#include "moth_ui/graphics/linear_gradient.h"
 #include "moth_ui/graphics/text_alignment.h"
 #include "moth_ui/graphics/texture_filter.h"
 #include "moth_ui/utils/color.h"
@@ -85,6 +86,14 @@ namespace moth_ui {
          * @param rect Destination rectangle in screen space.
          */
         virtual void RenderFilledRect(IntRect const& rect) = 0;
+
+        /**
+         * @brief Draws a two-stop linear gradient inside a rectangle.
+         *
+         * @param rect     Destination rectangle in screen space.
+         * @param gradient Gradient parameters (start/end colour, midpoint, angle, transition length).
+         */
+        virtual void RenderGradientRect(IntRect const& rect, LinearGradient const& gradient) = 0;
 
         /**
          * @brief Draws a portion of an image into a destination rectangle.

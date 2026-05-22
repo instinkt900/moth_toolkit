@@ -24,6 +24,8 @@ TEST_CASE("IRenderer method signatures are stable", "[api][graphics][irenderer]"
     // Draw calls
     void (IRenderer::*renderRect)(IntRect const&)        = &IRenderer::RenderRect;
     void (IRenderer::*renderFilled)(IntRect const&)      = &IRenderer::RenderFilledRect;
+    void (IRenderer::*renderGradient)(IntRect const&,
+                                      LinearGradient const&) = &IRenderer::RenderGradientRect;
     void (IRenderer::*renderImg)(IImage const&, IntRect const&, IntRect const&,
                                  ImageScaleType, float) = &IRenderer::RenderImage;
     void (IRenderer::*renderText)(std::string_view, IFont&,
@@ -34,7 +36,7 @@ TEST_CASE("IRenderer method signatures are stable", "[api][graphics][irenderer]"
     (void)pushBlend; (void)popBlend; (void)pushColor; (void)popColor;
     (void)pushXform; (void)popXform; (void)pushClip;  (void)popClip;
     (void)pushFilter; (void)popFilter;
-    (void)renderRect; (void)renderFilled; (void)renderImg;
+    (void)renderRect; (void)renderFilled; (void)renderGradient; (void)renderImg;
     (void)renderText; (void)setLogical;
     SUCCEED();
 }

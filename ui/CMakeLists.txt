@@ -46,6 +46,7 @@ set(PUBLIC_HEADERS
 	include/moth_ui/graphics/image_scale_type.h
 	include/moth_ui/graphics/irenderer.h
 	include/moth_ui/graphics/itarget.h
+	include/moth_ui/graphics/linear_gradient.h
 	include/moth_ui/graphics/text_alignment.h
 	include/moth_ui/iflipbook_factory.h
 	include/moth_ui/ifont_factory.h
@@ -56,6 +57,7 @@ set(PUBLIC_HEADERS
 	include/moth_ui/layout/layout_cache.h
 	include/moth_ui/layout/layout_entity_clip.h
 	include/moth_ui/layout/layout_entity_flipbook.h
+	include/moth_ui/layout/layout_entity_gradient.h
 	include/moth_ui/layout/layout_entity_group.h
 	include/moth_ui/layout/layout_entity.h
 	include/moth_ui/layout/layout_entity_image.h
@@ -69,6 +71,7 @@ set(PUBLIC_HEADERS
 	include/moth_ui/nodes/group.h
 	include/moth_ui/nodes/node_clip.h
 	include/moth_ui/nodes/node_flipbook.h
+	include/moth_ui/nodes/node_gradient.h
 	include/moth_ui/nodes/node.h
 	include/moth_ui/nodes/node_image.h
 	include/moth_ui/nodes/node_rect.h
@@ -107,6 +110,7 @@ set(SOURCES ${SOURCES}
 	src/layout/layout_entity_clip.cpp
 	src/layout/layout_entity.cpp
 	src/layout/layout_entity_flipbook.cpp
+	src/layout/layout_entity_gradient.cpp
 	src/layout/layout_entity_group.cpp
 	src/layout/layout_entity_image.cpp
 	src/layout/layout_entity_rect.cpp
@@ -117,6 +121,7 @@ set(SOURCES ${SOURCES}
 	src/nodes/node_clip.cpp
 	src/nodes/node.cpp
 	src/nodes/node_flipbook.cpp
+	src/nodes/node_gradient.cpp
 	src/nodes/node_image.cpp
 	src/nodes/node_rect.cpp
 	src/nodes/node_text.cpp

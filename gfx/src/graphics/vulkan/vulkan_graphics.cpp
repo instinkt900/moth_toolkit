@@ -319,6 +319,74 @@ namespace moth_graphics::graphics::vulkan {
         SubmitVertices(vertices.data(), static_cast<uint32_t>(vertices.size()), ETopologyType::Triangles);
     }
 
+    void Graphics::DrawImageCircle(Image const& image, FloatVec2 const& center, float radius, IntRect const* sourceRect) {
+        auto* context = CurrentContext();
+        if (context == nullptr || radius <= 0.0f) {
+            return;
+        }
+        auto texture = std::dynamic_pointer_cast<Texture>(image.GetTexture());
+        if (!texture) {
+            return;
+        }
+
+        FloatRect imageRect;
+        if (sourceRect != nullptr) {
+            imageRect = static_cast<FloatRect>(*sourceRect);
+        } else {
+            imageRect = MakeRect(0.0f, 0.0f, static_cast<float>(image.GetWidth()), static_cast<float>(image.GetHeight()));
+        }
+        FloatVec2 const textureDimensions{
+            static_cast<float>(texture->GetVkExtent().width),
+            static_cast<float>(texture->GetVkExtent().height),
+        };
+        imageRect += static_cast<FloatVec2>(image.GetSourceRect().topLeft);
+        imageRect /= textureDimensions;
+
+        int const segments = detail::CircleSegmentCount(radius);
+        auto const t = CurrentTransform();
+        constexpr float kTwoPi = 6.28318530718f;
+
+        auto computeUv = [&](float lx, float ly) -> FloatVec2 {
+            float const u = (lx - (center.x - radius)) / (2.0f * radius);
+            float const v = (ly - (center.y - radius)) / (2.0f * radius);
+            return {
+                imageRect.topLeft.x + (u * (imageRect.bottomRight.x - imageRect.topLeft.x)),
+                imageRect.topLeft.y + (v * (imageRect.bottomRight.y - imageRect.topLeft.y)),
+            };
+        };
+
+        auto const centerW = t.TransformPoint(center);
+        FloatVec2 const centerUv = computeUv(center.x, center.y);
+
+        std::vector<Vertex> vertices(static_cast<size_t>(segments) * 3);
+        float prevLx = center.x + radius;
+        float prevLy = center.y;
+        FloatVec2 prevW = t.TransformPoint({ prevLx, prevLy });
+        FloatVec2 prevUv = computeUv(prevLx, prevLy);
+        for (int i = 0; i < segments; ++i) {
+            float const a = (kTwoPi * static_cast<float>(i + 1)) / static_cast<float>(segments);
+            float const nextLx = center.x + (std::cos(a) * radius);
+            float const nextLy = center.y + (std::sin(a) * radius);
+            FloatVec2 const nextW = t.TransformPoint({ nextLx, nextLy });
+            FloatVec2 const nextUv = computeUv(nextLx, nextLy);
+            auto const base = static_cast<size_t>(i) * 3;
+            vertices[base + 0].xy = centerW;
+            vertices[base + 0].uv = centerUv;
+            vertices[base + 0].color = context->m_currentColor;
+            vertices[base + 1].xy = prevW;
+            vertices[base + 1].uv = prevUv;
+            vertices[base + 1].color = context->m_currentColor;
+            vertices[base + 2].xy = nextW;
+            vertices[base + 2].uv = nextUv;
+            vertices[base + 2].color = context->m_currentColor;
+            prevW = nextW;
+            prevUv = nextUv;
+        }
+
+        VkDescriptorSet const descriptorSet = m_drawingShader->GetDescriptorSet(*texture);
+        SubmitVertices(vertices.data(), static_cast<uint32_t>(vertices.size()), ETopologyType::Triangles, descriptorSet);
+    }
+
     void Graphics::DrawGradientRect(FloatRect const& destRect,
                                     Color startColor, Color endColor,
                                     FloatVec2 midpoint,

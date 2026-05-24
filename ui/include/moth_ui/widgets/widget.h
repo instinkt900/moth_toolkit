@@ -51,4 +51,21 @@ namespace moth_ui {
 
     template <typename T, typename BaseType>
     bool Widget<T, BaseType>::s_widgetIsRegistered_ = Widget<T, BaseType>::SelfRegister();
+
+    /**
+     * @brief Forces every bundled widget's self-registration to be linked in.
+     *
+     * Widgets in moth_ui register themselves with @ref NodeFactory through
+     * static initialisers (see @ref Widget::SelfRegister). When moth_ui is
+     * consumed as a static library and no application code names the widget
+     * types directly, the linker drops their translation units and the
+     * registrations never run — layouts that reference those widget classes
+     * silently fall back to plain @ref Group nodes.
+     *
+     * Apps that rely on any bundled widget must call this function once at
+     * startup (before loading any layouts). It is idempotent and has no
+     * runtime cost beyond the static initialisers it pulls in. Apps that
+     * supply their own widget set can ignore it.
+     */
+    void EnsureWidgetsRegistered();
 }

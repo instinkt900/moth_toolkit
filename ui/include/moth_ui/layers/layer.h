@@ -65,6 +65,31 @@ namespace moth_ui {
          */
         virtual bool UseRenderSize() const { return false; }
 
+        /**
+         * @brief Returns @c true if this layer blocks input and updates of layers beneath it.
+         *
+         * When a modal layer is on the stack, the LayerStack stops dispatching
+         * events to layers below it (regardless of whether the modal layer
+         * itself consumed the event) and skips updating them. Use this for
+         * pause menus, blocking dialogs, and full-screen transitions.
+         *
+         * Layers above a modal layer continue to receive events and updates
+         * normally; only the topmost modal in the stack acts as the cutoff.
+         *
+         * Defaults to the value set by @ref SetModal (initially @c false).
+         * Subclasses may override to implement dynamic modality.
+         */
+        virtual bool IsModal() const { return m_modal; }
+
+        /**
+         * @brief Sets the static modal flag returned by the default @ref IsModal.
+         *
+         * The @ref flow::Flow runtime calls this on overlay creation when the
+         * @c LayerSpec.modality field is @c Modal. Subclasses that override
+         * @ref IsModal directly can ignore this method.
+         */
+        void SetModal(bool modal) { m_modal = modal; }
+
         Layer() = default;
         Layer(Layer const&) = delete;
         Layer(Layer&&) = delete;
@@ -74,5 +99,8 @@ namespace moth_ui {
 
     protected:
         LayerStack* m_layerStack = nullptr; ///< The stack this layer belongs to, or @c nullptr.
+
+    private:
+        bool m_modal = false;
     };
 }

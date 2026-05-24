@@ -54,9 +54,15 @@ namespace moth_ui {
     class NodeClip;
     class NodeFlipbook;
     class NodeGradient;
+    class UIButton;
 
     template <typename T, typename BaseType>
     class Widget;
+
+    // -------------------------------------------------------------------------
+    // Clickable
+    // -------------------------------------------------------------------------
+    class IClickable;
 
     // -------------------------------------------------------------------------
     // Layout

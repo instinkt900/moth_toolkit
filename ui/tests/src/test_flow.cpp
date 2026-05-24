@@ -344,13 +344,16 @@ TEST_CASE("Action hooks fire in OnStart / OnMidpoint / OnComplete order", "[flow
     flow->Trigger("title.play");
     flow->Tick(0);
 
+    // OnExit fires in BeginTransition (before OnStart actions); OnEnter fires
+    // in DoStackMutation (before OnMidpoint actions). The hook-internal order
+    // (start1 < start2 < mid < complete) is what the test name guarantees.
     REQUIRE(f.log == std::vector<std::string>{
+        "title.OnExit",
         "action:start1",
         "action:start2",
-        "title.OnExit",
         "title.Out:transition_out",
-        "action:mid",
         "game.OnEnter",
+        "action:mid",
         "game.In:transition_in",
         "action:complete",
     });
@@ -457,6 +460,12 @@ TEST_CASE("Re-entry policy: Reject drops new triggers mid-transition", "[flow][r
     f.log.clear();
 
     flow->Trigger("a.go");
+    // Pump into OutAnimating so a's TransitionOut runs and captures the
+    // pendingDone callback. Without this Tick the second Trigger lands while
+    // the machine is still in OnStart, no async call has been made yet, and
+    // pendingDone is still empty — moving from an empty std::function and
+    // invoking it is platform-dependent UB (throws on MSVC's STL).
+    flow->Tick(0);
     flow->Trigger("a.go");  // dropped: transition already in flight
     auto done = std::move(f.created["a"]->pendingDone);
     done();

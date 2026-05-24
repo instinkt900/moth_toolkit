@@ -33,12 +33,13 @@ namespace moth_ui {
     }
 
     bool UIButton::OnMouseUp(EventMouseUp const& event) {
-        if (IsInBounds(event.GetPosition()) && m_state == State::Pressed) {
+        bool const activated = IsInBounds(event.GetPosition()) && m_state == State::Pressed;
+        if (activated) {
             SetState(State::Activated);
         } else {
             SetState(State::Idle);
         }
-        return false;
+        return activated;
     }
 
     bool UIButton::OnMouseMove(EventMouseMove const& event) {

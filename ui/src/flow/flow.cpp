@@ -323,13 +323,16 @@ namespace moth_ui::flow {
             LayerSpec const* leavingSpec = m_active.back().spec;
             m_active.pop_back();
             if (leavingSpec != nullptr && leavingSpec->construction == Construction::Cached) {
-                // RemoveLayer takes a raw pointer and erases the unique_ptr.
-                // We can't reclaim ownership here, so cached + Pop currently
-                // destroys the instance. Logged for follow-up.
-                log::warn("Flow: cached layer '{}' destroyed by Pop (caching across Pop not yet supported)",
-                          leavingSpec->id);
+                // Detach the layer out of the stack so we can keep it alive
+                // in the cache for the next visit. RemoveLayer would destroy
+                // the unique_ptr.
+                auto cached = m_stack.DetachLayer(leaving);
+                if (cached) {
+                    m_cached[leavingSpec->id] = std::move(cached);
+                }
+            } else {
+                m_stack.RemoveLayer(leaving);
             }
-            m_stack.RemoveLayer(leaving);
             // Re-activate whatever layer the pop just revealed — its OnExit
             // was fired when this overlay was Push'd, so OnEnter is owed to
             // restore its active state.
@@ -338,57 +341,40 @@ namespace moth_ui::flow {
             }
             return;
         }
-        case TransitionKind::Push: {
-            if (m_activeTransition.targetSpec == nullptr) {
-                return;
-            }
-            auto owned = BuildLayer(*m_activeTransition.targetSpec);
-            if (!owned) {
-                return;
-            }
-            Layer* raw = owned.get();
-            ITransitionParticipant* participant = AsParticipant(raw);
-            m_activeTransition.targetLayer = raw;
-            m_activeTransition.targetParticipant = participant;
-            bool const modal = m_activeTransition.targetSpec->kind == LayerKind::Overlay
-                && m_activeTransition.targetSpec->modality == Modality::Modal;
-            raw->SetModal(modal);
-            m_stack.PushLayer(std::move(owned));
-            m_active.push_back({ m_activeTransition.targetSpec, raw, participant });
-            InstallButtonBindings(*m_activeTransition.targetSpec, participant);
-            if (participant != nullptr) {
-                participant->OnEnter();
+        case TransitionKind::Push:
+            if (m_activeTransition.targetSpec != nullptr) {
+                PushTargetLayer(*m_activeTransition.targetSpec);
             }
             return;
-        }
-        case TransitionKind::Replace: {
+        case TransitionKind::Replace:
             // Pop any overlays sitting above the source plus the source itself.
             for (auto it = m_active.rbegin(); it != m_active.rend(); ++it) {
                 m_stack.RemoveLayer(it->layer);
             }
             m_active.clear();
-            if (m_activeTransition.targetSpec == nullptr) {
-                return;
-            }
-            auto owned = BuildLayer(*m_activeTransition.targetSpec);
-            if (!owned) {
-                return;
-            }
-            Layer* raw = owned.get();
-            ITransitionParticipant* participant = AsParticipant(raw);
-            m_activeTransition.targetLayer = raw;
-            m_activeTransition.targetParticipant = participant;
-            bool const modal = m_activeTransition.targetSpec->kind == LayerKind::Overlay
-                && m_activeTransition.targetSpec->modality == Modality::Modal;
-            raw->SetModal(modal);
-            m_stack.PushLayer(std::move(owned));
-            m_active.push_back({ m_activeTransition.targetSpec, raw, participant });
-            InstallButtonBindings(*m_activeTransition.targetSpec, participant);
-            if (participant != nullptr) {
-                participant->OnEnter();
+            if (m_activeTransition.targetSpec != nullptr) {
+                PushTargetLayer(*m_activeTransition.targetSpec);
             }
             return;
         }
+    }
+
+    void Flow::PushTargetLayer(LayerSpec const& spec) {
+        auto owned = BuildLayer(spec);
+        if (!owned) {
+            return;
+        }
+        Layer* raw = owned.get();
+        ITransitionParticipant* participant = AsParticipant(raw);
+        m_activeTransition.targetLayer = raw;
+        m_activeTransition.targetParticipant = participant;
+        bool const modal = spec.kind == LayerKind::Overlay && spec.modality == Modality::Modal;
+        raw->SetModal(modal);
+        m_stack.PushLayer(std::move(owned));
+        m_active.push_back({ &spec, raw, participant });
+        InstallButtonBindings(spec, participant);
+        if (participant != nullptr) {
+            participant->OnEnter();
         }
     }
 

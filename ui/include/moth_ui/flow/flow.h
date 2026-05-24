@@ -158,6 +158,7 @@ namespace moth_ui::flow {
         };
 
         std::unique_ptr<Layer> BuildLayer(LayerSpec const& spec);
+        void PushTargetLayer(LayerSpec const& spec);
         void InstallButtonBindings(LayerSpec const& spec, ITransitionParticipant* participant);
         void BeginTransition(LayerSpec const& source, TransitionSpec const& transition);
         void AdvancePhase();

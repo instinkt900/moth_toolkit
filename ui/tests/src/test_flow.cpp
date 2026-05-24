@@ -638,3 +638,70 @@ TEST_CASE("Passthrough overlay does not set the modal flag", "[flow]") {
 
     REQUIRE_FALSE(f.created["overlay"]->IsModal());
 }
+
+TEST_CASE("Cached layer survives a Pop and is reused on re-push", "[flow][cached]") {
+    FlowFixture f;
+    FlowGraph g;
+    g.initial = "shell";
+
+    auto shell = MakeMockSpec("shell");
+    shell.transitions.push_back(MakeTransition("open", "tray", TransitionKind::Push, EventTrigger("open")));
+    g.layers.push_back(shell);
+
+    auto tray = MakeMockSpec("tray", LayerKind::Overlay);
+    tray.construction = Construction::Cached;
+    tray.transitions.push_back(MakeTransition("close", std::string(kBackTarget), TransitionKind::Pop, EventTrigger("close")));
+    g.layers.push_back(tray);
+
+    auto flow = f.MakeFlow(std::move(g));
+    flow->Start();
+
+    flow->Trigger("shell.open");
+    flow->Tick(0);
+    MockParticipantLayer* first = f.created["tray"];
+    REQUIRE(first != nullptr);
+
+    flow->Trigger("tray.close");
+    flow->Tick(0);
+    // first is still alive — Pop should have detached, not destroyed, the cached layer.
+
+    // Forget the create-time pointer so we can prove the next push reuses
+    // the same instance rather than constructing a new one. Our factory
+    // would overwrite f.created["tray"] if it were called again.
+    f.created.erase("tray");
+
+    flow->Trigger("shell.open");
+    flow->Tick(0);
+    // Factory was NOT invoked a second time; the cached instance came back.
+    REQUIRE(f.created.count("tray") == 0);
+}
+
+TEST_CASE("Fresh layer is rebuilt each push", "[flow]") {
+    FlowFixture f;
+    FlowGraph g;
+    g.initial = "shell";
+
+    auto shell = MakeMockSpec("shell");
+    shell.transitions.push_back(MakeTransition("open", "tray", TransitionKind::Push, EventTrigger("open")));
+    g.layers.push_back(shell);
+
+    auto tray = MakeMockSpec("tray", LayerKind::Overlay);
+    tray.construction = Construction::Fresh;
+    tray.transitions.push_back(MakeTransition("close", std::string(kBackTarget), TransitionKind::Pop, EventTrigger("close")));
+    g.layers.push_back(tray);
+
+    auto flow = f.MakeFlow(std::move(g));
+    flow->Start();
+
+    flow->Trigger("shell.open");
+    flow->Tick(0);
+    flow->Trigger("tray.close");
+    flow->Tick(0);
+
+    f.created.erase("tray");
+
+    flow->Trigger("shell.open");
+    flow->Tick(0);
+    // Factory WAS invoked again — fresh instance.
+    REQUIRE(f.created.count("tray") == 1);
+}

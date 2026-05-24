@@ -42,6 +42,19 @@ namespace moth_ui {
         }
     }
 
+    std::unique_ptr<Layer> LayerStack::DetachLayer(Layer* layer) {
+        auto it = std::find_if(std::begin(m_layers), std::end(m_layers), [layer](auto& candidate) {
+            return candidate.get() == layer;
+        });
+        if (std::end(m_layers) == it) {
+            return nullptr;
+        }
+        auto owned = std::move(*it);
+        m_layers.erase(it);
+        owned->OnRemovedFromStack();
+        return owned;
+    }
+
     bool LayerStack::OnEvent(Event const& event) {
         // Walk top-to-bottom. A modal layer terminates dispatch regardless of
         // whether it consumed the event, so layers beneath it remain isolated.

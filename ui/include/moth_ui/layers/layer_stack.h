@@ -52,6 +52,18 @@ namespace moth_ui {
         void RemoveLayer(Layer* layer);
 
         /**
+         * @brief Removes a specific layer and returns ownership to the caller.
+         *
+         * Like @ref RemoveLayer but transfers the @c unique_ptr out instead
+         * of destroying it. Used by consumers (e.g. @ref flow::Flow caching)
+         * that want to keep a layer instance alive for later re-pushing.
+         *
+         * @param layer Raw pointer to the layer to detach.
+         * @return Owning pointer to the detached layer, or @c nullptr if not found.
+         */
+        std::unique_ptr<Layer> DetachLayer(Layer* layer);
+
+        /**
          * @brief Iterates layers in reverse order and dispatches the event.
          *
          * The first layer whose @c OnEvent returns @c true consumes the event.

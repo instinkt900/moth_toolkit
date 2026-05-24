@@ -292,26 +292,37 @@ namespace moth_ui::flow {
             return result;
         }
 
-        ParseContext ctx{ result.errors, "", "" };
+        // Catch-all for nlohmann::json type mismatches that the per-field
+        // checks miss (e.g. a string field that is actually a number). The
+        // Parse* helpers use j.value() / j.at().get<T>(), both of which
+        // throw type_error on a wrong-typed value rather than returning a
+        // default. Without this barrier those exceptions would unwind into
+        // application code.
         FlowGraph graph;
-        graph.initial = root.value("initial", "");
-        if (graph.initial.empty()) {
-            ctx.Error("graph missing 'initial'");
-        }
-        if (root.contains("policy")) {
-            graph.policy = ParsePolicy(root.at("policy"), ctx);
-        }
-        if (root.contains("layers")) {
-            auto const& arr = root.at("layers");
-            if (!arr.is_array()) {
-                ctx.Error("'layers' must be an array");
-            } else {
-                for (auto const& item : arr) {
-                    graph.layers.push_back(ParseLayer(item, ctx));
-                }
+        try {
+            ParseContext ctx{ result.errors, "", "" };
+            graph.initial = root.value("initial", "");
+            if (graph.initial.empty()) {
+                ctx.Error("graph missing 'initial'");
             }
-        } else {
-            ctx.Error("graph missing 'layers'");
+            if (root.contains("policy")) {
+                graph.policy = ParsePolicy(root.at("policy"), ctx);
+            }
+            if (root.contains("layers")) {
+                auto const& arr = root.at("layers");
+                if (!arr.is_array()) {
+                    ctx.Error("'layers' must be an array");
+                } else {
+                    for (auto const& item : arr) {
+                        graph.layers.push_back(ParseLayer(item, ctx));
+                    }
+                }
+            } else {
+                ctx.Error("graph missing 'layers'");
+            }
+        } catch (nlohmann::json::exception const& e) {
+            result.errors.push_back({ "", "", fmt::format("JSON type error: {}", e.what()) });
+            return result;
         }
 
         auto structural = ValidateFlowGraph(graph);

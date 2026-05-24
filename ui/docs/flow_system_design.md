@@ -1,6 +1,6 @@
 # Flow System — Design
 
-Status: design exploration, not yet implemented.
+Status: implemented (PR #147). The runtime, layer bases, JSON loader, and bundled `UIButton` widget have all landed under `moth_ui/flow/` and `moth_ui/widgets/`. This document is the design-of-record; concrete naming or behaviour drifts should be reconciled against the headers.
 
 Location: moth_ui, as an opt-in utility. Existing moth_ui users with their own layer/transition setup ignore the new headers and lose nothing; new users include `<moth_ui/flow/...>` and pick it up. The system has no moth_graphics dependency — the entire flow runtime, layer bases, and supporting widgets are pure moth_ui.
 
@@ -31,7 +31,7 @@ Scorched_moth also defines a `UIButton` widget (a moth_ui `Widget<T>` CRTP subcl
 
 The serialisable artifact. An app loads a graph at startup, hands it to a `Flow` runtime, and from that point on, the graph drives navigation.
 
-```
+```text
 FlowGraph {
     initial:   LayerId
     policy:    GraphPolicy
@@ -48,7 +48,7 @@ GraphPolicy {
 
 One node in the graph. Carries everything the runtime needs to construct and animate this layer, plus the outgoing transitions originating from it.
 
-```
+```text
 LayerSpec {
     id:               LayerId          # unique within graph, e.g. "title", "game", "pause"
     factory:          string | null    # name of an app-registered factory; null → default
@@ -75,7 +75,7 @@ The trade-off: cross-cutting transitions (e.g., "from any layer, Esc → setting
 
 One outgoing edge. Locally addressable as `"layerId.transitionId"`.
 
-```
+```text
 TransitionSpec {
     id:        string              # local to parent layer; readable as "title.play"
     to:        LayerId | "<back>"  # "<back>" pops the topmost overlay
@@ -97,7 +97,7 @@ The graph loader can validate `inClip` references at load time by reading the ta
 
 A discriminated union describing how a transition is initiated:
 
-```
+```text
 TriggerSpec =
   | { type: "button", id: string }       # named UIButton in the source layer's layout
   | { type: "key",    key: KeyId }       # key event while source is active
@@ -167,7 +167,7 @@ A layer with no meaningful transition is a degenerate case: it inherits the defa
 // installs ClickActions on the matching UIButtons automatically. No custom
 // logic in this subclass; in fact, no subclass is needed at all if the layer
 // is purely graph-driven — see "When to subclass".
-class PauseLayer : public moth_graphics::flow::TransitioningLayer {
+class PauseLayer : public moth_ui::flow::TransitioningLayer {
 public:
     using TransitioningLayer::TransitioningLayer;
 };
@@ -176,7 +176,7 @@ public:
 ### Code-driven layer example
 
 ```cpp
-class TitleSplashLayer : public moth_graphics::flow::CodeDrivenLayer {
+class TitleSplashLayer : public moth_ui::flow::CodeDrivenLayer {
 public:
     void TransitionIn(std::string_view tag, std::function<void()> done) override {
         if (tag == "fast_fade") {
@@ -297,7 +297,7 @@ The `Flow` has no knowledge of any specific layer or screen — those are addres
 
 Once a trigger fires, the runtime walks a fixed sequence of phases. Each phase can be synchronous (`done()` fires immediately) or asynchronous (the framework waits for an explicit callback).
 
-```
+```text
 Idle
   └─ Trigger(t) accepted
 OnStart        ─── run t.onStart actions sequentially ───────────────┐
@@ -418,8 +418,8 @@ This design introduces several new public headers in moth_ui. They're all opt-in
 - `moth_ui/flow/transition_participant.h` — the `ITransitionParticipant` interface.
 - `moth_ui/flow/transitioning_layer.h` — the `.mothui`-backed layer base.
 - `moth_ui/flow/code_driven_layer.h` — the code-driven layer base.
-- `moth_ui/iclickable.h` — the `IClickable` interface (top-level in moth_ui; not under flow/, since custom widgets that aren't graph-driven can also benefit).
-- `moth_ui/nodes/ui_button.h` — the bundled `UIButton` widget that implements `IClickable`.
+- `moth_ui/flow/iclickable.h` — the `IClickable` interface. Lives under `flow/` because the flow runtime is its only current consumer; non-flow consumers can include it directly if they grow a need for it.
+- `moth_ui/widgets/ui_button.h` — the bundled `UIButton` widget that implements `IClickable`. (Lives under `widgets/` alongside `widget.h`, the CRTP base.)
 
 The `moth_ui/flow/` subdirectory is a coherent unit; users can ignore it wholesale or pull in the pieces they want.
 

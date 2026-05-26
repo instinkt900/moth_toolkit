@@ -34,6 +34,48 @@ namespace moth_ui {
         return OnEvent(event);
     }
 
+    namespace {
+        Group* FindRootGroup(Node* node) {
+            if (node == nullptr) {
+                return nullptr;
+            }
+            Group* parent = node->GetParent();
+            if (parent == nullptr) {
+                // A detached node has no root; capture has nowhere to live.
+                return nullptr;
+            }
+            while (parent->GetParent() != nullptr) {
+                parent = parent->GetParent();
+            }
+            return parent;
+        }
+    }
+
+    void Node::RequestInputCapture() {
+        if (auto* root = FindRootGroup(this)) {
+            root->SetCapturedNode(shared_from_this());
+        }
+    }
+
+    void Node::ReleaseInputCapture() {
+        if (auto* root = FindRootGroup(this)) {
+            if (root->GetCapturedNode().get() == this) {
+                root->SetCapturedNode(nullptr);
+            }
+        }
+    }
+
+    bool Node::HasInputCapture() const {
+        Group const* parent = GetParent();
+        if (parent == nullptr) {
+            return false;
+        }
+        while (parent->GetParent() != nullptr) {
+            parent = parent->GetParent();
+        }
+        return parent->GetCapturedNode().get() == this;
+    }
+
     bool Node::OnEvent(Event const& event) {
         if (m_eventHandler) {
             return m_eventHandler(this, event);

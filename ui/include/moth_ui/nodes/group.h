@@ -87,6 +87,24 @@ namespace moth_ui {
         void MoveChild(int fromIndex, int toIndex);
 
         /**
+         * @brief Sets the node that should receive events before normal broadcast.
+         *
+         * Stored as a weak reference, so a destroyed capturing node clears
+         * itself automatically. The capture state is normally consulted at the
+         * root of a UI tree (see @ref flow::TransitioningLayer::OnEvent);
+         * setting it on a non-root group has no effect unless the consumer of
+         * the tree reads from that group directly.
+         *
+         * @param node Node to receive events first, or @c nullptr to clear.
+         */
+        void SetCapturedNode(std::shared_ptr<Node> node);
+
+        /**
+         * @brief Returns the currently captured node, or @c nullptr if none / destroyed.
+         */
+        std::shared_ptr<Node> GetCapturedNode() const;
+
+        /**
          * @brief Returns whether an animation clip with the given name exists.
          * @param name Clip name to look up.
          * @return @c true if the clip exists in the layout's clip list.
@@ -186,6 +204,7 @@ namespace moth_ui {
 
     private:
         LayoutEntityGroup* m_typedLayout = nullptr;
+        std::weak_ptr<Node> m_capturedNode;
         void ReloadChildren();
     };
 }

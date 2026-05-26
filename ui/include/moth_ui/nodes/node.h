@@ -120,6 +120,37 @@ namespace moth_ui {
         /// @brief Returns the parent group, or @c nullptr if this is a root node.
         Group* GetParent() const { return m_parent; }
 
+        /**
+         * @brief Registers this node to receive events before normal broadcast.
+         *
+         * Walks up to the root @ref Group of this node's tree and stores a
+         * weak reference there. The root is the entry point that consults the
+         * capture (see @ref flow::TransitioningLayer::OnEvent): captured nodes
+         * see each event first and may consume it or let it fall through to
+         * the regular depth-first broadcast.
+         *
+         * Typical use is a widget entering an exclusive input mode (e.g. a
+         * text field beginning edit). The node must call
+         * @ref ReleaseInputCapture when leaving that mode; capture is also
+         * cleared automatically if the node is destroyed.
+         *
+         * No-op if the node has no parent (not yet attached to a tree).
+         */
+        void RequestInputCapture();
+
+        /**
+         * @brief Releases this node's input capture, if it currently holds it.
+         *
+         * No-op if the captured node on the root is a different node, or if
+         * the node has no parent.
+         */
+        void ReleaseInputCapture();
+
+        /**
+         * @brief Returns @c true if this node currently holds input capture on its tree.
+         */
+        bool HasInputCapture() const;
+
         /// @brief Returns the node's anchor/offset layout rectangle.
         LayoutRect& GetLayoutRect() { return m_layoutRect; }
 

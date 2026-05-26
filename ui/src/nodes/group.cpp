@@ -91,6 +91,14 @@ namespace moth_ui {
         m_children.insert(std::next(std::begin(m_children), toIndex), std::move(child));
     }
 
+    void Group::SetCapturedNode(std::shared_ptr<Node> node) {
+        m_capturedNode = node;
+    }
+
+    std::shared_ptr<Node> Group::GetCapturedNode() const {
+        return m_capturedNode.lock();
+    }
+
     bool Group::HasAnimation(std::string_view name) const {
         if (m_layout) {
             auto& animationClips = m_typedLayout->m_clips;

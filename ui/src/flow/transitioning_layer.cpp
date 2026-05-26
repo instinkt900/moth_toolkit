@@ -36,10 +36,22 @@ namespace moth_ui::flow {
     }
 
     bool TransitioningLayer::OnEvent(Event const& event) {
-        if (m_active && m_uiRoot) {
-            return m_uiRoot->Broadcast(event);
+        if (!m_active || !m_uiRoot) {
+            return false;
         }
-        return false;
+        // A captured node gets first crack at every event so widgets in an
+        // exclusive input mode (e.g. a text field being typed into) win over
+        // siblings that would otherwise consume the event during the normal
+        // broadcast walk. The capture-holder declines (returns false) for
+        // events it doesn't care about; we then fall through to the regular
+        // depth-first dispatch, which will revisit the capture-holder via the
+        // tree walk. Implementors must handle that second visit idempotently.
+        if (auto captured = m_uiRoot->GetCapturedNode()) {
+            if (captured->OnEvent(event)) {
+                return true;
+            }
+        }
+        return m_uiRoot->Broadcast(event);
     }
 
     void TransitioningLayer::Update(uint32_t ticks) {

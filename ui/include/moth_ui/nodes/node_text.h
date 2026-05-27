@@ -62,8 +62,14 @@ namespace moth_ui {
         /// @brief Returns the horizontal text alignment.
         TextHorizAlignment GetHorizontalAlignment() const { return m_horizontalAlignment; }
 
+        /// @brief Sets the horizontal text alignment.
+        void SetHorizontalAlignment(TextHorizAlignment alignment) { m_horizontalAlignment = alignment; }
+
         /// @brief Returns the vertical text alignment.
         TextVertAlignment GetVerticalAlignment() const { return m_verticalAlignment; }
+
+        /// @brief Sets the vertical text alignment.
+        void SetVerticalAlignment(TextVertAlignment alignment) { m_verticalAlignment = alignment; }
 
         /// @brief Returns @c true if a drop-shadow is rendered.
         bool IsDropShadow() const { return m_dropShadow; }

@@ -154,7 +154,12 @@ namespace moth_ui {
 
     std::shared_ptr<Node> Group::FindChild(std::string_view id) {
         if (id == m_id) {
-            return shared_from_this();
+            // weak_from_this() is empty during construction, so shared_from_this()
+            // would throw bad_weak_ptr if a widget ctor calls FindChild for its
+            // own id. Fall through to the child search in that case.
+            if (auto self = weak_from_this().lock()) {
+                return self;
+            }
         }
         std::shared_ptr<Node> found;
         for (auto&& child : m_children) {

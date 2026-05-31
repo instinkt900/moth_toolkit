@@ -97,6 +97,21 @@ namespace moth_ui {
         return success;
     }
 
+    // TODO: currently unreachable. The only caller (Node::ReloadEntity) was
+    // removed because this function reverted user edits by stamping the stale
+    // m_childOverrides JSON over a freshly-edited child entity. Overrides are
+    // already baked into child entities at Deserialize time (see the loop in
+    // Deserialize that calls child->DeserializeOverrides), and nothing in the
+    // ReloadEntity path resets a child entity to base values, so there is
+    // nothing to reapply during a normal reload.
+    //
+    // Keep this (and m_childOverrides, Group::ReapplyOverrides) until we
+    // confirm no future feature needs it. The likely future caller is
+    // hot-reload of the referenced sub-layout: re-running CopyLayout from a
+    // freshly loaded Layout would reset child entities to base values, after
+    // which overrides would need to be reapplied. If we add that, drive the
+    // reapply off the entity's current diff vs m_hardReference rather than the
+    // stale on-disk JSON snapshot stored here.
     void LayoutEntityRef::ReapplyOverrides(LayoutEntity& entity) const {
         for (int i = 0; i < static_cast<int>(m_children.size()); ++i) {
             if (m_children[i].get() == &entity) {

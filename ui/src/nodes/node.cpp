@@ -174,7 +174,13 @@ namespace moth_ui {
         ReloadEntityInternal();
 
         if (m_parent != nullptr) {
-            m_parent->ReapplyOverrides(*m_layout);
+            // TODO: previously also called m_parent->ReapplyOverrides(*m_layout)
+            // here. Removed because it stamped stale on-disk override JSON over a
+            // freshly-edited entity, reverting edits before save. The reapply is
+            // unnecessary in current code: overrides are baked into child entities
+            // at Deserialize time and nothing in the ReloadEntity path resets them.
+            // See LayoutEntityRef::ReapplyOverrides for the conditions under which
+            // such a call would actually be needed.
             m_visible = m_layout->m_visible;
             m_blend = m_layout->m_blend;
         }

@@ -189,6 +189,9 @@ namespace moth_ui {
         m_animationClipController = std::make_unique<AnimationClipController>(this);
     }
 
+    // TODO: currently unreachable — see LayoutEntityRef::ReapplyOverrides for why
+    // the Node::ReloadEntity call site was removed and the conditions under
+    // which a future caller would need it.
     void Group::ReapplyOverrides(LayoutEntity& childLayout) {
         if (auto* ref = dynamic_cast<LayoutEntityRef*>(m_layout.get())) {
             ref->ReapplyOverrides(childLayout);

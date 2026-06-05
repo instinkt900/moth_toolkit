@@ -147,6 +147,22 @@ namespace moth_graphics::graphics::vulkan {
             uint32_t m_vertexCount = 0;
             uint32_t m_currentPipelineId = 0;
 
+            // True until this context's first submit of the current frame. Only
+            // that submit may wait on the target's acquire (imageAvailable)
+            // semaphore; later mid-frame submits from RestartContext must not,
+            // or they wait on an already-consumed semaphore that nothing will
+            // re-signal (GPU deadlock + validation error).
+            bool m_acquireWaitPending = false;
+
+            // Letterbox projection state from SetLogicalSize (m_logicalExtent is
+            // the logical coordinate space; these are the physical viewport and
+            // scissor it maps into). Persisted on the context so StartCommands
+            // re-applies it after a mid-frame RestartContext — otherwise a draw
+            // that overflows the vertex buffer (e.g. a long aim path) reverts to
+            // the target's native extent and the HUD renders at the wrong size.
+            VkViewport m_viewport{};
+            VkRect2D m_scissor{};
+
             struct PendingBatch {
                 uint32_t m_firstVertex = 0;
                 uint32_t m_vertexCount = 0;
@@ -190,10 +206,11 @@ namespace moth_graphics::graphics::vulkan {
         }
 
         void BeginContext(DrawContext* context);
+        void ApplyProjection();
         void RestartContext();
         void EndContext();
         void StartCommands();
-        void FlushCommands();
+        void FlushCommands(bool isFinal);
         void FlushPendingBatch();
         void SubmitVertices(Vertex* vertices, uint32_t vertCount, ETopologyType topology, VkDescriptorSet descriptorSet = VK_NULL_HANDLE);
 

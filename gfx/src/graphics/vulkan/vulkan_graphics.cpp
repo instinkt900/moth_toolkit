@@ -684,29 +684,16 @@ namespace moth_graphics::graphics::vulkan {
         float const offsetX = (static_cast<float>(physical.width) - fitWidth) * 0.5f;
         float const offsetY = (static_cast<float>(physical.height) - fitHeight) * 0.5f;
 
-        auto& commandBuffer = context->m_target->GetCommandBuffer();
-
-        VkViewport viewport;
-        viewport.x = offsetX;
-        viewport.y = offsetY;
-        viewport.width = fitWidth;
-        viewport.height = fitHeight;
-        viewport.minDepth = 0.0f;
-        viewport.maxDepth = 1.0f;
-        commandBuffer.SetViewport(viewport);
-
-        VkRect2D scissor;
-        scissor.offset.x = static_cast<int32_t>(offsetX);
-        scissor.offset.y = static_cast<int32_t>(offsetY);
-        scissor.extent.width = static_cast<uint32_t>(fitWidth);
-        scissor.extent.height = static_cast<uint32_t>(fitHeight);
-        commandBuffer.SetScissor(scissor);
-
-        PushConstants constants;
-        constants.xyScale = { 2.0f / static_cast<float>(logicalSize.x), 2.0f / static_cast<float>(logicalSize.y) };
-        constants.xyOffset = { -1.0f, -1.0f };
-        commandBuffer.PushConstants(*m_drawingShader, VK_SHADER_STAGE_VERTEX_BIT, sizeof(PushConstants), &constants);
-        commandBuffer.PushConstants(*m_fontShader, VK_SHADER_STAGE_VERTEX_BIT, sizeof(PushConstants), &constants);
+        // Store the projection on the context so StartCommands re-applies it
+        // after a mid-frame RestartContext; ApplyProjection records it into the
+        // command buffer here.
+        context->m_logicalExtent = VkExtent2D{ static_cast<uint32_t>(logicalSize.x),
+                                               static_cast<uint32_t>(logicalSize.y) };
+        context->m_viewport = VkViewport{ offsetX, offsetY, fitWidth, fitHeight, 0.0f, 1.0f };
+        context->m_scissor = VkRect2D{
+            { static_cast<int32_t>(offsetX), static_cast<int32_t>(offsetY) },
+            { static_cast<uint32_t>(fitWidth), static_cast<uint32_t>(fitHeight) } };
+        ApplyProjection();
     }
 
     void Graphics::OnResize(VkSurfaceKHR surface, uint32_t surfaceWidth, uint32_t surfaceHeight) {

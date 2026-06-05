@@ -33,8 +33,24 @@ namespace moth_graphics::platform::sdl {
 
             void Render(moth_graphics::graphics::IGraphics& /*graphics*/) override {
                 if (m_sdlWindow != nullptr) {
+                    // The moth_ui layer draw leaves an SDL logical-size scale on
+                    // the renderer (SDL_RenderSetLogicalSize) to map layout
+                    // coordinates. ImGui's SDL backend renders through that same
+                    // renderer but expects 1:1 output pixels, and its mouse input
+                    // is in raw window coordinates — so without clearing the
+                    // logical size the overlay is scaled/offset relative to the
+                    // cursor. Clear it (0,0 disables logical scaling) just for the
+                    // ImGui submit, then restore it: SDL also uses the logical
+                    // size to rescale mouse-event coordinates into layout space,
+                    // which moth_ui relies on, so it must persist between frames.
+                    SDL_Renderer* renderer = SDL_GetRenderer(m_sdlWindow);
+                    int logicalW = 0;
+                    int logicalH = 0;
+                    SDL_RenderGetLogicalSize(renderer, &logicalW, &logicalH);
+                    SDL_RenderSetLogicalSize(renderer, 0, 0);
                     ImGui::Render();
                     ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
+                    SDL_RenderSetLogicalSize(renderer, logicalW, logicalH);
                 }
             }
 

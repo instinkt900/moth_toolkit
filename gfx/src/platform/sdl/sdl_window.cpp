@@ -65,6 +65,53 @@ namespace {
         }
     }
 
+    // Convert a mouse event's coordinates from the renderer's logical space
+    // back into native window pixels, in place. When a logical size is set
+    // (SDL_RenderSetLogicalSize, which moth_ui uses for layout scaling +
+    // letterboxing), SDL rescales mouse-event coordinates into that logical
+    // space. moth_ui wants that; ImGui does not — its SDL backend reads these
+    // same coordinates as its mouse position but submits its geometry in
+    // native window pixels, so feeding it logical coordinates makes the cursor
+    // and the UI drift apart by the logical/window scale factor (most visible
+    // when dragging an ImGui window's resize grip). Undo SDL's scaling for
+    // ImGui's copy only. No-op when no logical size is active or on the older
+    // SDL that lacks the conversion.
+    void ToWindowSpaceMouseCoords(SDL_Renderer* renderer, SDL_Event& event) {
+#if SDL_VERSION_ATLEAST(2, 0, 18)
+        if (renderer == nullptr) {
+            return;
+        }
+        int logicalW = 0;
+        int logicalH = 0;
+        SDL_RenderGetLogicalSize(renderer, &logicalW, &logicalH);
+        if (logicalW == 0 && logicalH == 0) {
+            return;
+        }
+        int windowX = 0;
+        int windowY = 0;
+        switch (event.type) {
+        case SDL_MOUSEMOTION:
+            SDL_RenderLogicalToWindow(renderer, static_cast<float>(event.motion.x),
+                                      static_cast<float>(event.motion.y), &windowX, &windowY);
+            event.motion.x = windowX;
+            event.motion.y = windowY;
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+        case SDL_MOUSEBUTTONUP:
+            SDL_RenderLogicalToWindow(renderer, static_cast<float>(event.button.x),
+                                      static_cast<float>(event.button.y), &windowX, &windowY);
+            event.button.x = windowX;
+            event.button.y = windowY;
+            break;
+        default:
+            break;
+        }
+#else
+        (void)renderer;
+        (void)event;
+#endif
+    }
+
     bool CollectSDLEventsForWindow(uint32_t windowId, std::vector<SDL_Event>* outEvents) {
         std::lock_guard lock(EventFetchMutex);
 
@@ -134,7 +181,11 @@ namespace moth_graphics::platform::sdl {
         std::vector<SDL_Event> events;
         CollectSDLEventsForWindow(m_windowId, &events);
         for (auto event : events) {
-            ImGui_ImplSDL2_ProcessEvent(&event);
+            // Hand ImGui a copy with mouse coordinates in native window space;
+            // moth_ui's translation below keeps the logical-space original.
+            SDL_Event imguiEvent = event;
+            ToWindowSpaceMouseCoords(m_renderer, imguiEvent);
+            ImGui_ImplSDL2_ProcessEvent(&imguiEvent);
             if (auto const translatedEvent = FromSDL(event)) {
                 moth_ui::EventDispatch dispatch(*translatedEvent);
                 dispatch.Dispatch(this, &Window::OnResizeEvent);

@@ -138,11 +138,17 @@ namespace moth_ui {
     public:
         /**
          * @brief Constructs the event.
-         * @param delta Scroll amount, positive values scroll up/forward.
+         * @param delta    Scroll amount, positive values scroll up/forward.
+         * @param position Cursor position in screen space at the time of the
+         *                 scroll. Wheel events carry no position of their own,
+         *                 so the platform stamps the current cursor location;
+         *                 widgets need it to decide whether the scroll is over
+         *                 them without relying on a cached move position.
          */
-        EventMouseWheel(IntVec2 const& delta)
+        EventMouseWheel(IntVec2 const& delta, IntVec2 const& position)
             : Event(GetStaticType())
-            , m_delta(delta) {}
+            , m_delta(delta)
+            , m_position(position) {}
 
         /// @brief Returns the static type code for EventMouseWheel.
         static constexpr int GetStaticType() { return EVENTTYPE_MOUSE_WHEEL; }
@@ -150,8 +156,11 @@ namespace moth_ui {
         /// @brief Returns the scroll delta.
         IntVec2 const& GetDelta() const { return m_delta; }
 
+        /// @brief Returns the cursor position in screen space.
+        IntVec2 const& GetPosition() const { return m_position; }
+
         std::unique_ptr<Event> Clone() const override {
-            return std::make_unique<EventMouseWheel>(m_delta);
+            return std::make_unique<EventMouseWheel>(m_delta, m_position);
         }
 
         EventMouseWheel(EventMouseWheel const&) = default;
@@ -162,5 +171,6 @@ namespace moth_ui {
 
     private:
         IntVec2 m_delta;
+        IntVec2 m_position;
     };
 }

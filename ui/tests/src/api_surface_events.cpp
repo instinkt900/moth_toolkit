@@ -48,9 +48,10 @@ TEST_CASE("Mouse event method signatures are stable", "[api][events][mouse]") {
     FloatVec2 const& (EventMouseMove::*moveDelta)() const = &EventMouseMove::GetDelta;
 
     IntVec2 const& (EventMouseWheel::*wheelDelta)() const = &EventMouseWheel::GetDelta;
+    IntVec2 const& (EventMouseWheel::*wheelPos)()   const = &EventMouseWheel::GetPosition;
 
     (void)downBtn; (void)downPos; (void)upBtn; (void)upPos;
-    (void)movePos; (void)moveDelta; (void)wheelDelta;
+    (void)movePos; (void)moveDelta; (void)wheelDelta; (void)wheelPos;
     SUCCEED();
 }
 

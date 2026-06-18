@@ -182,3 +182,146 @@ TEST_CASE("LayerStack size changes are reflected", "[layer_stack]") {
     REQUIRE(stack.GetWindowWidth() == 3840);
     REQUIRE(stack.GetWindowHeight() == 2160);
 }
+
+namespace {
+    class ModalTestLayer : public Layer {
+    public:
+        bool eventReceived = false;
+        bool updateReceived = false;
+        bool modal = false;
+
+        bool IsModal() const override { return modal || Layer::IsModal(); }
+
+        bool OnEvent(Event const&) override {
+            eventReceived = true;
+            return false;  // never consume — we want to see who else gets the event
+        }
+        void Update(uint32_t) override { updateReceived = true; }
+    };
+}
+
+TEST_CASE("Modal layer blocks events from reaching layers below", "[layer_stack][modal]") {
+    MockRenderer renderer;
+    LayerStack stack(renderer, {800, 600}, {800, 600});
+
+    auto bottom = std::make_unique<ModalTestLayer>();
+    auto middle = std::make_unique<ModalTestLayer>();
+    auto top = std::make_unique<ModalTestLayer>();
+    auto* bottomPtr = bottom.get();
+    auto* middlePtr = middle.get();
+    auto* topPtr = top.get();
+    middlePtr->modal = true;
+
+    stack.PushLayer(std::move(bottom));
+    stack.PushLayer(std::move(middle));
+    stack.PushLayer(std::move(top));
+
+    TestEvent ev;
+    stack.OnEvent(ev);
+
+    REQUIRE(topPtr->eventReceived);     // top of stack: yes
+    REQUIRE(middlePtr->eventReceived);  // modal layer itself: yes
+    REQUIRE_FALSE(bottomPtr->eventReceived);  // beneath the modal: blocked
+}
+
+TEST_CASE("Modal layer suspends Update on layers below", "[layer_stack][modal]") {
+    MockRenderer renderer;
+    LayerStack stack(renderer, {800, 600}, {800, 600});
+
+    auto bottom = std::make_unique<ModalTestLayer>();
+    auto modal = std::make_unique<ModalTestLayer>();
+    auto top = std::make_unique<ModalTestLayer>();
+    auto* bottomPtr = bottom.get();
+    auto* modalPtr = modal.get();
+    auto* topPtr = top.get();
+    modalPtr->modal = true;
+
+    stack.PushLayer(std::move(bottom));
+    stack.PushLayer(std::move(modal));
+    stack.PushLayer(std::move(top));
+
+    stack.Update(16);
+
+    REQUIRE(topPtr->updateReceived);
+    REQUIRE(modalPtr->updateReceived);
+    REQUIRE_FALSE(bottomPtr->updateReceived);
+}
+
+TEST_CASE("No modal layer means normal dispatch", "[layer_stack][modal]") {
+    MockRenderer renderer;
+    LayerStack stack(renderer, {800, 600}, {800, 600});
+
+    auto bottom = std::make_unique<ModalTestLayer>();
+    auto top = std::make_unique<ModalTestLayer>();
+    auto* bottomPtr = bottom.get();
+    auto* topPtr = top.get();
+
+    stack.PushLayer(std::move(bottom));
+    stack.PushLayer(std::move(top));
+
+    TestEvent ev;
+    stack.OnEvent(ev);
+    stack.Update(16);
+
+    REQUIRE(topPtr->eventReceived);
+    REQUIRE(bottomPtr->eventReceived);
+    REQUIRE(topPtr->updateReceived);
+    REQUIRE(bottomPtr->updateReceived);
+}
+
+TEST_CASE("Topmost modal acts as the cutoff when multiple modals exist", "[layer_stack][modal]") {
+    MockRenderer renderer;
+    LayerStack stack(renderer, {800, 600}, {800, 600});
+
+    auto bottom = std::make_unique<ModalTestLayer>();
+    auto lowerModal = std::make_unique<ModalTestLayer>();
+    auto between = std::make_unique<ModalTestLayer>();
+    auto upperModal = std::make_unique<ModalTestLayer>();
+    auto top = std::make_unique<ModalTestLayer>();
+    auto* bottomPtr = bottom.get();
+    auto* lowerModalPtr = lowerModal.get();
+    auto* betweenPtr = between.get();
+    auto* upperModalPtr = upperModal.get();
+    auto* topPtr = top.get();
+    lowerModalPtr->modal = true;
+    upperModalPtr->modal = true;
+
+    stack.PushLayer(std::move(bottom));
+    stack.PushLayer(std::move(lowerModal));
+    stack.PushLayer(std::move(between));
+    stack.PushLayer(std::move(upperModal));
+    stack.PushLayer(std::move(top));
+
+    stack.Update(16);
+
+    REQUIRE(topPtr->updateReceived);
+    REQUIRE(upperModalPtr->updateReceived);
+    REQUIRE_FALSE(betweenPtr->updateReceived);
+    REQUIRE_FALSE(lowerModalPtr->updateReceived);
+    REQUIRE_FALSE(bottomPtr->updateReceived);
+}
+
+TEST_CASE("SetModal flips the default IsModal", "[layer_stack][modal]") {
+    MockRenderer renderer;
+    LayerStack stack(renderer, {800, 600}, {800, 600});
+
+    auto bottom = std::make_unique<TestLayer>();
+    auto top = std::make_unique<TestLayer>();
+    auto* bottomPtr = bottom.get();
+    auto* topPtr = top.get();
+    topPtr->SetModal(true);
+
+    stack.PushLayer(std::move(bottom));
+    stack.PushLayer(std::move(top));
+
+    stack.Update(16);
+    REQUIRE(topPtr->updateCalled);
+    REQUIRE_FALSE(bottomPtr->updateCalled);
+
+    topPtr->SetModal(false);
+    bottomPtr->updateCalled = false;
+    topPtr->updateCalled = false;
+    stack.Update(16);
+    REQUIRE(topPtr->updateCalled);
+    REQUIRE(bottomPtr->updateCalled);
+}

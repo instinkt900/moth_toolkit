@@ -91,6 +91,14 @@ namespace moth_ui {
         m_children.insert(std::next(std::begin(m_children), toIndex), std::move(child));
     }
 
+    void Group::SetCapturedNode(std::shared_ptr<Node> node) {
+        m_capturedNode = node;
+    }
+
+    std::shared_ptr<Node> Group::GetCapturedNode() const {
+        return m_capturedNode.lock();
+    }
+
     bool Group::HasAnimation(std::string_view name) const {
         if (m_layout) {
             auto& animationClips = m_typedLayout->m_clips;
@@ -146,7 +154,12 @@ namespace moth_ui {
 
     std::shared_ptr<Node> Group::FindChild(std::string_view id) {
         if (id == m_id) {
-            return shared_from_this();
+            // weak_from_this() is empty during construction, so shared_from_this()
+            // would throw bad_weak_ptr if a widget ctor calls FindChild for its
+            // own id. Fall through to the child search in that case.
+            if (auto self = weak_from_this().lock()) {
+                return self;
+            }
         }
         std::shared_ptr<Node> found;
         for (auto&& child : m_children) {
@@ -176,6 +189,9 @@ namespace moth_ui {
         m_animationClipController = std::make_unique<AnimationClipController>(this);
     }
 
+    // TODO: currently unreachable — see LayoutEntityRef::ReapplyOverrides for why
+    // the Node::ReloadEntity call site was removed and the conditions under
+    // which a future caller would need it.
     void Group::ReapplyOverrides(LayoutEntity& childLayout) {
         if (auto* ref = dynamic_cast<LayoutEntityRef*>(m_layout.get())) {
             ref->ReapplyOverrides(childLayout);

@@ -54,6 +54,14 @@
 #include "moth_ui/layers/layer.h"
 #include "moth_ui/layers/layer_stack.h"
 
+// flow (opt-in navigation utility)
+#include "moth_ui/flow/code_driven_layer.h"
+#include "moth_ui/flow/flow.h"
+#include "moth_ui/flow/flow_graph.h"
+#include "moth_ui/flow/iclickable.h"
+#include "moth_ui/flow/transition_participant.h"
+#include "moth_ui/flow/transitioning_layer.h"
+
 // nodes
 #include "moth_ui/nodes/group.h"
 #include "moth_ui/nodes/node.h"
@@ -61,9 +69,13 @@
 #include "moth_ui/nodes/node_image.h"
 #include "moth_ui/nodes/node_rect.h"
 #include "moth_ui/nodes/node_text.h"
-#include "moth_ui/nodes/widget.h"
 #include "moth_ui/nodes/node_flipbook.h"
 #include "moth_ui/nodes/node_gradient.h"
+
+// widgets (opt-in extension points on top of Group)
+#include "moth_ui/widgets/widget.h"
+#include "moth_ui/widgets/ui_button.h"
+#include "moth_ui/widgets/ui_scroll_view.h"
 
 // utils
 #include "moth_ui/utils/color.h"

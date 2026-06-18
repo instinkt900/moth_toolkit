@@ -42,18 +42,46 @@ namespace moth_ui {
         }
     }
 
+    std::unique_ptr<Layer> LayerStack::DetachLayer(Layer* layer) {
+        auto it = std::find_if(std::begin(m_layers), std::end(m_layers), [layer](auto& candidate) {
+            return candidate.get() == layer;
+        });
+        if (std::end(m_layers) == it) {
+            return nullptr;
+        }
+        auto owned = std::move(*it);
+        m_layers.erase(it);
+        owned->OnRemovedFromStack();
+        return owned;
+    }
+
     bool LayerStack::OnEvent(Event const& event) {
+        // Walk top-to-bottom. A modal layer terminates dispatch regardless of
+        // whether it consumed the event, so layers beneath it remain isolated.
         for (auto it = m_layers.rbegin(); it != m_layers.rend(); ++it) {
-            if ((*it)->OnEvent(event)) {
+            bool const handled = (*it)->OnEvent(event);
+            if (handled) {
                 return true;
+            }
+            if ((*it)->IsModal()) {
+                return false;
             }
         }
         return false;
     }
 
     void LayerStack::Update(uint32_t ticks) {
-        for (auto&& layer : m_layers) {
-            layer->Update(ticks);
+        // Update layers from the topmost modal upward. Anything beneath a
+        // modal layer is suspended (no Update call) until the modal is popped.
+        auto begin = m_layers.begin();
+        for (auto it = m_layers.rbegin(); it != m_layers.rend(); ++it) {
+            if ((*it)->IsModal()) {
+                begin = it.base() - 1;
+                break;
+            }
+        }
+        for (auto it = begin; it != m_layers.end(); ++it) {
+            (*it)->Update(ticks);
         }
     }
 

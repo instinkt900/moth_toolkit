@@ -35,6 +35,8 @@ set(SOURCES
     src/test_node_factory.cpp
     src/test_layout_cache.cpp
     src/test_layer_stack.cpp
+    src/test_flow_graph.cpp
+    src/test_flow.cpp
     # API surface tests — compile-time only, no runtime assertions
     src/api_surface_umbrella.cpp
     src/api_surface_fwd.cpp

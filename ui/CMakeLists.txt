@@ -38,6 +38,12 @@ set(PUBLIC_HEADERS
 	include/moth_ui/events/event_key.h
 	include/moth_ui/events/event_listener.h
 	include/moth_ui/events/event_mouse.h
+	include/moth_ui/flow/code_driven_layer.h
+	include/moth_ui/flow/flow.h
+	include/moth_ui/flow/flow_graph.h
+	include/moth_ui/flow/iclickable.h
+	include/moth_ui/flow/transition_participant.h
+	include/moth_ui/flow/transitioning_layer.h
 	include/moth_ui/font_factory.h
 	include/moth_ui/graphics/blend_mode.h
 	include/moth_ui/graphics/iflipbook.h
@@ -76,7 +82,6 @@ set(PUBLIC_HEADERS
 	include/moth_ui/nodes/node_image.h
 	include/moth_ui/nodes/node_rect.h
 	include/moth_ui/nodes/node_text.h
-	include/moth_ui/nodes/widget.h
 	include/moth_ui/utils/color.h
 	include/moth_ui/utils/interp.h
 	include/moth_ui/utils/rect.h
@@ -90,6 +95,9 @@ set(PUBLIC_HEADERS
 	include/moth_ui/utils/transform.h
 	include/moth_ui/utils/vector_utils.h
 	include/moth_ui/version.h
+	include/moth_ui/widgets/ui_button.h
+	include/moth_ui/widgets/ui_scroll_view.h
+	include/moth_ui/widgets/widget.h
 )
 set(SOURCES ${SOURCES}
 	src/animation/animation_clip_controller.cpp
@@ -101,6 +109,9 @@ set(SOURCES ${SOURCES}
 	src/animation/discrete_animation_track_controller.cpp
 	src/animation/keyframe.cpp
 	src/context.cpp
+	src/flow/flow.cpp
+	src/flow/flow_graph.cpp
+	src/flow/transitioning_layer.cpp
 	src/logger.cpp
 	src/font_factory.cpp
 	src/layers/layer.cpp
@@ -125,6 +136,9 @@ set(SOURCES ${SOURCES}
 	src/nodes/node_image.cpp
 	src/nodes/node_rect.cpp
 	src/nodes/node_text.cpp
+	src/widgets/ui_button.cpp
+	src/widgets/ui_scroll_view.cpp
+	src/widgets/widget.cpp
 )
 
 find_package(nlohmann_json REQUIRED)

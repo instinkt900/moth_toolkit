@@ -34,6 +34,48 @@ namespace moth_ui {
         return OnEvent(event);
     }
 
+    namespace {
+        Group* FindRootGroup(Node* node) {
+            if (node == nullptr) {
+                return nullptr;
+            }
+            Group* parent = node->GetParent();
+            if (parent == nullptr) {
+                // A detached node has no root; capture has nowhere to live.
+                return nullptr;
+            }
+            while (parent->GetParent() != nullptr) {
+                parent = parent->GetParent();
+            }
+            return parent;
+        }
+    }
+
+    void Node::RequestInputCapture() {
+        if (auto* root = FindRootGroup(this)) {
+            root->SetCapturedNode(shared_from_this());
+        }
+    }
+
+    void Node::ReleaseInputCapture() {
+        if (auto* root = FindRootGroup(this)) {
+            if (root->GetCapturedNode().get() == this) {
+                root->SetCapturedNode(nullptr);
+            }
+        }
+    }
+
+    bool Node::HasInputCapture() const {
+        Group const* parent = GetParent();
+        if (parent == nullptr) {
+            return false;
+        }
+        while (parent->GetParent() != nullptr) {
+            parent = parent->GetParent();
+        }
+        return parent->GetCapturedNode().get() == this;
+    }
+
     bool Node::OnEvent(Event const& event) {
         if (m_eventHandler) {
             return m_eventHandler(this, event);
@@ -132,7 +174,13 @@ namespace moth_ui {
         ReloadEntityInternal();
 
         if (m_parent != nullptr) {
-            m_parent->ReapplyOverrides(*m_layout);
+            // TODO: previously also called m_parent->ReapplyOverrides(*m_layout)
+            // here. Removed because it stamped stale on-disk override JSON over a
+            // freshly-edited entity, reverting edits before save. The reapply is
+            // unnecessary in current code: overrides are baked into child entities
+            // at Deserialize time and nothing in the ReloadEntity path resets them.
+            // See LayoutEntityRef::ReapplyOverrides for the conditions under which
+            // such a call would actually be needed.
             m_visible = m_layout->m_visible;
             m_blend = m_layout->m_blend;
         }
@@ -152,7 +200,10 @@ namespace moth_ui {
 
     std::shared_ptr<Node> Node::FindChild(std::string_view id) {
         if (id == m_id) {
-            return shared_from_this();
+            // weak_from_this() is empty during construction, so shared_from_this()
+            // would throw bad_weak_ptr if a widget ctor calls FindChild for its
+            // own id. Return nullptr in that case rather than aborting.
+            return weak_from_this().lock();
         }
         return nullptr;
     }

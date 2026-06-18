@@ -3,6 +3,46 @@
 All notable changes to this project will be documented in this file.
 Entries are generated automatically from git history using [git-cliff](https://github.com/orhun/git-cliff).
 
+## [1.1.0] - 2026-06-18
+### Features
+- Add NodeGradient with animatable two-stop linear gradient
+- Add Group::SetAnimationProgress for clip scrubbing
+- Add opt-in flow navigation utility
+- Add input capture for exclusive event routing
+- Add alignment setters to NodeText
+- Add UIScrollView widget for scrollable layout content
+
+### Bug Fixes
+- Make Context non-copyable to prevent aliased factory pointer bugs
+- Return load result from NodeFactory::Create(path) instead of silent nullptr
+- Guard NodeFactory::Create against null instantiation result
+- Replace abort() with warning and graceful skip for unknown AnimationTarget
+- Log when gradient target dispatched on non-gradient node
+- Catch nlohmann json type errors during graph load
+- Preserve cached layers across Pop
+- UIButton consumes mouse-up on activation
+- Avoid bad_weak_ptr when widget ctors call FindChild or SetAnimation
+- Drop stale-override reapply on ReloadEntity
+- Ignore non-positive or NaN scroll step in UIScrollView
+
+### Refactoring
+- Remove EventDirection enum and SendEvent(direction) overload
+- Rename SendEventUp to SendEvent
+
+### Documentation
+- Refresh flow system design doc after implementation
+- Add flow system consumer guide; fix design doc drift
+- Document adding the Artifactory remote before installing
+
+### Testing
+- Extend ContinuousTargets pin to include 12 new gradient targets
+- Bump ContinuousTargets size assert from 13 to 25
+- Cover flow system, layer-stack modality, and graph validation
+- Fix two flow tests that pass on libstdc++ but fail on MSVC
+
+### Changes
+- Bump version from 1.0.0 to 1.1.0
+
 ## [1.0.0] - 2026-05-01
 ### Bug Fixes
 - CopyLayout now copies events from source layout

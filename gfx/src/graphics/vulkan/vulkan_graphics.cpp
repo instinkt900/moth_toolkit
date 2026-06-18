@@ -8,6 +8,8 @@
 
 #include "moth_graphics/utils/circle_tessellation.h"
 
+#include <cmath>
+
 namespace moth_graphics::graphics::vulkan {
     Graphics::Graphics(SurfaceContext& context, VkSurfaceKHR surface, uint32_t surfaceWidth, uint32_t surfaceHeight)
         : m_surfaceContext(context)
@@ -72,6 +74,17 @@ namespace moth_graphics::graphics::vulkan {
         vkResetFences(m_surfaceContext.GetVkDevice(), 1, &cmdFence);
 
         BeginContext(&m_defaultContext);
+
+        // Mirror the SDL backend: wipe the full physical surface each frame.
+        // The render pass uses LOAD_OP_LOAD and per-layer SetLogicalSize narrows
+        // the viewport, so without this the region outside the logical viewport
+        // keeps stale content from the previous frame in this swapchain image.
+        // BeginContext leaves viewport/scissor/m_logicalExtent at the full target
+        // extent, so this clears everything before any letterboxing applies.
+        Color const savedColor = m_defaultContext.m_currentColor;
+        SetColor(BasicColors::Black);
+        Clear();
+        SetColor(savedColor);
     }
 
     void Graphics::End() {
@@ -594,18 +607,45 @@ namespace moth_graphics::graphics::vulkan {
         FlushPendingBatch();
         auto& commandBuffer = context->m_target->GetCommandBuffer();
         if (clipRect != nullptr) {
+            // The clip rect arrives in logical coordinates. Geometry is mapped
+            // logical -> physical through the letterbox viewport (scale + offset
+            // from SetLogicalSize); the scissor must follow the same mapping, or
+            // it lands in the wrong place at the wrong size whenever the logical
+            // size differs from the physical extent. Then clamp to the letterbox
+            // scissor so it never spills into the black bars.
+            float const scaleX = context->m_logicalExtent.width > 0
+                ? context->m_viewport.width / static_cast<float>(context->m_logicalExtent.width)
+                : 1.0f;
+            float const scaleY = context->m_logicalExtent.height > 0
+                ? context->m_viewport.height / static_cast<float>(context->m_logicalExtent.height)
+                : 1.0f;
+
+            float const left = context->m_viewport.x + (static_cast<float>(clipRect->x()) * scaleX);
+            float const top = context->m_viewport.y + (static_cast<float>(clipRect->y()) * scaleY);
+            float const right = left + (static_cast<float>(clipRect->w()) * scaleX);
+            float const bottom = top + (static_cast<float>(clipRect->h()) * scaleY);
+
+            VkRect2D const& bounds = context->m_scissor;
+            int32_t const boundsLeft = bounds.offset.x;
+            int32_t const boundsTop = bounds.offset.y;
+            int32_t const boundsRight = bounds.offset.x + static_cast<int32_t>(bounds.extent.width);
+            int32_t const boundsBottom = bounds.offset.y + static_cast<int32_t>(bounds.extent.height);
+
+            int32_t const clampedLeft = std::min(std::max(static_cast<int32_t>(std::floor(left)), boundsLeft), boundsRight);
+            int32_t const clampedTop = std::min(std::max(static_cast<int32_t>(std::floor(top)), boundsTop), boundsBottom);
+            int32_t const clampedRight = std::min(std::max(static_cast<int32_t>(std::ceil(right)), boundsLeft), boundsRight);
+            int32_t const clampedBottom = std::min(std::max(static_cast<int32_t>(std::ceil(bottom)), boundsTop), boundsBottom);
+
             VkRect2D scissor;
-            scissor.offset.x = clipRect->x();
-            scissor.offset.y = clipRect->y();
-            scissor.extent.width = clipRect->w();
-            scissor.extent.height = clipRect->h();
+            scissor.offset.x = clampedLeft;
+            scissor.offset.y = clampedTop;
+            scissor.extent.width = static_cast<uint32_t>(clampedRight - clampedLeft);
+            scissor.extent.height = static_cast<uint32_t>(clampedBottom - clampedTop);
             commandBuffer.SetScissor(scissor);
         } else {
-            VkRect2D scissor;
-            scissor.offset.x = 0;
-            scissor.offset.y = 0;
-            scissor.extent = context->m_target->GetVkExtent();
-            commandBuffer.SetScissor(scissor);
+            // Restore the letterbox scissor (the no-clip state set by
+            // SetLogicalSize / BeginContext), not the raw physical extent.
+            commandBuffer.SetScissor(context->m_scissor);
         }
     }
 
@@ -668,8 +708,8 @@ namespace moth_graphics::graphics::vulkan {
         FlushPendingBatch();
 
         // Letterbox: fit the logical aspect inside the physical extent and
-        // centre it. Bars outside the viewport stay black via the render pass
-        // clear.
+        // centre it. Bars outside the viewport stay black via the full-surface
+        // clear in Begin() (the render pass itself uses LOAD_OP_LOAD).
         VkExtent2D const physical = context->m_target->GetVkExtent();
         float const logicalAspect = static_cast<float>(logicalSize.x) / static_cast<float>(logicalSize.y);
         float const physicalAspect = static_cast<float>(physical.width) / static_cast<float>(physical.height);
@@ -684,15 +724,31 @@ namespace moth_graphics::graphics::vulkan {
         float const offsetX = (static_cast<float>(physical.width) - fitWidth) * 0.5f;
         float const offsetY = (static_cast<float>(physical.height) - fitHeight) * 0.5f;
 
+        // Snap the letterbox rect to whole pixels and derive both the viewport
+        // and the scissor from the same integers. The viewport is float and the
+        // scissor is int; if they disagree by a sub-pixel at the edge, the
+        // content rasterises against one grid while the scissor clips against
+        // another, leaving a one-pixel sliver of content detached at the
+        // letterbox boundary. Clamp the extent so offset + size never exceeds
+        // the physical surface after rounding.
+        int32_t const intOffsetX = static_cast<int32_t>(std::lround(offsetX));
+        int32_t const intOffsetY = static_cast<int32_t>(std::lround(offsetY));
+        int32_t const intFitWidth = std::min(static_cast<int32_t>(std::lround(fitWidth)),
+                                             static_cast<int32_t>(physical.width) - intOffsetX);
+        int32_t const intFitHeight = std::min(static_cast<int32_t>(std::lround(fitHeight)),
+                                              static_cast<int32_t>(physical.height) - intOffsetY);
+
         // Store the projection on the context so StartCommands re-applies it
         // after a mid-frame RestartContext; ApplyProjection records it into the
         // command buffer here.
         context->m_logicalExtent = VkExtent2D{ static_cast<uint32_t>(logicalSize.x),
                                                static_cast<uint32_t>(logicalSize.y) };
-        context->m_viewport = VkViewport{ offsetX, offsetY, fitWidth, fitHeight, 0.0f, 1.0f };
+        context->m_viewport = VkViewport{ static_cast<float>(intOffsetX), static_cast<float>(intOffsetY),
+                                          static_cast<float>(intFitWidth), static_cast<float>(intFitHeight),
+                                          0.0f, 1.0f };
         context->m_scissor = VkRect2D{
-            { static_cast<int32_t>(offsetX), static_cast<int32_t>(offsetY) },
-            { static_cast<uint32_t>(fitWidth), static_cast<uint32_t>(fitHeight) } };
+            { intOffsetX, intOffsetY },
+            { static_cast<uint32_t>(intFitWidth), static_cast<uint32_t>(intFitHeight) } };
         ApplyProjection();
     }
 

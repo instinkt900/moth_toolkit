@@ -101,7 +101,18 @@ The recommended pattern is:
 
 ## Using with Conan
 
-The recommended way to consume moth_ui is as a Conan package. Add it as a dependency in your `conanfile.py`:
+moth_ui is published to an Artifactory remote, not to Conan Center, so Conan
+can't resolve it from the default `conancenter` remote. Register the remote
+once before installing:
+
+```bash
+conan remote add moth https://artifactory.matthewcotton.net/artifactory/api/conan/conan-local
+```
+
+The remote is publicly readable, so no login is required to install.
+
+With the remote registered, consume moth_ui as a Conan package. Add it as a
+dependency in your `conanfile.py`:
 
 ```python
 def requirements(self):

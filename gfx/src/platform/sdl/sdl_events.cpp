@@ -272,7 +272,7 @@ namespace {
 }
 
 namespace moth_graphics::platform::sdl {
-    std::unique_ptr<moth_ui::Event> FromSDL(SDL_Event const& event) {
+    std::unique_ptr<moth_ui::Event> FromSDL(SDL_Event const& event, moth_ui::IntVec2 const& mousePosition) {
         switch (event.type) {
         case SDL_WINDOWEVENT: {
             switch (event.window.event) {
@@ -329,7 +329,7 @@ namespace moth_graphics::platform::sdl {
             return std::make_unique<moth_ui::EventMouseMove>(moth_ui::IntVec2{ event.motion.x, event.motion.y }, moth_ui::FloatVec2{ static_cast<float>(event.motion.xrel), static_cast<float>(event.motion.yrel) });
         }
         case SDL_MOUSEWHEEL: {
-            return std::make_unique<moth_ui::EventMouseWheel>(moth_ui::IntVec2{ event.wheel.x, event.wheel.y });
+            return std::make_unique<moth_ui::EventMouseWheel>(moth_ui::IntVec2{ event.wheel.x, event.wheel.y }, mousePosition);
         }
         }
         return nullptr;

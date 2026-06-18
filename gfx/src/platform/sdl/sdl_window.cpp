@@ -112,6 +112,32 @@ namespace {
 #endif
     }
 
+    // Current cursor position in logical (render) space. SDL_GetMouseState
+    // returns native window pixels; convert through the renderer's logical
+    // mapping so it matches the coordinates SDL already scales motion/button
+    // events into. Used to stamp wheel events, which carry no position.
+    moth_ui::IntVec2 CurrentLogicalMousePos(SDL_Renderer* renderer) {
+        int windowX = 0;
+        int windowY = 0;
+        SDL_GetMouseState(&windowX, &windowY);
+#if SDL_VERSION_ATLEAST(2, 0, 18)
+        if (renderer != nullptr) {
+            int logicalW = 0;
+            int logicalH = 0;
+            SDL_RenderGetLogicalSize(renderer, &logicalW, &logicalH);
+            if (logicalW != 0 || logicalH != 0) {
+                float logicalX = 0.0f;
+                float logicalY = 0.0f;
+                SDL_RenderWindowToLogical(renderer, windowX, windowY, &logicalX, &logicalY);
+                return { static_cast<int>(logicalX), static_cast<int>(logicalY) };
+            }
+        }
+#else
+        (void)renderer;
+#endif
+        return { windowX, windowY };
+    }
+
     bool CollectSDLEventsForWindow(uint32_t windowId, std::vector<SDL_Event>* outEvents) {
         std::lock_guard lock(EventFetchMutex);
 
@@ -186,7 +212,7 @@ namespace moth_graphics::platform::sdl {
             SDL_Event imguiEvent = event;
             ToWindowSpaceMouseCoords(m_renderer, imguiEvent);
             ImGui_ImplSDL2_ProcessEvent(&imguiEvent);
-            if (auto const translatedEvent = FromSDL(event)) {
+            if (auto const translatedEvent = FromSDL(event, CurrentLogicalMousePos(m_renderer))) {
                 moth_ui::EventDispatch dispatch(*translatedEvent);
                 dispatch.Dispatch(this, &Window::OnResizeEvent);
                 dispatch.Dispatch(&GetLayerStack());

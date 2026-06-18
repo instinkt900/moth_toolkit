@@ -194,6 +194,23 @@ namespace moth_graphics::platform::glfw {
             }
         });
 
+        glfwSetScrollCallback(m_glfwWindow, [](GLFWwindow* window, double xoffset, double yoffset) {
+            Window* app = static_cast<Window*>(glfwGetWindowUserPointer(window));
+            if (app == nullptr) {
+                return;
+            }
+            // GLFW wheel callbacks carry a delta only; stamp the current cursor
+            // position (logical space, as for button events) so widgets can tell
+            // whether the scroll is over them without a prior move event. The
+            // last known cursor pos stays accurate while the cursor is still.
+            // Match the SDL backend's integer notch convention (+y is scroll up).
+            auto const logicalPos = ToLogicalPos(app->GetLayerStack(), app->m_lastMousePos);
+            moth_ui::EventMouseWheel const translatedEvent{
+                moth_ui::IntVec2{ static_cast<int>(xoffset), static_cast<int>(yoffset) },
+                logicalPos };
+            app->OnEvent(translatedEvent);
+        });
+
         int width = 0;
         int height = 0;
         glfwGetFramebufferSize(m_glfwWindow, &width, &height);

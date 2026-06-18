@@ -50,8 +50,14 @@ namespace moth_ui {
         /// @brief Default pixels scrolled per wheel notch.
         static constexpr float kDefaultScrollStep = 40.0f;
 
-        /// @brief Sets the pixels scrolled per wheel notch.
-        void SetScrollStep(float step) { m_scrollStep = step; }
+        /// @brief Sets the pixels scrolled per wheel notch. Ignores non-positive
+        /// or NaN values (the comparison is false for negative, zero, and NaN),
+        /// keeping the current step so wheel math can't be corrupted.
+        void SetScrollStep(float step) {
+            if (step > 0.0f) {
+                m_scrollStep = step;
+            }
+        }
 
         /// @brief Returns the current scroll offset in pixels from the top.
         float GetScrollOffset() const { return m_scrollY; }

@@ -2,6 +2,7 @@
 #include "moth_ui/widgets/widget.h"
 
 #include "moth_ui/widgets/ui_button.h"
+#include "moth_ui/widgets/ui_scroll_view.h"
 
 namespace moth_ui {
     void EnsureWidgetsRegistered() {
@@ -10,5 +11,6 @@ namespace moth_ui {
         // their SelfRegister() initialisers intact. Add a new line for each
         // bundled widget added to moth_ui.
         (void)Widget<UIButton>::s_widgetIsRegistered_;
+        (void)Widget<UIScrollView>::s_widgetIsRegistered_;
     }
 }

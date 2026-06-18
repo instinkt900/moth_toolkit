@@ -96,6 +96,7 @@ set(PUBLIC_HEADERS
 	include/moth_ui/utils/vector_utils.h
 	include/moth_ui/version.h
 	include/moth_ui/widgets/ui_button.h
+	include/moth_ui/widgets/ui_scroll_view.h
 	include/moth_ui/widgets/widget.h
 )
 set(SOURCES ${SOURCES}
@@ -136,6 +137,7 @@ set(SOURCES ${SOURCES}
 	src/nodes/node_rect.cpp
 	src/nodes/node_text.cpp
 	src/widgets/ui_button.cpp
+	src/widgets/ui_scroll_view.cpp
 	src/widgets/widget.cpp
 )
 

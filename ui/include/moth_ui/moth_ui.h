@@ -75,6 +75,7 @@
 // widgets (opt-in extension points on top of Group)
 #include "moth_ui/widgets/widget.h"
 #include "moth_ui/widgets/ui_button.h"
+#include "moth_ui/widgets/ui_scroll_view.h"
 
 // utils
 #include "moth_ui/utils/color.h"

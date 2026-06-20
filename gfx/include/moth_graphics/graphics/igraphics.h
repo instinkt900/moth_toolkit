@@ -79,6 +79,29 @@ namespace moth_graphics::graphics {
         /// @param rect Rectangle in logical pixels.
         virtual void DrawFillRectF(FloatRect const& rect) = 0;
 
+        /// @brief Draw a filled circle using the current color.
+        /// @param center Centre point in logical pixels (pre-transform).
+        /// @param radius Radius in logical pixels.
+        virtual void DrawFillCircleF(FloatVec2 const& center, float radius) = 0;
+
+        /// @brief Draw a textured filled circle.
+        ///
+        /// The image is mapped across the circle's axis-aligned bounding box
+        /// (@p center ± @p radius), with fragments outside the disc clipped by
+        /// the tessellation. The current color modulates the texture sample,
+        /// matching @c DrawImage tinting semantics.
+        ///
+        /// @param image      Source image; @c image.GetSourceRect() applies.
+        /// @param center     Centre point in logical pixels (pre-transform).
+        /// @param radius     Radius in logical pixels.
+        /// @param sourceRect Sub-region of the image to sample, relative to
+        ///                   the image's own origin, or @c nullptr for the
+        ///                   full image.
+        virtual void DrawImageCircle(Image const& image,
+                                     FloatVec2 const& center,
+                                     float radius,
+                                     IntRect const* sourceRect = nullptr) = 0;
+
         /// @brief Draw a linear gradient inside @p destRect.
         ///
         /// The transition runs along an axis at @p angle radians, centred at

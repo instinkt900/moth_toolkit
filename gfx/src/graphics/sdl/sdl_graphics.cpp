@@ -7,6 +7,8 @@
 #include "moth_graphics/platform/sdl/sdl_window.h"
 #include "../utils.h"
 
+#include "moth_graphics/utils/circle_tessellation.h"
+
 namespace moth_graphics::graphics::sdl {
     Graphics::Graphics(SurfaceContext& context)
         : m_surfaceContext(context)
@@ -169,6 +171,107 @@ namespace moth_graphics::graphics::sdl {
             { { bl.x, bl.y }, sdlColor, { 0.0f, 0.0f } },
         };
         SDL_RenderGeometry(m_surfaceContext.GetRenderer(), nullptr, sdlVertices, 6, nullptr, 0);
+    }
+
+    void Graphics::DrawFillCircleF(FloatVec2 const& center, float radius) {
+        if (radius <= 0.0f) {
+            return;
+        }
+        int const segments = detail::CircleSegmentCount(radius);
+        auto const t = CurrentTransform();
+        auto const centerW = t.TransformPoint(center);
+        ColorComponents const comp{ m_drawColor };
+        SDL_Color const sdlColor{ comp.r, comp.g, comp.b, comp.a };
+        constexpr float kTwoPi = 6.28318530718f;
+
+        std::vector<SDL_Vertex> vertices(static_cast<size_t>(segments) * 3);
+        FloatVec2 prev = t.TransformPoint({ center.x + radius, center.y });
+        for (int i = 0; i < segments; ++i) {
+            float const a = (kTwoPi * static_cast<float>(i + 1)) / static_cast<float>(segments);
+            FloatVec2 const next = t.TransformPoint({
+                center.x + (std::cos(a) * radius),
+                center.y + (std::sin(a) * radius),
+            });
+            auto const base = static_cast<size_t>(i) * 3;
+            vertices[base + 0] = { { centerW.x, centerW.y }, sdlColor, { 0.0f, 0.0f } };
+            vertices[base + 1] = { { prev.x,    prev.y    }, sdlColor, { 0.0f, 0.0f } };
+            vertices[base + 2] = { { next.x,    next.y    }, sdlColor, { 0.0f, 0.0f } };
+            prev = next;
+        }
+        SDL_RenderGeometry(m_surfaceContext.GetRenderer(), nullptr,
+                           vertices.data(), static_cast<int>(vertices.size()),
+                           nullptr, 0);
+    }
+
+    void Graphics::DrawImageCircle(Image const& image, FloatVec2 const& center, float radius, IntRect const* sourceRect) {
+        if (radius <= 0.0f) {
+            return;
+        }
+        auto sdlTexture = std::dynamic_pointer_cast<Texture>(image.GetTexture());
+        if (!sdlTexture) {
+            return;
+        }
+
+        FloatRect imageRect;
+        if (sourceRect != nullptr) {
+            imageRect = static_cast<FloatRect>(*sourceRect);
+        } else {
+            imageRect = MakeRect(0.0f, 0.0f, static_cast<float>(image.GetWidth()), static_cast<float>(image.GetHeight()));
+        }
+        FloatVec2 const textureDimensions{
+            static_cast<float>(sdlTexture->GetWidth()),
+            static_cast<float>(sdlTexture->GetHeight()),
+        };
+        imageRect += static_cast<FloatVec2>(image.GetSourceRect().topLeft);
+        imageRect /= textureDimensions;
+
+        // Drive tint + alpha + blend through the texture state, matching the
+        // SDL DrawImage path. Vertex colors stay white so they don't double up.
+        SDL_Texture* const sdlTex = sdlTexture->GetSDLTexture()->GetImpl();
+        ColorComponents const comp{ m_drawColor };
+        SDL_SetTextureBlendMode(sdlTex, ToSDL(m_blendMode));
+        SDL_SetTextureColorMod(sdlTex, comp.r, comp.g, comp.b);
+        SDL_SetTextureAlphaMod(sdlTex, comp.a);
+        SDL_Color const sdlWhite{ 255, 255, 255, 255 };
+
+        int const segments = detail::CircleSegmentCount(radius);
+        auto const t = CurrentTransform();
+        constexpr float kTwoPi = 6.28318530718f;
+
+        auto computeUv = [&](float lx, float ly) -> FloatVec2 {
+            float const u = (lx - (center.x - radius)) / (2.0f * radius);
+            float const v = (ly - (center.y - radius)) / (2.0f * radius);
+            return {
+                imageRect.topLeft.x + (u * (imageRect.bottomRight.x - imageRect.topLeft.x)),
+                imageRect.topLeft.y + (v * (imageRect.bottomRight.y - imageRect.topLeft.y)),
+            };
+        };
+
+        auto const centerW = t.TransformPoint(center);
+        FloatVec2 const centerUv = computeUv(center.x, center.y);
+
+        std::vector<SDL_Vertex> vertices(static_cast<size_t>(segments) * 3);
+        float prevLx = center.x + radius;
+        float prevLy = center.y;
+        FloatVec2 prevW = t.TransformPoint({ prevLx, prevLy });
+        FloatVec2 prevUv = computeUv(prevLx, prevLy);
+        for (int i = 0; i < segments; ++i) {
+            float const a = (kTwoPi * static_cast<float>(i + 1)) / static_cast<float>(segments);
+            float const nextLx = center.x + (std::cos(a) * radius);
+            float const nextLy = center.y + (std::sin(a) * radius);
+            FloatVec2 const nextW = t.TransformPoint({ nextLx, nextLy });
+            FloatVec2 const nextUv = computeUv(nextLx, nextLy);
+            auto const base = static_cast<size_t>(i) * 3;
+            vertices[base + 0] = { { centerW.x, centerW.y }, sdlWhite, { centerUv.x, centerUv.y } };
+            vertices[base + 1] = { { prevW.x,   prevW.y   }, sdlWhite, { prevUv.x,   prevUv.y   } };
+            vertices[base + 2] = { { nextW.x,   nextW.y   }, sdlWhite, { nextUv.x,   nextUv.y   } };
+            prevW = nextW;
+            prevUv = nextUv;
+        }
+
+        SDL_RenderGeometry(m_surfaceContext.GetRenderer(), sdlTex,
+                           vertices.data(), static_cast<int>(vertices.size()),
+                           nullptr, 0);
     }
 
     void Graphics::DrawGradientRect(FloatRect const& destRect,

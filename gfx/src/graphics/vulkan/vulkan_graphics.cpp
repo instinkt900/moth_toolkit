@@ -6,6 +6,10 @@
 #include "vulkan_utils.h"
 #include "stb_image_write.h"
 
+#include "moth_graphics/utils/circle_tessellation.h"
+
+#include <cmath>
+
 namespace moth_graphics::graphics::vulkan {
     Graphics::Graphics(SurfaceContext& context, VkSurfaceKHR surface, uint32_t surfaceWidth, uint32_t surfaceHeight)
         : m_surfaceContext(context)
@@ -70,6 +74,17 @@ namespace moth_graphics::graphics::vulkan {
         vkResetFences(m_surfaceContext.GetVkDevice(), 1, &cmdFence);
 
         BeginContext(&m_defaultContext);
+
+        // Mirror the SDL backend: wipe the full physical surface each frame.
+        // The render pass uses LOAD_OP_LOAD and per-layer SetLogicalSize narrows
+        // the viewport, so without this the region outside the logical viewport
+        // keeps stale content from the previous frame in this swapchain image.
+        // BeginContext leaves viewport/scissor/m_logicalExtent at the full target
+        // extent, so this clears everything before any letterboxing applies.
+        Color const savedColor = m_defaultContext.m_currentColor;
+        SetColor(BasicColors::Black);
+        Clear();
+        SetColor(savedColor);
     }
 
     void Graphics::End() {
@@ -284,6 +299,107 @@ namespace moth_graphics::graphics::vulkan {
         SubmitVertices(vertices, 6, ETopologyType::Triangles);
     }
 
+    void Graphics::DrawFillCircleF(FloatVec2 const& center, float radius) {
+        auto* context = CurrentContext();
+        if (context == nullptr || radius <= 0.0f) {
+            return;
+        }
+        int const segments = detail::CircleSegmentCount(radius);
+        auto const t = CurrentTransform();
+        auto const centerW = t.TransformPoint(center);
+        constexpr float kTwoPi = 6.28318530718f;
+
+        std::vector<Vertex> vertices(static_cast<size_t>(segments) * 3);
+        FloatVec2 prev = t.TransformPoint({ center.x + radius, center.y });
+        for (int i = 0; i < segments; ++i) {
+            float const a = (kTwoPi * static_cast<float>(i + 1)) / static_cast<float>(segments);
+            FloatVec2 const next = t.TransformPoint({
+                center.x + (std::cos(a) * radius),
+                center.y + (std::sin(a) * radius),
+            });
+            auto const base = static_cast<size_t>(i) * 3;
+            vertices[base + 0].xy = centerW;
+            vertices[base + 0].uv = { 0, 0 };
+            vertices[base + 0].color = context->m_currentColor;
+            vertices[base + 1].xy = prev;
+            vertices[base + 1].uv = { 0, 0 };
+            vertices[base + 1].color = context->m_currentColor;
+            vertices[base + 2].xy = next;
+            vertices[base + 2].uv = { 0, 0 };
+            vertices[base + 2].color = context->m_currentColor;
+            prev = next;
+        }
+        SubmitVertices(vertices.data(), static_cast<uint32_t>(vertices.size()), ETopologyType::Triangles);
+    }
+
+    void Graphics::DrawImageCircle(Image const& image, FloatVec2 const& center, float radius, IntRect const* sourceRect) {
+        auto* context = CurrentContext();
+        if (context == nullptr || radius <= 0.0f) {
+            return;
+        }
+        auto texture = std::dynamic_pointer_cast<Texture>(image.GetTexture());
+        if (!texture) {
+            return;
+        }
+
+        FloatRect imageRect;
+        if (sourceRect != nullptr) {
+            imageRect = static_cast<FloatRect>(*sourceRect);
+        } else {
+            imageRect = MakeRect(0.0f, 0.0f, static_cast<float>(image.GetWidth()), static_cast<float>(image.GetHeight()));
+        }
+        FloatVec2 const textureDimensions{
+            static_cast<float>(texture->GetVkExtent().width),
+            static_cast<float>(texture->GetVkExtent().height),
+        };
+        imageRect += static_cast<FloatVec2>(image.GetSourceRect().topLeft);
+        imageRect /= textureDimensions;
+
+        int const segments = detail::CircleSegmentCount(radius);
+        auto const t = CurrentTransform();
+        constexpr float kTwoPi = 6.28318530718f;
+
+        auto computeUv = [&](float lx, float ly) -> FloatVec2 {
+            float const u = (lx - (center.x - radius)) / (2.0f * radius);
+            float const v = (ly - (center.y - radius)) / (2.0f * radius);
+            return {
+                imageRect.topLeft.x + (u * (imageRect.bottomRight.x - imageRect.topLeft.x)),
+                imageRect.topLeft.y + (v * (imageRect.bottomRight.y - imageRect.topLeft.y)),
+            };
+        };
+
+        auto const centerW = t.TransformPoint(center);
+        FloatVec2 const centerUv = computeUv(center.x, center.y);
+
+        std::vector<Vertex> vertices(static_cast<size_t>(segments) * 3);
+        float prevLx = center.x + radius;
+        float prevLy = center.y;
+        FloatVec2 prevW = t.TransformPoint({ prevLx, prevLy });
+        FloatVec2 prevUv = computeUv(prevLx, prevLy);
+        for (int i = 0; i < segments; ++i) {
+            float const a = (kTwoPi * static_cast<float>(i + 1)) / static_cast<float>(segments);
+            float const nextLx = center.x + (std::cos(a) * radius);
+            float const nextLy = center.y + (std::sin(a) * radius);
+            FloatVec2 const nextW = t.TransformPoint({ nextLx, nextLy });
+            FloatVec2 const nextUv = computeUv(nextLx, nextLy);
+            auto const base = static_cast<size_t>(i) * 3;
+            vertices[base + 0].xy = centerW;
+            vertices[base + 0].uv = centerUv;
+            vertices[base + 0].color = context->m_currentColor;
+            vertices[base + 1].xy = prevW;
+            vertices[base + 1].uv = prevUv;
+            vertices[base + 1].color = context->m_currentColor;
+            vertices[base + 2].xy = nextW;
+            vertices[base + 2].uv = nextUv;
+            vertices[base + 2].color = context->m_currentColor;
+            prevW = nextW;
+            prevUv = nextUv;
+        }
+
+        VkDescriptorSet const descriptorSet = m_drawingShader->GetDescriptorSet(*texture);
+        SubmitVertices(vertices.data(), static_cast<uint32_t>(vertices.size()), ETopologyType::Triangles, descriptorSet);
+    }
+
     void Graphics::DrawGradientRect(FloatRect const& destRect,
                                     Color startColor, Color endColor,
                                     FloatVec2 midpoint,
@@ -491,18 +607,45 @@ namespace moth_graphics::graphics::vulkan {
         FlushPendingBatch();
         auto& commandBuffer = context->m_target->GetCommandBuffer();
         if (clipRect != nullptr) {
+            // The clip rect arrives in logical coordinates. Geometry is mapped
+            // logical -> physical through the letterbox viewport (scale + offset
+            // from SetLogicalSize); the scissor must follow the same mapping, or
+            // it lands in the wrong place at the wrong size whenever the logical
+            // size differs from the physical extent. Then clamp to the letterbox
+            // scissor so it never spills into the black bars.
+            float const scaleX = context->m_logicalExtent.width > 0
+                ? context->m_viewport.width / static_cast<float>(context->m_logicalExtent.width)
+                : 1.0f;
+            float const scaleY = context->m_logicalExtent.height > 0
+                ? context->m_viewport.height / static_cast<float>(context->m_logicalExtent.height)
+                : 1.0f;
+
+            float const left = context->m_viewport.x + (static_cast<float>(clipRect->x()) * scaleX);
+            float const top = context->m_viewport.y + (static_cast<float>(clipRect->y()) * scaleY);
+            float const right = left + (static_cast<float>(clipRect->w()) * scaleX);
+            float const bottom = top + (static_cast<float>(clipRect->h()) * scaleY);
+
+            VkRect2D const& bounds = context->m_scissor;
+            int32_t const boundsLeft = bounds.offset.x;
+            int32_t const boundsTop = bounds.offset.y;
+            int32_t const boundsRight = bounds.offset.x + static_cast<int32_t>(bounds.extent.width);
+            int32_t const boundsBottom = bounds.offset.y + static_cast<int32_t>(bounds.extent.height);
+
+            int32_t const clampedLeft = std::min(std::max(static_cast<int32_t>(std::floor(left)), boundsLeft), boundsRight);
+            int32_t const clampedTop = std::min(std::max(static_cast<int32_t>(std::floor(top)), boundsTop), boundsBottom);
+            int32_t const clampedRight = std::min(std::max(static_cast<int32_t>(std::ceil(right)), boundsLeft), boundsRight);
+            int32_t const clampedBottom = std::min(std::max(static_cast<int32_t>(std::ceil(bottom)), boundsTop), boundsBottom);
+
             VkRect2D scissor;
-            scissor.offset.x = clipRect->x();
-            scissor.offset.y = clipRect->y();
-            scissor.extent.width = clipRect->w();
-            scissor.extent.height = clipRect->h();
+            scissor.offset.x = clampedLeft;
+            scissor.offset.y = clampedTop;
+            scissor.extent.width = static_cast<uint32_t>(clampedRight - clampedLeft);
+            scissor.extent.height = static_cast<uint32_t>(clampedBottom - clampedTop);
             commandBuffer.SetScissor(scissor);
         } else {
-            VkRect2D scissor;
-            scissor.offset.x = 0;
-            scissor.offset.y = 0;
-            scissor.extent = context->m_target->GetVkExtent();
-            commandBuffer.SetScissor(scissor);
+            // Restore the letterbox scissor (the no-clip state set by
+            // SetLogicalSize / BeginContext), not the raw physical extent.
+            commandBuffer.SetScissor(context->m_scissor);
         }
     }
 
@@ -565,8 +708,8 @@ namespace moth_graphics::graphics::vulkan {
         FlushPendingBatch();
 
         // Letterbox: fit the logical aspect inside the physical extent and
-        // centre it. Bars outside the viewport stay black via the render pass
-        // clear.
+        // centre it. Bars outside the viewport stay black via the full-surface
+        // clear in Begin() (the render pass itself uses LOAD_OP_LOAD).
         VkExtent2D const physical = context->m_target->GetVkExtent();
         float const logicalAspect = static_cast<float>(logicalSize.x) / static_cast<float>(logicalSize.y);
         float const physicalAspect = static_cast<float>(physical.width) / static_cast<float>(physical.height);
@@ -581,29 +724,32 @@ namespace moth_graphics::graphics::vulkan {
         float const offsetX = (static_cast<float>(physical.width) - fitWidth) * 0.5f;
         float const offsetY = (static_cast<float>(physical.height) - fitHeight) * 0.5f;
 
-        auto& commandBuffer = context->m_target->GetCommandBuffer();
+        // Snap the letterbox rect to whole pixels and derive both the viewport
+        // and the scissor from the same integers. The viewport is float and the
+        // scissor is int; if they disagree by a sub-pixel at the edge, the
+        // content rasterises against one grid while the scissor clips against
+        // another, leaving a one-pixel sliver of content detached at the
+        // letterbox boundary. Clamp the extent so offset + size never exceeds
+        // the physical surface after rounding.
+        int32_t const intOffsetX = static_cast<int32_t>(std::lround(offsetX));
+        int32_t const intOffsetY = static_cast<int32_t>(std::lround(offsetY));
+        int32_t const intFitWidth = std::min(static_cast<int32_t>(std::lround(fitWidth)),
+                                             static_cast<int32_t>(physical.width) - intOffsetX);
+        int32_t const intFitHeight = std::min(static_cast<int32_t>(std::lround(fitHeight)),
+                                              static_cast<int32_t>(physical.height) - intOffsetY);
 
-        VkViewport viewport;
-        viewport.x = offsetX;
-        viewport.y = offsetY;
-        viewport.width = fitWidth;
-        viewport.height = fitHeight;
-        viewport.minDepth = 0.0f;
-        viewport.maxDepth = 1.0f;
-        commandBuffer.SetViewport(viewport);
-
-        VkRect2D scissor;
-        scissor.offset.x = static_cast<int32_t>(offsetX);
-        scissor.offset.y = static_cast<int32_t>(offsetY);
-        scissor.extent.width = static_cast<uint32_t>(fitWidth);
-        scissor.extent.height = static_cast<uint32_t>(fitHeight);
-        commandBuffer.SetScissor(scissor);
-
-        PushConstants constants;
-        constants.xyScale = { 2.0f / static_cast<float>(logicalSize.x), 2.0f / static_cast<float>(logicalSize.y) };
-        constants.xyOffset = { -1.0f, -1.0f };
-        commandBuffer.PushConstants(*m_drawingShader, VK_SHADER_STAGE_VERTEX_BIT, sizeof(PushConstants), &constants);
-        commandBuffer.PushConstants(*m_fontShader, VK_SHADER_STAGE_VERTEX_BIT, sizeof(PushConstants), &constants);
+        // Store the projection on the context so StartCommands re-applies it
+        // after a mid-frame RestartContext; ApplyProjection records it into the
+        // command buffer here.
+        context->m_logicalExtent = VkExtent2D{ static_cast<uint32_t>(logicalSize.x),
+                                               static_cast<uint32_t>(logicalSize.y) };
+        context->m_viewport = VkViewport{ static_cast<float>(intOffsetX), static_cast<float>(intOffsetY),
+                                          static_cast<float>(intFitWidth), static_cast<float>(intFitHeight),
+                                          0.0f, 1.0f };
+        context->m_scissor = VkRect2D{
+            { intOffsetX, intOffsetY },
+            { static_cast<uint32_t>(intFitWidth), static_cast<uint32_t>(intFitHeight) } };
+        ApplyProjection();
     }
 
     void Graphics::OnResize(VkSurfaceKHR surface, uint32_t surfaceWidth, uint32_t surfaceHeight) {

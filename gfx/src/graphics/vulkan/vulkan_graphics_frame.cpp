@@ -10,10 +10,16 @@ namespace moth_graphics::graphics::vulkan {
     static constexpr uint32_t kMaxGlyphCount = 1024;
 
     void Graphics::BeginContext(DrawContext* context) {
-        context->m_logicalExtent = context->m_target->GetVkExtent();
+        VkExtent2D const targetExtent = context->m_target->GetVkExtent();
+        context->m_logicalExtent = targetExtent;
+        context->m_viewport = VkViewport{ 0.0f, 0.0f,
+            static_cast<float>(targetExtent.width), static_cast<float>(targetExtent.height),
+            0.0f, 1.0f };
+        context->m_scissor = VkRect2D{ { 0, 0 }, targetExtent };
         context->m_vertexCount = 0;
         context->m_currentPipelineId = 0;
         context->m_pendingBatch.reset();
+        context->m_acquireWaitPending = true;
 
         if (!context->m_vertexBuffer) {
             context->m_vertexBuffer = std::make_unique<Buffer>(m_surfaceContext, kVertexBufferCapacity * sizeof(Vertex), VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
@@ -33,11 +39,14 @@ namespace moth_graphics::graphics::vulkan {
 
     void Graphics::RestartContext() {
         auto* context = m_contextStack.top();
-        FlushCommands();
+        FlushCommands(false);
         auto* cmdFence = context->m_target->GetFence().GetVkFence();
         vkWaitForFences(m_surfaceContext.GetVkDevice(), 1, &cmdFence, VK_TRUE, UINT64_MAX);
         vkResetFences(m_surfaceContext.GetVkDevice(), 1, &cmdFence);
-        context->m_logicalExtent = context->m_target->GetVkExtent();
+        // Deliberately preserve m_logicalExtent/m_viewport/m_scissor: they hold
+        // the SetLogicalSize state, and StartCommands re-applies it below. The
+        // layer only sets the logical size once per frame, so resetting it here
+        // would draw everything after this overflow at the target's native size.
         context->m_vertexCount = 0;
         context->m_currentPipelineId = 0;
         context->m_pendingBatch.reset();
@@ -46,7 +55,7 @@ namespace moth_graphics::graphics::vulkan {
     }
 
     void Graphics::EndContext() {
-        FlushCommands();
+        FlushCommands(true);
         m_contextStack.pop();
     }
 
@@ -61,26 +70,23 @@ namespace moth_graphics::graphics::vulkan {
         }
         commandBuffer.BeginRenderPass(GetCurrentRenderPass(), *context->m_target);
 
-        VkViewport viewport;
-        viewport.x = 0;
-        viewport.y = 0;
-        viewport.width = static_cast<float>(context->m_logicalExtent.width);
-        viewport.height = static_cast<float>(context->m_logicalExtent.height);
-        viewport.minDepth = 0.0f;
-        viewport.maxDepth = 1.0f;
-        commandBuffer.SetViewport(viewport);
+        ApplyProjection();
+        commandBuffer.BindVertexBuffer(*context->m_vertexBuffer, 0);
+    }
 
-        VkRect2D scissor;
-        scissor.offset.x = 0;
-        scissor.offset.y = 0;
-        scissor.extent = context->m_target->GetVkExtent();
-        commandBuffer.SetScissor(scissor);
+    void Graphics::ApplyProjection() {
+        auto* context = m_contextStack.top();
+        auto& commandBuffer = context->m_target->GetCommandBuffer();
+
+        commandBuffer.SetViewport(context->m_viewport);
+        commandBuffer.SetScissor(context->m_scissor);
 
         PushConstants pushConstants;
-        pushConstants.xyScale = { 2.0f / static_cast<float>(context->m_logicalExtent.width), 2.0f / static_cast<float>(context->m_logicalExtent.height) };
+        pushConstants.xyScale = { 2.0f / static_cast<float>(context->m_logicalExtent.width),
+                                  2.0f / static_cast<float>(context->m_logicalExtent.height) };
         pushConstants.xyOffset = { -1.0f, -1.0f };
         commandBuffer.PushConstants(*m_drawingShader, VK_SHADER_STAGE_VERTEX_BIT, sizeof(PushConstants), &pushConstants);
-        commandBuffer.BindVertexBuffer(*context->m_vertexBuffer, 0);
+        commandBuffer.PushConstants(*m_fontShader, VK_SHADER_STAGE_VERTEX_BIT, sizeof(PushConstants), &pushConstants);
     }
 
     void Graphics::FlushPendingBatch() {
@@ -96,7 +102,7 @@ namespace moth_graphics::graphics::vulkan {
         context->m_pendingBatch.reset();
     }
 
-    void Graphics::FlushCommands() {
+    void Graphics::FlushCommands(bool isFinal) {
         FlushPendingBatch();
         auto* context = CurrentContext();
         VkFence cmdFence = context->m_target->GetFence().GetVkFence();
@@ -141,7 +147,21 @@ namespace moth_graphics::graphics::vulkan {
             uploadCommandBuffer->SubmitAndWait();
         }
 
-        commandBuffer.Submit(cmdFence, context->m_target->GetAvailableSemaphore(), context->m_target->GetRenderFinishedSemaphore());
+        // Only the frame's first submit waits on the acquire semaphore, and only
+        // its final submit signals the render-finished semaphore that present
+        // waits on. Mid-frame submits (RestartContext, when a draw overflows the
+        // vertex buffer) carry neither — they are ordered by the fence wait in
+        // RestartContext, and reusing the once-per-frame swapchain semaphores
+        // here would deadlock the GPU and trip validation. (Render targets have
+        // no frame slot, so both accessors return VK_NULL_HANDLE regardless.)
+        VkSemaphore const waitSemaphore = context->m_acquireWaitPending
+            ? context->m_target->GetAvailableSemaphore()
+            : VK_NULL_HANDLE;
+        context->m_acquireWaitPending = false;
+        VkSemaphore const signalSemaphore = isFinal
+            ? context->m_target->GetRenderFinishedSemaphore()
+            : VK_NULL_HANDLE;
+        commandBuffer.Submit(cmdFence, waitSemaphore, signalSemaphore);
     }
 
     void Graphics::SubmitVertices(Vertex* vertices, uint32_t vertCount, ETopologyType topology, VkDescriptorSet descriptorSet) {

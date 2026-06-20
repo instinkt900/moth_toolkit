@@ -188,6 +188,14 @@ namespace moth_graphics::platform::glfw {
             if (app == nullptr) {
                 return;
             }
+            // Query the live cursor position rather than the cached one: no
+            // move callback need have fired yet (cursor stationary since launch),
+            // which would otherwise hit-test the click at a stale position.
+            double cursorX = 0.0;
+            double cursorY = 0.0;
+            glfwGetCursorPos(window, &cursorX, &cursorY);
+            app->m_lastMousePos = FloatVec2{ cursorX, cursorY };
+            app->m_haveMousePos = true;
             auto const logicalPos = ToLogicalPos(app->GetLayerStack(), app->m_lastMousePos);
             if (auto const translatedEvent = FromGLFW(button, action, mods, logicalPos)) {
                 app->OnEvent(*translatedEvent);
@@ -199,11 +207,17 @@ namespace moth_graphics::platform::glfw {
             if (app == nullptr) {
                 return;
             }
-            // GLFW wheel callbacks carry a delta only; stamp the current cursor
-            // position (logical space, as for button events) so widgets can tell
-            // whether the scroll is over them without a prior move event. The
-            // last known cursor pos stays accurate while the cursor is still.
+            // GLFW wheel callbacks carry a delta only; stamp the cursor position
+            // (logical space, as for button events) so widgets can tell whether
+            // the scroll is over them without a prior move event. Query the live
+            // position rather than the cached one, which may be stale if no move
+            // callback has fired since launch.
             // Match the SDL backend's integer notch convention (+y is scroll up).
+            double cursorX = 0.0;
+            double cursorY = 0.0;
+            glfwGetCursorPos(window, &cursorX, &cursorY);
+            app->m_lastMousePos = FloatVec2{ cursorX, cursorY };
+            app->m_haveMousePos = true;
             auto const logicalPos = ToLogicalPos(app->GetLayerStack(), app->m_lastMousePos);
             moth_ui::EventMouseWheel const translatedEvent{
                 moth_ui::IntVec2{ static_cast<int>(xoffset), static_cast<int>(yoffset) },

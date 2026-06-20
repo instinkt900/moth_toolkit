@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 Entries are generated automatically from git history using [git-cliff](https://github.com/orhun/git-cliff).
 
+## [1.1.0] - 2026-06-20
+### Features
+- Add ITexture::UpdatePixels for sub-rect texture writes
+- Add IGraphics::DrawGradientRect for linear gradient fills
+- Bridge moth_ui::IRenderer::RenderGradientRect to IGraphics::DrawGradientRect
+- Add DrawFillCircleF primitive to IGraphics
+- Add DrawImageCircle primitive to IGraphics
+- Stamp cursor position onto mouse wheel events
+
+### Bug Fixes
+- Letterbox consistently across SDL and Vulkan backends
+- Address review feedback on letterbox patches
+- Translate GLFW mouse events into logical coords
+- Give MockTexture an UpdatePixels override
+- Validate inputs in UpdatePixels and make ITexture self-contained
+- Clear SDL logical size around ImGui render
+- Correct Vulkan frame state across mid-frame restarts
+- Feed ImGui window-space mouse coords on SDL backend
+- Clear full Vulkan surface and snap letterbox to whole pixels
+- Guard non-finite radius and stale GLFW cursor position
+
+### Miscellaneous
+- Bump moth_ui dependency to 1.1.0
+
+### Changes
+- Bump version from 1.0.0 to 1.1.0
+
 ## [1.0.0] - 2026-05-14
 ### Features
 - Add font metrics to IFont, switch SpriteSheet getters to std::optional

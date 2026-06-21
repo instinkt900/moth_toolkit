@@ -164,7 +164,17 @@ moth_graphics bridges its rendering to moth_ui automatically. Push a `moth_ui::L
 
 ## Using with Conan
 
-Add moth_graphics as a dependency in your `conanfile.py`:
+moth_graphics (and its `moth_ui` dependency) are published to an Artifactory
+remote, not to Conan Center, so Conan can't resolve them from the default
+`conancenter` remote. Register the remote once before installing:
+
+```bash
+conan remote add moth https://artifactory.matthewcotton.net/artifactory/api/conan/conan-local
+```
+
+The remote is publicly readable, so no login is required to install.
+
+With the remote registered, add moth_graphics as a dependency in your `conanfile.py`:
 
 ```python
 def requirements(self):
@@ -214,6 +224,12 @@ pip install conan
 ```
 
 **C++17 is required.** A `.conan/profile` is provided that sets `compiler.cppstd=17` and configures Conan to install system packages automatically (`tools.system.package_manager:mode=install`). This profile is used in CI and can be used directly or as a reference when building locally.
+
+Building from source pulls `moth_ui` from the Artifactory remote, so register it first if you haven't already (see [Using with Conan](#using-with-conan)):
+
+```bash
+conan remote add moth https://artifactory.matthewcotton.net/artifactory/api/conan/conan-local
+```
 
 ### Linux
 

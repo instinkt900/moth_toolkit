@@ -10,6 +10,42 @@
 #include "moth_graphics/utils/circle_tessellation.h"
 
 namespace moth_graphics::graphics::sdl {
+    namespace {
+        // Width of line primitives, in post-transform (logical) units. Matches
+        // SDL's ~1px hairline when the logical size equals the window size.
+        constexpr float kLineThickness = 1.0f;
+
+        // Draw a line segment as a filled quad via SDL_RenderGeometry.
+        //
+        // SDL's line rasterizer (SDL_RenderDrawLine*) clips against the right
+        // and bottom edges of the render area under SDL_RenderSetLogicalSize,
+        // so segments touching those edges silently drop out. Routing lines
+        // through the same geometry path as filled rects avoids the clipping.
+        // Endpoints are already in post-transform space; thickness shares those
+        // units.
+        void EmitLineQuad(SDL_Renderer* renderer, SDL_Color color,
+                          FloatVec2 const& a, FloatVec2 const& b, float thickness) {
+            float const dx = b.x - a.x;
+            float const dy = b.y - a.y;
+            float const length = std::sqrt((dx * dx) + (dy * dy));
+            if (length <= 0.0f) {
+                return;
+            }
+            float const half = thickness * 0.5f;
+            float const nx = (-dy / length) * half; // perpendicular offset
+            float const ny = (dx / length) * half;
+            SDL_Vertex const verts[6] = {
+                { { a.x + nx, a.y + ny }, color, { 0.0f, 0.0f } },
+                { { b.x + nx, b.y + ny }, color, { 0.0f, 0.0f } },
+                { { b.x - nx, b.y - ny }, color, { 0.0f, 0.0f } },
+                { { a.x + nx, a.y + ny }, color, { 0.0f, 0.0f } },
+                { { b.x - nx, b.y - ny }, color, { 0.0f, 0.0f } },
+                { { a.x - nx, a.y - ny }, color, { 0.0f, 0.0f } },
+            };
+            SDL_RenderGeometry(renderer, nullptr, verts, 6, nullptr, 0);
+        }
+    }
+
     Graphics::Graphics(SurfaceContext& context)
         : m_surfaceContext(context)
         , m_drawColor(graphics::BasicColors::White) {
@@ -144,14 +180,13 @@ namespace moth_graphics::graphics::sdl {
         auto const tr = t.TransformPoint({ rect.bottomRight.x, rect.topLeft.y });
         auto const br = t.TransformPoint({ rect.bottomRight.x, rect.bottomRight.y });
         auto const bl = t.TransformPoint({ rect.topLeft.x, rect.bottomRight.y });
-        SDL_FPoint const pts[5] = {
-            { tl.x, tl.y },
-            { tr.x, tr.y },
-            { br.x, br.y },
-            { bl.x, bl.y },
-            { tl.x, tl.y },
-        };
-        SDL_RenderDrawLinesF(m_surfaceContext.GetRenderer(), pts, 5);
+        ColorComponents const components{ m_drawColor };
+        SDL_Color const sdlColor{ components.r, components.g, components.b, components.a };
+        auto* const renderer = m_surfaceContext.GetRenderer();
+        EmitLineQuad(renderer, sdlColor, tl, tr, kLineThickness);
+        EmitLineQuad(renderer, sdlColor, tr, br, kLineThickness);
+        EmitLineQuad(renderer, sdlColor, br, bl, kLineThickness);
+        EmitLineQuad(renderer, sdlColor, bl, tl, kLineThickness);
     }
 
     void Graphics::DrawFillRectF(FloatRect const& rect) {
@@ -353,7 +388,9 @@ namespace moth_graphics::graphics::sdl {
         auto const t = CurrentTransform();
         auto const wp0 = t.TransformPoint(p0);
         auto const wp1 = t.TransformPoint(p1);
-        SDL_RenderDrawLineF(m_surfaceContext.GetRenderer(), wp0.x, wp0.y, wp1.x, wp1.y);
+        ColorComponents const components{ m_drawColor };
+        SDL_Color const sdlColor{ components.r, components.g, components.b, components.a };
+        EmitLineQuad(m_surfaceContext.GetRenderer(), sdlColor, wp0, wp1, kLineThickness);
     }
 
     void Graphics::DrawText(std::string_view text, graphics::IFont& font, IntRect const& destRect, graphics::TextHorizAlignment horizontalAlignment, graphics::TextVertAlignment verticalAlignment) {

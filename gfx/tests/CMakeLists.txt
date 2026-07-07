@@ -18,6 +18,7 @@ set(SOURCES
     src/test_sprite.cpp
     src/test_ticker.cpp
     src/test_event_emitter.cpp
+    src/test_polygon_triangulation.cpp
     # API surface tests — compile-time only, no runtime assertions
     src/api_surface_umbrella.cpp
     src/api_surface_enums.cpp

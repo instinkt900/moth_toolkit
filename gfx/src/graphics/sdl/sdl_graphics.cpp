@@ -8,6 +8,7 @@
 #include "../utils.h"
 
 #include "moth_graphics/utils/circle_tessellation.h"
+#include "moth_graphics/utils/polygon_triangulation.h"
 
 namespace moth_graphics::graphics::sdl {
     namespace {
@@ -235,6 +236,30 @@ namespace moth_graphics::graphics::sdl {
         }
         SDL_RenderGeometry(m_surfaceContext.GetRenderer(), nullptr,
                            vertices.data(), static_cast<int>(vertices.size()),
+                           nullptr, 0);
+    }
+
+    void Graphics::DrawFillPolygonF(FloatVec2 const* points, size_t count) {
+        auto const vertices = TriangulatePolygon(points, count);
+        DrawTrianglesF(vertices.data(), vertices.size());
+    }
+
+    void Graphics::DrawTrianglesF(FloatVec2 const* vertices, size_t count) {
+        size_t const triVerts = count - (count % 3);
+        if (vertices == nullptr || triVerts < 3) {
+            return;
+        }
+        auto const t = CurrentTransform();
+        ColorComponents const comp{ m_drawColor };
+        SDL_Color const sdlColor{ comp.r, comp.g, comp.b, comp.a };
+
+        std::vector<SDL_Vertex> sdlVertices(triVerts);
+        for (size_t i = 0; i < triVerts; ++i) {
+            FloatVec2 const w = t.TransformPoint(vertices[i]);
+            sdlVertices[i] = { { w.x, w.y }, sdlColor, { 0.0f, 0.0f } };
+        }
+        SDL_RenderGeometry(m_surfaceContext.GetRenderer(), nullptr,
+                           sdlVertices.data(), static_cast<int>(sdlVertices.size()),
                            nullptr, 0);
     }
 

@@ -26,6 +26,10 @@ TEST_CASE("IGraphics method signatures are stable", "[api][graphics][igraphics]"
                                     IntRect const*, float)    = &IGraphics::DrawImageTiled;
     void (IGraphics::*drawRect)(FloatRect const&)             = &IGraphics::DrawRectF;
     void (IGraphics::*drawFill)(FloatRect const&)             = &IGraphics::DrawFillRectF;
+    void (IGraphics::*drawFillPoly)(FloatVec2 const*,
+                                    size_t)                  = &IGraphics::DrawFillPolygonF;
+    void (IGraphics::*drawTris)(FloatVec2 const*,
+                                size_t)                      = &IGraphics::DrawTrianglesF;
     void (IGraphics::*drawLine)(FloatVec2 const&,
                                 FloatVec2 const&)             = &IGraphics::DrawLineF;
     void (IGraphics::*drawText)(std::string_view, IFont&,
@@ -43,7 +47,7 @@ TEST_CASE("IGraphics method signatures are stable", "[api][graphics][igraphics]"
     (void)setBlend; (void)setColor; (void)clear;
     (void)setXform;
     (void)drawImg; (void)drawImgPivot; (void)drawImgTiled;
-    (void)drawRect; (void)drawFill; (void)drawLine; (void)drawText;
+    (void)drawRect; (void)drawFill; (void)drawFillPoly; (void)drawTris; (void)drawLine; (void)drawText;
     (void)setClip; (void)createTarget; (void)getTarget; (void)setTarget;
     (void)setLogical;
     SUCCEED();

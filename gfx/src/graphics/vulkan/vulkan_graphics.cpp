@@ -7,6 +7,7 @@
 #include "stb_image_write.h"
 
 #include "moth_graphics/utils/circle_tessellation.h"
+#include "moth_graphics/utils/polygon_triangulation.h"
 
 #include <cmath>
 
@@ -330,6 +331,30 @@ namespace moth_graphics::graphics::vulkan {
             prev = next;
         }
         SubmitVertices(vertices.data(), static_cast<uint32_t>(vertices.size()), ETopologyType::Triangles);
+    }
+
+    void Graphics::DrawFillPolygonF(FloatVec2 const* points, size_t count) {
+        auto const vertices = TriangulatePolygon(points, count);
+        DrawTrianglesF(vertices.data(), vertices.size());
+    }
+
+    void Graphics::DrawTrianglesF(FloatVec2 const* vertices, size_t count) {
+        auto* context = CurrentContext();
+        if (context == nullptr) {
+            return;
+        }
+        size_t const triVerts = count - (count % 3);
+        if (vertices == nullptr || triVerts < 3) {
+            return;
+        }
+        auto const t = CurrentTransform();
+        std::vector<Vertex> verts(triVerts);
+        for (size_t i = 0; i < triVerts; ++i) {
+            verts[i].xy = t.TransformPoint(vertices[i]);
+            verts[i].uv = { 0, 0 };
+            verts[i].color = context->m_currentColor;
+        }
+        SubmitVertices(verts.data(), static_cast<uint32_t>(verts.size()), ETopologyType::Triangles);
     }
 
     void Graphics::DrawImageCircle(Image const& image, FloatVec2 const& center, float radius, IntRect const* sourceRect) {

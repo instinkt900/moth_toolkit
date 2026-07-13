@@ -21,12 +21,14 @@ namespace moth_graphics::graphics {
             return ((b.x - a.x) * (c.y - a.y)) - ((b.y - a.y) * (c.x - a.x));
         }
 
-        // Strictly inside the CCW triangle a-b-c (points on an edge are excluded,
-        // so vertices shared with the ear's own edges never block the clip).
+        // Inside or on the CCW triangle a-b-c. The caller already skips the ear's
+        // own three vertices, so any point reaching here is a genuine other vertex;
+        // one lying on an edge (e.g. a reflex vertex grazed by the candidate
+        // diagonal) must block the clip, else the ear bridges a concave notch.
         inline bool PointInsideTriangle(FloatVec2 const& p, FloatVec2 const& a,
                                         FloatVec2 const& b, FloatVec2 const& c) {
-            return PolygonCross(a, b, p) > 0.0f && PolygonCross(b, c, p) > 0.0f &&
-                   PolygonCross(c, a, p) > 0.0f;
+            return PolygonCross(a, b, p) >= 0.0f && PolygonCross(b, c, p) >= 0.0f &&
+                   PolygonCross(c, a, p) >= 0.0f;
         }
 
         inline std::vector<uint16_t> TriangulatePolygonIndices(FloatVec2 const* points, size_t count) {

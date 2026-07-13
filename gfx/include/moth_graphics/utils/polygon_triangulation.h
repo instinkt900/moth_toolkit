@@ -4,6 +4,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <limits>
 #include <vector>
 
 namespace moth_graphics::graphics {
@@ -33,7 +34,11 @@ namespace moth_graphics::graphics {
 
         inline std::vector<uint16_t> TriangulatePolygonIndices(FloatVec2 const* points, size_t count) {
             std::vector<uint16_t> triangles;
-            if (points == nullptr || count < 3) {
+            // Indices are emitted as uint16_t, so the largest point index
+            // (count - 1) must stay representable; reject counts that would
+            // otherwise wrap silently into wrong vertex references.
+            if (points == nullptr || count < 3 ||
+                count > static_cast<size_t>(std::numeric_limits<uint16_t>::max()) + 1) {
                 return triangles;
             }
 
@@ -94,11 +99,17 @@ namespace moth_graphics::graphics {
                 }
             }
 
-            if (remaining.size() == 3) {
-                triangles.push_back(static_cast<uint16_t>(remaining[0]));
-                triangles.push_back(static_cast<uint16_t>(remaining[1]));
-                triangles.push_back(static_cast<uint16_t>(remaining[2]));
+            // A guard-limited exit (self-intersecting or otherwise malformed
+            // input) leaves more than three vertices unclipped. Per the
+            // contract that is degenerate, so discard the partial fan rather
+            // than return stray triangles.
+            if (remaining.size() != 3) {
+                triangles.clear();
+                return triangles;
             }
+            triangles.push_back(static_cast<uint16_t>(remaining[0]));
+            triangles.push_back(static_cast<uint16_t>(remaining[1]));
+            triangles.push_back(static_cast<uint16_t>(remaining[2]));
             return triangles;
         }
     }

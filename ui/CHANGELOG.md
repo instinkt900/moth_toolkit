@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 Entries are generated automatically from git history using [git-cliff](https://github.com/orhun/git-cliff).
 
+## [1.1.1] - 2026-07-14
+### Bug Fixes
+- Assign vector elements without reinterpret_cast
+
+### Changes
+- Bump version from 1.1.0 to 1.1.1
+
 ## [1.1.0] - 2026-06-18
 ### Features
 - Add NodeGradient with animatable two-stop linear gradient

@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 Entries are generated automatically from git history using [git-cliff](https://github.com/orhun/git-cliff).
 
+## [1.2.0] - 2026-07-14
+### Features
+- Add filled polygon and cached triangle drawing to IGraphics
+
+### Bug Fixes
+- Draw SDL line primitives via geometry to stop edge clipping
+- Block ear clip when a vertex lies on the candidate triangle edge
+- Harden polygon triangulation against overflow and malformed input
+
+### Documentation
+- Document Artifactory remote registration for Conan
+
+### Miscellaneous
+- Bump moth_ui to 1.1.1
+
+### Changes
+- Bump version from 1.1.0 to 1.2.0
+
 ## [1.1.0] - 2026-06-20
 ### Features
 - Add ITexture::UpdatePixels for sub-rect texture writes

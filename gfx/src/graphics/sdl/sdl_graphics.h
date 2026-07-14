@@ -40,6 +40,8 @@ namespace moth_graphics::graphics::sdl {
         void DrawRectF(FloatRect const& rect) override;
         void DrawFillRectF(FloatRect const& rect) override;
         void DrawFillCircleF(FloatVec2 const& center, float radius) override;
+        void DrawFillPolygonF(FloatVec2 const* points, size_t count) override;
+        void DrawTrianglesF(FloatVec2 const* vertices, size_t count) override;
         void DrawImageCircle(Image const& image, FloatVec2 const& center, float radius, IntRect const* sourceRect) override;
         void DrawGradientRect(FloatRect const& destRect,
                               Color startColor, Color endColor,

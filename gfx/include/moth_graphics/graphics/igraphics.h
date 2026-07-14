@@ -10,6 +10,7 @@
 #include "moth_graphics/utils/transform.h"
 #include "moth_graphics/utils/vector.h"
 
+#include <cstddef>
 #include <memory>
 
 namespace moth_graphics::platform {
@@ -83,6 +84,35 @@ namespace moth_graphics::graphics {
         /// @param center Centre point in logical pixels (pre-transform).
         /// @param radius Radius in logical pixels.
         virtual void DrawFillCircleF(FloatVec2 const& center, float radius) = 0;
+
+        /// @brief Draw a filled polygon using the current color.
+        ///
+        /// The polygon is given by its perimeter points in local (pre-transform)
+        /// space, in either winding order; the active transform is applied. The
+        /// outline must be simple (non-self-intersecting) but may be convex or
+        /// concave. Holes are not supported. Fewer than three points draws
+        /// nothing.
+        ///
+        /// Triangulation runs on every call, so this suits dynamic or
+        /// modest-sized shapes. For large static geometry (e.g. land regions),
+        /// triangulate once with @c graphics::TriangulatePolygon and draw the
+        /// cached vertices each frame via @c DrawTrianglesF instead.
+        ///
+        /// @param points Perimeter points in local pixels.
+        /// @param count  Number of points.
+        virtual void DrawFillPolygonF(FloatVec2 const* points, size_t count) = 0;
+
+        /// @brief Draw a list of filled triangles using the current color.
+        ///
+        /// @p vertices holds three points per triangle in local (pre-transform)
+        /// space; the active transform is applied. Any trailing points that do
+        /// not complete a triple are ignored. This is the cached counterpart to
+        /// @c DrawFillPolygonF: pair it with @c graphics::TriangulatePolygon to
+        /// triangulate a polygon once and redraw it without re-triangulating.
+        ///
+        /// @param vertices Triangle vertices in local pixels (three per triangle).
+        /// @param count    Number of vertices.
+        virtual void DrawTrianglesF(FloatVec2 const* vertices, size_t count) = 0;
 
         /// @brief Draw a textured filled circle.
         ///

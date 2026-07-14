@@ -86,7 +86,10 @@ namespace moth_ui {
          */
         template <class... Scalars, std::enable_if_t<Dim >= 2 && std::conjunction_v<std::is_convertible<Scalars, T>...> && sizeof...(Scalars) == Dim, bool> = true>
         Vector(Scalars... scalars) {
-            *reinterpret_cast<std::array<T, Dim>*>(data) = { T(scalars)... };
+            T const values[Dim] = { T(scalars)... };
+            for (int i = 0; i < Dim; ++i) {
+                data[i] = values[i];
+            }
         }
 
         /**

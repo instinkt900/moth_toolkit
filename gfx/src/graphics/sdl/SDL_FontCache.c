@@ -862,7 +862,13 @@ static void FC_Init(FC_Font* font)
     font->ttf_source = NULL;
     font->owns_ttf_source = 0;
 
-    font->filter = FC_FILTER_NEAREST;
+    // NOTE (moth): deliberately do NOT reset font->filter here. FC_Init is also
+    // called from FC_ClearFont, which FC_LoadFontFromTTF runs *after* a caller has
+    // chosen a filter mode but *before* the glyph atlas is uploaded — so resetting
+    // it here would discard the caller's choice and always bake a NEAREST atlas,
+    // defeating FC_SetFilterMode(font, FC_FILTER_LINEAR). A fresh font is memset to
+    // 0 (== FC_FILTER_NEAREST) in FC_CreateFont, so the default is unchanged; this
+    // only lets a pre-load FC_SetFilterMode survive the load. See smart_sdl.hpp.
 
     font->default_color.r = 0;
     font->default_color.g = 0;

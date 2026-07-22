@@ -91,6 +91,15 @@ namespace moth_graphics {
         if (font == nullptr) {
             return nullptr;
         }
+        // Linear-filter the glyph atlas so text stays smooth when the frame is
+        // scaled (the renderer draws at a fixed logical size and SDL scales that
+        // up to the window). SDL_FontCache defaults to nearest, which turns the
+        // anti-aliased glyphs jagged under magnification. Must be set before
+        // FC_LoadFont: the atlas bakes in the filter mode as its glyphs upload
+        // during the load, and the plain-SDL path never re-filters an existing
+        // atlas. This relies on our FC_Init patch not resetting the filter on the
+        // FC_ClearFont that FC_LoadFontFromTTF runs before that upload.
+        FC_SetFilterMode(font, FC_FILTER_LINEAR);
         if (FC_LoadFont(font, renderer, assetPath.string().c_str(), size, color, style) == 0) {
             FC_FreeFont(font);
             return nullptr;

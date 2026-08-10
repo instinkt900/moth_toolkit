@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 Entries are generated automatically from git history using [git-cliff](https://github.com/orhun/git-cliff).
 
+## [1.1.2] - 2026-08-10
+### Bug Fixes
+- Widen the nlohmann_json and fmt ranges
+- Include fmt/format.h where the logger calls fmt::format
+
+### Changes
+- Bump version from 1.1.1 to 1.1.2
+
 ## [1.1.1] - 2026-07-14
 ### Bug Fixes
 - Assign vector elements without reinterpret_cast

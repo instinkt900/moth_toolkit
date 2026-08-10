@@ -162,7 +162,14 @@ else()
 	set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-Werror -Wall")
 endif()
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR DEFINED ENV{CI})
+# clang-tidy reads a clang command line, so it cannot lint an MSVC build. It
+# never sees /EHsc there and rejects every throw in this library with "cannot
+# use 'throw' with exceptions disabled".
+#
+# That reached a consumer rather than this project. ENV{CI} is set in anybody's
+# CI, so a downstream build of this package inside GitHub Actions turned the
+# linter on and failed on Windows. See the Camina engine, issue instinkt900/camina#201.
+if((CMAKE_BUILD_TYPE STREQUAL "Debug" OR DEFINED ENV{CI}) AND NOT MSVC)
 	find_program(CLANG_TIDY_EXE NAMES clang-tidy)
 	if(CLANG_TIDY_EXE)
 		set_target_properties(${PROJECT_NAME} PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_EXE}")

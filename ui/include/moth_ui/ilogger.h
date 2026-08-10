@@ -1,6 +1,10 @@
 #pragma once
 
-#include <fmt/core.h>
+// fmt/format.h, because this header calls fmt::format. fmt/core.h is a
+// compatibility header that carries whatever fmt decides, and it stopped
+// carrying fmt::format in fmt 12.2. Its own comment says to include
+// fmt/base.h when fmt::format is not needed and fmt/format.h when it is.
+#include <fmt/format.h>
 #include <string_view>
 
 namespace moth_ui {

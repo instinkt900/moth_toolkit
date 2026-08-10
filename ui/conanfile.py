@@ -20,10 +20,14 @@ class MothUI(ConanFile):
             self.version = load(self, "version.txt").strip()
 
     def requirements(self):
-        self.requires("nlohmann_json/[~3.11]", transitive_headers=True)
+        # A tilde range pins a patch line, which makes this library refuse any
+        # consumer on a newer minor. That blocked the Camina engine, which takes
+        # nlohmann_json 3.12 and gets fmt 12 through spdlog. Both APIs this
+        # library uses are stable across those bumps, so accept a major range.
+        self.requires("nlohmann_json/[>=3.11 <4]", transitive_headers=True)
         self.requires("magic_enum/[~0.8]", transitive_headers=True)
         self.requires("range-v3/[~0.12]", transitive_headers=True)
-        self.requires("fmt/[~10.2]", transitive_headers=True)
+        self.requires("fmt/[>=10.2 <13]", transitive_headers=True)
 
     def build_requirements(self):
         self.tool_requires("cmake/[>=3.27.0]")

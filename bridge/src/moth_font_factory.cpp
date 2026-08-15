@@ -1,9 +1,12 @@
-#include "common.h"
-#include "moth_graphics/graphics/moth_ui/moth_font_factory.h"
+#include <spdlog/spdlog.h>
+#include "moth/bridge/moth_font_factory.h"
 #include "moth_graphics/graphics/font_factory.h"
-#include "moth_graphics/graphics/moth_ui/moth_font.h"
+#include "moth/bridge/moth_font.h"
 
-namespace moth_graphics::graphics {
+namespace moth::bridge {
+    using namespace moth_graphics::graphics;
+    using namespace moth::core;
+    namespace graphics = moth_graphics::graphics;
     MothFontFactory::MothFontFactory(moth_graphics::graphics::FontFactory& factoryImpl)
         : m_factoryImpl(factoryImpl) {
     }

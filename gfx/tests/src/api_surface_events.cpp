@@ -36,12 +36,12 @@ TEST_CASE("LambdaHandle IsValid is stable", "[api][events][lambda_handle]") {
 }
 
 TEST_CASE("EventEmitter method signatures are stable", "[api][events][emitter]") {
-    void (EventEmitter::*addPtr)(moth_ui::IEventListener*)                           = &EventEmitter::AddEventListener;
-    void (EventEmitter::*removePtr)(moth_ui::IEventListener*)                        = &EventEmitter::RemoveEventListener;
+    void (EventEmitter::*addPtr)(moth::core::IEventListener*)                           = &EventEmitter::AddEventListener;
+    void (EventEmitter::*removePtr)(moth::core::IEventListener*)                        = &EventEmitter::RemoveEventListener;
     LambdaHandle (EventEmitter::*addLambda)(
-        std::function<bool(moth_ui::Event const&)> const&)                          = &EventEmitter::AddEventListener;
+        std::function<bool(moth::core::Event const&)> const&)                          = &EventEmitter::AddEventListener;
     void (EventEmitter::*removeLambda)(LambdaHandle const&)                         = &EventEmitter::RemoveEventListener;
-    bool (EventEmitter::*emit)(moth_ui::Event const&)                               = &EventEmitter::EmitEvent;
+    bool (EventEmitter::*emit)(moth::core::Event const&)                               = &EventEmitter::EmitEvent;
 
     (void)addPtr; (void)removePtr; (void)addLambda; (void)removeLambda; (void)emit;
     SUCCEED();

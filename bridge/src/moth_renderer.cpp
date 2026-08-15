@@ -1,12 +1,15 @@
-#include "moth_graphics/graphics/moth_ui/moth_renderer.h"
+#include "moth/bridge/moth_renderer.h"
 #include "moth_graphics/graphics/igraphics.h"
-#include "moth_graphics/graphics/moth_ui/moth_font.h"
-#include "moth_graphics/graphics/moth_ui/moth_image.h"
+#include "moth/bridge/moth_font.h"
+#include "moth/bridge/moth_image.h"
 
 #include <algorithm>
 #include <cmath>
 
-namespace moth_graphics::graphics {
+namespace moth::bridge {
+    using namespace moth_graphics::graphics;
+    using namespace moth::core;
+    namespace graphics = moth_graphics::graphics;
     namespace {
         TextureFilter ToGraphicsFilter(moth_ui::TextureFilter f) {
             return f == moth_ui::TextureFilter::Nearest

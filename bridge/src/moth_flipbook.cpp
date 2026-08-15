@@ -1,7 +1,10 @@
-#include "common.h"
-#include "moth_graphics/graphics/moth_ui/moth_flipbook.h"
+#include <spdlog/spdlog.h>
+#include "moth/bridge/moth_flipbook.h"
 
-namespace moth_graphics::graphics {
+namespace moth::bridge {
+    using namespace moth_graphics::graphics;
+    using namespace moth::core;
+    namespace graphics = moth_graphics::graphics;
     namespace {
         moth_ui::IFlipbook::LoopType ToMothLoopType(graphics::SpriteSheet::LoopType t) {
             switch (t) {

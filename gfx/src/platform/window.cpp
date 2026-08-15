@@ -1,6 +1,4 @@
 #include "common.h"
-#include <moth_ui/context.h>
-#include <moth_ui/layers/layer.h>
 #include "moth_graphics/platform/window.h"
 #include "moth_graphics/graphics/surface_context.h"
 
@@ -9,61 +7,9 @@ namespace moth_graphics::platform {
         : moth::core::Window(title, width, height) {
     }
 
-    Window::~Window() {
-    }
+    Window::~Window() = default;
 
     graphics::TextureFactory& Window::GetTextureFactory() const {
         return GetSurfaceContext().GetAssetContext().GetTextureFactory();
-    }
-
-    moth::core::IntVec2 Window::GetRenderSize() const {
-        if (m_layerStack) {
-            return { m_layerStack->GetRenderWidth(), m_layerStack->GetRenderHeight() };
-        }
-        return { GetWidth(), GetHeight() };
-    }
-
-    void Window::Draw() {
-        BeginFrame();
-        assert(m_layerStack && "Draw called before PostCreate; layer stack not yet initialised");
-        if (m_layerStack) {
-            m_layerStack->Draw();
-        }
-        EndFrame();
-    }
-
-    bool Window::OnEvent(moth::core::Event const& event) {
-        // FireEvent from layers: dispatch to all layers first, then external
-        // listeners if unhandled.
-        moth::core::EventDispatch dispatch(event);
-        dispatch.Dispatch(m_layerStack.get());
-        if (!dispatch.GetHandled()) {
-            return EmitEvent(event);
-        }
-        return true;
-    }
-
-    void Window::PushLayer(std::unique_ptr<moth_ui::Layer> layer) {
-        assert(m_layerStack && "PushLayer called before PostCreate; layer stack not yet initialised");
-        m_layerStack->PushLayer(std::move(layer));
-    }
-
-    void Window::PostCreate() {
-        auto& assetContext = GetSurfaceContext().GetAssetContext();
-        m_uiRenderer = std::make_unique<moth_graphics::graphics::MothRenderer>(*m_graphics);
-        m_mothImageFactory = std::make_unique<moth_graphics::graphics::MothImageFactory>(assetContext.GetTextureFactory());
-        m_mothFontFactory = std::make_unique<moth_graphics::graphics::MothFontFactory>(assetContext.GetFontFactory());
-        m_mothFlipbookFactory = std::make_unique<moth_graphics::graphics::MothFlipbookFactory>(assetContext.GetSpriteSheetFactory());
-        m_mothContext = std::make_shared<moth_ui::Context>(m_mothImageFactory.get(), m_mothFontFactory.get(), m_uiRenderer.get(), m_mothFlipbookFactory.get());
-        m_layerStack = std::make_unique<moth_ui::LayerStack>(*m_uiRenderer, moth::core::IntVec2{ m_windowWidth, m_windowHeight }, moth::core::IntVec2{ m_windowWidth, m_windowHeight });
-        m_layerStack->SetEventListener(this);
-    }
-
-    void Window::ReleaseUiResources() {
-        // Order matters: textures owned by the layer stack call
-        // ImGui_ImplVulkan_RemoveTexture in their destructors, so the layer
-        // stack must die before the ImGui context shuts down its Vulkan pool.
-        m_layerStack.reset();
-        m_imguiContext.reset();
     }
 }

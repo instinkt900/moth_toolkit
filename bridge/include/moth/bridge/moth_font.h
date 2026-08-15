@@ -6,16 +6,16 @@
 
 #include <memory>
 
-namespace moth_graphics::graphics {
+namespace moth::bridge {
     class MothFont : public moth_ui::IFont {
     public:
-        explicit MothFont(std::shared_ptr<graphics::IFont> internalFont)
+        explicit MothFont(std::shared_ptr<moth_graphics::graphics::IFont> internalFont)
             : m_font(internalFont) {}
         ~MothFont() override = default;
 
-        std::shared_ptr<graphics::IFont> GetInternalFont() { return m_font; }
+        std::shared_ptr<moth_graphics::graphics::IFont> GetInternalFont() { return m_font; }
 
     private:
-        std::shared_ptr<graphics::IFont> m_font;
+        std::shared_ptr<moth_graphics::graphics::IFont> m_font;
     };
 }

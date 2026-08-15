@@ -13,10 +13,11 @@
 
 #include <stack>
 
-namespace moth_graphics::graphics {
+namespace moth::bridge {
+    /// @brief Adapts a moth_graphics IGraphics to the moth_ui IRenderer interface.
     class MothRenderer : public moth_ui::IRenderer {
     public:
-        explicit MothRenderer(IGraphics& graphics);
+        explicit MothRenderer(moth_graphics::graphics::IGraphics& graphics);
         ~MothRenderer() override = default;
 
         void PushBlendMode(moth_ui::BlendMode mode) override;
@@ -42,11 +43,11 @@ namespace moth_graphics::graphics {
         void SetRendererLogicalSize(moth_ui::IntVec2 const& size) override;
 
     private:
-        IGraphics& m_graphics;
-        std::stack<Color> m_drawColor;
-        std::stack<BlendMode> m_blendMode;
+        moth_graphics::graphics::IGraphics& m_graphics;
+        std::stack<moth_graphics::graphics::Color> m_drawColor;
+        std::stack<moth_graphics::graphics::BlendMode> m_blendMode;
         std::stack<moth_ui::FloatMat4x4> m_transform;
-        std::stack<IntRect> m_clip;
+        std::stack<moth::core::IntRect> m_clip;
         std::stack<moth_ui::TextureFilter> m_textureFilter;
     };
 }

@@ -8,9 +8,10 @@
 #include "moth_graphics/graphics/texture_address_mode.h"
 #include "moth_graphics/graphics/texture_filter.h"
 
-// Rect and vector types are re-exported aliases from moth_ui; pull in its
-// forward declarations so moth_graphics consumers can use them without a full include.
-#include "moth_ui/moth_ui_fwd.h"
+// Rect/vector/color types are re-exported from moth::core; pull in the gfx
+// re-export headers so moth_graphics consumers can use them without a full include.
+#include "moth_graphics/utils/vector.h"
+#include "moth_graphics/utils/rect.h"
 
 namespace moth::core {
     class EventEmitter;
@@ -32,7 +33,6 @@ namespace moth_graphics::platform {
     // -------------------------------------------------------------------------
     // Platform
     // -------------------------------------------------------------------------
-    class Application;
     class IPlatform;
     class Window;
 
@@ -53,18 +53,8 @@ namespace moth_graphics::graphics {
     // -------------------------------------------------------------------------
     // Graphics core
     // -------------------------------------------------------------------------
-    class Context;
     class SurfaceContext;
     class FontFactory;
     class TextureFactory;
-
-    // -------------------------------------------------------------------------
-    // moth_ui bridge
-    // -------------------------------------------------------------------------
-    class MothRenderer;
-    class MothImage;
-    class MothFont;
-    class MothImageFactory;
-    class MothFontFactory;
 
 } // namespace moth_graphics::graphics

@@ -8,16 +8,15 @@
 #include <memory>
 #include <filesystem>
 
-namespace moth_graphics::graphics {
+namespace moth::bridge {
     class MothImageFactory : public moth_ui::IImageFactory {
     public:
-        explicit MothImageFactory(graphics::TextureFactory& factoryImpl);
+        explicit MothImageFactory(moth_graphics::graphics::TextureFactory& factoryImpl);
         ~MothImageFactory() override = default;
 
         std::unique_ptr<moth_ui::IImage> GetImage(std::filesystem::path const& path) override;
 
     private:
-        graphics::TextureFactory& m_factoryImpl;
+        moth_graphics::graphics::TextureFactory& m_factoryImpl;
     };
 }
-

@@ -7,7 +7,7 @@
 
 #include <memory>
 
-namespace moth_graphics::graphics {
+namespace moth::bridge {
     class MothFontFactory : public moth_ui::FontFactory {
     public:
         explicit MothFontFactory(moth_graphics::graphics::FontFactory& factoryImpl);

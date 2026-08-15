@@ -1,14 +1,14 @@
 #include "moth_graphics/events/event_emitter.h"
 #include "moth_graphics/events/event_window.h"
 
-#include <moth_ui/events/event.h>
-#include <moth_ui/events/event_listener.h>
+#include <moth/core/event.h>
+#include <moth/core/event_listener.h>
 
 #include <catch2/catch_all.hpp>
 #include <memory>
 
 using namespace moth_graphics;
-using namespace moth_ui;
+using namespace moth::core;
 
 // ---------------------------------------------------------------------------
 // Concrete listener for testing

@@ -1,8 +1,11 @@
-#include "common.h"
-#include "moth_graphics/graphics/moth_ui/moth_image_factory.h"
-#include "moth_graphics/graphics/moth_ui/moth_image.h"
+#include <spdlog/spdlog.h>
+#include "moth/bridge/moth_image_factory.h"
+#include "moth/bridge/moth_image.h"
 
-namespace moth_graphics::graphics {
+namespace moth::bridge {
+    using namespace moth_graphics::graphics;
+    using namespace moth::core;
+    namespace graphics = moth_graphics::graphics;
     MothImageFactory::MothImageFactory(graphics::TextureFactory& factoryImpl)
         : m_factoryImpl(factoryImpl) {
     }

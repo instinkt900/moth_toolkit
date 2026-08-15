@@ -24,7 +24,6 @@ set(SOURCES
     src/api_surface_sprite.cpp
     src/api_surface_events.cpp
     src/api_surface_platform.cpp
-    src/api_surface_moth_bridge.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

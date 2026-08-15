@@ -51,7 +51,6 @@ class MothGraphics(ConanFile):
             self.requires("vulkan-memory-allocator/3.0.1", transitive_headers=True)
         self.requires("spdlog/[~1.14]", transitive_headers=True)
         self.requires("moth_core/0.1.0")
-        self.requires("moth_ui/1.1.2", transitive_headers=True)
 
     def system_requirements(self):
         if self.settings.os == "Linux":

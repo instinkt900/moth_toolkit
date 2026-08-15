@@ -31,24 +31,15 @@
 #include "moth_graphics/graphics/texture_factory.h"
 #include "moth_graphics/graphics/texture_filter.h"
 
-// graphics — moth_ui bridge
-#include "moth_graphics/graphics/moth_ui/moth_flipbook.h"
-#include "moth_graphics/graphics/moth_ui/moth_flipbook_factory.h"
-#include "moth_graphics/graphics/moth_ui/moth_font.h"
-#include "moth_graphics/graphics/moth_ui/moth_font_factory.h"
-#include "moth_graphics/graphics/moth_ui/moth_image.h"
-#include "moth_graphics/graphics/moth_ui/moth_image_factory.h"
-#include "moth_graphics/graphics/moth_ui/moth_renderer.h"
+// graphics — moth_ui bridge lives in the `bridge` module (moth/bridge).
 
 // platform
-#include "moth_graphics/platform/application.h"
 #include "moth_graphics/platform/imgui_context.h"
 #include "moth_graphics/platform/iplatform.h"
 #include "moth_graphics/platform/window.h"
 
 // utils
 #include "moth_graphics/utils/math_utils.h"
-#include "moth_graphics/utils/moth_ui_format.h"
 #include "moth_graphics/utils/rect.h"
 #include "moth_graphics/utils/ticker.h"
 #include "moth_graphics/utils/transform.h"

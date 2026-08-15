@@ -3,7 +3,6 @@
 #include "moth_graphics/platform/glfw/glfw_window.h"
 #include "graphics/vulkan/vulkan_graphics.h"
 #include "moth_graphics/graphics/vulkan/vulkan_surface_context.h"
-#include <moth_ui/layers/layer_stack.h>
 
 #include <cassert>
 
@@ -13,20 +12,13 @@ namespace moth_graphics::platform::glfw {
         , m_context(context) {
         m_nativeWindow = std::make_unique<moth::core::glfw::Window>(title, width, height);
         m_nativeWindow->SetListener(this);
-        if (CreateSurface()) {
-            PostCreate();
-        }
+        CreateSurface();
     }
 
-    // Subclass member dtors run BEFORE the base dtor's members, so the layer
-    // stack and ImGui context (base members that depend on GLFW + Vulkan
-    // resources we own here) must be released explicitly in the right order
-    // before this body returns.
     Window::~Window() {
         if (m_surfaceContext) {
             vkDeviceWaitIdle(m_surfaceContext->GetVkDevice());
         }
-        ReleaseUiResources();      // layer stack -> ImGui context
         SetGraphics(nullptr);      // vulkan::Graphics (uses surface, pool)
         m_surfaceContext.reset();
         if (m_customVkSurface != VK_NULL_HANDLE) {
@@ -43,7 +35,6 @@ namespace moth_graphics::platform::glfw {
 
     void Window::Update(uint32_t ticks) {
         m_nativeWindow->Update(ticks);
-        GetLayerStack().Update(ticks);
     }
 
     void Window::BeginFrame() {
@@ -75,11 +66,13 @@ namespace moth_graphics::platform::glfw {
     }
 
     moth::core::IntVec2 Window::GetRenderSize() const {
-        return moth_graphics::platform::Window::GetRenderSize();
+        auto* delegate = GetUiDelegate();
+        return delegate ? delegate->GetRenderSize() : moth::core::Window::GetRenderSize();
     }
 
     bool Window::OnEvent(moth::core::Event const& event) {
-        return moth_graphics::platform::Window::OnEvent(event);
+        auto* delegate = GetUiDelegate();
+        return delegate ? delegate->OnEvent(event) : EmitEvent(event);
     }
 
     void Window::OnResize(int width, int height) {
@@ -88,7 +81,6 @@ namespace moth_graphics::platform::glfw {
             return;
         }
         graphics->OnResize(m_customVkSurface, static_cast<uint32_t>(width), static_cast<uint32_t>(height));
-        GetLayerStack().SetWindowSize({ GetWidth(), GetHeight() });
     }
 
     bool Window::CreateSurface() {

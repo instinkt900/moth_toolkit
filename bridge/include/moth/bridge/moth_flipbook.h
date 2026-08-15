@@ -1,13 +1,13 @@
 #pragma once
 
 #include "moth_graphics/graphics/spritesheet.h"
-#include "moth_graphics/graphics/moth_ui/moth_image.h"
+#include "moth/bridge/moth_image.h"
 
 #include <moth_ui/graphics/iflipbook.h>
 
 #include <memory>
 
-namespace moth_graphics::graphics {
+namespace moth::bridge {
     class MothFlipbook : public moth_ui::IFlipbook {
     public:
         explicit MothFlipbook(std::shared_ptr<moth_graphics::graphics::SpriteSheet> spriteSheet);

@@ -36,16 +36,9 @@ set(SOURCES
     src/graphics/spritesheet_factory.cpp
     src/graphics/font_factory.cpp
     src/graphics/texture_factory.cpp
-    src/graphics/moth_ui/moth_flipbook.cpp
-    src/graphics/moth_ui/moth_flipbook_factory.cpp
-    src/graphics/moth_ui/moth_font_factory.cpp
-    src/graphics/moth_ui/moth_image.cpp
-    src/graphics/moth_ui/moth_image_factory.cpp
-    src/graphics/moth_ui/moth_renderer.cpp
     src/graphics/stb_image.cpp
     src/graphics/stb_image_write.cpp
     src/graphics/stb_rect_pack.cpp
-    src/platform/application.cpp
     src/platform/window.cpp
     external/murmurhash.c/murmurhash.c
 )
@@ -100,7 +93,6 @@ if(NOT MOTH_GRAPHICS_DISABLE_VULKAN)
 endif()
 
 find_package(spdlog REQUIRED)
-find_package(moth_ui REQUIRED)
 
 # Core is a sibling module; in the superbuild the target already exists, standalone it is located via find_package.
 if(NOT TARGET moth::core)
@@ -133,7 +125,6 @@ else()
 endif()
 
 target_link_libraries(${PROJECT_NAME} PUBLIC spdlog::spdlog)
-target_link_libraries(${PROJECT_NAME} PUBLIC moth_ui::moth_ui)
 target_link_libraries(${PROJECT_NAME} PUBLIC moth::core)
 
 if(MSVC)

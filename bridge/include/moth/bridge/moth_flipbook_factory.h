@@ -7,15 +7,15 @@
 #include <filesystem>
 #include <memory>
 
-namespace moth_graphics::graphics {
+namespace moth::bridge {
     class MothFlipbookFactory : public moth_ui::IFlipbookFactory {
     public:
-        explicit MothFlipbookFactory(SpriteSheetFactory& factoryImpl);
+        explicit MothFlipbookFactory(moth_graphics::graphics::SpriteSheetFactory& factoryImpl);
         ~MothFlipbookFactory() override = default;
 
         std::unique_ptr<moth_ui::IFlipbook> GetFlipbook(std::filesystem::path const& path) override;
 
     private:
-        SpriteSheetFactory& m_factoryImpl;
+        moth_graphics::graphics::SpriteSheetFactory& m_factoryImpl;
     };
 }

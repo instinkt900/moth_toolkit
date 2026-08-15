@@ -14,6 +14,9 @@ set(SOURCES
     src/main.cpp
     src/test_input.cpp
     src/test_transform2d.cpp
+    src/test_aabb.cpp
+    src/test_geometry.cpp
+    src/test_angle.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

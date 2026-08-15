@@ -31,6 +31,9 @@
 #include <moth/core/color.h>
 #include <moth/core/transform.h>
 #include <moth/core/transform2d.h>
+#include <moth/core/aabb.h>
+#include <moth/core/geometry.h>
+#include <moth/core/angle.h>
 #include <moth/core/blend_mode.h>
 #include <moth/core/text_alignment.h>
 #include <moth/core/interp.h>

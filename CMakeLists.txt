@@ -15,39 +15,56 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Each module is a standalone library under the `moth::` namespace, consumable
 # on its own (find_package(moth_gfx)) or as part of this toolkit. Turning a
 # module off removes it (and its dependencies) from the build; the flag is
-# exposed to consumers via target_compile_definitions(... PUBLIC ...) once the
-# modules are wired in.
+# exposed to consumers via the generated features.h header.
 # ---------------------------------------------------------------------------
 option(MOTH_ENABLE_CORE    "Build the moth::core module (loop/platform/math/events)" ON)
 option(MOTH_ENABLE_GFX     "Build the moth::gfx module (2D renderer + backends)"      ON)
 option(MOTH_ENABLE_UI      "Build the moth::ui module (node graph/layers/animation)"  ON)
-option(MOTH_ENABLE_BRIDGE  "Build the moth::bridge module (ui <-> gfx adapter)"       OFF)
+option(MOTH_ENABLE_BRIDGE  "Build the moth::bridge module (ui <-> gfx adapter)"       ON)
 option(MOTH_ENABLE_TOOLKIT "Build the moth::toolkit aggregate target"                 ON)
 
 # ---------------------------------------------------------------------------
-# Status / roadmap
-#
-# gfx/ and ui/ are imported from their original repos (roadmap Phase 3) and
-# remain standalone-able; their own CMakeLists are not yet consumed by this
-# superbuild. core/ and bridge/ are placeholders pending the core extraction
-# (Phase 1) and the ui<->gfx bridge split (Phase 2).
-#
-# TODO(Phase 1): extract moth::core from gfx/ (platform/, Ticker, events, math),
-#                then replace the core/ placeholder with the real library.
-# TODO(Phase 2): move the moth_ui bridge out of gfx/ into bridge/ and gate ui
-#                behind MOTH_ENABLE_UI.
-# TODO(Phase 4): add_subdirectory(gfx) / add_subdirectory(ui) once they consume
-#                moth::core and no longer hard-depend on moth_ui types.
+# Dependency constraints
 # ---------------------------------------------------------------------------
+if(MOTH_ENABLE_BRIDGE AND NOT (MOTH_ENABLE_CORE AND MOTH_ENABLE_GFX AND MOTH_ENABLE_UI))
+    message(FATAL_ERROR "moth::bridge requires core, gfx, and ui — enable those modules or disable MOTH_ENABLE_BRIDGE.")
+endif()
+if(MOTH_ENABLE_GFX AND NOT MOTH_ENABLE_CORE)
+    message(FATAL_ERROR "moth::gfx requires moth::core — enable MOTH_ENABLE_CORE or disable MOTH_ENABLE_GFX.")
+endif()
+if(MOTH_ENABLE_UI AND NOT MOTH_ENABLE_CORE)
+    message(FATAL_ERROR "moth::ui requires moth::core — enable MOTH_ENABLE_CORE or disable MOTH_ENABLE_UI.")
+endif()
 
+# ---------------------------------------------------------------------------
 # Generated feature header (compile-time flags for consumer code):
+# ---------------------------------------------------------------------------
 configure_file(
     cmake/features.h.in
     ${CMAKE_BINARY_DIR}/generated/include/moth/features.h
 )
 
+# ---------------------------------------------------------------------------
+# Modules
+# ---------------------------------------------------------------------------
 if(MOTH_ENABLE_CORE)
     add_subdirectory(core)
+endif()
+
+if(MOTH_ENABLE_GFX)
+    add_subdirectory(gfx)
+    # Namespaced aliases, resolved at this (top-level) scope so they are visible
+    # to sibling modules (bridge, toolkit) added below. gfx defines the bare
+    # target `moth_graphics`; the `moth_graphics::moth_graphics` name matches
+    # what a standalone consumer gets from find_package(moth_graphics).
+    add_library(moth::gfx ALIAS moth_graphics)
+    add_library(moth_graphics::moth_graphics ALIAS moth_graphics)
+endif()
+
+if(MOTH_ENABLE_UI)
+    add_subdirectory(ui)
+    add_library(moth::ui ALIAS moth_ui)
+    add_library(moth_ui::moth_ui ALIAS moth_ui)
 endif()
 
 if(MOTH_ENABLE_BRIDGE)

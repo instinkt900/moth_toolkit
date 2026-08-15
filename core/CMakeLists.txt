@@ -40,30 +40,34 @@ target_link_libraries(moth_core PUBLIC nlohmann_json::nlohmann_json)
 target_link_libraries(moth_core PUBLIC ${MOTH_CORE_GLFW_LINK})
 
 # Install + export so other modules (and external consumers) can find_package(moth_core).
-include(CMakePackageConfigHelpers)
-include(GNUInstallDirs)
+# Only when built standalone; in the superbuild the modules are consumed in-tree and packaged
+# individually via Conan.
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    include(CMakePackageConfigHelpers)
+    include(GNUInstallDirs)
 
-install(TARGETS moth_core EXPORT moth_coreTargets
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-install(EXPORT moth_coreTargets
-    FILE moth_coreTargets.cmake
-    NAMESPACE moth::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/moth_core)
+    install(TARGETS moth_core EXPORT moth_coreTargets
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    install(EXPORT moth_coreTargets
+        FILE moth_coreTargets.cmake
+        NAMESPACE moth::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/moth_core)
 
-configure_package_config_file(
-    cmake/moth_coreConfig.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/moth_coreConfig.cmake
-    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/moth_core)
+    configure_package_config_file(
+        cmake/moth_coreConfig.cmake.in
+        ${CMAKE_CURRENT_BINARY_DIR}/moth_coreConfig.cmake
+        INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/moth_core)
 
-write_basic_package_version_file(
-    ${CMAKE_CURRENT_BINARY_DIR}/moth_coreConfigVersion.cmake
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY SameMajorVersion)
+    write_basic_package_version_file(
+        ${CMAKE_CURRENT_BINARY_DIR}/moth_coreConfigVersion.cmake
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY SameMajorVersion)
 
-install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/moth_coreConfig.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/moth_coreConfigVersion.cmake
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/moth_core)
+    install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/moth_coreConfig.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/moth_coreConfigVersion.cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/moth_core)
+endif()

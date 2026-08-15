@@ -45,13 +45,17 @@ target_link_libraries(moth_bridge PUBLIC moth_graphics::moth_graphics)
 target_link_libraries(moth_bridge PUBLIC moth_ui::moth_ui)
 target_link_libraries(moth_bridge PUBLIC spdlog::spdlog)
 
-include(GNUInstallDirs)
-install(TARGETS moth_bridge EXPORT moth_bridgeTargets
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-install(EXPORT moth_bridgeTargets
-    FILE moth_bridgeTargets.cmake
-    NAMESPACE moth::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/moth_bridge)
+# Install + export only when built standalone; in the superbuild the modules are consumed
+# in-tree and packaged individually via Conan.
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    include(GNUInstallDirs)
+    install(TARGETS moth_bridge EXPORT moth_bridgeTargets
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    install(EXPORT moth_bridgeTargets
+        FILE moth_bridgeTargets.cmake
+        NAMESPACE moth::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/moth_bridge)
+endif()

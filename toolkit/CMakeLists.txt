@@ -15,5 +15,14 @@ if(MOTH_ENABLE_CORE)
     target_link_libraries(moth_toolkit INTERFACE moth::core)
 endif()
 
-# TODO(Phase 4): link moth::gfx / moth::ui / moth::bridge here once they are
-# integrated into the superbuild and gated by their MOTH_ENABLE_* flags.
+if(MOTH_ENABLE_GFX)
+    target_link_libraries(moth_toolkit INTERFACE moth::gfx)
+endif()
+
+if(MOTH_ENABLE_UI)
+    target_link_libraries(moth_toolkit INTERFACE moth::ui)
+endif()
+
+if(MOTH_ENABLE_BRIDGE)
+    target_link_libraries(moth_toolkit INTERFACE moth::bridge)
+endif()

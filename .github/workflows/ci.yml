@@ -19,6 +19,8 @@ jobs:
             flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
           - name: core-gfx
             flags: "-DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
+          - name: game-example
+            flags: "-DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF -DMOTH_ENABLE_EXAMPLES=ON"
           - name: core-ui
             flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
     steps:
@@ -59,6 +61,14 @@ jobs:
       - uses: conan-io/setup-conan@v1
         with:
           cache_packages: true
+
+      - name: Build and run core tests
+        working-directory: core/tests
+        run: |
+          conan install . --build=missing -s build_type=Release
+          cmake --preset conan-release
+          cmake --build --preset conan-release
+          ctest --preset conan-release --output-on-failure
 
       - name: Build and run gfx tests
         working-directory: gfx/tests

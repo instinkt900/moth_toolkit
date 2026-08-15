@@ -13,6 +13,12 @@
 #include <moth/core/rect.h>
 #include <moth/core/color.h>
 
+// Core events live in moth::core now; pulled in for the aliases below.
+#include <moth/core/event.h>
+#include <moth/core/event_dispatch.h>
+#include <moth/core/event_key.h>
+#include <moth/core/event_mouse.h>
+
 namespace moth_ui {
 
     // -------------------------------------------------------------------------
@@ -34,14 +40,15 @@ namespace moth_ui {
     // -------------------------------------------------------------------------
     // Events
     // -------------------------------------------------------------------------
-    class Event;
-    class IEventListener;
-    class EventDispatch;
-    class EventMouseDown;
-    class EventMouseUp;
-    class EventMouseMove;
-    class EventMouseWheel;
-    class EventKey;
+    using moth::core::Event;
+    using moth::core::IEventListener;
+    using moth::core::EventDispatch;
+    using moth::core::EventMouseDown;
+    using moth::core::EventMouseUp;
+    using moth::core::EventMouseMove;
+    using moth::core::EventMouseWheel;
+    using moth::core::EventKey;
+
     class EventAnimation;
     class EventAnimationStarted;
     class EventAnimationStopped;

@@ -12,17 +12,18 @@
 // forward declarations so moth_graphics consumers can use them without a full include.
 #include "moth_ui/moth_ui_fwd.h"
 
+namespace moth::core {
+    class EventEmitter;
+    class Ticker;
+}
+
 namespace moth_graphics {
 
     // -------------------------------------------------------------------------
-    // Events
+    // Events / Utils (re-exported from moth::core)
     // -------------------------------------------------------------------------
-    class EventEmitter;
-
-    // -------------------------------------------------------------------------
-    // Utils
-    // -------------------------------------------------------------------------
-    class Ticker;
+    using moth::core::EventEmitter;
+    using moth::core::Ticker;
 
 } // namespace moth_graphics
 

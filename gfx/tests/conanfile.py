@@ -11,9 +11,12 @@ class MothGraphicsTests(ConanFile):
     def requirements(self):
         self.requires("catch2/3.13.0")
         # moth_graphics is built from source via add_subdirectory;
-        # list its external Conan dependencies here.
-        self.requires("moth_ui/1.1.1", transitive_headers=True)
+        # list its external Conan dependencies here. Order matters: spdlog
+        # pins fmt/10.2.x, so declare it before moth_ui (whose wider fmt range
+        # otherwise resolves to fmt/12 and conflicts).
         self.requires("spdlog/[~1.14]", transitive_headers=True)
+        self.requires("moth_core/0.1.0")
+        self.requires("moth_ui/1.1.2", transitive_headers=True)
         # GLFW/Freetype/HarfBuzz come from the system package manager on Linux
         # (GTK3/GDK-Pixbuf conflict). On Windows they come from Conan.
         if self.settings.os == "Windows":

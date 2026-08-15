@@ -39,16 +39,16 @@ namespace moth::core {
         virtual void SetWindowTitle(std::string_view title) = 0;
 
         /// @brief Returns @c true if the window is currently maximized.
-        bool IsMaximized() const { return m_windowMaximized; }
+        virtual bool IsMaximized() const { return m_windowMaximized; }
 
         /// @brief Returns the current window position in screen coordinates.
-        IntVec2 const& GetPosition() const { return m_windowPos; }
+        virtual IntVec2 const& GetPosition() const { return m_windowPos; }
 
         /// @brief Returns the current window width in pixels.
-        int GetWidth() const { return m_windowWidth; }
+        virtual int GetWidth() const { return m_windowWidth; }
 
         /// @brief Returns the current window height in pixels.
-        int GetHeight() const { return m_windowHeight; }
+        virtual int GetHeight() const { return m_windowHeight; }
 
         /// @brief Returns the logical render size used to map input to logical
         ///        coordinates (accounting for letterboxing).

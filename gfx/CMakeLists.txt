@@ -73,7 +73,6 @@ if(NOT MOTH_GRAPHICS_DISABLE_VULKAN)
         src/graphics/vulkan/vulkan_swapchain.cpp
         src/graphics/vulkan/vulkan_texture.cpp
         src/graphics/vulkan/vulkan_vma.cpp
-        src/platform/glfw/glfw_events.cpp
         src/platform/glfw/glfw_platform.cpp
         src/platform/glfw/glfw_window.cpp
     )

@@ -2,7 +2,8 @@
 
 #include "moth_graphics/graphics/surface_context.h"
 #include "moth_graphics/platform/window.h"
-#include "moth_graphics/utils/vector.h"
+
+#include <moth/core/glfw/window.h>
 
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan_core.h>
@@ -17,32 +18,41 @@ namespace moth_graphics::graphics::vulkan {
 }
 
 namespace moth_graphics::platform::glfw {
-    class Window : public moth_graphics::platform::Window {
+    /// @brief A Vulkan/GLFW window with rendering + moth_ui integration.
+    ///
+    /// Composes a @c moth::core::glfw::Window for the native window/input and
+    /// adds the Vulkan surface, graphics context, and UI layer stack on top.
+    class Window : public moth_graphics::platform::Window, public moth::core::glfw::Window::Listener {
     public:
         Window(graphics::vulkan::Context& context, std::string_view title, int width, int height);
         ~Window() override;
 
-        graphics::SurfaceContext & GetSurfaceContext() const override;
+        graphics::SurfaceContext& GetSurfaceContext() const override;
         void SetWindowTitle(std::string_view title) override;
-        GLFWwindow* GetGLFWWindow() const { return m_glfwWindow; }
+        GLFWwindow* GetGLFWWindow() const { return m_nativeWindow->GetGLFWWindow(); }
         VkSurfaceKHR GetVkSurface() const { return m_customVkSurface; }
 
         void Update(uint32_t ticks) override;
         void BeginFrame() override;
         void EndFrame() override;
 
+        // Native-window state delegated to the composed core window.
+        bool IsMaximized() const override;
+        moth::core::IntVec2 const& GetPosition() const override;
+        int GetWidth() const override;
+        int GetHeight() const override;
+
+        // core::glfw::Window::Listener (also overrides core::Window / IEventListener).
+        moth::core::IntVec2 GetRenderSize() const override;
+        bool OnEvent(moth::core::Event const& event) override;
+        void OnResize(int width, int height) override;
+
     private:
-        bool CreateWindow();
+        bool CreateSurface();
 
         graphics::vulkan::Context& m_context;
+        std::unique_ptr<moth::core::glfw::Window> m_nativeWindow;
         std::unique_ptr<graphics::vulkan::SurfaceContext> m_surfaceContext;
-
-        GLFWwindow* m_glfwWindow = nullptr;
-        FloatVec2 m_lastMousePos;
-        bool m_haveMousePos = false;
         VkSurfaceKHR m_customVkSurface = VK_NULL_HANDLE;
-
-        void OnResize();
     };
 }
-

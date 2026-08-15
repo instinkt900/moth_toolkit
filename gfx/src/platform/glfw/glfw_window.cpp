@@ -3,65 +3,17 @@
 #include "moth_graphics/platform/glfw/glfw_window.h"
 #include "graphics/vulkan/vulkan_graphics.h"
 #include "moth_graphics/graphics/vulkan/vulkan_surface_context.h"
-#include "moth_graphics/platform/glfw/glfw_events.h"
-#include "moth_graphics/events/event_window.h"
-#include <moth_ui/events/event_mouse.h>
 #include <moth_ui/layers/layer_stack.h>
 
 #include <cassert>
 
 namespace moth_graphics::platform::glfw {
-    namespace {
-        // Translate a raw window-pixel position (and optional delta) into
-        // logical/render coordinates, accounting for the letterbox introduced
-        // when window aspect differs from the render aspect.
-        struct LogicalScale {
-            float scaleX;
-            float scaleY;
-            float offsetX;
-            float offsetY;
-        };
-
-        LogicalScale ComputeLogicalScale(moth::core::IntVec2 windowSize, moth::core::IntVec2 renderSize) {
-            float const ww = static_cast<float>(windowSize.x);
-            float const wh = static_cast<float>(windowSize.y);
-            float const lw = static_cast<float>(renderSize.x);
-            float const lh = static_cast<float>(renderSize.y);
-            if (ww <= 0.0f || wh <= 0.0f || lw <= 0.0f || lh <= 0.0f) {
-                return { 1.0f, 1.0f, 0.0f, 0.0f };
-            }
-            float const logicalAspect = lw / lh;
-            float const windowAspect = ww / wh;
-            float fitWidth = ww;
-            float fitHeight = wh;
-            if (windowAspect > logicalAspect) {
-                fitWidth = wh * logicalAspect;
-            } else {
-                fitHeight = ww / logicalAspect;
-            }
-            float const offsetX = (ww - fitWidth) * 0.5f;
-            float const offsetY = (wh - fitHeight) * 0.5f;
-            return { lw / fitWidth, lh / fitHeight, offsetX, offsetY };
-        }
-
-        moth::core::IntVec2 ToLogicalPos(moth::core::IntVec2 windowSize, moth::core::IntVec2 renderSize, FloatVec2 const& windowPos) {
-            auto const s = ComputeLogicalScale(windowSize, renderSize);
-            return moth::core::IntVec2{
-                static_cast<int>((windowPos.x - s.offsetX) * s.scaleX),
-                static_cast<int>((windowPos.y - s.offsetY) * s.scaleY),
-            };
-        }
-
-        FloatVec2 ToLogicalDelta(moth::core::IntVec2 windowSize, moth::core::IntVec2 renderSize, FloatVec2 const& windowDelta) {
-            auto const s = ComputeLogicalScale(windowSize, renderSize);
-            return FloatVec2{ windowDelta.x * s.scaleX, windowDelta.y * s.scaleY };
-        }
-    }
-
     Window::Window(graphics::vulkan::Context& context, std::string_view title, int width, int height)
         : moth_graphics::platform::Window(title, width, height)
         , m_context(context) {
-        if (CreateWindow()) {
+        m_nativeWindow = std::make_unique<moth::core::glfw::Window>(title, width, height);
+        m_nativeWindow->SetListener(this);
+        if (CreateSurface()) {
             PostCreate();
         }
     }
@@ -71,21 +23,17 @@ namespace moth_graphics::platform::glfw {
     // resources we own here) must be released explicitly in the right order
     // before this body returns.
     Window::~Window() {
-        spdlog::info("GLFW: destroying window '{}'", m_title);
         if (m_surfaceContext) {
             vkDeviceWaitIdle(m_surfaceContext->GetVkDevice());
         }
-        ReleaseUiResources();      // layer stack → ImGui context
+        ReleaseUiResources();      // layer stack -> ImGui context
         SetGraphics(nullptr);      // vulkan::Graphics (uses surface, pool)
         m_surfaceContext.reset();
         if (m_customVkSurface != VK_NULL_HANDLE) {
             vkDestroySurfaceKHR(m_context.instance, m_customVkSurface, nullptr);
             m_customVkSurface = VK_NULL_HANDLE;
         }
-        if (m_glfwWindow != nullptr) {
-            glfwDestroyWindow(m_glfwWindow);
-            m_glfwWindow = nullptr;
-        }
+        m_nativeWindow.reset();    // destroys the GLFW window
     }
 
     graphics::SurfaceContext& Window::GetSurfaceContext() const {
@@ -94,14 +42,7 @@ namespace moth_graphics::platform::glfw {
     }
 
     void Window::Update(uint32_t ticks) {
-        glfwPollEvents();
-
-        if (glfwWindowShouldClose(m_glfwWindow) != 0) {
-            glfwSetWindowShouldClose(m_glfwWindow, 0);
-            OnEvent(EventRequestQuit());
-        }
-
-        m_windowMaximized = glfwGetWindowAttrib(m_glfwWindow, GLFW_MAXIMIZED) == GLFW_TRUE;
+        m_nativeWindow->Update(ticks);
         GetLayerStack().Update(ticks);
     }
 
@@ -113,165 +54,50 @@ namespace moth_graphics::platform::glfw {
         GetGraphics().End();
     }
 
-    bool Window::CreateWindow() {
-        spdlog::info("GLFW: creating window '{}' ({}x{})", m_title, m_windowWidth, m_windowHeight);
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        m_glfwWindow = glfwCreateWindow(m_windowWidth, m_windowHeight, m_title.c_str(), nullptr, nullptr);
-        if (m_glfwWindow == nullptr) {
-            spdlog::error("GLFW: failed to create window '{}'", m_title);
-            return false;
+    void Window::SetWindowTitle(std::string_view title) {
+        m_nativeWindow->SetWindowTitle(title);
+    }
+
+    bool Window::IsMaximized() const {
+        return m_nativeWindow->IsMaximized();
+    }
+
+    moth::core::IntVec2 const& Window::GetPosition() const {
+        return m_nativeWindow->GetPosition();
+    }
+
+    int Window::GetWidth() const {
+        return m_nativeWindow->GetWidth();
+    }
+
+    int Window::GetHeight() const {
+        return m_nativeWindow->GetHeight();
+    }
+
+    moth::core::IntVec2 Window::GetRenderSize() const {
+        return moth_graphics::platform::Window::GetRenderSize();
+    }
+
+    bool Window::OnEvent(moth::core::Event const& event) {
+        return moth_graphics::platform::Window::OnEvent(event);
+    }
+
+    void Window::OnResize(int width, int height) {
+        auto* graphics = dynamic_cast<graphics::vulkan::Graphics*>(GetGraphicsPtr());
+        if (graphics == nullptr) {
+            return;
         }
-        glfwSetWindowUserPointer(m_glfwWindow, this);
+        graphics->OnResize(m_customVkSurface, static_cast<uint32_t>(width), static_cast<uint32_t>(height));
+        GetLayerStack().SetWindowSize({ GetWidth(), GetHeight() });
+    }
 
-        if (m_windowPos.x != -1 && m_windowPos.y != -1) {
-            glfwSetWindowPos(m_glfwWindow, m_windowPos.x, m_windowPos.y);
-        }
-
-        glfwSetWindowPosCallback(m_glfwWindow, [](GLFWwindow* window, int xpos, int ypos) {
-            Window* app = static_cast<Window*>(glfwGetWindowUserPointer(window));
-            if (app == nullptr) {
-                return;
-            }
-            app->m_windowMaximized = glfwGetWindowAttrib(window, GLFW_MAXIMIZED) == GLFW_TRUE;
-            if (!app->m_windowMaximized) {
-                app->m_windowPos.x = xpos;
-                app->m_windowPos.y = ypos;
-            }
-        });
-
-        glfwSetWindowSizeCallback(m_glfwWindow, [](GLFWwindow* window, int width, int height) {
-            Window* app = static_cast<Window*>(glfwGetWindowUserPointer(window));
-            if (app == nullptr) {
-                return;
-            }
-            app->m_windowMaximized = glfwGetWindowAttrib(window, GLFW_MAXIMIZED) == GLFW_TRUE;
-            if (!app->m_windowMaximized) {
-                app->m_windowWidth = width;
-                app->m_windowHeight = height;
-            }
-            app->OnResize();
-            auto const translatedEvent = std::make_unique<EventWindowSize>(width, height);
-            app->OnEvent(*translatedEvent);
-        });
-
-        glfwSetKeyCallback(m_glfwWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-            Window* app = static_cast<Window*>(glfwGetWindowUserPointer(window));
-            if (app == nullptr) {
-                return;
-            }
-            if (auto const translatedEvent = FromGLFW(key, scancode, action, mods)) {
-                app->OnEvent(*translatedEvent);
-            }
-        });
-
-        glfwSetCursorPosCallback(m_glfwWindow, [](GLFWwindow* window, double xpos, double ypos) {
-            Window* app = static_cast<Window*>(glfwGetWindowUserPointer(window));
-            if (app == nullptr) {
-                return;
-            }
-            auto const newMousePos = FloatVec2{ xpos, ypos };
-            FloatVec2 windowDelta{ 0, 0 };
-            if (app->m_haveMousePos) {
-                windowDelta = newMousePos - app->m_lastMousePos;
-            }
-            app->m_lastMousePos = newMousePos;
-            app->m_haveMousePos = true;
-            auto const windowSize = moth::core::IntVec2{ app->GetWidth(), app->GetHeight() };
-            auto const renderSize = app->GetRenderSize();
-            auto const logicalPos = ToLogicalPos(windowSize, renderSize, newMousePos);
-            auto const logicalDelta = ToLogicalDelta(windowSize, renderSize, windowDelta);
-            auto const translatedEvent = std::make_unique<moth_ui::EventMouseMove>(logicalPos, logicalDelta);
-            app->OnEvent(*translatedEvent);
-        });
-
-        glfwSetMouseButtonCallback(m_glfwWindow, [](GLFWwindow* window, int button, int action, int mods) {
-            Window* app = static_cast<Window*>(glfwGetWindowUserPointer(window));
-            if (app == nullptr) {
-                return;
-            }
-            // Query the live cursor position rather than the cached one: no
-            // move callback need have fired yet (cursor stationary since launch),
-            // which would otherwise hit-test the click at a stale position.
-            double cursorX = 0.0;
-            double cursorY = 0.0;
-            glfwGetCursorPos(window, &cursorX, &cursorY);
-            app->m_lastMousePos = FloatVec2{ cursorX, cursorY };
-            app->m_haveMousePos = true;
-            auto const windowSize = moth::core::IntVec2{ app->GetWidth(), app->GetHeight() };
-            auto const renderSize = app->GetRenderSize();
-            auto const logicalPos = ToLogicalPos(windowSize, renderSize, app->m_lastMousePos);
-            if (auto const translatedEvent = FromGLFW(button, action, mods, logicalPos)) {
-                app->OnEvent(*translatedEvent);
-            }
-        });
-
-        glfwSetScrollCallback(m_glfwWindow, [](GLFWwindow* window, double xoffset, double yoffset) {
-            Window* app = static_cast<Window*>(glfwGetWindowUserPointer(window));
-            if (app == nullptr) {
-                return;
-            }
-            // GLFW wheel callbacks carry a delta only; stamp the cursor position
-            // (logical space, as for button events) so widgets can tell whether
-            // the scroll is over them without a prior move event. Query the live
-            // position rather than the cached one, which may be stale if no move
-            // callback has fired since launch.
-            // Integer notch convention (+y is scroll up).
-            double cursorX = 0.0;
-            double cursorY = 0.0;
-            glfwGetCursorPos(window, &cursorX, &cursorY);
-            app->m_lastMousePos = FloatVec2{ cursorX, cursorY };
-            app->m_haveMousePos = true;
-            auto const windowSize = moth::core::IntVec2{ app->GetWidth(), app->GetHeight() };
-            auto const renderSize = app->GetRenderSize();
-            auto const logicalPos = ToLogicalPos(windowSize, renderSize, app->m_lastMousePos);
-            moth_ui::EventMouseWheel const translatedEvent{
-                moth_ui::IntVec2{ static_cast<int>(xoffset), static_cast<int>(yoffset) },
-                logicalPos };
-            app->OnEvent(translatedEvent);
-        });
-
-        int width = 0;
-        int height = 0;
-        glfwGetFramebufferSize(m_glfwWindow, &width, &height);
-
-        if (m_windowMaximized) {
-            glfwMaximizeWindow(m_glfwWindow);
-        }
-
-        CHECK_VK_RESULT(glfwCreateWindowSurface(m_context.instance, m_glfwWindow, nullptr, &m_customVkSurface));
+    bool Window::CreateSurface() {
+        spdlog::info("GLFW: creating window '{}' ({}x{})", m_title, GetWidth(), GetHeight());
+        CHECK_VK_RESULT(glfwCreateWindowSurface(m_context.instance, m_nativeWindow->GetGLFWWindow(), nullptr, &m_customVkSurface));
         m_surfaceContext = std::make_unique<graphics::vulkan::SurfaceContext>(m_context);
 
-        SetGraphics(std::make_unique<graphics::vulkan::Graphics>(*m_surfaceContext, m_customVkSurface, m_windowWidth, m_windowHeight));
+        SetGraphics(std::make_unique<graphics::vulkan::Graphics>(*m_surfaceContext, m_customVkSurface, GetWidth(), GetHeight()));
         spdlog::info("GLFW: window '{}' ready", m_title);
         return true;
-    }
-
-    void Window::SetWindowTitle(std::string_view title) {
-        m_title = title;
-        glfwSetWindowTitle(m_glfwWindow, m_title.c_str());
-    }
-
-    void Window::OnResize() {
-        int fbWidth = 0;
-        int fbHeight = 0;
-        glfwGetFramebufferSize(m_glfwWindow, &fbWidth, &fbHeight);
-        spdlog::info("GLFW: window '{}' resized to {}x{} (framebuffer {}x{})",
-                     m_title, m_windowWidth, m_windowHeight, fbWidth, fbHeight);
-        if (fbWidth == 0 || fbHeight == 0) {
-            // Window is minimised or has a zero dimension; skip swapchain recreation.
-            return;
-        }
-        auto* g = GetGraphicsPtr();
-        if (g == nullptr) {
-            spdlog::error("GLFW: OnResize called but graphics is null");
-            return;
-        }
-        auto* graphics = dynamic_cast<graphics::vulkan::Graphics*>(g);
-        if (graphics == nullptr) {
-            spdlog::error("GLFW: OnResize called but graphics backend is not Vulkan");
-            return;
-        }
-        graphics->OnResize(m_customVkSurface, static_cast<uint32_t>(fbWidth), static_cast<uint32_t>(fbHeight));
-        GetLayerStack().SetWindowSize({ m_windowWidth, m_windowHeight });
     }
 }

@@ -22,6 +22,7 @@ option(MOTH_ENABLE_GFX     "Build the moth::gfx module (2D renderer + backends)"
 option(MOTH_ENABLE_UI      "Build the moth::ui module (node graph/layers/animation)"  ON)
 option(MOTH_ENABLE_BRIDGE  "Build the moth::bridge module (ui <-> gfx adapter)"       ON)
 option(MOTH_ENABLE_TOOLKIT "Build the moth::toolkit aggregate target"                 ON)
+option(MOTH_ENABLE_EXAMPLES "Build the example projects"                              OFF)
 
 # ---------------------------------------------------------------------------
 # Dependency constraints
@@ -73,4 +74,11 @@ endif()
 
 if(MOTH_ENABLE_TOOLKIT)
     add_subdirectory(toolkit)
+endif()
+
+if(MOTH_ENABLE_EXAMPLES)
+    if(NOT MOTH_ENABLE_GFX)
+        message(FATAL_ERROR "MOTH_ENABLE_EXAMPLES requires MOTH_ENABLE_GFX.")
+    endif()
+    add_subdirectory(examples/sample_game)
 endif()

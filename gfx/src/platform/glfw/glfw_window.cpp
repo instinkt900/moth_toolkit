@@ -14,8 +14,7 @@ namespace moth_graphics::platform::glfw {
     namespace {
         // Translate a raw window-pixel position (and optional delta) into
         // logical/render coordinates, accounting for the letterbox introduced
-        // when window aspect differs from the render aspect. SDL does this
-        // automatically via SDL_RenderSetLogicalSize; GLFW does not.
+        // when window aspect differs from the render aspect.
         struct LogicalScale {
             float scaleX;
             float scaleY;
@@ -212,7 +211,7 @@ namespace moth_graphics::platform::glfw {
             // the scroll is over them without a prior move event. Query the live
             // position rather than the cached one, which may be stale if no move
             // callback has fired since launch.
-            // Match the SDL backend's integer notch convention (+y is scroll up).
+            // Integer notch convention (+y is scroll up).
             double cursorX = 0.0;
             double cursorY = 0.0;
             glfwGetCursorPos(window, &cursorX, &cursorY);

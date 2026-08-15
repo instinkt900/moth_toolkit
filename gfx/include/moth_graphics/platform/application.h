@@ -23,7 +23,7 @@ namespace moth_graphics::platform {
     /// application lifecycle behavior.
     class Application : public Ticker, public moth_ui::IEventListener {
     public:
-        /// @param platform The platform backend to use (SDL or GLFW).
+        /// @param platform The platform backend to use (GLFW).
         /// @param title Initial window title.
         /// @param width Initial window width in pixels.
         /// @param height Initial window height in pixels.

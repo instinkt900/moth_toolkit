@@ -23,13 +23,6 @@
 #include <GLFW/glfw3.h>
 #endif
 
-#if !MOTH_GRAPHICS_DISABLE_SDL
-#include <SDL.h>
-#include <SDL_rect.h>
-#include <SDL_image.h>
-#include "graphics/sdl/smart_sdl.hpp"
-#endif
-
 #include <spdlog/spdlog.h>
 #include <nlohmann/json.hpp>
 #include <imgui.h>

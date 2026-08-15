@@ -11,8 +11,6 @@ find_package(Catch2 3 REQUIRED)
 add_subdirectory(.. moth_graphics)
 
 set(SOURCES
-    # Entry point: includes SDL.h so SDL's #define renames main→SDL_main on Windows,
-    # letting SDL2main.lib's WinMain call Catch2 directly without any stub or /ENTRY hacks.
     src/main.cpp
     src/test_spritesheet.cpp
     src/test_sprite.cpp

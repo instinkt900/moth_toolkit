@@ -76,7 +76,7 @@ namespace moth_graphics::graphics::vulkan {
 
         BeginContext(&m_defaultContext);
 
-        // Mirror the SDL backend: wipe the full physical surface each frame.
+        // Wipe the full physical surface each frame.
         // The render pass uses LOAD_OP_LOAD and per-layer SetLogicalSize narrows
         // the viewport, so without this the region outside the logical viewport
         // keeps stale content from the previous frame in this swapchain image.

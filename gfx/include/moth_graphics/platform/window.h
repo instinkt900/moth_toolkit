@@ -28,8 +28,7 @@ namespace moth_graphics::platform {
     /// Owns the @c IGraphics instance, the moth_ui @c LayerStack, and the
     /// @c MothImageFactory / @c MothFontFactory adapter wrappers. The underlying
     /// image and font factories are owned by the @c AssetContext. Subclasses
-    /// handle the platform-specific window creation (see @c sdl::Window and
-    /// @c glfw::Window).
+    /// handle the platform-specific window creation (see @c glfw::Window).
     class Window : public EventEmitter, public moth_ui::IEventListener {
     public:
         /// @param windowTitle Initial title bar text.
@@ -116,7 +115,7 @@ namespace moth_graphics::platform {
         /// @brief Release the layer stack and ImGui context in the order they
         ///        depend on each other. Called from a derived class destructor
         ///        body while native handles (window, surface, descriptor pool)
-        ///        are still alive — see @c glfw::Window and @c sdl::Window.
+        ///        are still alive — see @c glfw::Window.
         ///        Idempotent.
         void ReleaseUiResources();
 

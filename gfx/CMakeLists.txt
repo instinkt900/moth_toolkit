@@ -19,10 +19,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(MOTH_GRAPHICS_DISABLE_VULKAN "Disable the Vulkan/GLFW backend" OFF)
-option(MOTH_GRAPHICS_DISABLE_SDL "Disable the SDL2 backend" OFF)
 
-if(MOTH_GRAPHICS_DISABLE_VULKAN AND MOTH_GRAPHICS_DISABLE_SDL)
-    message(FATAL_ERROR "At least one backend must be enabled (MOTH_GRAPHICS_DISABLE_VULKAN and MOTH_GRAPHICS_DISABLE_SDL cannot both be ON).")
+if(MOTH_GRAPHICS_DISABLE_VULKAN)
+    message(FATAL_ERROR "Vulkan is the only backend; it cannot be disabled (a future backend can re-introduce the toggle).")
 endif()
 
 # ---- Always-compiled sources ------------------------------------------------
@@ -50,24 +49,6 @@ set(SOURCES
     src/platform/window.cpp
     external/murmurhash.c/murmurhash.c
 )
-
-# ---- SDL backend sources -----------------------------------------------------
-if(NOT MOTH_GRAPHICS_DISABLE_SDL)
-    list(APPEND SOURCES
-        external/imgui/backends/imgui_impl_sdl2.cpp
-        external/imgui/backends/imgui_impl_sdlrenderer2.cpp
-        src/graphics/sdl/sdl_font.cpp
-        src/graphics/sdl/sdl_graphics.cpp
-        src/graphics/sdl/sdl_target.cpp
-        src/graphics/sdl/sdl_asset_context.cpp
-        src/graphics/sdl/sdl_surface_context.cpp
-        src/graphics/sdl/sdl_texture.cpp
-        src/graphics/sdl/SDL_FontCache.c
-        src/platform/sdl/sdl_events.cpp
-        src/platform/sdl/sdl_platform.cpp
-        src/platform/sdl/sdl_window.cpp
-    )
-endif()
 
 # ---- Vulkan backend sources --------------------------------------------------
 if(NOT MOTH_GRAPHICS_DISABLE_VULKAN)
@@ -100,29 +81,8 @@ endif()
 
 # ---- Dependencies ------------------------------------------------------------
 
-# SDL2/SDL_image/SDL_ttf/GLFW must come from the system on Linux to avoid
-# runtime symbol conflicts with GTK3/GDK-Pixbuf (used by NFD's file dialog).
-# Conan-built copies statically embed libpng, libjpeg, etc. which clash with
-# the system versions loaded by GTK3 at runtime.
-if(NOT MOTH_GRAPHICS_DISABLE_SDL)
-    if(WIN32)
-        find_package(SDL2 REQUIRED)
-        find_package(SDL2_image REQUIRED)
-        find_package(SDL2_ttf REQUIRED)
-        set(MOTH_GRAPHICS_SDL2_LINK SDL2::SDL2)
-        set(MOTH_GRAPHICS_SDL2_IMAGE_LINK SDL2_image::SDL2_image)
-        set(MOTH_GRAPHICS_SDL2_TTF_LINK SDL2_ttf::SDL2_ttf-static)
-    else()
-        find_package(PkgConfig REQUIRED)
-        pkg_check_modules(SDL2 REQUIRED IMPORTED_TARGET sdl2)
-        pkg_check_modules(SDL2_image REQUIRED IMPORTED_TARGET SDL2_image)
-        pkg_check_modules(SDL2_ttf REQUIRED IMPORTED_TARGET SDL2_ttf)
-        set(MOTH_GRAPHICS_SDL2_LINK PkgConfig::SDL2)
-        set(MOTH_GRAPHICS_SDL2_IMAGE_LINK PkgConfig::SDL2_image)
-        set(MOTH_GRAPHICS_SDL2_TTF_LINK PkgConfig::SDL2_ttf)
-    endif()
-endif()
-
+# GLFW/FreeType/HarfBuzz must come from the system on Linux to avoid runtime
+# symbol conflicts with GTK3/GDK-Pixbuf (used by NFD's file dialog).
 if(NOT MOTH_GRAPHICS_DISABLE_VULKAN)
     if(WIN32)
         find_package(glfw3 REQUIRED)
@@ -157,16 +117,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE external/murmurhash.c)
 target_include_directories(${PROJECT_NAME} PRIVATE external/stb)
 target_include_directories(${PROJECT_NAME} PRIVATE src)
 
-if(NOT MOTH_GRAPHICS_DISABLE_SDL)
-    target_compile_definitions(${PROJECT_NAME} PUBLIC MOTH_GRAPHICS_DISABLE_SDL=0)
-    target_link_libraries(${PROJECT_NAME} PUBLIC ${MOTH_GRAPHICS_SDL2_LINK})
-    target_link_libraries(${PROJECT_NAME} PUBLIC ${MOTH_GRAPHICS_SDL2_IMAGE_LINK})
-    target_link_libraries(${PROJECT_NAME} PUBLIC ${MOTH_GRAPHICS_SDL2_TTF_LINK})
-else()
-    target_compile_definitions(${PROJECT_NAME} PUBLIC MOTH_GRAPHICS_DISABLE_SDL=1)
-    set_source_files_properties(src/graphics/sdl/SDL_FontCache.c PROPERTIES HEADER_FILE_ONLY TRUE)
-endif()
-
 if(NOT MOTH_GRAPHICS_DISABLE_VULKAN)
     target_compile_definitions(${PROJECT_NAME} PUBLIC MOTH_GRAPHICS_DISABLE_VULKAN=0)
     target_link_libraries(${PROJECT_NAME} PUBLIC ${MOTH_GRAPHICS_GLFW_LINK})
@@ -182,16 +132,10 @@ target_link_libraries(${PROJECT_NAME} PUBLIC spdlog::spdlog)
 target_link_libraries(${PROJECT_NAME} PUBLIC moth_ui::moth_ui)
 
 if(MSVC)
-    if(NOT MOTH_GRAPHICS_DISABLE_SDL)
-        set_source_files_properties(src/graphics/sdl/SDL_FontCache.c PROPERTIES COMPILE_FLAGS "/W0")
-    endif()
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/ignore:4099")
     set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/W3 /WX")
     target_compile_definitions(${PROJECT_NAME} PRIVATE _CRT_SECURE_NO_WARNINGS)
 else()
-    if(NOT MOTH_GRAPHICS_DISABLE_SDL)
-        set_source_files_properties(src/graphics/sdl/SDL_FontCache.c PROPERTIES COMPILE_FLAGS "-w")
-    endif()
     set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-Wall -Werror")
 endif()
 
@@ -204,13 +148,10 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR DEFINED ENV{CI})
         set_target_properties(${PROJECT_NAME} PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_EXE};--extra-arg=-Wno-ignored-gch")
         # Third-party source files — skip all linting (requires CMake 3.27+)
         set_source_files_properties(
-            src/graphics/sdl/SDL_FontCache.c
             external/imgui/imgui.cpp
             external/imgui/imgui_draw.cpp
             external/imgui/imgui_tables.cpp
             external/imgui/imgui_widgets.cpp
-            external/imgui/backends/imgui_impl_sdl2.cpp
-            external/imgui/backends/imgui_impl_sdlrenderer2.cpp
             external/imgui/backends/imgui_impl_glfw.cpp
             external/imgui/backends/imgui_impl_vulkan.cpp
             external/murmurhash.c/murmurhash.c
@@ -227,13 +168,10 @@ endif()
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/common.h)
 set_source_files_properties(
     external/murmurhash.c/murmurhash.c
-    src/graphics/sdl/SDL_FontCache.c
     external/imgui/imgui.cpp
     external/imgui/imgui_draw.cpp
     external/imgui/imgui_tables.cpp
     external/imgui/imgui_widgets.cpp
-    external/imgui/backends/imgui_impl_sdl2.cpp
-    external/imgui/backends/imgui_impl_sdlrenderer2.cpp
     external/imgui/backends/imgui_impl_glfw.cpp
     external/imgui/backends/imgui_impl_vulkan.cpp
     src/graphics/vulkan/shaders/vulkan_shaders.cpp

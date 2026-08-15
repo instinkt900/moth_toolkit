@@ -16,11 +16,9 @@ class MothGraphics(ConanFile):
 
     options = {
         "disable_vulkan": [True, False],
-        "disable_sdl": [True, False],
     }
     default_options = {
         "disable_vulkan": False,
-        "disable_sdl": False,
     }
 
     exports_sources = "CMakeLists.txt", "version.txt", "include/*", "src/*", "external/imgui/*", "external/murmurhash.c/*", "external/stb/*"
@@ -30,26 +28,22 @@ class MothGraphics(ConanFile):
             self.version = load(self, "version.txt").strip()
 
     def validate(self):
-        if self.options.disable_vulkan and self.options.disable_sdl:
-            raise ConanInvalidConfiguration("disable_vulkan and disable_sdl cannot both be True")
+        if self.options.disable_vulkan:
+            raise ConanInvalidConfiguration("Vulkan is the only backend; disable_vulkan cannot be True")
 
     def requirements(self):
-        # SDL2, SDL_image, SDL_ttf, and GLFW bring in the system display/audio
-        # stack (X11, Wayland, ALSA, libpng, libjpeg, etc.) which must match the
-        # system versions already used by GTK3/GDK-Pixbuf (via NFD). Using
-        # Conan-built copies causes runtime symbol conflicts. On Linux these must
-        # come from the system package manager.
-        if not self.options.disable_sdl and self.settings.os == "Windows":
-            self.requires("sdl/[~2.28]", override=True, transitive_headers=True)
-            self.requires("sdl_image/[~2.0]")
-            self.requires("sdl_ttf/[~2.20]")
+        # GLFW brings in the system display/audio stack (X11, Wayland, ALSA,
+        # libpng, libjpeg, etc.) which must match the system versions already
+        # used by GTK3/GDK-Pixbuf (via NFD). Using Conan-built copies causes
+        # runtime symbol conflicts. On Linux these come from the system package
+        # manager.
         if not self.options.disable_vulkan:
             if self.settings.os == "Windows":
                 self.requires("glfw/3.3.8", transitive_headers=True)
-                # vulkan_context.h uses FreeType (FT_Library). The Vulkan font
-                # backend (now in private src/) uses HarfBuzz. Both are kept
-                # transitive for safety on Windows where they come from Conan.
-                # On Linux these come from the system package manager.
+                # The Vulkan font backend uses FreeType (FT_Library) and
+                # HarfBuzz. Both are kept transitive for safety on Windows where
+                # they come from Conan. On Linux these come from the system
+                # package manager.
                 self.requires("freetype/[~2.13]", transitive_headers=True)
                 self.requires("harfbuzz/[~8.3]", transitive_headers=True)
             self.requires("vulkan-headers/1.3.243.0", transitive_headers=True)
@@ -62,11 +56,8 @@ class MothGraphics(ConanFile):
         if self.settings.os == "Linux":
             import shutil
             packages = []
-            if not self.options.disable_sdl:
-                packages += ["libsdl2-dev", "libsdl2-image-dev", "libsdl2-ttf-dev"]
             if not self.options.disable_vulkan:
                 packages += ["libglfw3-dev", "libfreetype-dev", "libharfbuzz-dev"]
-            if not self.options.disable_sdl or not self.options.disable_vulkan:
                 packages.append("pkg-config")
             if packages:
                 if not shutil.which("apt-get"):
@@ -91,7 +82,6 @@ class MothGraphics(ConanFile):
         deps.generate()
         tc = CMakeToolchain(self)
         tc.cache_variables["MOTH_GRAPHICS_DISABLE_VULKAN"] = bool(self.options.disable_vulkan)
-        tc.cache_variables["MOTH_GRAPHICS_DISABLE_SDL"] = bool(self.options.disable_sdl)
         tc.generate()
 
     def build(self):
@@ -109,18 +99,14 @@ class MothGraphics(ConanFile):
         self.cpp_info.includedirs = ["include", "external/imgui"]
         self.cpp_info.defines = ["IMGUI_DEFINE_MATH_OPERATORS"]
         self.cpp_info.defines.append("MOTH_GRAPHICS_DISABLE_VULKAN={}".format(1 if self.options.disable_vulkan else 0))
-        self.cpp_info.defines.append("MOTH_GRAPHICS_DISABLE_SDL={}".format(1 if self.options.disable_sdl else 0))
         if self.settings.os == "Linux":
-            # System SDL2/SDL_image/SDL_ttf/GLFW — propagate link flags and
-            # include paths to all consumers. Paths are detected via
-            # pkg-config rather than hard-coding a sysroot-relative location.
+            # System GLFW/FreeType/HarfBuzz — propagate link flags and include
+            # paths to all consumers. Paths are detected via pkg-config rather
+            # than hard-coding a sysroot-relative location.
             import shutil
             import subprocess
             system_libs = []
             pkg_config_pkgs = []
-            if not self.options.disable_sdl:
-                system_libs += ["SDL2", "SDL2_image", "SDL2_ttf"]
-                pkg_config_pkgs.append("sdl2")
             if not self.options.disable_vulkan:
                 system_libs += ["glfw", "freetype", "harfbuzz"]
                 pkg_config_pkgs += ["freetype2", "harfbuzz"]

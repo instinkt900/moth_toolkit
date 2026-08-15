@@ -1,0 +1,14 @@
+# Build
+build/
+cmake-build-*/
+out/
+
+# Generated
+compile_commands.json
+CMakeUserPresets.json
+
+# IDE
+.vscode/
+.idea/
+.cache/
+.clangd/

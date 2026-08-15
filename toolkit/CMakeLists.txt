@@ -30,4 +30,8 @@ if(MOTH_ENABLE_BRIDGE)
     target_link_libraries(moth_toolkit INTERFACE moth::bridge)
 endif()
 
+if(MOTH_ENABLE_ECS)
+    target_link_libraries(moth_toolkit INTERFACE moth::ecs)
+endif()
+
 install(DIRECTORY include/ DESTINATION include)

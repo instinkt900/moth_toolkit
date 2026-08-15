@@ -26,3 +26,4 @@ class MothToolkitSuperbuild(ConanFile):
         self.requires("magic_enum/[~0.8]", transitive_headers=True)
         self.requires("range-v3/[~0.12]", transitive_headers=True)
         self.requires("vulkan-memory-allocator/3.0.1", transitive_headers=True)
+        self.requires("entt/[~3.13]", transitive_headers=True)

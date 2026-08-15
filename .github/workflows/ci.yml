@@ -16,7 +16,7 @@ jobs:
           - name: full
             flags: ""
           - name: core-only
-            flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
+            flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ECS=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
           - name: core-gfx
             flags: "-DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
           - name: game-example
@@ -80,6 +80,14 @@ jobs:
 
       - name: Build and run ui tests
         working-directory: ui/tests
+        run: |
+          conan install . --build=missing -s build_type=Release
+          cmake --preset conan-release
+          cmake --build --preset conan-release
+          ctest --preset conan-release --output-on-failure
+
+      - name: Build and run ecs tests
+        working-directory: ecs/tests
         run: |
           conan install . --build=missing -s build_type=Release
           cmake --preset conan-release

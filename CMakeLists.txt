@@ -21,6 +21,7 @@ option(MOTH_ENABLE_CORE    "Build the moth::core module (loop/platform/math/even
 option(MOTH_ENABLE_GFX     "Build the moth::gfx module (2D renderer + backends)"      ON)
 option(MOTH_ENABLE_UI      "Build the moth::ui module (node graph/layers/animation)"  ON)
 option(MOTH_ENABLE_BRIDGE  "Build the moth::bridge module (ui <-> gfx adapter)"       ON)
+option(MOTH_ENABLE_ECS     "Build the moth::ecs module (EnTT entity-component system)" ON)
 option(MOTH_ENABLE_TOOLKIT "Build the moth::toolkit aggregate target"                 ON)
 option(MOTH_ENABLE_EXAMPLES "Build the example projects"                              OFF)
 
@@ -35,6 +36,9 @@ if(MOTH_ENABLE_GFX AND NOT MOTH_ENABLE_CORE)
 endif()
 if(MOTH_ENABLE_UI AND NOT MOTH_ENABLE_CORE)
     message(FATAL_ERROR "moth::ui requires moth::core — enable MOTH_ENABLE_CORE or disable MOTH_ENABLE_UI.")
+endif()
+if(MOTH_ENABLE_ECS AND NOT MOTH_ENABLE_CORE)
+    message(FATAL_ERROR "moth::ecs requires moth::core — enable MOTH_ENABLE_CORE or disable MOTH_ENABLE_ECS.")
 endif()
 
 # ---------------------------------------------------------------------------
@@ -70,6 +74,12 @@ endif()
 
 if(MOTH_ENABLE_BRIDGE)
     add_subdirectory(bridge)
+endif()
+
+if(MOTH_ENABLE_ECS)
+    add_subdirectory(ecs)
+    add_library(moth::ecs ALIAS moth_ecs)
+    add_library(moth_ecs::moth_ecs ALIAS moth_ecs)
 endif()
 
 if(MOTH_ENABLE_TOOLKIT)

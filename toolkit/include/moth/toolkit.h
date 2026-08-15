@@ -24,6 +24,9 @@
 #ifndef MOTH_ENABLE_BRIDGE
 #define MOTH_ENABLE_BRIDGE 1
 #endif
+#ifndef MOTH_ENABLE_ECS
+#define MOTH_ENABLE_ECS 1
+#endif
 
 #if MOTH_ENABLE_CORE
 #include <moth/core/vector.h>
@@ -53,6 +56,10 @@
 
 #if MOTH_ENABLE_UI
 #include <moth_ui/moth_ui.h>
+#endif
+
+#if MOTH_ENABLE_ECS
+#include <moth/ecs/ecs.h>
 #endif
 
 #if MOTH_ENABLE_BRIDGE

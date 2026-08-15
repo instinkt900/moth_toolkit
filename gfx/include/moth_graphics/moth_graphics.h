@@ -34,9 +34,6 @@
 
 // graphics — moth_ui bridge lives in the `bridge` module (moth/bridge).
 
-// scene — lightweight game-object model
-#include "moth_graphics/scene/scene.h"
-
 // platform
 #include "moth_graphics/platform/imgui_context.h"
 #include "moth_graphics/platform/iplatform.h"

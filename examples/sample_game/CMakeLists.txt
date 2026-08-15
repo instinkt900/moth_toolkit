@@ -18,5 +18,12 @@ if(NOT TARGET moth::core)
     find_package(moth_core CONFIG REQUIRED)
 endif()
 
+if(TARGET moth::ecs)
+    set(MOTH_ECS_TARGET moth::ecs)
+else()
+    find_package(moth_ecs CONFIG REQUIRED)
+    set(MOTH_ECS_TARGET moth::ecs)
+endif()
+
 add_executable(sample_game main.cpp)
-target_link_libraries(sample_game PRIVATE ${MOTH_GFX_TARGET} moth::core)
+target_link_libraries(sample_game PRIVATE ${MOTH_GFX_TARGET} moth::core ${MOTH_ECS_TARGET})

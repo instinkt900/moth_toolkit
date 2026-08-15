@@ -1,8 +1,8 @@
 #pragma once
 
-#include <moth_ui/graphics/text_alignment.h>
+#include <moth/core/text_alignment.h>
 
 namespace moth_graphics::graphics {
-    using TextHorizAlignment = moth_ui::TextHorizAlignment;
-    using TextVertAlignment = moth_ui::TextVertAlignment;
+    using TextHorizAlignment = moth::core::TextHorizAlignment;
+    using TextVertAlignment = moth::core::TextVertAlignment;
 }

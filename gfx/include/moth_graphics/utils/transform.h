@@ -1,10 +1,10 @@
 #pragma once
 
-#include <moth_ui/utils/transform.h>
+#include <moth/core/transform.h>
 
 namespace moth_graphics {
-    using moth_ui::FloatMat4x4;
-    using moth_ui::kDefaultPivot;
-    using moth_ui::kDegToRad;
-    using moth_ui::kRadToDeg;
+    using moth::core::FloatMat4x4;
+    using moth::core::kDefaultPivot;
+    using moth::core::kDegToRad;
+    using moth::core::kRadToDeg;
 }

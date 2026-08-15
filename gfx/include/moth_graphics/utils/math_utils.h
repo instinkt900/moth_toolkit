@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cmath>
-#include <moth_ui/utils/interp.h>
+#include <moth/core/interp.h>
 
 namespace moth_graphics {
     template<typename T, typename F>
@@ -19,8 +19,8 @@ namespace moth_graphics {
         return radians * (180.0f / M_PI);
     }
 
-    using moth_ui::InterpType;
-    using moth_ui::Interp;
-    using moth_ui::F_PI;
+    using moth::core::InterpType;
+    using moth::core::Interp;
+    using moth::core::F_PI;
 }
 

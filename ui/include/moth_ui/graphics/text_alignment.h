@@ -1,17 +1,9 @@
 #pragma once
 
-namespace moth_ui {
-    /// @brief Horizontal alignment of text within its bounding rectangle.
-    enum class TextHorizAlignment {
-        Left,   ///< Text is left-aligned.
-        Center, ///< Text is centred horizontally.
-        Right   ///< Text is right-aligned.
-    };
+// Moved to moth::core — re-exported here so existing moth_ui text alignments keep working.
+#include <moth/core/text_alignment.h>
 
-    /// @brief Vertical alignment of text within its bounding rectangle.
-    enum class TextVertAlignment {
-        Top,    ///< Text is aligned to the top edge.
-        Middle, ///< Text is centred vertically.
-        Bottom  ///< Text is aligned to the bottom edge.
-    };
+namespace moth_ui {
+    using moth::core::TextHorizAlignment;
+    using moth::core::TextVertAlignment;
 }

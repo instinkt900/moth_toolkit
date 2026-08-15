@@ -8,6 +8,11 @@
 #include "moth_ui/graphics/text_alignment.h"
 #include "moth_ui/layout/layout_entity_type.h"
 
+// Vector/Rect/Color live in moth::core now; pulled in for the aliases below.
+#include <moth/core/vector.h>
+#include <moth/core/rect.h>
+#include <moth/core/color.h>
+
 namespace moth_ui {
 
     // -------------------------------------------------------------------------
@@ -107,29 +112,17 @@ namespace moth_ui {
     class Context;
 
     // -------------------------------------------------------------------------
-    // Vector types
+    // Vector / Rect / Color types (defined in moth::core)
     // -------------------------------------------------------------------------
-    template <class T, int Dim>
-    class VectorData;
+    using moth::core::VectorData;
+    using moth::core::Vector;
+    using moth::core::FloatVec2;
+    using moth::core::IntVec2;
 
-    template <class T, int Dim>
-    class Vector;
+    using moth::core::Rect;
+    using moth::core::IntRect;
+    using moth::core::FloatRect;
 
-    using FloatVec2 = Vector<float, 2>;
-    using IntVec2   = Vector<int, 2>;
-
-    // -------------------------------------------------------------------------
-    // Rect types
-    // -------------------------------------------------------------------------
-    template <typename T>
-    struct Rect;
-
-    using IntRect   = Rect<int>;
-    using FloatRect = Rect<float>;
-
-    // -------------------------------------------------------------------------
-    // Color
-    // -------------------------------------------------------------------------
-    using Color = Vector<float, 4>;
+    using moth::core::Color;
 }
 

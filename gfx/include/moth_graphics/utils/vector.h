@@ -1,20 +1,20 @@
 #pragma once
 
-#include <moth_ui/utils/vector.h>
-#include <moth_ui/utils/vector_serialization.h>
-#include <moth_ui/utils/vector_utils.h>
+#include <moth/core/vector.h>
+#include <moth/core/vector_serialization.h>
+#include <moth/core/vector_utils.h>
 
 namespace moth_graphics {
-    using moth_ui::Vector;
-    using moth_ui::IntVec2;
-    using moth_ui::FloatVec2;
-    using moth_ui::Length;
-    using moth_ui::LengthSq;
-    using moth_ui::Distance;
-    using moth_ui::DistanceSq;
-    using moth_ui::Dot;
-    using moth_ui::Normalized;
-    using moth_ui::Rotate2D;
-    using moth_ui::Angle;
+    using moth::core::Vector;
+    using moth::core::IntVec2;
+    using moth::core::FloatVec2;
+    using moth::core::Length;
+    using moth::core::LengthSq;
+    using moth::core::Distance;
+    using moth::core::DistanceSq;
+    using moth::core::Dot;
+    using moth::core::Normalized;
+    using moth::core::Rotate2D;
+    using moth::core::Angle;
 }
 

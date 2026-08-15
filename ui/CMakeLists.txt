@@ -146,6 +146,11 @@ find_package(fmt REQUIRED)
 find_package(magic_enum REQUIRED)
 find_package(range-v3 REQUIRED)
 
+# Core is a sibling module; in the superbuild the target already exists, standalone it is located via find_package.
+if(NOT TARGET moth::core)
+    find_package(moth_core CONFIG REQUIRED)
+endif()
+
 add_library(${PROJECT_NAME} ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 target_include_directories(${PROJECT_NAME} PUBLIC include)
@@ -154,6 +159,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC nlohmann_json::nlohmann_json)
 target_link_libraries(${PROJECT_NAME} PUBLIC fmt::fmt)
 target_link_libraries(${PROJECT_NAME} PUBLIC magic_enum::magic_enum)
 target_link_libraries(${PROJECT_NAME} PUBLIC range-v3::range-v3)
+target_link_libraries(${PROJECT_NAME} PUBLIC moth::core)
 
 if (MSVC)
 	set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/W3 /WX")

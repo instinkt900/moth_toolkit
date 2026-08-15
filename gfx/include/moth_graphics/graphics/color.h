@@ -1,14 +1,14 @@
 #pragma once
 
 #include <cmath>
-#include <moth_ui/utils/color.h>
+#include <moth/core/color.h>
 
 namespace moth_graphics::graphics {
-    using moth_ui::Color;
-    namespace BasicColors = moth_ui::BasicColors;
-    using moth_ui::Clamp;
-    using moth_ui::Normalize;
-    using moth_ui::Limit;
-    using moth_ui::FromARGB;
-    using moth_ui::FromRGBA;
+    using moth::core::Color;
+    namespace BasicColors = moth::core::BasicColors;
+    using moth::core::Clamp;
+    using moth::core::Normalize;
+    using moth::core::Limit;
+    using moth::core::FromARGB;
+    using moth::core::FromRGBA;
 }

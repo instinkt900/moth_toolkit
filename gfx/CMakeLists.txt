@@ -103,6 +103,11 @@ endif()
 find_package(spdlog REQUIRED)
 find_package(moth_ui REQUIRED)
 
+# Core is a sibling module; in the superbuild the target already exists, standalone it is located via find_package.
+if(NOT TARGET moth::core)
+    find_package(moth_core CONFIG REQUIRED)
+endif()
+
 # ---- Target ------------------------------------------------------------------
 
 add_library(${PROJECT_NAME} ${SOURCES})
@@ -130,6 +135,7 @@ endif()
 
 target_link_libraries(${PROJECT_NAME} PUBLIC spdlog::spdlog)
 target_link_libraries(${PROJECT_NAME} PUBLIC moth_ui::moth_ui)
+target_link_libraries(${PROJECT_NAME} PUBLIC moth::core)
 
 if(MSVC)
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/ignore:4099")

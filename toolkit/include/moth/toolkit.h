@@ -40,6 +40,8 @@
 #include <moth/core/aabb.h>
 #include <moth/core/geometry.h>
 #include <moth/core/angle.h>
+#include <moth/core/random.h>
+#include <moth/core/noise.h>
 #include <moth/core/blend_mode.h>
 #include <moth/core/text_alignment.h>
 #include <moth/core/interp.h>

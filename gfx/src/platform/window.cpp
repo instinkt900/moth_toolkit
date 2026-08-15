@@ -6,9 +6,7 @@
 
 namespace moth_graphics::platform {
     Window::Window(std::string_view title, int width, int height)
-        : m_title(title)
-        , m_windowWidth(width)
-        , m_windowHeight(height) {
+        : moth::core::Window(title, width, height) {
     }
 
     Window::~Window() {
@@ -27,10 +25,10 @@ namespace moth_graphics::platform {
         EndFrame();
     }
 
-    bool Window::OnEvent(moth_ui::Event const& event) {
+    bool Window::OnEvent(moth::core::Event const& event) {
         // FireEvent from layers: dispatch to all layers first, then external
         // listeners if unhandled.
-        moth_ui::EventDispatch dispatch(event);
+        moth::core::EventDispatch dispatch(event);
         dispatch.Dispatch(m_layerStack.get());
         if (!dispatch.GetHandled()) {
             return EmitEvent(event);
@@ -50,7 +48,7 @@ namespace moth_graphics::platform {
         m_mothFontFactory = std::make_unique<moth_graphics::graphics::MothFontFactory>(assetContext.GetFontFactory());
         m_mothFlipbookFactory = std::make_unique<moth_graphics::graphics::MothFlipbookFactory>(assetContext.GetSpriteSheetFactory());
         m_mothContext = std::make_shared<moth_ui::Context>(m_mothImageFactory.get(), m_mothFontFactory.get(), m_uiRenderer.get(), m_mothFlipbookFactory.get());
-        m_layerStack = std::make_unique<moth_ui::LayerStack>(*m_uiRenderer, IntVec2{ m_windowWidth, m_windowHeight }, IntVec2{ m_windowWidth, m_windowHeight });
+        m_layerStack = std::make_unique<moth_ui::LayerStack>(*m_uiRenderer, moth::core::IntVec2{ m_windowWidth, m_windowHeight }, moth::core::IntVec2{ m_windowWidth, m_windowHeight });
         m_layerStack->SetEventListener(this);
     }
 

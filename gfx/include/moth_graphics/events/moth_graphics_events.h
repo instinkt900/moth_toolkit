@@ -1,15 +1,14 @@
 #pragma once
 
-#include <moth_ui/events/event.h>
+// Moved to moth::core — re-exported here so existing moth_graphics event types keep working.
+#include <moth/core/event_types.h>
 
 namespace moth_graphics {
-    enum MothGraphicsEventType : int {
-        EVENTTYPE_RENDERDEVICERESET = moth_ui::EVENTTYPE_USER0,
-        EVENTTYPE_RENDERTARGETRESET,
-        EVENTTYPE_WINDOWSIZE,
-        EVENTTYPE_REQUEST_QUIT,
-        EVENTTYPE_QUIT,
-
-        EVENTTYPE_GRAPHICSUSER0 = moth_ui::EVENTTYPE_USER0 + 100
-    };
+    using moth::core::MothGraphicsEventType;
+    using moth::core::EVENTTYPE_RENDERDEVICERESET;
+    using moth::core::EVENTTYPE_RENDERTARGETRESET;
+    using moth::core::EVENTTYPE_WINDOWSIZE;
+    using moth::core::EVENTTYPE_REQUEST_QUIT;
+    using moth::core::EVENTTYPE_QUIT;
+    using moth::core::EVENTTYPE_GRAPHICSUSER0;
 }

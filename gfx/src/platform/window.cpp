@@ -16,6 +16,13 @@ namespace moth_graphics::platform {
         return GetSurfaceContext().GetAssetContext().GetTextureFactory();
     }
 
+    moth::core::IntVec2 Window::GetRenderSize() const {
+        if (m_layerStack) {
+            return { m_layerStack->GetRenderWidth(), m_layerStack->GetRenderHeight() };
+        }
+        return { GetWidth(), GetHeight() };
+    }
+
     void Window::Draw() {
         BeginFrame();
         assert(m_layerStack && "Draw called before PostCreate; layer stack not yet initialised");

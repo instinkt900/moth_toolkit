@@ -22,11 +22,11 @@ namespace moth_graphics::platform::glfw {
             float offsetY;
         };
 
-        LogicalScale ComputeLogicalScale(moth_ui::LayerStack const& stack) {
-            float const ww = static_cast<float>(stack.GetWindowWidth());
-            float const wh = static_cast<float>(stack.GetWindowHeight());
-            float const lw = static_cast<float>(stack.GetRenderWidth());
-            float const lh = static_cast<float>(stack.GetRenderHeight());
+        LogicalScale ComputeLogicalScale(moth::core::IntVec2 windowSize, moth::core::IntVec2 renderSize) {
+            float const ww = static_cast<float>(windowSize.x);
+            float const wh = static_cast<float>(windowSize.y);
+            float const lw = static_cast<float>(renderSize.x);
+            float const lh = static_cast<float>(renderSize.y);
             if (ww <= 0.0f || wh <= 0.0f || lw <= 0.0f || lh <= 0.0f) {
                 return { 1.0f, 1.0f, 0.0f, 0.0f };
             }
@@ -44,16 +44,16 @@ namespace moth_graphics::platform::glfw {
             return { lw / fitWidth, lh / fitHeight, offsetX, offsetY };
         }
 
-        moth_ui::IntVec2 ToLogicalPos(moth_ui::LayerStack const& stack, FloatVec2 const& windowPos) {
-            auto const s = ComputeLogicalScale(stack);
-            return moth_ui::IntVec2{
+        moth::core::IntVec2 ToLogicalPos(moth::core::IntVec2 windowSize, moth::core::IntVec2 renderSize, FloatVec2 const& windowPos) {
+            auto const s = ComputeLogicalScale(windowSize, renderSize);
+            return moth::core::IntVec2{
                 static_cast<int>((windowPos.x - s.offsetX) * s.scaleX),
                 static_cast<int>((windowPos.y - s.offsetY) * s.scaleY),
             };
         }
 
-        FloatVec2 ToLogicalDelta(moth_ui::LayerStack const& stack, FloatVec2 const& windowDelta) {
-            auto const s = ComputeLogicalScale(stack);
+        FloatVec2 ToLogicalDelta(moth::core::IntVec2 windowSize, moth::core::IntVec2 renderSize, FloatVec2 const& windowDelta) {
+            auto const s = ComputeLogicalScale(windowSize, renderSize);
             return FloatVec2{ windowDelta.x * s.scaleX, windowDelta.y * s.scaleY };
         }
     }
@@ -176,8 +176,10 @@ namespace moth_graphics::platform::glfw {
             }
             app->m_lastMousePos = newMousePos;
             app->m_haveMousePos = true;
-            auto const logicalPos = ToLogicalPos(app->GetLayerStack(), newMousePos);
-            auto const logicalDelta = ToLogicalDelta(app->GetLayerStack(), windowDelta);
+            auto const windowSize = moth::core::IntVec2{ app->GetWidth(), app->GetHeight() };
+            auto const renderSize = app->GetRenderSize();
+            auto const logicalPos = ToLogicalPos(windowSize, renderSize, newMousePos);
+            auto const logicalDelta = ToLogicalDelta(windowSize, renderSize, windowDelta);
             auto const translatedEvent = std::make_unique<moth_ui::EventMouseMove>(logicalPos, logicalDelta);
             app->OnEvent(*translatedEvent);
         });
@@ -195,7 +197,9 @@ namespace moth_graphics::platform::glfw {
             glfwGetCursorPos(window, &cursorX, &cursorY);
             app->m_lastMousePos = FloatVec2{ cursorX, cursorY };
             app->m_haveMousePos = true;
-            auto const logicalPos = ToLogicalPos(app->GetLayerStack(), app->m_lastMousePos);
+            auto const windowSize = moth::core::IntVec2{ app->GetWidth(), app->GetHeight() };
+            auto const renderSize = app->GetRenderSize();
+            auto const logicalPos = ToLogicalPos(windowSize, renderSize, app->m_lastMousePos);
             if (auto const translatedEvent = FromGLFW(button, action, mods, logicalPos)) {
                 app->OnEvent(*translatedEvent);
             }
@@ -217,7 +221,9 @@ namespace moth_graphics::platform::glfw {
             glfwGetCursorPos(window, &cursorX, &cursorY);
             app->m_lastMousePos = FloatVec2{ cursorX, cursorY };
             app->m_haveMousePos = true;
-            auto const logicalPos = ToLogicalPos(app->GetLayerStack(), app->m_lastMousePos);
+            auto const windowSize = moth::core::IntVec2{ app->GetWidth(), app->GetHeight() };
+            auto const renderSize = app->GetRenderSize();
+            auto const logicalPos = ToLogicalPos(windowSize, renderSize, app->m_lastMousePos);
             moth_ui::EventMouseWheel const translatedEvent{
                 moth_ui::IntVec2{ static_cast<int>(xoffset), static_cast<int>(yoffset) },
                 logicalPos };

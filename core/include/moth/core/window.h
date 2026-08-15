@@ -50,6 +50,13 @@ namespace moth::core {
         /// @brief Returns the current window height in pixels.
         int GetHeight() const { return m_windowHeight; }
 
+        /// @brief Returns the logical render size used to map input to logical
+        ///        coordinates (accounting for letterboxing).
+        ///
+        /// Defaults to the window size (no letterbox). Graphics/UI subclasses
+        /// override this to report their logical resolution.
+        virtual IntVec2 GetRenderSize() const { return { m_windowWidth, m_windowHeight }; }
+
         // IEventListener — by default, rebroadcast to external listeners.
         bool OnEvent(Event const& event) override { return EmitEvent(event); }
 

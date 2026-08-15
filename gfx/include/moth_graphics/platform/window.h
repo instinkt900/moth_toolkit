@@ -48,6 +48,9 @@ namespace moth_graphics::platform {
         /// @brief Returns the per-window GPU resource context.
         virtual graphics::SurfaceContext& GetSurfaceContext() const = 0;
 
+        /// @brief Returns the logical render size (for letterboxed input mapping).
+        moth::core::IntVec2 GetRenderSize() const override;
+
         /// @brief Returns the moth_ui context used for UI rendering.
         moth_ui::Context& GetMothContext() const { return *m_mothContext; }
 

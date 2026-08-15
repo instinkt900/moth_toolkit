@@ -1,0 +1,147 @@
+#include "common.h"
+#include "vulkan_swapchain.h"
+#include "vulkan_utils.h"
+#include "vulkan_command_buffer.h"
+
+namespace {
+    VkExtent2D chooseSwapExtent(uint32_t width, uint32_t height, const VkSurfaceCapabilitiesKHR& capabilities) {
+        if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
+            return capabilities.currentExtent;
+        }
+        {
+            VkExtent2D actualExtent = {
+                width,
+                height
+            };
+
+            actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+            actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
+
+            return actualExtent;
+        }
+    }
+}
+
+namespace moth_graphics::graphics::vulkan {
+    Swapchain::Swapchain(SurfaceContext& context, RenderPass& renderPass, VkSurfaceKHR surface, VkExtent2D extent)
+        : m_context(context)
+        , m_extent{} {
+        VkSurfaceCapabilitiesKHR capabilities;
+        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_context.GetVkPhysicalDevice(), surface, &capabilities);
+        m_extent = chooseSwapExtent(extent.width, extent.height, capabilities);
+
+        const VkFormat requestSurfaceImageFormat[] = { VK_FORMAT_B8G8R8A8_UNORM, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_B8G8R8_UNORM, VK_FORMAT_R8G8B8_UNORM };
+        const VkColorSpaceKHR requestSurfaceColorSpace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
+        VkSurfaceFormatKHR surfaceFormat = SurfaceContext::selectSurfaceFormat(m_context.GetVkPhysicalDevice(), surface, requestSurfaceImageFormat, 4, requestSurfaceColorSpace);
+        VkPresentModeKHR presentModes[] = { VK_PRESENT_MODE_MAILBOX_KHR, /*VK_PRESENT_MODE_IMMEDIATE_KHR, */ VK_PRESENT_MODE_FIFO_KHR };
+        VkPresentModeKHR presentMode = SurfaceContext::selectPresentMode(m_context.GetVkPhysicalDevice(), surface, presentModes, 3);
+        VkSwapchainCreateInfoKHR createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+        createInfo.surface = surface;
+        createInfo.minImageCount = SurfaceContext::getMinImageCountFromPresentMode(presentMode);
+        createInfo.imageFormat = surfaceFormat.format;
+        createInfo.imageColorSpace = surfaceFormat.colorSpace;
+        createInfo.imageExtent = m_extent;
+        createInfo.imageArrayLayers = 1;
+        createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+        if ((capabilities.supportedUsageFlags & VK_IMAGE_USAGE_TRANSFER_SRC_BIT) != 0u) {
+            createInfo.imageUsage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+        }
+        createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        createInfo.preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
+        createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+        createInfo.presentMode = presentMode;
+        createInfo.clipped = VK_TRUE;
+        createInfo.oldSwapchain = VK_NULL_HANDLE;
+        VkSwapchainKHR swapchain = VK_NULL_HANDLE;
+        CHECK_VK_RESULT(vkCreateSwapchainKHR(m_context.GetVkDevice(), &createInfo, nullptr, &swapchain));
+        VkDevice const device = m_context.GetVkDevice();
+        m_vkSwapchain = UniqueHandle<VkSwapchainKHR>(swapchain, [device](VkSwapchainKHR h) {
+            vkDestroySwapchainKHR(device, h, nullptr);
+        });
+
+        uint32_t imageCount = 0;
+        std::vector<VkImage> swapchainImages;
+        std::vector<VkImageView> swapchainImageViews;
+        vkGetSwapchainImagesKHR(m_context.GetVkDevice(), m_vkSwapchain, &imageCount, nullptr);
+        swapchainImages.resize(imageCount);
+        swapchainImageViews.resize(imageCount);
+        vkGetSwapchainImagesKHR(m_context.GetVkDevice(), m_vkSwapchain, &imageCount, swapchainImages.data());
+
+        for (size_t i = 0; i < swapchainImages.size(); ++i) {
+            VkImageViewCreateInfo createInfo{};
+            createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+            createInfo.image = swapchainImages[i];
+            createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+            createInfo.format = surfaceFormat.format;
+            createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            createInfo.subresourceRange.baseMipLevel = 0;
+            createInfo.subresourceRange.levelCount = 1;
+            createInfo.subresourceRange.baseArrayLayer = 0;
+            createInfo.subresourceRange.layerCount = 1;
+            CHECK_VK_RESULT(vkCreateImageView(m_context.GetVkDevice(), &createInfo, nullptr, &swapchainImageViews[i]));
+        }
+
+        auto commandBuffer = std::make_unique<CommandBuffer>(m_context);
+        commandBuffer->BeginRecord();
+        for (uint32_t i = 0; i < imageCount; ++i) {
+            m_framebuffers.push_back(std::make_unique<Framebuffer>(m_context, m_extent.width, m_extent.height, swapchainImages[i], swapchainImageViews[i], surfaceFormat.format, renderPass.GetRenderPass(), i));
+            commandBuffer->TransitionImageLayout(m_framebuffers[i]->GetVkTexture(), surfaceFormat.format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+
+            auto slot = std::make_shared<FrameSlot>();
+            VkSemaphoreCreateInfo semaphoreInfo{};
+            semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+            VkSemaphore imageAvailable = VK_NULL_HANDLE;
+            VkSemaphore renderFinished = VK_NULL_HANDLE;
+            CHECK_VK_RESULT(vkCreateSemaphore(m_context.GetVkDevice(), &semaphoreInfo, nullptr, &imageAvailable));
+            CHECK_VK_RESULT(vkCreateSemaphore(m_context.GetVkDevice(), &semaphoreInfo, nullptr, &renderFinished));
+            slot->imageAvailable = UniqueHandle<VkSemaphore>(imageAvailable, [device](VkSemaphore h) {
+                vkDestroySemaphore(device, h, nullptr);
+            });
+            slot->renderFinished = UniqueHandle<VkSemaphore>(renderFinished, [device](VkSemaphore h) {
+                vkDestroySemaphore(device, h, nullptr);
+            });
+            m_frames.push_back(slot);
+        }
+        commandBuffer->SubmitAndWait();
+
+        m_imageCount = imageCount;
+    }
+
+    void Swapchain::ResetCommandBuffers() {
+        for (auto& framebuffer : m_framebuffers) {
+            framebuffer->GetCommandBuffer().Reset();
+        }
+    }
+
+    Framebuffer* Swapchain::GetNextFramebuffer() {
+        auto& slot = m_frames[m_currentFrame];
+
+        // Wait for the framebuffer this slot previously submitted to.
+        // This guarantees slot->imageAvailable has no pending operations
+        // from its last use as a wait semaphore in vkQueueSubmit.
+        if (slot->lastImageIndex != UINT32_MAX) {
+            VkFence prevFence = m_framebuffers[slot->lastImageIndex]->GetFence().GetVkFence();
+            vkWaitForFences(m_context.GetVkDevice(), 1, &prevFence, VK_TRUE, UINT64_MAX);
+        }
+
+        uint32_t imageIndex = 0;
+        VkResult result = vkAcquireNextImageKHR(m_context.GetVkDevice(), m_vkSwapchain, UINT64_MAX, slot->imageAvailable, VK_NULL_HANDLE, &imageIndex);
+        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
+            return nullptr;
+        }
+        CHECK_VK_RESULT(result);
+
+        // If the acquired image differs from this slot's last image, also wait on
+        // the acquired image's fence so its command buffer is safe to reuse.
+        if (imageIndex != slot->lastImageIndex) {
+            VkFence imageFence = m_framebuffers[imageIndex]->GetFence().GetVkFence();
+            vkWaitForFences(m_context.GetVkDevice(), 1, &imageFence, VK_TRUE, UINT64_MAX);
+        }
+
+        slot->lastImageIndex = imageIndex;
+        m_framebuffers[imageIndex]->SetFrameSlot(slot);
+        m_currentFrame = (m_currentFrame + 1) % m_framebuffers.size();
+        return m_framebuffers[imageIndex].get();
+    }
+}

@@ -1,0 +1,221 @@
+#pragma once
+
+#include "moth_graphics/graphics/blend_mode.h"
+#include "moth_graphics/graphics/color.h"
+#include "moth_graphics/graphics/ifont.h"
+#include "moth_graphics/graphics/igraphics.h"
+#include "moth_graphics/graphics/image.h"
+#include "moth_graphics/graphics/itarget.h"
+#include "moth_graphics/graphics/text_alignment.h"
+#include "vulkan_buffer.h"
+#include "vulkan_command_buffer.h"
+#include "vulkan_framebuffer.h"
+#include "vulkan_pipeline.h"
+#include "vulkan_renderpass.h"
+#include "vulkan_shader.h"
+#include "moth_graphics/graphics/vulkan/vulkan_surface_context.h"
+#include "vulkan_swapchain.h"
+#include "vulkan_texture.h"
+#include "vulkan_unique.h"
+#include "moth_graphics/platform/window.h"
+#include "moth_graphics/utils/rect.h"
+#include "moth_graphics/utils/vector.h"
+
+#include <vulkan/vulkan_core.h>
+
+#include <cstdint>
+#include <filesystem>
+#include <map>
+#include <memory>
+#include <optional>
+#include <stack>
+#include <string>
+
+namespace moth_graphics::graphics::vulkan {
+    class Graphics : public IGraphics {
+    public:
+        Graphics(SurfaceContext& context, VkSurfaceKHR surface, uint32_t surfaceWidth, uint32_t surfaceHeight);
+        ~Graphics();
+
+        SurfaceContext& GetSurfaceContext() const { return m_surfaceContext; }
+
+        struct Vertex {
+            FloatVec2 xy;
+            FloatVec2 uv;
+            Color color;
+        };
+
+        struct FontRect {
+            float min_x;
+            float min_y;
+            float max_x;
+            float max_y;
+        };
+
+        struct FontGlyphInstance {
+            FloatVec2 pos;
+            uint32_t glyphIndex;
+            float rotation; // radians, clockwise
+            Color color;
+        };
+
+        void Begin() override;
+        void End() override;
+
+        void SetBlendMode(BlendMode mode) override;
+        void SetColor(Color const& color) override;
+        void Clear() override;
+        void SetTransform(FloatMat4x4 const& transform) override;
+        void DrawImage(Image const& image, IntVec2 const& pos, FloatVec2 const& pivot) override;
+        void DrawImage(Image const& image, IntRect const& destRect, IntRect const* sourceRect) override;
+        void DrawImageTiled(Image const& image, IntRect const& destRect, IntRect const* sourceRect, float scale) override;
+        void DrawRectF(FloatRect const& rect) override;
+        void DrawFillRectF(FloatRect const& rect) override;
+        void DrawFillCircleF(FloatVec2 const& center, float radius) override;
+        void DrawFillPolygonF(FloatVec2 const* points, size_t count) override;
+        void DrawTrianglesF(FloatVec2 const* vertices, size_t count) override;
+        void DrawImageCircle(Image const& image, FloatVec2 const& center, float radius, IntRect const* sourceRect) override;
+        void DrawGradientRect(FloatRect const& destRect,
+                              Color startColor, Color endColor,
+                              FloatVec2 midpoint,
+                              float angle,
+                              float transitionLength) override;
+        void DrawLineF(FloatVec2 const& p0, FloatVec2 const& p1) override;
+        void DrawText(std::string_view text, IFont& font, IntRect const& destRect, TextHorizAlignment horizontalAlignment = TextHorizAlignment::Left, TextVertAlignment verticalAlignment = TextVertAlignment::Top) override;
+        void SetClip(IntRect const* clipRect) override;
+
+        std::unique_ptr<ITarget> CreateTarget(int width, int height) override;
+        ITarget* GetTarget() override;
+        void SetTarget(ITarget* target) override;
+
+        void SetLogicalSize(IntVec2 const& logicalSize) override;
+        void Drain();
+
+        Swapchain& GetSwapchain() const { return *m_swapchain; }
+        RenderPass& GetRenderPass() const { return *m_renderPass; }
+        CommandBuffer* GetCurrentCommandBuffer() {
+            auto context = m_contextStack.top();
+            if (context) {
+                return &context->m_target->GetCommandBuffer();
+            }
+            return nullptr;
+        }
+        VkDescriptorSet GetDescriptorSet(Texture& image);
+
+        Shader& GetFontShader() { return *m_fontShader; }
+
+        void OnResize(VkSurfaceKHR surface, uint32_t surfaceWidth, uint32_t surfaceHeight);
+
+        /// @brief Flush any pending vertex batch into the active command buffer.
+        ///
+        /// Call this before issuing draw commands that bind a different pipeline
+        /// (e.g. ImGui's Vulkan backend). Without it, moth's pending batch would
+        /// be flushed at @c End() against whatever pipeline the foreign code
+        /// last bound, producing garbage geometry.
+        void Flush();
+
+    private:
+        FloatMat4x4 CurrentTransform() const;
+
+        SurfaceContext& m_surfaceContext;
+        VkSurfaceKHR m_vkSurface = VK_NULL_HANDLE;
+        FloatMat4x4 m_currentTransform = FloatMat4x4::Identity();
+
+        struct PushConstants {
+            FloatVec2 xyScale;
+            FloatVec2 xyOffset;
+        };
+
+        enum class ETopologyType {
+            Invalid,
+            Lines,
+            Triangles
+        };
+
+        struct DrawContext {
+            Framebuffer* m_target = nullptr;
+            VkExtent2D m_logicalExtent;
+
+            BlendMode m_currentBlendMode = BlendMode::Replace;
+            Color m_currentColor = BasicColors::White;
+
+            std::unique_ptr<Buffer> m_vertexBuffer;
+            Vertex* m_vertexBufferData = nullptr;
+
+            std::unique_ptr<Buffer> m_fontInstanceBuffer;
+            std::unique_ptr<Buffer> m_fontInstanceStagingBuffer;
+            uint32_t m_glyphCount = 0;
+
+            uint32_t m_vertexCount = 0;
+            uint32_t m_currentPipelineId = 0;
+
+            // True until this context's first submit of the current frame. Only
+            // that submit may wait on the target's acquire (imageAvailable)
+            // semaphore; later mid-frame submits from RestartContext must not,
+            // or they wait on an already-consumed semaphore that nothing will
+            // re-signal (GPU deadlock + validation error).
+            bool m_acquireWaitPending = false;
+
+            // Letterbox projection state from SetLogicalSize (m_logicalExtent is
+            // the logical coordinate space; these are the physical viewport and
+            // scissor it maps into). Persisted on the context so StartCommands
+            // re-applies it after a mid-frame RestartContext — otherwise a draw
+            // that overflows the vertex buffer (e.g. a long aim path) reverts to
+            // the target's native extent and the HUD renders at the wrong size.
+            VkViewport m_viewport{};
+            VkRect2D m_scissor{};
+
+            struct PendingBatch {
+                uint32_t m_firstVertex = 0;
+                uint32_t m_vertexCount = 0;
+                VkDescriptorSet m_descriptorSet = VK_NULL_HANDLE;
+            };
+            std::optional<PendingBatch> m_pendingBatch;
+        };
+
+        UniqueHandle<VkPipelineCache> m_vkPipelineCache;
+        std::map<uint32_t, std::shared_ptr<Pipeline>> m_pipelines;
+        std::map<uint32_t, std::shared_ptr<Pipeline>> m_fontPipelines;
+        std::unique_ptr<RenderPass> m_renderPass;
+        std::unique_ptr<RenderPass> m_rtRenderPass;
+        std::unique_ptr<Swapchain> m_swapchain;
+        std::shared_ptr<Shader> m_drawingShader;
+        std::shared_ptr<Shader> m_fontShader;
+        std::unique_ptr<Texture> m_defaultImage;
+
+        DrawContext m_defaultContext;
+        DrawContext m_overrideContext;
+        std::stack<DrawContext*> m_contextStack;
+
+        static VkPrimitiveTopology ToVulkan(ETopologyType type);
+        static VkPipelineColorBlendAttachmentState ToVulkan(BlendMode mode);
+
+        void CreateRenderPass();
+        void CreateShaders();
+        void CreateDefaultImage();
+        RenderPass& GetCurrentRenderPass();
+        Pipeline& GetCurrentPipeline(ETopologyType topology);
+        Pipeline& GetCurrentFontPipeline();
+
+        /// @brief Returns the current draw context, or @c nullptr for a null frame.
+        ///
+        /// @note The constructor pushes a nullptr sentinel onto m_contextStack.
+        ///       Begin()/End() push/pop real contexts; a null frame pushes an
+        ///       additional nullptr. The stack is never empty.
+        DrawContext* CurrentContext() {
+            assert(!m_contextStack.empty());
+            return m_contextStack.top();
+        }
+
+        void BeginContext(DrawContext* context);
+        void ApplyProjection();
+        void RestartContext();
+        void EndContext();
+        void StartCommands();
+        void FlushCommands(bool isFinal);
+        void FlushPendingBatch();
+        void SubmitVertices(Vertex* vertices, uint32_t vertCount, ETopologyType topology, VkDescriptorSet descriptorSet = VK_NULL_HANDLE);
+
+        bool IsRenderTarget() const;
+    };
+}

@@ -1,0 +1,161 @@
+#include "common.h"
+#include "vulkan_shader.h"
+#include "vulkan_texture.h"
+#include "vulkan_utils.h"
+
+namespace moth_graphics::graphics::vulkan {
+    Shader::Shader(uint32_t hash)
+        : m_hash(hash)
+        , m_device(VK_NULL_HANDLE)
+        , m_descriptorPool(VK_NULL_HANDLE) {
+    }
+
+    Shader::~Shader() {
+        // Descriptor sets must be freed before the pool/layouts they reference.
+        // Member RAII handles the rest in reverse declaration order.
+        if (!m_descriptorSets.empty()) {
+            std::vector<VkDescriptorSet> freedSets;
+            freedSets.reserve(m_descriptorSets.size());
+            for (auto& [key, descriptorSet] : m_descriptorSets) {
+                freedSets.push_back(descriptorSet);
+            }
+            vkFreeDescriptorSets(m_device, m_descriptorPool, static_cast<uint32_t>(freedSets.size()), freedSets.data());
+        }
+    }
+
+    VkDescriptorSet Shader::GetDescriptorSet(Texture& image) {
+        VkSampler const currentSampler = image.GetVkSampler();
+        auto const key = std::make_pair(image.GetId(), currentSampler);
+        auto const it = m_descriptorSets.find(key);
+        if (it != std::end(m_descriptorSets)) {
+            return it->second;
+        }
+        return CreateDescriptorSet(image);
+    }
+
+    VkDescriptorSet Shader::CreateDescriptorSet(Texture& image) {
+        VkDescriptorSet descriptorSet = VK_NULL_HANDLE;
+
+        VkDescriptorSetLayout const setLayoutHandle = m_descriptorSetLayout.Get();
+        VkDescriptorSetAllocateInfo alloc_info{};
+        alloc_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        alloc_info.descriptorPool = m_descriptorPool;
+        alloc_info.descriptorSetCount = 1;
+        alloc_info.pSetLayouts = &setLayoutHandle;
+        CHECK_VK_RESULT(vkAllocateDescriptorSets(m_device, &alloc_info, &descriptorSet));
+
+        VkSampler const sampler = image.GetVkSampler();
+        VkDescriptorImageInfo desc_image[1] = {};
+        desc_image[0].sampler = sampler;
+        desc_image[0].imageView = image.GetVkView();
+        desc_image[0].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        VkWriteDescriptorSet write_desc[1] = {};
+        write_desc[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        write_desc[0].dstSet = descriptorSet;
+        write_desc[0].descriptorCount = 1;
+        write_desc[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        write_desc[0].pImageInfo = desc_image;
+        vkUpdateDescriptorSets(m_device, 1, write_desc, 0, nullptr);
+
+        auto const key = std::make_pair(image.GetId(), sampler);
+        m_descriptorSets.insert(std::make_pair(key, descriptorSet));
+        return descriptorSet;
+    }
+
+
+    ShaderBuilder::ShaderBuilder(VkDevice device, VkDescriptorPool descriptorPool)
+        : m_device(device)
+        , m_descriptorPool(descriptorPool) {
+    }
+
+    ShaderBuilder& ShaderBuilder::AddPushConstant(VkShaderStageFlags stageFlags, uint32_t offset, uint32_t size) {
+        VkPushConstantRange pushConstant{};
+        pushConstant.stageFlags = stageFlags;
+        pushConstant.offset = offset;
+        pushConstant.size = size;
+        m_pushConstants.push_back(pushConstant);
+        return *this;
+    }
+
+    ShaderBuilder& ShaderBuilder::AddBinding(uint32_t binding, VkDescriptorType type, uint32_t count, VkShaderStageFlags flags) {
+        VkDescriptorSetLayoutBinding layoutBinding{};
+        layoutBinding.binding = binding;
+        layoutBinding.descriptorType = type;
+        layoutBinding.descriptorCount = count;
+        layoutBinding.stageFlags = flags;
+        m_layoutBindings.push_back(layoutBinding);
+        return *this;
+    }
+
+    ShaderBuilder& ShaderBuilder::AddStage(VkShaderStageFlagBits stageFlags, std::string const& entryPoint, unsigned char const* byteCode, size_t codeSize) {
+        Stage stage;
+        stage.m_stageFlags = stageFlags;
+        stage.m_entryPoint = entryPoint;
+        stage.m_byteCode.resize(codeSize);
+        memcpy(stage.m_byteCode.data(), byteCode, codeSize);
+        m_stages.push_back(stage);
+        return *this;
+    }
+
+    std::unique_ptr<Shader> ShaderBuilder::Build() {
+        uint32_t hash = CalculateHash();
+
+        std::unique_ptr<Shader> newShader = std::make_unique<Shader>(hash);
+        newShader->m_device = m_device;
+        newShader->m_descriptorPool = m_descriptorPool;
+        newShader->m_stages.reserve(m_stages.size());
+        VkDevice const device = m_device;
+        for (auto& stage : m_stages) {
+            Shader::Stage newStage;
+            newStage.m_stageFlags = stage.m_stageFlags;
+            newStage.m_entryPoint = stage.m_entryPoint;
+
+            VkShaderModuleCreateInfo createInfo{};
+            createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+            createInfo.codeSize = stage.m_byteCode.size();
+            createInfo.pCode = reinterpret_cast<uint32_t const*>(stage.m_byteCode.data()); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+            VkShaderModule module = VK_NULL_HANDLE;
+            CHECK_VK_RESULT(vkCreateShaderModule(m_device, &createInfo, nullptr, &module));
+            newStage.m_module = UniqueHandle<VkShaderModule>(module, [device](VkShaderModule h) {
+                vkDestroyShaderModule(device, h, nullptr);
+            });
+
+            newShader->m_stages.push_back(std::move(newStage));
+        }
+
+        VkDescriptorSetLayoutCreateInfo setLayoutInfo{};
+        setLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+        setLayoutInfo.bindingCount = static_cast<uint32_t>(m_layoutBindings.size());
+        setLayoutInfo.pBindings = m_layoutBindings.data();
+        VkDescriptorSetLayout setLayout = VK_NULL_HANDLE;
+        CHECK_VK_RESULT(vkCreateDescriptorSetLayout(m_device, &setLayoutInfo, nullptr, &setLayout));
+        newShader->m_descriptorSetLayout = UniqueHandle<VkDescriptorSetLayout>(setLayout, [device](VkDescriptorSetLayout h) {
+            vkDestroyDescriptorSetLayout(device, h, nullptr);
+        });
+
+        VkDescriptorSetLayout const setLayoutHandle = newShader->m_descriptorSetLayout.Get();
+        VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+        pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+        pipelineLayoutInfo.setLayoutCount = 1;
+        pipelineLayoutInfo.pSetLayouts = &setLayoutHandle;
+        pipelineLayoutInfo.pushConstantRangeCount = static_cast<uint32_t>(m_pushConstants.size());
+        pipelineLayoutInfo.pPushConstantRanges = m_pushConstants.data();
+        VkPipelineLayout pipelineLayout = VK_NULL_HANDLE;
+        CHECK_VK_RESULT(vkCreatePipelineLayout(m_device, &pipelineLayoutInfo, nullptr, &pipelineLayout));
+        newShader->m_pipelineLayout = UniqueHandle<VkPipelineLayout>(pipelineLayout, [device](VkPipelineLayout h) {
+            vkDestroyPipelineLayout(device, h, nullptr);
+        });
+
+        return newShader;
+    }
+
+    uint32_t ShaderBuilder::CalculateHash() const {
+        std::vector<uint32_t> hashes;
+        for (const auto& stage : m_stages) {
+            hashes.push_back(CalcHash(stage.m_stageFlags));
+            hashes.push_back(CalcHash(stage.m_entryPoint));
+            hashes.push_back(CalcHash(stage.m_byteCode.data(), stage.m_byteCode.size()));
+        }
+        return CalcHash(reinterpret_cast<void const*>(hashes.data()), sizeof(uint32_t) * hashes.size()); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+    }
+}

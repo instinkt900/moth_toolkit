@@ -1,0 +1,52 @@
+#pragma once
+
+#include "moth_graphics/graphics/vulkan/vulkan_surface_context.h"
+#include "vulkan_framebuffer.h"
+#include "vulkan_renderpass.h"
+#include "vulkan_unique.h"
+
+#include <vulkan/vulkan_core.h>
+
+#include <memory>
+#include <vector>
+#include <cstdint>
+
+namespace moth_graphics::graphics::vulkan {
+    struct FrameSlot {
+        UniqueHandle<VkSemaphore> imageAvailable;
+        UniqueHandle<VkSemaphore> renderFinished;
+        uint32_t lastImageIndex = UINT32_MAX;
+    };
+
+    class Swapchain {
+    public:
+        Swapchain(SurfaceContext& context, RenderPass& renderPass, VkSurfaceKHR surface, VkExtent2D extent);
+        ~Swapchain() = default;
+
+        VkExtent2D GetExtent() const { return m_extent; }
+
+        Framebuffer* GetNextFramebuffer();
+
+        VkSwapchainKHR GetVkSwapchain() const { return m_vkSwapchain; }
+
+        uint32_t GetImageCount() const { return m_imageCount; }
+
+        /// @brief Reset every framebuffer's command buffer.
+        ///
+        /// Drops all recorded commands so foreign-bound pipelines can be
+        /// destroyed safely. Caller must ensure the device is idle first.
+        void ResetCommandBuffers();
+
+    private:
+        SurfaceContext& m_context;
+        VkExtent2D m_extent;
+        // Framebuffers reference the swapchain's images, so they must be torn
+        // down before the swapchain handle. Declaration order: swapchain first
+        // (destroyed last), framebuffers after (destroyed first).
+        UniqueHandle<VkSwapchainKHR> m_vkSwapchain;
+        std::vector<std::unique_ptr<Framebuffer>> m_framebuffers;
+        uint32_t m_currentFrame = 0;
+        uint32_t m_imageCount = 0;
+        std::vector<std::shared_ptr<FrameSlot>> m_frames;
+    };
+}

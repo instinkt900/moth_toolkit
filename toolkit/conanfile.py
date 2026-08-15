@@ -1,5 +1,8 @@
 from conan import ConanFile
 from conan.errors import ConanInvalidConfiguration
+from conan.tools.files import copy
+
+import os
 
 
 class MothToolkit(ConanFile):
@@ -11,7 +14,7 @@ class MothToolkit(ConanFile):
 
     settings = "os", "compiler", "build_type", "arch"
 
-    exports_sources = "version.txt", "CMakeLists.txt"
+    exports_sources = "version.txt", "CMakeLists.txt", "include/*"
 
     options = {
         "enable_core": [True, False],
@@ -58,9 +61,13 @@ class MothToolkit(ConanFile):
         if self.options.enable_bridge:
             self.requires("moth_bridge/0.1.0", transitive_headers=True, transitive_libs=True)
 
+    def package(self):
+        copy(self, "*.h", src=os.path.join(self.source_folder, "include"),
+             dst=os.path.join(self.package_folder, "include"))
+
     def package_info(self):
-        # Pure aggregator — no headers or libraries of its own.
-        self.cpp_info.includedirs = []
+        # Aggregator with a single umbrella header (moth/toolkit.h) — no library.
+        self.cpp_info.includedirs = ["include"]
         self.cpp_info.libdirs = []
 
         # Feature flags, mirrored in cmake/features.h.in for the source superbuild.

@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+
+jobs:
+  feature-matrix:
+    name: superbuild (${{ matrix.config.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - name: full
+            flags: ""
+          - name: core-only
+            flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
+          - name: core-gfx
+            flags: "-DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
+          - name: core-ui
+            flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libglfw3-dev libfreetype-dev libharfbuzz-dev libvulkan-dev
+
+      - uses: conan-io/setup-conan@v1
+        with:
+          cache_packages: true
+
+      - name: Configure
+        run: |
+          conan install . -of build --build=missing -s build_type=Release
+          cmake --preset conan-release ${{ matrix.config.flags }}
+
+      - name: Build
+        run: cmake --build --preset conan-release
+
+  tests:
+    name: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libglfw3-dev libfreetype-dev libharfbuzz-dev libvulkan-dev
+
+      - uses: conan-io/setup-conan@v1
+        with:
+          cache_packages: true
+
+      - name: Build and run gfx tests
+        working-directory: gfx/tests
+        run: |
+          conan install . --build=missing -s build_type=Release
+          cmake --preset conan-release
+          cmake --build --preset conan-release
+          ctest --preset conan-release --output-on-failure
+
+      - name: Build and run ui tests
+        working-directory: ui/tests
+        run: |
+          conan install . --build=missing -s build_type=Release
+          cmake --preset conan-release
+          cmake --build --preset conan-release
+          ctest --preset conan-release --output-on-failure

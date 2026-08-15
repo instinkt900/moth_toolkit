@@ -7,8 +7,8 @@
 #include <catch2/catch_all.hpp>
 #include <type_traits>
 
-using namespace moth_graphics;
-using namespace moth_graphics::graphics;
+using namespace moth::gfx;
+using namespace moth::gfx::graphics;
 
 TEST_CASE("BlendMode enum values are stable", "[api][enums][blend_mode]") {
     using U = std::underlying_type_t<BlendMode>;
@@ -54,7 +54,7 @@ TEST_CASE("SpriteSheet::LoopType enum values are stable", "[api][enums][loop_typ
 }
 
 TEST_CASE("MothGraphicsEventType constants are stable", "[api][enums][moth_graphics_events]") {
-    // moth_ui::EVENTTYPE_USER0 == 1000; graphics types are offset from there.
+    // moth::ui::EVENTTYPE_USER0 == 1000; graphics types are offset from there.
     static_assert(EVENTTYPE_RENDERDEVICERESET == 1000);
     static_assert(EVENTTYPE_RENDERTARGETRESET == 1001);
     static_assert(EVENTTYPE_WINDOWSIZE        == 1002);

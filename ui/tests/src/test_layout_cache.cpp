@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <fstream>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 namespace {
     struct TempDir {

@@ -11,7 +11,7 @@
 
 #include <utility>
 
-namespace moth_ui::flow {
+namespace moth::ui::flow {
 
     namespace {
         ITransitionParticipant* AsParticipant(Layer* layer) {

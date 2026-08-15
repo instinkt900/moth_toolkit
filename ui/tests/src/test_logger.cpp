@@ -1,7 +1,7 @@
 #include "moth_ui/ilogger.h"
 #include <catch2/catch_all.hpp>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 TEST_CASE("NullLogger does not throw on any log level", "[logger][null]") {
     NullLogger logger;

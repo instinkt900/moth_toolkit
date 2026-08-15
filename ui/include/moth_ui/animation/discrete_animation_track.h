@@ -7,7 +7,7 @@
 #include <vector>
 #include <utility>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief A non-interpolated animation track that stores string values at specific frames.
      *

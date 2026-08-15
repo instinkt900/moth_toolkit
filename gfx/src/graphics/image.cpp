@@ -1,7 +1,7 @@
 #include "common.h"
 #include "moth_graphics/graphics/image.h"
 
-namespace moth_graphics::graphics {
+namespace moth::gfx::graphics {
     Image::Image(std::shared_ptr<ITexture> texture)
         : m_texture(std::move(texture)) {
         if (m_texture) {

@@ -9,7 +9,7 @@ namespace {
     uint32_t NextTextureId = 1; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 }
 
-namespace moth_graphics::graphics::vulkan {
+namespace moth::gfx::graphics::vulkan {
     std::unique_ptr<Texture> Texture::FromFile(SurfaceContext& context, std::filesystem::path const& path) {
         if (!std::filesystem::exists(path)) {
             return nullptr;

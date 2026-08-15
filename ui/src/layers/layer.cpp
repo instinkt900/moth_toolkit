@@ -2,7 +2,7 @@
 #include "moth_ui/layers/layer.h"
 #include "moth_ui/layers/layer_stack.h"
 
-namespace moth_ui {
+namespace moth::ui {
     bool Layer::OnEvent(Event const& event) {
         return false;
     }

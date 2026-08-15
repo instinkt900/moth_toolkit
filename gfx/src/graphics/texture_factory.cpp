@@ -4,7 +4,7 @@
 
 //NOLINTBEGIN(readability-function-cognitive-complexity)
 
-namespace moth_graphics::graphics {
+namespace moth::gfx::graphics {
     TextureFactory::TextureFactory(AssetContext& context)
         : m_context(context) {
     }
@@ -91,7 +91,7 @@ namespace moth_graphics::graphics {
                     int const y = rectJson.at("y").get<int>();
                     int const w = rectJson.at("w").get<int>();
                     int const h = rectJson.at("h").get<int>();
-                    desc.m_sourceRect = moth_graphics::MakeRect(x, y, w, h);
+                    desc.m_sourceRect = moth::gfx::MakeRect(x, y, w, h);
                     m_cachedTextures.insert(std::make_pair(absPath.string(), desc));
                     anyCached = true;
                 } catch (std::exception& e) {

@@ -3,7 +3,7 @@
 #include "moth_ui/flow/transition_participant.h"
 #include "moth_ui/layers/layer.h"
 
-namespace moth_ui::flow {
+namespace moth::ui::flow {
 
     /**
      * @brief Layer base for screens whose visuals and transitions are written by hand.

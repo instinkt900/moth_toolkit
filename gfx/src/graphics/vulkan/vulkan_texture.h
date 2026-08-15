@@ -10,7 +10,7 @@
 #include <filesystem>
 #include <cstdint>
 
-namespace moth_graphics::graphics::vulkan {
+namespace moth::gfx::graphics::vulkan {
     class Texture : public ITexture {
     public:
         static std::unique_ptr<Texture> FromFile(SurfaceContext& context, std::filesystem::path const& path);

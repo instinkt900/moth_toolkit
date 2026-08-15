@@ -12,7 +12,7 @@
 #include "moth_ui/layout/layout.h"
 #include <catch2/catch_all.hpp>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 namespace {
     bool s_registerWidgetInvoked = false;

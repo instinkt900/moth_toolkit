@@ -2,7 +2,7 @@
 #include "moth_graphics/platform/window.h"
 #include "moth_graphics/graphics/surface_context.h"
 
-namespace moth_graphics::platform {
+namespace moth::gfx::platform {
     Window::Window(std::string_view title, int width, int height)
         : moth::core::Window(title, width, height) {
     }

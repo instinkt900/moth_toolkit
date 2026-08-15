@@ -11,7 +11,7 @@ namespace {
     };
 }
 
-namespace moth_graphics::graphics::vulkan {
+namespace moth::gfx::graphics::vulkan {
     SurfaceContext::SurfaceContext(Context& context,
                                    VkPhysicalDevice physicalDevice,
                                    VkDevice device,

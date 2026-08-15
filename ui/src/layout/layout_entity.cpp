@@ -11,7 +11,7 @@
 #include "moth_ui/layout/layout_entity_clip.h"
 #include "moth_ui/animation/keyframe.h"
 
-namespace moth_ui {
+namespace moth::ui {
     std::unique_ptr<LayoutEntity> CreateLayoutEntity(LayoutEntityType type) {
         switch (type) {
         case LayoutEntityType::Text:

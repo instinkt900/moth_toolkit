@@ -7,7 +7,7 @@
 #include <catch2/catch_all.hpp>
 #include <type_traits>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 TEST_CASE("IRenderer method signatures are stable", "[api][graphics][irenderer]") {
     // State stacks

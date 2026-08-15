@@ -14,7 +14,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace moth_ui::flow {
+namespace moth::ui::flow {
 
     class ITransitionParticipant;
 

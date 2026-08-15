@@ -7,11 +7,11 @@
 #include <memory>
 #include <optional>
 
-namespace moth_ui {
+namespace moth::ui {
     class LayoutEntityFlipbook;
 }
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief A Node that renders a sprite-sheet animation frame by frame.
      *

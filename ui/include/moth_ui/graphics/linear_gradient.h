@@ -5,7 +5,7 @@
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Parameters describing a two-stop linear colour gradient.
      *

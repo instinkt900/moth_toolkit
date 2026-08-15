@@ -12,7 +12,7 @@
 #include <filesystem>
 #include <fstream>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 //NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 

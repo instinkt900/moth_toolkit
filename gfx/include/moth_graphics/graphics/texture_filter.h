@@ -1,6 +1,6 @@
 #pragma once
 
-namespace moth_graphics::graphics {
+namespace moth::gfx::graphics {
     enum class TextureFilter {
         Nearest,
         Linear,

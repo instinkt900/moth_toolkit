@@ -7,7 +7,7 @@
 #include <fmt/format.h>
 #include <string_view>
 
-namespace moth_ui {
+namespace moth::ui {
     /// @brief Severity levels for log messages.
     enum class LogLevel {
         Debug,   ///< Diagnostic messages, typically disabled in release builds.

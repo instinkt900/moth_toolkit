@@ -8,14 +8,14 @@
 #include <memory>
 
 namespace moth::bridge {
-    class MothFlipbookFactory : public moth_ui::IFlipbookFactory {
+    class MothFlipbookFactory : public moth::ui::IFlipbookFactory {
     public:
-        explicit MothFlipbookFactory(moth_graphics::graphics::SpriteSheetFactory& factoryImpl);
+        explicit MothFlipbookFactory(moth::gfx::graphics::SpriteSheetFactory& factoryImpl);
         ~MothFlipbookFactory() override = default;
 
-        std::unique_ptr<moth_ui::IFlipbook> GetFlipbook(std::filesystem::path const& path) override;
+        std::unique_ptr<moth::ui::IFlipbook> GetFlipbook(std::filesystem::path const& path) override;
 
     private:
-        moth_graphics::graphics::SpriteSheetFactory& m_factoryImpl;
+        moth::gfx::graphics::SpriteSheetFactory& m_factoryImpl;
     };
 }

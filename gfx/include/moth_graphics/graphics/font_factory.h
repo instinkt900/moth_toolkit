@@ -7,7 +7,7 @@
 #include <string>
 #include <memory>
 
-namespace moth_graphics::graphics {
+namespace moth::gfx::graphics {
     /// @brief Cached font loader.
     ///
     /// Loads fonts from disk on first request and caches them by path and size.

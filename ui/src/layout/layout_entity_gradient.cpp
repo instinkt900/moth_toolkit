@@ -3,7 +3,7 @@
 #include "moth_ui/nodes/node_gradient.h"
 #include "moth_ui/animation/animation_track.h"
 
-namespace moth_ui {
+namespace moth::ui {
     namespace {
         constexpr std::size_t kGradientTrackCount = 12;
 

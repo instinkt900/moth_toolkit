@@ -23,7 +23,7 @@ typedef FT_FaceRec_* FT_Face;
 #include <string_view>
 #include <vector>
 
-namespace moth_graphics::graphics::vulkan {
+namespace moth::gfx::graphics::vulkan {
     class Font : public IFont {
     public:
         static std::unique_ptr<Font> Load(std::filesystem::path const& path, int size, SurfaceContext& context);

@@ -12,7 +12,7 @@
 #include <memory>
 #include <cstdint>
 
-namespace moth_graphics::graphics::vulkan {
+namespace moth::gfx::graphics::vulkan {
     class CommandBuffer;
     struct FrameSlot;
 

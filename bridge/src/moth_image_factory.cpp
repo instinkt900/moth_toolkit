@@ -3,14 +3,14 @@
 #include "moth/bridge/moth_image.h"
 
 namespace moth::bridge {
-    using namespace moth_graphics::graphics;
+    using namespace moth::gfx::graphics;
     using namespace moth::core;
-    namespace graphics = moth_graphics::graphics;
+    namespace graphics = moth::gfx::graphics;
     MothImageFactory::MothImageFactory(graphics::TextureFactory& factoryImpl)
         : m_factoryImpl(factoryImpl) {
     }
 
-    std::unique_ptr<::moth_ui::IImage> MothImageFactory::GetImage(std::filesystem::path const& path) {
+    std::unique_ptr<::moth::ui::IImage> MothImageFactory::GetImage(std::filesystem::path const& path) {
         auto texture = m_factoryImpl.GetTexture(path);
         if (!texture) {
             return nullptr;

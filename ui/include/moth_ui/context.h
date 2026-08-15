@@ -5,7 +5,7 @@
 #include "moth_ui/iimage_factory.h"
 #include "moth_ui/iflipbook_factory.h"
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Aggregates the core service objects required by the UI system.
      *

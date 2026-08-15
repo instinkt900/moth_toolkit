@@ -3,7 +3,7 @@
 #include <moth/core/rect.h>
 #include <moth/core/rect_serialization.h>
 
-namespace moth_graphics {
+namespace moth::gfx {
     using moth::core::Rect;
     using moth::core::IntRect;
     using moth::core::FloatRect;

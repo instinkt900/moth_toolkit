@@ -3,7 +3,7 @@
 #include "vulkan_texture.h"
 #include "vulkan_utils.h"
 
-namespace moth_graphics::graphics::vulkan {
+namespace moth::gfx::graphics::vulkan {
     Shader::Shader(uint32_t hash)
         : m_hash(hash)
         , m_device(VK_NULL_HANDLE)

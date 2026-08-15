@@ -11,7 +11,7 @@
 #include <map>
 #include <nlohmann/json_fwd.hpp>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Creates a default-constructed LayoutEntity of the given type.
      * @param type Concrete entity type to create.

@@ -4,7 +4,7 @@
 #include "vulkan_font.h"
 #include "vulkan_texture.h"
 
-namespace moth_graphics::graphics::vulkan {
+namespace moth::gfx::graphics::vulkan {
     AssetContext::AssetContext(SurfaceContext& context)
         : m_context(context)
         , m_textureFactory(*this)

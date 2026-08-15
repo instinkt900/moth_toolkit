@@ -3,10 +3,10 @@
 // Original header transitively provided event_cast via event.h — keep that.
 #include "moth_ui/events/event.h"
 
-// Moved to moth::core — re-exported here so existing moth_ui::EventKey keep working.
+// Moved to moth::core — re-exported here so existing moth::ui::EventKey keep working.
 #include <moth/core/event_key.h>
 
-namespace moth_ui {
+namespace moth::ui {
     using moth::core::Key;
     using moth::core::KeyAction;
     using moth::core::EventKey;

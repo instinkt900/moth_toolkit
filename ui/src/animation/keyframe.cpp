@@ -23,7 +23,7 @@ namespace nlohmann {
     };
 }
 
-namespace moth_ui {
+namespace moth::ui {
     void to_json(nlohmann::json& json, Keyframe const& keyframe) {
         json["frame"] = keyframe.frame;
         json["value"] = keyframe.value;

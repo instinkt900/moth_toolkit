@@ -96,3 +96,7 @@
 #include "moth_ui/node_factory.h"
 #include "moth_ui/iflipbook_factory.h"
 
+// Transitional alias — the namespace moved from moth_ui to moth::ui (Phase 4).
+// Kept so existing consumers writing `moth_ui::Node` keep compiling for one release.
+namespace moth_ui = moth::ui;
+

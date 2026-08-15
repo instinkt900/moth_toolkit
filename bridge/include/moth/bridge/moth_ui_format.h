@@ -27,10 +27,10 @@
 // ---------------------------------------------------------------------------
 
 template <typename T, int Dim>
-struct fmt::formatter<moth_ui::Vector<T, Dim>> {
+struct fmt::formatter<moth::ui::Vector<T, Dim>> {
     constexpr auto parse(fmt::format_parse_context& ctx) { return ctx.begin(); }
 
-    auto format(moth_ui::Vector<T, Dim> const& v, fmt::format_context& ctx) const {
+    auto format(moth::ui::Vector<T, Dim> const& v, fmt::format_context& ctx) const {
         if constexpr (Dim == 2) {
             return fmt::format_to(ctx.out(), "({}, {})", v.x, v.y);
         } else if constexpr (Dim == 3) {
@@ -56,10 +56,10 @@ struct fmt::formatter<moth_ui::Vector<T, Dim>> {
 // ---------------------------------------------------------------------------
 
 template <typename T>
-struct fmt::formatter<moth_ui::Rect<T>> {
+struct fmt::formatter<moth::ui::Rect<T>> {
     constexpr auto parse(fmt::format_parse_context& ctx) { return ctx.begin(); }
 
-    auto format(moth_ui::Rect<T> const& r, fmt::format_context& ctx) const {
+    auto format(moth::ui::Rect<T> const& r, fmt::format_context& ctx) const {
         return fmt::format_to(ctx.out(), "[{} -> {}]", r.topLeft, r.bottomRight);
     }
 };
@@ -71,10 +71,10 @@ struct fmt::formatter<moth_ui::Rect<T>> {
 // ---------------------------------------------------------------------------
 
 template <>
-struct fmt::formatter<moth_ui::LayoutRect> {
+struct fmt::formatter<moth::ui::LayoutRect> {
     constexpr auto parse(fmt::format_parse_context& ctx) { return ctx.begin(); }
 
-    auto format(moth_ui::LayoutRect const& lr, fmt::format_context& ctx) const {
+    auto format(moth::ui::LayoutRect const& lr, fmt::format_context& ctx) const {
         return fmt::format_to(ctx.out(),
             "{{anchor: {}, offset: {}}}",
             lr.anchor, lr.offset);

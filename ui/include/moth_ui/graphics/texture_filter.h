@@ -1,6 +1,6 @@
 #pragma once
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Selects the texture sampling filter applied when an image is
      *        scaled up or down during rendering.

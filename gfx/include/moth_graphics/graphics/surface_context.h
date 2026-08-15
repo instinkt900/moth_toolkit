@@ -2,7 +2,7 @@
 
 #include "moth_graphics/graphics/asset_context.h"
 
-namespace moth_graphics::graphics {
+namespace moth::gfx::graphics {
     /// @brief Per-window GPU resource context.
     ///
     /// Owns the GPU device resources associated with a single window surface

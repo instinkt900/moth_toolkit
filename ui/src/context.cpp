@@ -2,7 +2,7 @@
 #include "moth_ui/context.h"
 #include <stdexcept>
 
-namespace moth_ui {
+namespace moth::ui {
     Context::Context(IImageFactory* imageFactory,
                      IFontFactory* fontFactory,
                      IRenderer* renderer,

@@ -17,7 +17,7 @@ namespace {
 
 }
 
-namespace moth_graphics::platform::glfw {
+namespace moth::gfx::platform::glfw {
 
     Platform::Platform() = default;
 
@@ -26,9 +26,9 @@ namespace moth_graphics::platform::glfw {
     }
 
     namespace {
-        class VulkanImGuiContext final : public moth_graphics::platform::ImGuiContext {
+        class VulkanImGuiContext final : public moth::gfx::platform::ImGuiContext {
         public:
-            explicit VulkanImGuiContext(moth_graphics::graphics::vulkan::Graphics* vkGraphics)
+            explicit VulkanImGuiContext(moth::gfx::graphics::vulkan::Graphics* vkGraphics)
                 : m_initialized(true)
                 , m_vkGraphics(vkGraphics) {}
 
@@ -44,7 +44,7 @@ namespace moth_graphics::platform::glfw {
                 }
             }
 
-            void Render(moth_graphics::graphics::IGraphics& /*graphics*/) override {
+            void Render(moth::gfx::graphics::IGraphics& /*graphics*/) override {
                 if (!m_initialized || m_vkGraphics == nullptr) {
                     return;
                 }
@@ -83,7 +83,7 @@ namespace moth_graphics::platform::glfw {
 
         private:
             bool m_initialized = false;
-            moth_graphics::graphics::vulkan::Graphics* m_vkGraphics = nullptr;
+            moth::gfx::graphics::vulkan::Graphics* m_vkGraphics = nullptr;
         };
     }
 
@@ -121,7 +121,7 @@ namespace moth_graphics::platform::glfw {
         m_initialized = false;
     }
 
-    std::unique_ptr<moth_graphics::platform::Window> Platform::CreateWindow(std::string_view title, int width, int height) {
+    std::unique_ptr<moth::gfx::platform::Window> Platform::CreateWindow(std::string_view title, int width, int height) {
         if (m_context == nullptr) {
             spdlog::error("GLFW: Platform::CreateWindow called without an active graphics context");
             return nullptr;
@@ -129,15 +129,15 @@ namespace moth_graphics::platform::glfw {
         return std::make_unique<platform::glfw::Window>(m_context->GetContext(), title, width, height);
     }
 
-    std::unique_ptr<moth_graphics::platform::ImGuiContext> Platform::CreateImGuiContext(
-        moth_graphics::platform::Window& window, moth_graphics::graphics::IGraphics& graphics, bool enableViewports) {
-        auto* glfwWindowPtr = dynamic_cast<moth_graphics::platform::glfw::Window*>(&window);
+    std::unique_ptr<moth::gfx::platform::ImGuiContext> Platform::CreateImGuiContext(
+        moth::gfx::platform::Window& window, moth::gfx::graphics::IGraphics& graphics, bool enableViewports) {
+        auto* glfwWindowPtr = dynamic_cast<moth::gfx::platform::glfw::Window*>(&window);
         if (glfwWindowPtr == nullptr) {
             spdlog::error("Vulkan: CreateImGuiContext called with non-GLFW window");
             return nullptr;
         }
 
-        auto* vkGraphicsPtr = dynamic_cast<moth_graphics::graphics::vulkan::Graphics*>(&graphics);
+        auto* vkGraphicsPtr = dynamic_cast<moth::gfx::graphics::vulkan::Graphics*>(&graphics);
         if (vkGraphicsPtr == nullptr) {
             spdlog::error("Vulkan: CreateImGuiContext called with non-Vulkan graphics");
             return nullptr;

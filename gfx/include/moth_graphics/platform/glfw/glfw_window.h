@@ -12,18 +12,18 @@
 #include <string_view>
 #include <cstdint>
 
-namespace moth_graphics::graphics::vulkan {
+namespace moth::gfx::graphics::vulkan {
     struct Context;
     class SurfaceContext;
 }
 
-namespace moth_graphics::platform::glfw {
+namespace moth::gfx::platform::glfw {
     /// @brief A Vulkan/GLFW window with rendering (no UI).
     ///
     /// Composes a @c moth::core::glfw::Window for the native window/input and
     /// adds the Vulkan surface and graphics context. Input events are forwarded
     /// to the UI delegate installed via @c Window::SetUiDelegate.
-    class Window : public moth_graphics::platform::Window, public moth::core::glfw::Window::Listener {
+    class Window : public moth::gfx::platform::Window, public moth::core::glfw::Window::Listener {
     public:
         Window(graphics::vulkan::Context& context, std::string_view title, int width, int height);
         ~Window() override;

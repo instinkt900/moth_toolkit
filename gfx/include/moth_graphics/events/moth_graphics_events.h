@@ -3,7 +3,7 @@
 // Moved to moth::core — re-exported here so existing moth_graphics event types keep working.
 #include <moth/core/event_types.h>
 
-namespace moth_graphics {
+namespace moth::gfx {
     using moth::core::MothGraphicsEventType;
     using moth::core::EVENTTYPE_RENDERDEVICERESET;
     using moth::core::EVENTTYPE_RENDERTARGETRESET;

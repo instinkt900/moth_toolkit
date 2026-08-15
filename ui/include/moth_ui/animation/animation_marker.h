@@ -6,7 +6,7 @@
 #include <string>
 #include <string_view>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief A named marker placed at a specific frame on a group's timeline.
      *

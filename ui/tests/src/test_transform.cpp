@@ -2,7 +2,7 @@
 #include <catch2/catch_all.hpp>
 #include <cmath>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 
 TEST_CASE("FloatMat4x4 Identity leaves point unchanged", "[transform]") {

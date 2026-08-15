@@ -79,7 +79,7 @@ namespace {
     while (0)               \
         ;
 
-namespace moth_graphics::graphics::vulkan {
+namespace moth::gfx::graphics::vulkan {
     bool ManagedContext::Startup() {
         spdlog::info("Vulkan: initializing context");
 

@@ -4,7 +4,7 @@
 #include "moth_ui/utils/serialize_utils.h"
 #include <nlohmann/json.hpp>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Describes a named, bounded animation clip within a Group's timeline.
      *

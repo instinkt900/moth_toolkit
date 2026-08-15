@@ -11,7 +11,7 @@
 
 #include <cmath>
 
-namespace moth_graphics::graphics::vulkan {
+namespace moth::gfx::graphics::vulkan {
     Graphics::Graphics(SurfaceContext& context, VkSurfaceKHR surface, uint32_t surfaceWidth, uint32_t surfaceHeight)
         : m_surfaceContext(context)
         , m_vkSurface(surface) {

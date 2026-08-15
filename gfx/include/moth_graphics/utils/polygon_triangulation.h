@@ -7,7 +7,7 @@
 #include <limits>
 #include <vector>
 
-namespace moth_graphics::graphics {
+namespace moth::gfx::graphics {
     namespace detail {
         // Ear-clipping triangulation of a simple (non-self-intersecting) polygon
         // given by its perimeter points in either winding order. Convex and

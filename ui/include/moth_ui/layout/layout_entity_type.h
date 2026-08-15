@@ -1,6 +1,6 @@
 #pragma once
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Discriminator tag stored with every LayoutEntity to identify its concrete type.
      */

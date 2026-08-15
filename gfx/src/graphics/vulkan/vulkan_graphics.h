@@ -31,7 +31,7 @@
 #include <stack>
 #include <string>
 
-namespace moth_graphics::graphics::vulkan {
+namespace moth::gfx::graphics::vulkan {
     class Graphics : public IGraphics {
     public:
         Graphics(SurfaceContext& context, VkSurfaceKHR surface, uint32_t surfaceWidth, uint32_t surfaceHeight);

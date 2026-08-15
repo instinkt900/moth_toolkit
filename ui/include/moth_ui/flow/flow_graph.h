@@ -10,7 +10,7 @@
 #include <string_view>
 #include <vector>
 
-namespace moth_ui::flow {
+namespace moth::ui::flow {
 
     /// @brief String identifier of a layer entry within a @ref FlowGraph.
     using LayerId = std::string;

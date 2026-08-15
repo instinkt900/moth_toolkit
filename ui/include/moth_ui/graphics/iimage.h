@@ -2,7 +2,7 @@
 
 #include "moth_ui/utils/vector.h"
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Abstract representation of a loaded image or texture.
      *

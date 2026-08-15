@@ -11,7 +11,7 @@
 #include <filesystem>
 #include <memory>
 
-namespace moth_graphics::graphics::vulkan {
+namespace moth::gfx::graphics::vulkan {
     class SurfaceContext;
 
     class AssetContext : public graphics::AssetContext {

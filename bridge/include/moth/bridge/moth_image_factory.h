@@ -9,14 +9,14 @@
 #include <filesystem>
 
 namespace moth::bridge {
-    class MothImageFactory : public moth_ui::IImageFactory {
+    class MothImageFactory : public moth::ui::IImageFactory {
     public:
-        explicit MothImageFactory(moth_graphics::graphics::TextureFactory& factoryImpl);
+        explicit MothImageFactory(moth::gfx::graphics::TextureFactory& factoryImpl);
         ~MothImageFactory() override = default;
 
-        std::unique_ptr<moth_ui::IImage> GetImage(std::filesystem::path const& path) override;
+        std::unique_ptr<moth::ui::IImage> GetImage(std::filesystem::path const& path) override;
 
     private:
-        moth_graphics::graphics::TextureFactory& m_factoryImpl;
+        moth::gfx::graphics::TextureFactory& m_factoryImpl;
     };
 }

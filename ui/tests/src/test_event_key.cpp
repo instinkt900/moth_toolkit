@@ -1,7 +1,7 @@
 #include "moth_ui/events/event_key.h"
 #include <catch2/catch_all.hpp>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 TEST_CASE("EventKey construction and accessors", "[events][key]") {
     EventKey ev(KeyAction::Down, Key::A, KeyMod_Ctrl);

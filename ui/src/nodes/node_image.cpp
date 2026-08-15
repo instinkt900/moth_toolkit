@@ -4,7 +4,7 @@
 #include "moth_ui/layout/layout_entity_image.h"
 #include "moth_ui/context.h"
 
-namespace moth_ui {
+namespace moth::ui {
     NodeImage::NodeImage(Context& context)
         : Node(context) {
     }

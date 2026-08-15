@@ -2,7 +2,7 @@
 
 #include <functional>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Abstract interface for nodes that can be wired to a click action.
      *

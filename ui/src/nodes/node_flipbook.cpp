@@ -7,7 +7,7 @@
 #include "moth_ui/layout/layout_entity_flipbook.h"
 #include "moth_ui/context.h"
 
-namespace moth_ui {
+namespace moth::ui {
     NodeFlipbook::NodeFlipbook(Context& context)
         : Node(context) {
     }

@@ -2,7 +2,7 @@
 
 #include "moth_ui/widgets/widget.h"
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Scrollable viewport widget for moth_ui layouts.
      *

@@ -4,7 +4,7 @@
 #include <nlohmann/json.hpp>
 #include <algorithm>
 
-namespace moth_ui {
+namespace moth::ui {
     DiscreteAnimationTrack::DiscreteAnimationTrack(AnimationTarget target)
         : m_target(target) {
     }

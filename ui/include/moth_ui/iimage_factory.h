@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <memory>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Abstract factory interface for loading and caching images.
      *

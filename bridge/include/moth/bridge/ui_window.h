@@ -16,18 +16,18 @@
 namespace moth::bridge {
     /// @brief A graphics window with moth_ui integration layered on top.
     ///
-    /// Composes a @c moth_graphics::platform::Window (native + graphics) and
+    /// Composes a @c moth::gfx::platform::Window (native + graphics) and
     /// owns the moth_ui context, layer stack, renderer adapters, and ImGui.
-    class UiWindow : public moth_graphics::platform::Window::UiDelegate, public moth::core::IEventListener {
+    class UiWindow : public moth::gfx::platform::Window::UiDelegate, public moth::core::IEventListener {
     public:
-        explicit UiWindow(std::unique_ptr<moth_graphics::platform::Window> window);
+        explicit UiWindow(std::unique_ptr<moth::gfx::platform::Window> window);
         ~UiWindow() override = default;
 
-        moth_graphics::platform::Window& GetWindow() const { return *m_window; }
+        moth::gfx::platform::Window& GetWindow() const { return *m_window; }
 
         // Forwarding to the underlying graphics window.
-        moth_graphics::graphics::IGraphics& GetGraphics() const { return m_window->GetGraphics(); }
-        moth_graphics::graphics::SurfaceContext& GetSurfaceContext() const { return m_window->GetSurfaceContext(); }
+        moth::gfx::graphics::IGraphics& GetGraphics() const { return m_window->GetGraphics(); }
+        moth::gfx::graphics::SurfaceContext& GetSurfaceContext() const { return m_window->GetSurfaceContext(); }
         void Update(uint32_t ticks);
         void BeginFrame() { m_window->BeginFrame(); }
         void EndFrame() { m_window->EndFrame(); }
@@ -39,11 +39,11 @@ namespace moth::bridge {
         int GetHeight() const { return m_window->GetHeight(); }
 
         // UI integration.
-        moth_ui::Context& GetMothContext() const { return *m_mothContext; }
-        void PushLayer(std::unique_ptr<moth_ui::Layer> layer);
-        moth_ui::LayerStack& GetLayerStack() const { return *m_layerStack; }
-        void SetImGuiContext(std::unique_ptr<moth_graphics::platform::ImGuiContext> imguiContext) { m_imguiContext = std::move(imguiContext); }
-        moth_graphics::platform::ImGuiContext& GetImGuiContext() const { return *m_imguiContext; }
+        moth::ui::Context& GetMothContext() const { return *m_mothContext; }
+        void PushLayer(std::unique_ptr<moth::ui::Layer> layer);
+        moth::ui::LayerStack& GetLayerStack() const { return *m_layerStack; }
+        void SetImGuiContext(std::unique_ptr<moth::gfx::platform::ImGuiContext> imguiContext) { m_imguiContext = std::move(imguiContext); }
+        moth::gfx::platform::ImGuiContext& GetImGuiContext() const { return *m_imguiContext; }
         bool HasImGuiContext() const { return m_imguiContext != nullptr; }
 
         // Window::UiDelegate
@@ -53,13 +53,13 @@ namespace moth::bridge {
     private:
         void PostCreate();
 
-        std::unique_ptr<moth_graphics::platform::Window> m_window;
+        std::unique_ptr<moth::gfx::platform::Window> m_window;
         std::unique_ptr<MothImageFactory> m_mothImageFactory;
         std::unique_ptr<MothFontFactory> m_mothFontFactory;
         std::unique_ptr<MothFlipbookFactory> m_mothFlipbookFactory;
         std::unique_ptr<MothRenderer> m_uiRenderer;
-        std::shared_ptr<moth_ui::Context> m_mothContext;
-        std::unique_ptr<moth_graphics::platform::ImGuiContext> m_imguiContext;
-        std::unique_ptr<moth_ui::LayerStack> m_layerStack;
+        std::shared_ptr<moth::ui::Context> m_mothContext;
+        std::unique_ptr<moth::gfx::platform::ImGuiContext> m_imguiContext;
+        std::unique_ptr<moth::ui::LayerStack> m_layerStack;
     };
 }

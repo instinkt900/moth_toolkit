@@ -2,7 +2,7 @@
 
 #include <array>
 
-namespace moth_ui {
+namespace moth::ui {
 
 /// @brief Properties that can be animated via AnimationTrack or DiscreteAnimationTrack.
 enum class AnimationTarget {
@@ -71,4 +71,4 @@ inline constexpr std::array<AnimationTarget, 2> kDiscreteTargets{
     AnimationTarget::FlipbookPlaying,
 };
 
-} // namespace moth_ui
+} // namespace moth::ui

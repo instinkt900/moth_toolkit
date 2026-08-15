@@ -4,7 +4,7 @@
 
 #include <memory>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief A Node that renders a coloured rectangle.
      *

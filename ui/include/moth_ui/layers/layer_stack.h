@@ -7,7 +7,7 @@
 #include <memory>
 #include <vector>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief An ordered stack of Layer objects that are updated and drawn each frame.
      *

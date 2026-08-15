@@ -9,7 +9,7 @@
 #include <filesystem>
 #include <cstdint>
 
-namespace moth_graphics::graphics {
+namespace moth::gfx::graphics {
     class FontFactory;
     class SpriteSheetFactory;
     class TextureFactory;

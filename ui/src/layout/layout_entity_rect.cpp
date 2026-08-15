@@ -3,7 +3,7 @@
 #include "moth_ui/nodes/node_rect.h"
 #include "moth_ui/animation/animation_controller.h"
 
-namespace moth_ui {
+namespace moth::ui {
     LayoutEntityRect::LayoutEntityRect(LayoutRect const& initialBounds)
         : LayoutEntity(initialBounds) {
     }

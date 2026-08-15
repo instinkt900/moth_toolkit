@@ -3,7 +3,7 @@
 #include "moth_ui/graphics/texture_filter.h"
 #include "moth_ui/layout/layout_entity.h"
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Layout entity that describes a flipbook (sprite-sheet animation) node.
      *

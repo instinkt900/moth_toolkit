@@ -7,7 +7,7 @@
 struct FT_LibraryRec_;
 typedef FT_LibraryRec_* FT_Library;
 
-namespace moth_graphics::graphics::vulkan {
+namespace moth::gfx::graphics::vulkan {
     /// @brief Holds a Vulkan instance and FreeType library.
     ///
     /// Aggregate — construct with {instance, ftLibrary}. The caller retains

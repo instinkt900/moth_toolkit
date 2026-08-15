@@ -5,7 +5,7 @@
 #include <string_view>
 #include <memory>
 
-namespace moth_graphics::platform {
+namespace moth::gfx::platform {
     class Window;
 
     /// @brief Abstract platform backend.

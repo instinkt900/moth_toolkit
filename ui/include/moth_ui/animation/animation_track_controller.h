@@ -3,7 +3,7 @@
 #include "moth_ui/moth_ui_fwd.h"
 #include "moth_ui/animation/animation_track.h"
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Evaluates a single AnimationTrack and writes the result to a float target.
      *

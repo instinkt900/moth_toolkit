@@ -1,7 +1,7 @@
 #include "common.h"
 #include "moth_ui/font_factory.h"
 
-namespace moth_ui {
+namespace moth::ui {
     void FontFactory::AddFont(std::string const& name, std::filesystem::path const& path) {
         m_fontPaths[name] = path;
     }
@@ -58,7 +58,7 @@ namespace moth_ui {
         m_fontPaths.clear();
     }
 
-    std::shared_ptr<moth_ui::IFont> FontFactory::GetDefaultFont(int size) {
+    std::shared_ptr<moth::ui::IFont> FontFactory::GetDefaultFont(int size) {
         if (m_fontPaths.empty()) {
             return nullptr;
         }

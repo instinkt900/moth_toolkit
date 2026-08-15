@@ -10,7 +10,7 @@
 #include <memory>
 #include <stdexcept>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 // Node must be created via Node::Create to satisfy enable_shared_from_this.
 

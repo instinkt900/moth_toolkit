@@ -6,7 +6,7 @@
 
 #include <memory>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief CRTP base that auto-registers a custom widget class with NodeFactory.
      *

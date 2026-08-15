@@ -11,7 +11,7 @@
 #include <string>
 #include <stddef.h>
 
-namespace moth_graphics::graphics::vulkan {
+namespace moth::gfx::graphics::vulkan {
     class Texture;
 
     struct Shader {

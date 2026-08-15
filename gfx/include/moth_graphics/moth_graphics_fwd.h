@@ -18,7 +18,7 @@ namespace moth::core {
     class Ticker;
 }
 
-namespace moth_graphics {
+namespace moth::gfx {
 
     // -------------------------------------------------------------------------
     // Events / Utils (re-exported from moth::core)
@@ -26,9 +26,9 @@ namespace moth_graphics {
     using moth::core::EventEmitter;
     using moth::core::Ticker;
 
-} // namespace moth_graphics
+} // namespace moth::gfx
 
-namespace moth_graphics::platform {
+namespace moth::gfx::platform {
 
     // -------------------------------------------------------------------------
     // Platform
@@ -36,9 +36,9 @@ namespace moth_graphics::platform {
     class IPlatform;
     class Window;
 
-} // namespace moth_graphics::platform
+} // namespace moth::gfx::platform
 
-namespace moth_graphics::graphics {
+namespace moth::gfx::graphics {
 
     // -------------------------------------------------------------------------
     // Graphics interfaces
@@ -57,4 +57,7 @@ namespace moth_graphics::graphics {
     class FontFactory;
     class TextureFactory;
 
-} // namespace moth_graphics::graphics
+} // namespace moth::gfx::graphics
+
+// Transitional alias — see moth_graphics.h.
+namespace moth_graphics = moth::gfx;

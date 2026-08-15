@@ -5,7 +5,7 @@
 #include <functional>
 #include <utility>
 
-namespace moth_graphics::graphics::vulkan {
+namespace moth::gfx::graphics::vulkan {
     /// Move-only RAII wrapper for a Vulkan-style handle. The deleter is type-erased
     /// so any of the destroy/free/Vma* functions can be supplied at construction
     /// (typically as a small lambda capturing the device or allocator).

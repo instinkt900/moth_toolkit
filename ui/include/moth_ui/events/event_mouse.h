@@ -6,7 +6,9 @@
 // Moved to moth::core — re-exported here so existing moth_ui mouse events keep working.
 #include <moth/core/event_mouse.h>
 
-namespace moth_ui {
+namespace moth::ui {
+    using moth::core::IntVec2;
+    using moth::core::FloatVec2;
     using moth::core::MouseButton;
     using moth::core::EventMouseDown;
     using moth::core::EventMouseUp;

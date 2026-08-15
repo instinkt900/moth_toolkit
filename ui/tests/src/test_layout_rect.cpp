@@ -2,7 +2,7 @@
 #include <catch2/catch_all.hpp>
 #include <nlohmann/json.hpp>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 TEST_CASE("MakeDefaultLayoutRect fills parent", "[layout_rect][initialization]") {
     LayoutRect r = MakeDefaultLayoutRect();

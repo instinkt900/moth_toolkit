@@ -10,6 +10,7 @@ class MothUITests(ConanFile):
     def requirements(self):
         self.requires("catch2/3.13.0")
         # moth_ui dependencies (built from source via add_subdirectory)
+        self.requires("moth_core/0.1.0")
         self.requires("nlohmann_json/[~3.11]")
         self.requires("magic_enum/[~0.8]")
         self.requires("range-v3/[~0.12]")

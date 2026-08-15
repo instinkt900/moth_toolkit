@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 TEST_CASE("DiscreteAnimationTrackController fires callback on first SetFrame", "[discrete_controller]") {
     DiscreteAnimationTrack track(AnimationTarget::FlipbookClip);

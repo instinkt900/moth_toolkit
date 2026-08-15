@@ -2,7 +2,7 @@
 
 #include <moth/core/transform.h>
 
-namespace moth_graphics {
+namespace moth::gfx {
     using moth::core::FloatMat4x4;
     using moth::core::kDefaultPivot;
     using moth::core::kDegToRad;

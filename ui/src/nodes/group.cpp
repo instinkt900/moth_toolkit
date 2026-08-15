@@ -10,7 +10,7 @@
 #include "moth_ui/context.h"
 #include "moth_ui/node_factory.h"
 
-namespace moth_ui {
+namespace moth::ui {
     Group::Group(Context& context)
         : Node(context) {
         m_animationClipController = std::make_unique<AnimationClipController>(this);

@@ -10,7 +10,7 @@
 #include <shared_mutex>
 #include <utility>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Singleton factory that instantiates Node trees from layout descriptions.
      *

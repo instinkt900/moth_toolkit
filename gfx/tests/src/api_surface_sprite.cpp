@@ -8,8 +8,8 @@
 #include <string>
 #include <string_view>
 
-using namespace moth_graphics;
-using namespace moth_graphics::graphics;
+using namespace moth::gfx;
+using namespace moth::gfx::graphics;
 
 TEST_CASE("SpriteSheet method signatures are stable", "[api][sprite][spritesheet]") {
     // Nested type field layout

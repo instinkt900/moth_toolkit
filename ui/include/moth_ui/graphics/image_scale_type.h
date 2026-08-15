@@ -1,6 +1,6 @@
 #pragma once
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Describes how an image is scaled to fill its destination rectangle.
      */

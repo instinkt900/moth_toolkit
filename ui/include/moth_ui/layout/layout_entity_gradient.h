@@ -5,7 +5,7 @@
 
 #include <nlohmann/json_fwd.hpp>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Layout entity that describes a two-stop linear gradient node.
      *

@@ -1,9 +1,9 @@
 #pragma once
 
-// Moved to moth::core — re-exported here so existing moth_ui::<fn> keep working.
+// Moved to moth::core — re-exported here so existing moth::ui::<fn> keep working.
 #include <moth/core/vector_utils.h>
 
-namespace moth_ui {
+namespace moth::ui {
     using moth::core::Dot;
     using moth::core::LengthSq;
     using moth::core::Length;

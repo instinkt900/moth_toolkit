@@ -3,7 +3,7 @@
 #include "moth_ui/animation/animation_clip_controller.h"
 #include "moth_ui/nodes/node.h"
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief A Node that acts as a container for child nodes.
      *

@@ -4,7 +4,7 @@
 #include "moth_ui/animation/animation_track.h"
 #include "moth_ui/nodes/node_flipbook.h"
 
-namespace moth_ui {
+namespace moth::ui {
     namespace {
         constexpr std::array<AnimationTarget, 2> kFlipbookDiscreteTargets{
             AnimationTarget::FlipbookClip,

@@ -2,7 +2,7 @@
 #include "moth_ui/layout/layout_cache.h"
 #include "moth_ui/layout/layout.h"
 
-namespace moth_ui {
+namespace moth::ui {
     void LayoutCache::SetLayoutRoot(std::string_view path) {
         std::lock_guard lock(m_mutex);
         m_cache.clear();
@@ -45,7 +45,7 @@ namespace moth_ui {
         std::string const filename = fmt::format("{}/{}.json", root, name);
 
         auto [newLayout, loadResult] = Layout::Load(filename.c_str());
-        if (loadResult == moth_ui::Layout::LoadResult::Success) {
+        if (loadResult == moth::ui::Layout::LoadResult::Success) {
             return newLayout;
         }
         return nullptr;

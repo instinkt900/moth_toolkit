@@ -8,8 +8,8 @@
 #include <memory>
 #include <string>
 
-using namespace moth_graphics;
-using namespace moth_graphics::graphics;
+using namespace moth::gfx;
+using namespace moth::gfx::graphics;
 
 namespace {
     struct MockTexture : ITexture {

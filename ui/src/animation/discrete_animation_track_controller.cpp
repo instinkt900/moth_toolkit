@@ -1,7 +1,7 @@
 #include "common.h"
 #include "moth_ui/animation/discrete_animation_track_controller.h"
 
-namespace moth_ui {
+namespace moth::ui {
     DiscreteAnimationTrackController::DiscreteAnimationTrackController(DiscreteAnimationTrack const& track, std::function<void(std::string_view)> callback)
         : m_track(&track)
         , m_callback(std::move(callback)) {

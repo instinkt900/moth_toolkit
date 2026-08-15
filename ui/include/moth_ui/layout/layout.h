@@ -5,7 +5,7 @@
 
 #include <utility>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief The root LayoutEntityGroup that represents a complete saved layout file.
      *

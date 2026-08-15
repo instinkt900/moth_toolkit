@@ -8,15 +8,15 @@
 #include <memory>
 
 namespace moth::bridge {
-    class MothFontFactory : public moth_ui::FontFactory {
+    class MothFontFactory : public moth::ui::FontFactory {
     public:
-        explicit MothFontFactory(moth_graphics::graphics::FontFactory& factoryImpl);
+        explicit MothFontFactory(moth::gfx::graphics::FontFactory& factoryImpl);
         ~MothFontFactory() override = default;
 
         void ClearFonts() override;
-        std::shared_ptr<moth_ui::IFont> GetFont(std::string const& name, int size) override;
+        std::shared_ptr<moth::ui::IFont> GetFont(std::string const& name, int size) override;
 
     private:
-        moth_graphics::graphics::FontFactory& m_factoryImpl;
+        moth::gfx::graphics::FontFactory& m_factoryImpl;
     };
 }

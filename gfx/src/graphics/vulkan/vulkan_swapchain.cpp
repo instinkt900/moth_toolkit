@@ -22,7 +22,7 @@ namespace {
     }
 }
 
-namespace moth_graphics::graphics::vulkan {
+namespace moth::gfx::graphics::vulkan {
     Swapchain::Swapchain(SurfaceContext& context, RenderPass& renderPass, VkSurfaceKHR surface, VkExtent2D extent)
         : m_context(context)
         , m_extent{} {

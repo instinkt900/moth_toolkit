@@ -16,7 +16,7 @@ namespace moth::bridge {
     /// @brief A UI-driven application: platform + UiWindow + ImGui + fixed-timestep loop.
     class Application : public moth::core::Ticker, public moth::core::IEventListener {
     public:
-        Application(moth_graphics::platform::IPlatform& platform, std::string_view title, int width, int height);
+        Application(moth::gfx::platform::IPlatform& platform, std::string_view title, int width, int height);
         ~Application() override = default;
 
         void Init();
@@ -31,7 +31,7 @@ namespace moth::bridge {
         UiWindow* GetUiWindow() { return m_uiWindow.get(); }
 
         /// @brief Returns the underlying graphics window, or @c nullptr before @c Init().
-        moth_graphics::platform::Window* GetWindow() { return m_uiWindow ? &m_uiWindow->GetWindow() : nullptr; }
+        moth::gfx::platform::Window* GetWindow() { return m_uiWindow ? &m_uiWindow->GetWindow() : nullptr; }
 
         /// @brief Enable or disable ImGui multi-viewport support. Must be called before Init().
         void SetImGuiViewportsEnabled(bool enabled) {
@@ -59,7 +59,7 @@ namespace moth::bridge {
         bool OnRequestQuitEvent(moth::core::EventRequestQuit const& event);
         bool OnQuitEvent(moth::core::EventQuit const& event);
 
-        moth_graphics::platform::IPlatform& m_platform;
+        moth::gfx::platform::IPlatform& m_platform;
         std::string m_mainWindowTitle;
         int m_mainWindowWidth;
         int m_mainWindowHeight;

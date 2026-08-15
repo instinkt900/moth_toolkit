@@ -9,7 +9,7 @@
 
 #include <cstdint>
 
-namespace moth_graphics::graphics::vulkan {
+namespace moth::gfx::graphics::vulkan {
     class SurfaceContext : public graphics::SurfaceContext {
     public:
         /// @brief Create a surface context that selects a physical device and

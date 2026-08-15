@@ -15,8 +15,8 @@
 #include <utility>
 #include <vector>
 
-using namespace moth_ui;
-using namespace moth_ui::flow;
+using namespace moth::ui;
+using namespace moth::ui::flow;
 
 namespace {
     // A test layer that records every lifecycle call and can either complete

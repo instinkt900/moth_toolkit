@@ -5,7 +5,7 @@
 #include "moth_ui/nodes/group.h"
 #include "moth_ui/context.h"
 
-namespace moth_ui {
+namespace moth::ui {
     Node::Node(Context& context)
         : m_context(context) {
         m_animationController = std::make_unique<AnimationController>(*this);

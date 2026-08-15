@@ -7,7 +7,7 @@
 #include <fstream>
 #include <set>
 
-namespace moth_ui::flow {
+namespace moth::ui::flow {
 
     LayerSpec const* FlowGraph::FindLayer(std::string_view id) const {
         for (auto const& layer : layers) {

@@ -8,7 +8,7 @@
 #include <vector>
 #include <memory>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Drives all AnimationTrackControllers belonging to a single Node.
      *

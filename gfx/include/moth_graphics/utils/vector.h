@@ -4,7 +4,7 @@
 #include <moth/core/vector_serialization.h>
 #include <moth/core/vector_utils.h>
 
-namespace moth_graphics {
+namespace moth::gfx {
     using moth::core::Vector;
     using moth::core::IntVec2;
     using moth::core::FloatVec2;

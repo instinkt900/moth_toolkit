@@ -2,7 +2,7 @@
 #include "moth_ui/layout/layout_entity_text.h"
 #include "moth_ui/nodes/node_text.h"
 
-namespace moth_ui {
+namespace moth::ui {
     LayoutEntityText::LayoutEntityText(LayoutRect const& initialBounds)
         : LayoutEntity(initialBounds) {
     }

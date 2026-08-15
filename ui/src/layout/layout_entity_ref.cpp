@@ -5,7 +5,7 @@
 #include "moth_ui/animation/animation_clip.h"
 #include "moth_ui/animation/animation_marker.h"
 
-namespace moth_ui {
+namespace moth::ui {
     LayoutEntityRef::LayoutEntityRef(LayoutRect const& initialBounds, Layout const& layoutRef)
         : LayoutEntityGroup(initialBounds)
         , m_layoutPath(layoutRef.GetLoadedPath()) {

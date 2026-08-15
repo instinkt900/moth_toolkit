@@ -8,7 +8,7 @@
 #include <filesystem>
 #include <memory>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief A Node that renders an image with configurable scale type.
      *

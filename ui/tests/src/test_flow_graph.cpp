@@ -3,8 +3,8 @@
 #include <catch2/catch_all.hpp>
 #include <nlohmann/json.hpp>
 
-using namespace moth_ui;
-using namespace moth_ui::flow;
+using namespace moth::ui;
+using namespace moth::ui::flow;
 using nlohmann::json;
 
 namespace {

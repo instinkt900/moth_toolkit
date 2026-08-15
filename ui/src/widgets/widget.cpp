@@ -4,7 +4,7 @@
 #include "moth_ui/widgets/ui_button.h"
 #include "moth_ui/widgets/ui_scroll_view.h"
 
-namespace moth_ui {
+namespace moth::ui {
     void EnsureWidgetsRegistered() {
         // Touching each widget's template static here forces the linker to
         // retain this TU along with every referenced widget's TU, keeping

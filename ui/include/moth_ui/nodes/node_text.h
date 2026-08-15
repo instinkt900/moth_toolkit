@@ -7,7 +7,7 @@
 #include <string>
 #include <string_view>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief A Node that renders a text string using a named font.
      *

@@ -3,7 +3,7 @@
 #include "moth_ui/events/event_listener.h"
 #include <catch2/catch_all.hpp>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 // ---- helpers ----------------------------------------------------------------
 

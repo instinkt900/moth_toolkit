@@ -8,7 +8,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace moth_graphics::graphics {
+namespace moth::gfx::graphics {
     /// @brief Cached sprite sheet loader.
     ///
     /// Parses .flipbook.json descriptors produced by moth_packer and loads the

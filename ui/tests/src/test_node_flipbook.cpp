@@ -15,7 +15,7 @@
 #include <memory>
 #include <string>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 // ---------------------------------------------------------------------------
 // Test doubles
@@ -84,7 +84,7 @@ struct FlipbookTestContext {
     MockImageFactory imageFactory;
     MockFontFactory fontFactory;
     MockFlipbookFactory flipbookFactory;
-    moth_ui::Context context{ &imageFactory, &fontFactory, &renderer, &flipbookFactory };
+    moth::ui::Context context{ &imageFactory, &fontFactory, &renderer, &flipbookFactory };
 };
 
 // ---------------------------------------------------------------------------
@@ -570,7 +570,7 @@ TEST_CASE("LoopType::Reset rewinds to first step and stops playing", "[flipbook]
 
 // Helper: attaches a Group as parent so SendEvent has somewhere to go.
 static std::shared_ptr<Group> MakeGroupWithFlipbookChild(
-    moth_ui::Context& ctx,
+    moth::ui::Context& ctx,
     std::shared_ptr<NodeFlipbook>& outFlipbook) {
     auto group    = Group::Create(ctx);
     auto flipbook = NodeFlipbook::Create(ctx);

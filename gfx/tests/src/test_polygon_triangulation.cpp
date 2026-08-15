@@ -6,9 +6,9 @@
 #include <cstdint>
 #include <vector>
 
-using moth_graphics::FloatVec2;
-using moth_graphics::graphics::TriangulatePolygon;
-using moth_graphics::graphics::detail::TriangulatePolygonIndices;
+using moth::gfx::FloatVec2;
+using moth::gfx::graphics::TriangulatePolygon;
+using moth::gfx::graphics::detail::TriangulatePolygonIndices;
 
 namespace {
     float TriangleArea(FloatVec2 const& a, FloatVec2 const& b, FloatVec2 const& c) {

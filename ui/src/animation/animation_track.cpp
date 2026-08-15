@@ -2,7 +2,7 @@
 #include "moth_ui/animation/animation_track.h"
 #include "moth_ui/animation/keyframe.h"
 
-namespace moth_ui {
+namespace moth::ui {
     void to_json(nlohmann::json& json, AnimationTrack const& track) {
         json["target"] = track.m_target;
         std::vector<Keyframe> keyframes;

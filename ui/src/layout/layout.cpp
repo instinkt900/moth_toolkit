@@ -6,7 +6,7 @@
 #include "moth_ui/node_factory.h"
 #include "moth_ui/nodes/group.h"
 
-namespace moth_ui {
+namespace moth::ui {
     int const Layout::Version = 1;
     std::string const Layout::Extension("mothui");
     std::string const Layout::FullExtension("." + Extension);

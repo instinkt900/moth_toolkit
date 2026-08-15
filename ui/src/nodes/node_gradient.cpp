@@ -4,7 +4,7 @@
 #include "moth_ui/context.h"
 #include "moth_ui/graphics/irenderer.h"
 
-namespace moth_ui {
+namespace moth::ui {
     NodeGradient::NodeGradient(Context& context)
         : Node(context) {
     }

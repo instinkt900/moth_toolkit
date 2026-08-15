@@ -2,7 +2,7 @@
 #include "string_helpers.h"
 #include <catch2/catch_all.hpp>
 
-using namespace moth_ui;
+using namespace moth::ui;
 using namespace Catch::literals;
 
 TEST_CASE("Empty color initialization", "[color][initialization][properties]") {

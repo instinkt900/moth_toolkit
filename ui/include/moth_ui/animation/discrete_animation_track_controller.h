@@ -5,7 +5,7 @@
 #include <functional>
 #include <string_view>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Drives a DiscreteAnimationTrack, invoking a callback only when the value changes.
      *

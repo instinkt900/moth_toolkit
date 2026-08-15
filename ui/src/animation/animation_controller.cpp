@@ -6,7 +6,7 @@
 #include "moth_ui/nodes/node.h"
 #include "moth_ui/nodes/node_gradient.h"
 
-namespace moth_ui {
+namespace moth::ui {
     float* AnimationController::GradientTargetReference(NodeGradient* node, AnimationTarget target) {
         if (node == nullptr) {
             return nullptr;

@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace moth_graphics::graphics::detail {
+namespace moth::gfx::graphics::detail {
     // Segment count for a filled-circle triangle fan. Roughly 2px chord error;
     // clamped so tiny circles still look round and very large ones don't blow
     // up the vertex count.

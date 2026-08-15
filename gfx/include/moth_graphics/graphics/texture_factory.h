@@ -10,7 +10,7 @@
 #include <memory>
 #include <filesystem>
 
-namespace moth_graphics::graphics {
+namespace moth::gfx::graphics {
     /// @brief Cached texture loader.
     ///
     /// Loads textures from disk on first request and returns cached copies on

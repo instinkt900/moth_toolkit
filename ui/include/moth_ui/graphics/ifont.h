@@ -1,6 +1,6 @@
 #pragma once
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Abstract representation of a loaded font.
      *

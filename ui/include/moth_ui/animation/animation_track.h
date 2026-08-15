@@ -8,7 +8,7 @@
 #include <memory>
 #include <vector>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief A single animated property track consisting of an ordered list of keyframes.
      *

@@ -7,12 +7,12 @@
 #include <cmath>
 
 namespace moth::bridge {
-    using namespace moth_graphics::graphics;
+    using namespace moth::gfx::graphics;
     using namespace moth::core;
-    namespace graphics = moth_graphics::graphics;
+    namespace graphics = moth::gfx::graphics;
     namespace {
-        TextureFilter ToGraphicsFilter(moth_ui::TextureFilter f) {
-            return f == moth_ui::TextureFilter::Nearest
+        TextureFilter ToGraphicsFilter(moth::ui::TextureFilter f) {
+            return f == moth::ui::TextureFilter::Nearest
                 ? TextureFilter::Nearest
                 : TextureFilter::Linear;
         }
@@ -22,12 +22,12 @@ namespace moth::bridge {
         : m_graphics(graphics) {
         m_drawColor.push({ 1.0f, 1.0f, 1.0f, 1.0f });
         m_blendMode.push(BlendMode::Replace);
-        m_transform.push(moth_ui::FloatMat4x4::Identity());
+        m_transform.push(moth::ui::FloatMat4x4::Identity());
         m_graphics.SetTransform(m_transform.top());
-        m_textureFilter.push(moth_ui::TextureFilter::Linear);
+        m_textureFilter.push(moth::ui::TextureFilter::Linear);
     }
 
-    void MothRenderer::PushBlendMode(moth_ui::BlendMode mode) {
+    void MothRenderer::PushBlendMode(moth::ui::BlendMode mode) {
         m_blendMode.push(mode);
     }
 
@@ -37,7 +37,7 @@ namespace moth::bridge {
         }
     }
 
-    void MothRenderer::PushColor(moth_ui::Color const& color) {
+    void MothRenderer::PushColor(moth::ui::Color const& color) {
         auto const modColor = m_drawColor.top() * color;
         m_drawColor.push(modColor);
     }
@@ -59,7 +59,7 @@ namespace moth::bridge {
         return result;
     }
 
-    void MothRenderer::PushTransform(moth_ui::FloatMat4x4 const& transform) {
+    void MothRenderer::PushTransform(moth::ui::FloatMat4x4 const& transform) {
         m_transform.push(transform);
         m_graphics.SetTransform(transform);
     }
@@ -71,7 +71,7 @@ namespace moth::bridge {
         }
     }
 
-    void MothRenderer::PushClip(moth_ui::IntRect const& rect) {
+    void MothRenderer::PushClip(moth::ui::IntRect const& rect) {
         if (m_clip.empty()) {
             m_clip.push(rect);
         } else {
@@ -97,7 +97,7 @@ namespace moth::bridge {
         }
     }
 
-    void MothRenderer::PushTextureFilter(moth_ui::TextureFilter filter) {
+    void MothRenderer::PushTextureFilter(moth::ui::TextureFilter filter) {
         m_textureFilter.push(filter);
     }
 
@@ -107,30 +107,30 @@ namespace moth::bridge {
         }
     }
 
-    void MothRenderer::RenderRect(moth_ui::IntRect const& rect) {
+    void MothRenderer::RenderRect(moth::ui::IntRect const& rect) {
         m_graphics.SetBlendMode(m_blendMode.top());
         m_graphics.SetColor(m_drawColor.top());
         m_graphics.DrawRectF(static_cast<FloatRect>(rect));
     }
 
-    void MothRenderer::RenderFilledRect(moth_ui::IntRect const& rect) {
+    void MothRenderer::RenderFilledRect(moth::ui::IntRect const& rect) {
         m_graphics.SetBlendMode(m_blendMode.top());
         m_graphics.SetColor(m_drawColor.top());
         m_graphics.DrawFillRectF(static_cast<FloatRect>(rect));
     }
 
-    void MothRenderer::RenderGradientRect(moth_ui::IntRect const& rect, moth_ui::LinearGradient const& gradient) {
+    void MothRenderer::RenderGradientRect(moth::ui::IntRect const& rect, moth::ui::LinearGradient const& gradient) {
         m_graphics.SetBlendMode(m_blendMode.top());
         // Modulate gradient stop colours by the current renderer colour stack so
         // ancestor SetColor / alpha overrides compose with the gradient the same
         // way they do with RenderFilledRect.
-        moth_ui::Color const tint = m_drawColor.top();
+        moth::ui::Color const tint = m_drawColor.top();
 
         // The backend gradient implementation rasterises rotated quads that may
         // extend beyond the destination rect. Push a scissor matching the rect's
         // screen-space AABB so the visible gradient stays inside the node.
         auto const& transform = m_transform.top();
-        moth_ui::FloatVec2 const corners[4] = {
+        moth::ui::FloatVec2 const corners[4] = {
             transform.TransformPoint({ static_cast<float>(rect.topLeft.x),     static_cast<float>(rect.topLeft.y) }),
             transform.TransformPoint({ static_cast<float>(rect.bottomRight.x), static_cast<float>(rect.topLeft.y) }),
             transform.TransformPoint({ static_cast<float>(rect.topLeft.x),     static_cast<float>(rect.bottomRight.y) }),
@@ -146,7 +146,7 @@ namespace moth::bridge {
             minY = std::min(minY, corners[i].y);
             maxY = std::max(maxY, corners[i].y);
         }
-        moth_ui::IntRect const screenAabb{
+        moth::ui::IntRect const screenAabb{
             { static_cast<int>(std::floor(minX)), static_cast<int>(std::floor(minY)) },
             { static_cast<int>(std::ceil(maxX)),  static_cast<int>(std::ceil(maxY)) },
         };
@@ -161,7 +161,7 @@ namespace moth::bridge {
         PopClip();
     }
 
-    void MothRenderer::RenderImage(moth_ui::IImage const& image, moth_ui::IntRect const& sourceRect, moth_ui::IntRect const& destRect, moth_ui::ImageScaleType scaleType, float scale) {
+    void MothRenderer::RenderImage(moth::ui::IImage const& image, moth::ui::IntRect const& sourceRect, moth::ui::IntRect const& destRect, moth::ui::ImageScaleType scaleType, float scale) {
         m_graphics.SetBlendMode(m_blendMode.top());
         m_graphics.SetColor(m_drawColor.top());
 
@@ -184,14 +184,14 @@ namespace moth::bridge {
             texture->SetFilter(gfxFilter, gfxFilter);
         }
 
-        if (scaleType == moth_ui::ImageScaleType::Stretch) {
+        if (scaleType == moth::ui::ImageScaleType::Stretch) {
             m_graphics.DrawImage(internalImage, destRect, &srcRect);
-        } else if (scaleType == moth_ui::ImageScaleType::Tile) {
+        } else if (scaleType == moth::ui::ImageScaleType::Tile) {
             m_graphics.DrawImageTiled(internalImage, destRect, &srcRect, scale);
         }
     }
 
-    void MothRenderer::RenderText(std::string_view text, moth_ui::IFont& font, moth_ui::TextHorizAlignment horizontalAlignment, moth_ui::TextVertAlignment verticalAlignment, moth_ui::IntRect const& destRect) {
+    void MothRenderer::RenderText(std::string_view text, moth::ui::IFont& font, moth::ui::TextHorizAlignment horizontalAlignment, moth::ui::TextVertAlignment verticalAlignment, moth::ui::IntRect const& destRect) {
         m_graphics.SetBlendMode(m_blendMode.top());
         m_graphics.SetColor(m_drawColor.top());
 
@@ -207,7 +207,7 @@ namespace moth::bridge {
         m_graphics.DrawText(text, internalFont, destRect, horizontalAlignment, verticalAlignment);
     }
 
-    void MothRenderer::SetRendererLogicalSize(moth_ui::IntVec2 const& size) {
+    void MothRenderer::SetRendererLogicalSize(moth::ui::IntVec2 const& size) {
         m_graphics.SetLogicalSize(size);
     }
 }

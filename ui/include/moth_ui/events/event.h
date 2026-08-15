@@ -1,9 +1,9 @@
 #pragma once
 
-// Moved to moth::core — re-exported here so existing moth_ui::Event keep working.
+// Moved to moth::core — re-exported here so existing moth::ui::Event keep working.
 #include <moth/core/event.h>
 
-namespace moth_ui {
+namespace moth::ui {
     using moth::core::EventType;
     using moth::core::Event;
     using moth::core::event_cast;

@@ -8,7 +8,7 @@
 #include <string_view>
 #include <map>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief In-memory cache of loaded Layout objects, keyed by name.
      *

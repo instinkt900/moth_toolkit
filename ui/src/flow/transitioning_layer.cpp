@@ -8,7 +8,7 @@
 #include "moth_ui/nodes/group.h"
 #include "moth_ui/utils/rect.h"
 
-namespace moth_ui::flow {
+namespace moth::ui::flow {
 
     TransitioningLayer::TransitioningLayer(Context& context, std::string_view layoutPath)
         : m_context(context) {

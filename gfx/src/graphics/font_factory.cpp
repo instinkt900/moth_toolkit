@@ -1,6 +1,6 @@
 #include "common.h"
 #include "moth_graphics/graphics/font_factory.h"
-namespace moth_graphics::graphics {
+namespace moth::gfx::graphics {
     FontFactory::FontFactory(AssetContext& context)
         : m_context(context) {
     }

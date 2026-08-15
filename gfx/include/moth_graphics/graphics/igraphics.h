@@ -13,11 +13,11 @@
 #include <cstddef>
 #include <memory>
 
-namespace moth_graphics::platform {
+namespace moth::gfx::platform {
     class Window;
 }
 
-namespace moth_graphics::graphics {
+namespace moth::gfx::graphics {
     /// @brief Abstract 2D rendering interface.
     ///
     /// All drawing operations are batched between a @c Begin() / @c End() pair.
@@ -143,7 +143,7 @@ namespace moth_graphics::graphics {
         /// **Clip:** this call does NOT manage the scissor. Geometry outside
         /// @p destRect may be drawn unless the caller has set an appropriate
         /// clip — typically via @c SetClip in moth_graphics, or
-        /// @c PushClip/PopClip when going through @c moth_ui::IRenderer.
+        /// @c PushClip/PopClip when going through @c moth::ui::IRenderer.
         ///
         /// @param destRect          Destination rectangle in logical pixels.
         /// @param startColor        Colour at the start side of the axis.

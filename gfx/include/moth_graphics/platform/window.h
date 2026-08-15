@@ -8,11 +8,11 @@
 #include <memory>
 #include <string_view>
 
-namespace moth_graphics::graphics {
+namespace moth::gfx::graphics {
     class SurfaceContext;
 }
 
-namespace moth_graphics::platform {
+namespace moth::gfx::platform {
     /// @brief A platform window with rendering resources (no UI).
     ///
     /// Owns the @c IGraphics instance and the per-window surface. moth_ui and

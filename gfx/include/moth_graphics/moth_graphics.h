@@ -44,3 +44,8 @@
 #include "moth_graphics/utils/ticker.h"
 #include "moth_graphics/utils/transform.h"
 #include "moth_graphics/utils/vector.h"
+
+// Transitional alias — the namespace moved from moth_graphics to moth::gfx
+// (Phase 4). Kept so existing consumers writing `moth_graphics::graphics::X`
+// keep compiling for one release.
+namespace moth_graphics = moth::gfx;

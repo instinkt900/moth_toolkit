@@ -29,7 +29,7 @@ namespace {
         return value;
     }
 
-    moth_graphics::IntVec2 FindOptimalDimensions(std::vector<stbrp_node>& nodes, std::vector<stbrp_rect>& rects, moth_graphics::IntVec2 const& minPack, moth_graphics::IntVec2 const& maxPack) {
+    moth::gfx::IntVec2 FindOptimalDimensions(std::vector<stbrp_node>& nodes, std::vector<stbrp_rect>& rects, moth::gfx::IntVec2 const& minPack, moth::gfx::IntVec2 const& maxPack) {
         // collect some info about all the rects
         int minWidth = std::numeric_limits<int>::max();
         int minHeight = std::numeric_limits<int>::max();
@@ -46,7 +46,7 @@ namespace {
         }
 
         struct PackTest {
-            moth_graphics::IntVec2 m_dimensions;
+            moth::gfx::IntVec2 m_dimensions;
             float m_ratio = 0.0f;
         };
 
@@ -63,7 +63,7 @@ namespace {
                 int const curArea = curWidth * curHeight;
                 if (curArea > totalArea) {
                     PackTest info;
-                    info.m_dimensions = moth_graphics::IntVec2{ curWidth, curHeight };
+                    info.m_dimensions = moth::gfx::IntVec2{ curWidth, curHeight };
                     info.m_ratio = 0;
                     testDimensions.push_back(info);
                 }
@@ -91,7 +91,7 @@ namespace {
     }
 }
 
-namespace moth_graphics::graphics::vulkan {
+namespace moth::gfx::graphics::vulkan {
     std::unique_ptr<Font> Font::Load(std::filesystem::path const& path, int size, SurfaceContext& context) {
         if (context.GetContext().ftLibrary == nullptr) {
             spdlog::error("Vulkan: Font::Load called with uninitialized FreeType library");

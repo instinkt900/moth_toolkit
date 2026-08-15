@@ -7,7 +7,7 @@
 #include <filesystem>
 #include <memory>
 
-namespace moth_graphics::graphics {
+namespace moth::gfx::graphics {
     /// @brief A handle to a 2D image: a texture plus an optional sub-region rect.
     ///
     /// Images are cheap value types — copying one shares the underlying GPU

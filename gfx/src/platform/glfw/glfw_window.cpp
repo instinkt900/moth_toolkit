@@ -6,9 +6,9 @@
 
 #include <cassert>
 
-namespace moth_graphics::platform::glfw {
+namespace moth::gfx::platform::glfw {
     Window::Window(graphics::vulkan::Context& context, std::string_view title, int width, int height)
-        : moth_graphics::platform::Window(title, width, height)
+        : moth::gfx::platform::Window(title, width, height)
         , m_context(context) {
         m_nativeWindow = std::make_unique<moth::core::glfw::Window>(title, width, height);
         m_nativeWindow->SetListener(this);

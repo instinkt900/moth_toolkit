@@ -12,7 +12,7 @@
 
 #include <string_view>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Abstract rendering interface that the UI system draws through.
      *
@@ -119,7 +119,7 @@ namespace moth_ui {
          * @brief Sets the logical (virtual) rendering resolution.
          * @param size Width and height in logical pixels.
          */
-        virtual void SetRendererLogicalSize(moth_ui::IntVec2 const& size) = 0;
+        virtual void SetRendererLogicalSize(moth::ui::IntVec2 const& size) = 0;
 
         IRenderer() = default;
         IRenderer(IRenderer const&) = default;

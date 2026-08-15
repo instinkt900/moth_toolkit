@@ -6,7 +6,7 @@
 #include <memory>
 #include <string_view>
 
-namespace moth_ui::flow {
+namespace moth::ui::flow {
 
     /**
      * @brief Contract that a layer must satisfy to participate in @ref Flow transitions.

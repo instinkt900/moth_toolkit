@@ -14,40 +14,40 @@
 #include <stack>
 
 namespace moth::bridge {
-    /// @brief Adapts a moth_graphics IGraphics to the moth_ui IRenderer interface.
-    class MothRenderer : public moth_ui::IRenderer {
+    /// @brief Adapts a moth::gfx IGraphics to the moth::ui IRenderer interface.
+    class MothRenderer : public moth::ui::IRenderer {
     public:
-        explicit MothRenderer(moth_graphics::graphics::IGraphics& graphics);
+        explicit MothRenderer(moth::gfx::graphics::IGraphics& graphics);
         ~MothRenderer() override = default;
 
-        void PushBlendMode(moth_ui::BlendMode mode) override;
+        void PushBlendMode(moth::ui::BlendMode mode) override;
         void PopBlendMode() override;
-        void PushColor(moth_ui::Color const& color) override;
+        void PushColor(moth::ui::Color const& color) override;
         void PopColor() override;
 
-        void PushTransform(moth_ui::FloatMat4x4 const& transform) override;
+        void PushTransform(moth::ui::FloatMat4x4 const& transform) override;
         void PopTransform() override;
 
-        void PushClip(moth_ui::IntRect const& rect) override;
+        void PushClip(moth::ui::IntRect const& rect) override;
         void PopClip() override;
 
-        void PushTextureFilter(moth_ui::TextureFilter filter) override;
+        void PushTextureFilter(moth::ui::TextureFilter filter) override;
         void PopTextureFilter() override;
 
-        void RenderRect(moth_ui::IntRect const& rect) override;
-        void RenderFilledRect(moth_ui::IntRect const& rect) override;
-        void RenderGradientRect(moth_ui::IntRect const& rect, moth_ui::LinearGradient const& gradient) override;
-        void RenderImage(moth_ui::IImage const& image, moth_ui::IntRect const& sourceRect, moth_ui::IntRect const& destRect, moth_ui::ImageScaleType scaleType, float scale) override;
-        void RenderText(std::string_view text, moth_ui::IFont& font, moth_ui::TextHorizAlignment horizontalAlignment, moth_ui::TextVertAlignment verticalAlignment, moth_ui::IntRect const& destRect) override;
+        void RenderRect(moth::ui::IntRect const& rect) override;
+        void RenderFilledRect(moth::ui::IntRect const& rect) override;
+        void RenderGradientRect(moth::ui::IntRect const& rect, moth::ui::LinearGradient const& gradient) override;
+        void RenderImage(moth::ui::IImage const& image, moth::ui::IntRect const& sourceRect, moth::ui::IntRect const& destRect, moth::ui::ImageScaleType scaleType, float scale) override;
+        void RenderText(std::string_view text, moth::ui::IFont& font, moth::ui::TextHorizAlignment horizontalAlignment, moth::ui::TextVertAlignment verticalAlignment, moth::ui::IntRect const& destRect) override;
 
-        void SetRendererLogicalSize(moth_ui::IntVec2 const& size) override;
+        void SetRendererLogicalSize(moth::ui::IntVec2 const& size) override;
 
     private:
-        moth_graphics::graphics::IGraphics& m_graphics;
-        std::stack<moth_graphics::graphics::Color> m_drawColor;
-        std::stack<moth_graphics::graphics::BlendMode> m_blendMode;
-        std::stack<moth_ui::FloatMat4x4> m_transform;
+        moth::gfx::graphics::IGraphics& m_graphics;
+        std::stack<moth::gfx::graphics::Color> m_drawColor;
+        std::stack<moth::gfx::graphics::BlendMode> m_blendMode;
+        std::stack<moth::ui::FloatMat4x4> m_transform;
         std::stack<moth::core::IntRect> m_clip;
-        std::stack<moth_ui::TextureFilter> m_textureFilter;
+        std::stack<moth::ui::TextureFilter> m_textureFilter;
     };
 }

@@ -2,16 +2,16 @@
 #include "moth/bridge/moth_flipbook.h"
 
 namespace moth::bridge {
-    using namespace moth_graphics::graphics;
+    using namespace moth::gfx::graphics;
     using namespace moth::core;
-    namespace graphics = moth_graphics::graphics;
+    namespace graphics = moth::gfx::graphics;
     namespace {
-        moth_ui::IFlipbook::LoopType ToMothLoopType(graphics::SpriteSheet::LoopType t) {
+        moth::ui::IFlipbook::LoopType ToMothLoopType(graphics::SpriteSheet::LoopType t) {
             switch (t) {
-            case graphics::SpriteSheet::LoopType::Stop:  return moth_ui::IFlipbook::LoopType::Stop;
-            case graphics::SpriteSheet::LoopType::Reset: return moth_ui::IFlipbook::LoopType::Reset;
-            case graphics::SpriteSheet::LoopType::Loop:  return moth_ui::IFlipbook::LoopType::Loop;
-            default:                                      return moth_ui::IFlipbook::LoopType::Stop;
+            case graphics::SpriteSheet::LoopType::Stop:  return moth::ui::IFlipbook::LoopType::Stop;
+            case graphics::SpriteSheet::LoopType::Reset: return moth::ui::IFlipbook::LoopType::Reset;
+            case graphics::SpriteSheet::LoopType::Loop:  return moth::ui::IFlipbook::LoopType::Loop;
+            default:                                      return moth::ui::IFlipbook::LoopType::Stop;
             }
         }
     }
@@ -21,7 +21,7 @@ namespace moth::bridge {
         , m_image(spriteSheet->GetImage()) {
     }
 
-    moth_ui::IImage const& MothFlipbook::GetImage() const {
+    moth::ui::IImage const& MothFlipbook::GetImage() const {
         return m_image;
     }
 
@@ -29,7 +29,7 @@ namespace moth::bridge {
         return m_spriteSheet->GetFrameCount();
     }
 
-    bool MothFlipbook::GetFrameDesc(int index, moth_ui::IFlipbook::FrameDesc& outDesc) const {
+    bool MothFlipbook::GetFrameDesc(int index, moth::ui::IFlipbook::FrameDesc& outDesc) const {
         auto entry = m_spriteSheet->GetFrameDesc(index);
         if (!entry) {
             return false;
@@ -47,7 +47,7 @@ namespace moth::bridge {
         return m_spriteSheet->GetClipName(index);
     }
 
-    bool MothFlipbook::GetClipDesc(std::string_view name, moth_ui::IFlipbook::ClipDesc& outDesc) const {
+    bool MothFlipbook::GetClipDesc(std::string_view name, moth::ui::IFlipbook::ClipDesc& outDesc) const {
         auto internal = m_spriteSheet->GetClipDesc(name);
         if (!internal) {
             return false;
@@ -56,7 +56,7 @@ namespace moth::bridge {
         outDesc.frames.clear();
         outDesc.frames.reserve(internal->frames.size());
         for (auto const& step : internal->frames) {
-            moth_ui::IFlipbook::ClipFrame f;
+            moth::ui::IFlipbook::ClipFrame f;
             f.frameIndex = step.frameIndex;
             f.durationMs = step.durationMs;
             outDesc.frames.push_back(f);

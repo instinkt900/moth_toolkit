@@ -5,7 +5,7 @@
 
 #include <moth_ui/utils/color.h>
 
-namespace moth_graphics {
+namespace moth::gfx {
     // returns a rect with the coordinates of b within a
     inline IntRect MergeRects(IntRect const& a, IntRect const& b) {
         IntRect c;

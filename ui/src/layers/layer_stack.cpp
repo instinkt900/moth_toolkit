@@ -3,7 +3,7 @@
 #include "moth_ui/layers/layer.h"
 #include "moth_ui/graphics/irenderer.h"
 
-namespace moth_ui {
+namespace moth::ui {
     LayerStack::LayerStack(IRenderer& renderer, IntVec2 const& renderSize, IntVec2 const& windowSize)
         : m_renderer(renderer)
         , m_renderWidth(renderSize.x)

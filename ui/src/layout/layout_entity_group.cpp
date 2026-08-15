@@ -3,7 +3,7 @@
 #include "moth_ui/animation/animation_clip.h"
 #include "moth_ui/animation/animation_marker.h"
 
-namespace moth_ui {
+namespace moth::ui {
     LayoutEntityGroup::LayoutEntityGroup(LayoutRect const& initialBounds)
         : LayoutEntity(initialBounds) {
     }
@@ -15,7 +15,7 @@ namespace moth_ui {
     LayoutEntityGroup::LayoutEntityGroup(LayoutEntityGroup const& other)
         : LayoutEntity(other) {
         for (auto&& child : other.m_children) {
-            m_children.push_back(child->Clone(moth_ui::LayoutEntity::CloneType::Deep));
+            m_children.push_back(child->Clone(moth::ui::LayoutEntity::CloneType::Deep));
         }
         for (auto&& clip : other.m_clips) {
             m_clips.push_back(std::make_shared<AnimationClip>(*clip));

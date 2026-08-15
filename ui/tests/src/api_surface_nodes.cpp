@@ -7,7 +7,7 @@
 #include <memory>
 #include <string>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 TEST_CASE("Node method signatures are stable", "[api][nodes][node]") {
     // Identity

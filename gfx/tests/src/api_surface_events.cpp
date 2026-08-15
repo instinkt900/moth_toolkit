@@ -7,7 +7,7 @@
 #include <functional>
 #include <memory>
 
-using namespace moth_graphics;
+using namespace moth::gfx;
 
 TEST_CASE("EventWindowSize method signatures are stable", "[api][events][window_size]") {
     int (EventWindowSize::*getW)() const = &EventWindowSize::GetWidth;

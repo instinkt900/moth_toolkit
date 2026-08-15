@@ -8,8 +8,8 @@
 #include <filesystem>
 #include <memory>
 
-using namespace moth_graphics;
-using namespace moth_graphics::graphics;
+using namespace moth::gfx;
+using namespace moth::gfx::graphics;
 
 TEST_CASE("IGraphics method signatures are stable", "[api][graphics][igraphics]") {
     void (IGraphics::*begin)()                                  = &IGraphics::Begin;

@@ -3,7 +3,7 @@
 #include "moth_ui/moth_ui_fwd.h"
 #include <memory>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Advances playback of an AnimationClip within a Group.
      *

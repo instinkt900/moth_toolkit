@@ -7,7 +7,7 @@
 #include <string>
 #include <memory>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Layout entity that describes a text node.
      *

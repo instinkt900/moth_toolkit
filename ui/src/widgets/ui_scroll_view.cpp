@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <optional>
 
-namespace moth_ui {
+namespace moth::ui {
     namespace {
         // Returns the pointer position for the positional mouse events, or
         // nullopt for any other event type.

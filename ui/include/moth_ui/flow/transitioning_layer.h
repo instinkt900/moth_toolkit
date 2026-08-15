@@ -10,7 +10,7 @@
 #include <string>
 #include <string_view>
 
-namespace moth_ui::flow {
+namespace moth::ui::flow {
 
     /**
      * @brief Layer base for screens and overlays backed by a @c .mothui layout.

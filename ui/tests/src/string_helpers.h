@@ -3,7 +3,7 @@
 #include <ostream>
 #include <moth_ui/utils/vector.h>
 
-namespace moth_ui {
+namespace moth::ui {
     template <typename T, int Dim>
     std::ostream& operator<<(std::ostream& os, Vector<T, Dim> const& vector) {
         os << "Vector(";

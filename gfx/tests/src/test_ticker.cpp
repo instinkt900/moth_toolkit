@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <thread>
 
-using namespace moth_graphics;
+using namespace moth::gfx;
 
 // ---------------------------------------------------------------------------
 // Concrete subclass for testing — just counts calls.

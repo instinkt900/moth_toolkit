@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-class MockRenderer : public moth_ui::IRenderer {
+class MockRenderer : public moth::ui::IRenderer {
 public:
     // Call counts
     int pushColorCalls = 0;
@@ -33,37 +33,37 @@ public:
     int setLogicalSizeCalls = 0;
 
     // Last parameters
-    moth_ui::BlendMode lastBlendMode{};
-    moth_ui::Color lastColor{};
-    moth_ui::IntRect lastClipRect{};
-    moth_ui::TextureFilter lastTextureFilter{};
-    moth_ui::IntRect lastRenderRect{};
-    moth_ui::IntVec2 lastLogicalSize{};
+    moth::ui::BlendMode lastBlendMode{};
+    moth::ui::Color lastColor{};
+    moth::ui::IntRect lastClipRect{};
+    moth::ui::TextureFilter lastTextureFilter{};
+    moth::ui::IntRect lastRenderRect{};
+    moth::ui::IntVec2 lastLogicalSize{};
 
-    void PushBlendMode(moth_ui::BlendMode mode) override { ++pushBlendCalls; lastBlendMode = mode; }
+    void PushBlendMode(moth::ui::BlendMode mode) override { ++pushBlendCalls; lastBlendMode = mode; }
     void PopBlendMode() override { ++popBlendCalls; }
-    void PushColor(moth_ui::Color const& color) override { ++pushColorCalls; lastColor = color; }
+    void PushColor(moth::ui::Color const& color) override { ++pushColorCalls; lastColor = color; }
     void PopColor() override { ++popColorCalls; }
-    void PushTransform(moth_ui::FloatMat4x4 const&) override { ++pushTransformCalls; }
+    void PushTransform(moth::ui::FloatMat4x4 const&) override { ++pushTransformCalls; }
     void PopTransform() override { ++popTransformCalls; }
-    void PushClip(moth_ui::IntRect const& rect) override { ++pushClipCalls; lastClipRect = rect; }
+    void PushClip(moth::ui::IntRect const& rect) override { ++pushClipCalls; lastClipRect = rect; }
     void PopClip() override { ++popClipCalls; }
-    void PushTextureFilter(moth_ui::TextureFilter filter) override { ++pushTextureFilterCalls; lastTextureFilter = filter; }
+    void PushTextureFilter(moth::ui::TextureFilter filter) override { ++pushTextureFilterCalls; lastTextureFilter = filter; }
     void PopTextureFilter() override { ++popTextureFilterCalls; }
-    void RenderRect(moth_ui::IntRect const& rect) override { ++renderRectCalls; lastRenderRect = rect; }
-    void RenderFilledRect(moth_ui::IntRect const& rect) override { ++renderFilledRectCalls; lastRenderRect = rect; }
-    void RenderGradientRect(moth_ui::IntRect const& rect, moth_ui::LinearGradient const&) override { ++renderGradientRectCalls; lastRenderRect = rect; }
-    void RenderImage(moth_ui::IImage const&, moth_ui::IntRect const&, moth_ui::IntRect const&, moth_ui::ImageScaleType, float) override { ++renderImageCalls; }
-    void RenderText(std::string_view, moth_ui::IFont&, moth_ui::TextHorizAlignment, moth_ui::TextVertAlignment, moth_ui::IntRect const&) override { ++renderTextCalls; }
-    void SetRendererLogicalSize(moth_ui::IntVec2 const& size) override { ++setLogicalSizeCalls; lastLogicalSize = size; }
+    void RenderRect(moth::ui::IntRect const& rect) override { ++renderRectCalls; lastRenderRect = rect; }
+    void RenderFilledRect(moth::ui::IntRect const& rect) override { ++renderFilledRectCalls; lastRenderRect = rect; }
+    void RenderGradientRect(moth::ui::IntRect const& rect, moth::ui::LinearGradient const&) override { ++renderGradientRectCalls; lastRenderRect = rect; }
+    void RenderImage(moth::ui::IImage const&, moth::ui::IntRect const&, moth::ui::IntRect const&, moth::ui::ImageScaleType, float) override { ++renderImageCalls; }
+    void RenderText(std::string_view, moth::ui::IFont&, moth::ui::TextHorizAlignment, moth::ui::TextVertAlignment, moth::ui::IntRect const&) override { ++renderTextCalls; }
+    void SetRendererLogicalSize(moth::ui::IntVec2 const& size) override { ++setLogicalSizeCalls; lastLogicalSize = size; }
 };
 
-class MockImageFactory : public moth_ui::IImageFactory {
+class MockImageFactory : public moth::ui::IImageFactory {
 public:
-    std::unique_ptr<moth_ui::IImage> GetImage(std::filesystem::path const&) override { return nullptr; }
+    std::unique_ptr<moth::ui::IImage> GetImage(std::filesystem::path const&) override { return nullptr; }
 };
 
-class MockFontFactory : public moth_ui::IFontFactory {
+class MockFontFactory : public moth::ui::IFontFactory {
 public:
     void AddFont(std::string const&, std::filesystem::path const&) override {}
     void RemoveFont(std::string const&) override {}
@@ -71,9 +71,9 @@ public:
     void SaveProject(std::filesystem::path const&) override {}
     std::filesystem::path GetCurrentProjectPath() const override { return {}; }
     void ClearFonts() override {}
-    std::shared_ptr<moth_ui::IFont> GetDefaultFont(int) override { return nullptr; }
+    std::shared_ptr<moth::ui::IFont> GetDefaultFont(int) override { return nullptr; }
     std::vector<std::string> GetFontNameList() const override { return {}; }
-    std::shared_ptr<moth_ui::IFont> GetFont(std::string const&, int) override { return nullptr; }
+    std::shared_ptr<moth::ui::IFont> GetFont(std::string const&, int) override { return nullptr; }
     std::filesystem::path GetFontPath(std::string const&) const override { return {}; }
 };
 
@@ -81,5 +81,5 @@ struct MockContext {
     MockRenderer renderer;
     MockImageFactory imageFactory;
     MockFontFactory fontFactory;
-    moth_ui::Context context{ &imageFactory, &fontFactory, &renderer };
+    moth::ui::Context context{ &imageFactory, &fontFactory, &renderer };
 };

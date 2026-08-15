@@ -10,7 +10,7 @@
 
 #include <memory>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Base class for all UI scene-graph nodes.
      *

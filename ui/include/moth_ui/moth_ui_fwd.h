@@ -19,7 +19,7 @@
 #include <moth/core/event_key.h>
 #include <moth/core/event_mouse.h>
 
-namespace moth_ui {
+namespace moth::ui {
 
     // -------------------------------------------------------------------------
     // Graphics interfaces
@@ -132,4 +132,7 @@ namespace moth_ui {
 
     using moth::core::Color;
 }
+
+// Transitional alias — see moth_ui.h.
+namespace moth_ui = moth::ui;
 

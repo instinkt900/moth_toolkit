@@ -3,7 +3,7 @@
 #include "moth_ui/moth_ui_fwd.h"
 #include "moth_ui/utils/vector.h"
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Abstract off-screen render target.
      *
@@ -13,7 +13,7 @@ namespace moth_ui {
     class ITarget {
     public:
         /// @brief Returns the width and height of the render target in pixels.
-        virtual moth_ui::IntVec2 GetDimensions() const = 0;
+        virtual moth::ui::IntVec2 GetDimensions() const = 0;
 
         /**
          * @brief Returns the target's content as an IImage, if supported.

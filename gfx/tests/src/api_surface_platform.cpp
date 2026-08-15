@@ -8,9 +8,9 @@
 #include <string_view>
 #include <type_traits>
 
-using namespace moth_graphics;
-using namespace moth_graphics::platform;
-using namespace moth_graphics::graphics;
+using namespace moth::gfx;
+using namespace moth::gfx::platform;
+using namespace moth::gfx::graphics;
 
 TEST_CASE("Ticker method signatures are stable", "[api][platform][ticker]") {
     uint32_t (Ticker::*getFixed)() const = &Ticker::GetFixedTicks;

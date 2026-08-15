@@ -1,9 +1,9 @@
 #pragma once
 
-// Moved to moth::core — re-exported here so existing moth_ui::Rect keep working.
+// Moved to moth::core — re-exported here so existing moth::ui::Rect keep working.
 #include <moth/core/rect.h>
 
-namespace moth_ui {
+namespace moth::ui {
     using moth::core::Rect;
     using moth::core::IntRect;
     using moth::core::FloatRect;

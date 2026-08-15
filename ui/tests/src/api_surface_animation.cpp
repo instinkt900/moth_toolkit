@@ -5,7 +5,7 @@
 #include <catch2/catch_all.hpp>
 #include <type_traits>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 namespace {
     // std::array::operator== is only constexpr from C++20; provide a C++17 helper.

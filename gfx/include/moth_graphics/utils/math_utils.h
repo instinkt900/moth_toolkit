@@ -3,7 +3,7 @@
 #include <cmath>
 #include <moth/core/interp.h>
 
-namespace moth_graphics {
+namespace moth::gfx {
     template<typename T, typename F>
     inline T Lerp(T const& min, T const& max, F const factor) {
         return min + (max - min) * factor;

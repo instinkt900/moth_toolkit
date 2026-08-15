@@ -3,7 +3,7 @@
 
 #include "moth_ui/events/event_dispatch.h"
 
-namespace moth_ui {
+namespace moth::ui {
     UIButton::UIButton(Context& context, std::shared_ptr<LayoutEntityGroup> entity)
         : Widget<UIButton>(context, std::move(entity)) {
     }

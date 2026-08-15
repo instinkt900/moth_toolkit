@@ -2,7 +2,7 @@
 #include "string_helpers.h"
 #include <catch2/catch_all.hpp>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 TEST_CASE("Rect default initialization", "[rect][initialization]") {
     IntRect r;

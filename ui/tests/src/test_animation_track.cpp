@@ -3,7 +3,7 @@
 #include <catch2/catch_all.hpp>
 #include <memory>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 TEST_CASE("AnimationTrack target construction", "[animation_track][initialization]") {
     AnimationTrack track(AnimationTrack::Target::TopOffset);

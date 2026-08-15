@@ -7,7 +7,7 @@
 #include <string>
 #include <string_view>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Event fired when an animation marker frame is reached during playback.
      */

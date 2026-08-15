@@ -4,7 +4,7 @@
 
 #include <nlohmann/json_fwd.hpp>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief A LayoutEntity that acts as a container for child entities and animation clips.
      *

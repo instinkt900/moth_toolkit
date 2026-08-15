@@ -2,7 +2,7 @@
 #include <catch2/catch_all.hpp>
 #include <magic_enum.hpp>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 TEST_CASE("interpStep always returns 0", "[interp][step]") {
     REQUIRE(interpStep(0.0f) == 0.0f);

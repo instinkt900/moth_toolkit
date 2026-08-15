@@ -3,7 +3,7 @@
 #include "moth_ui/utils/rect.h"
 #include "moth_ui/utils/rect_serialization.h"
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Layout rectangle combining an anchor fraction and a pixel offset.
      *

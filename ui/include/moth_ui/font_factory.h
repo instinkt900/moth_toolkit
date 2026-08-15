@@ -7,7 +7,7 @@
 #include <filesystem>
 #include <memory>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Partial implementation of IFontFactory that manages font path registration.
      *

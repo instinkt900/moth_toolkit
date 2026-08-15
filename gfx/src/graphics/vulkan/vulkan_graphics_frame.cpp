@@ -3,7 +3,7 @@
 #include "vulkan_command_buffer.h"
 #include "vulkan_utils.h"
 
-namespace moth_graphics::graphics::vulkan {
+namespace moth::gfx::graphics::vulkan {
     // Allocated size of the vertex buffer.
     static constexpr uint32_t kVertexBufferCapacity = 1024;
     // Maximum number of font glyphs that can be submitted in a single frame.

@@ -2,7 +2,7 @@
 
 #include "moth_ui/layout/layout_entity.h"
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Layout entity that describes a scissor-clip region node.
      *

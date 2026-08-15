@@ -4,7 +4,7 @@
 
 #include <cmath>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 TEST_CASE("Dot product of orthogonal vectors is zero", "[vector_utils][dot]") {
     FloatVec2 right{ 1.0f, 0.0f };

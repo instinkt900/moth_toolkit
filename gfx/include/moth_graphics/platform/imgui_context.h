@@ -1,6 +1,6 @@
 #pragma once
 
-namespace moth_graphics {
+namespace moth::gfx {
     namespace platform {
         class Window;
     }
@@ -9,7 +9,7 @@ namespace moth_graphics {
     }
 }
 
-namespace moth_graphics::platform {
+namespace moth::gfx::platform {
 
     class ImGuiContext {
     public:

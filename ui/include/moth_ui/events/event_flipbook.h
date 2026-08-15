@@ -3,7 +3,7 @@
 #include "moth_ui/events/event.h"
 #include "moth_ui/nodes/node_flipbook.h"
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Event fired when a flipbook node begins or resumes playing a clip.
      */

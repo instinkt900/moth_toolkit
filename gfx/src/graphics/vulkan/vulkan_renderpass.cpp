@@ -2,7 +2,7 @@
 #include "vulkan_renderpass.h"
 #include "vulkan_utils.h"
 
-namespace moth_graphics::graphics::vulkan {
+namespace moth::gfx::graphics::vulkan {
     RenderPass::RenderPass(uint32_t hash, VkDevice device, VkRenderPass renderPass)
         : m_hash(hash)
         , m_device(device)

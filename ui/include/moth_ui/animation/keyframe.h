@@ -5,7 +5,7 @@
 
 #include <nlohmann/json_fwd.hpp>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief A single keyframe on an animation track.
      *

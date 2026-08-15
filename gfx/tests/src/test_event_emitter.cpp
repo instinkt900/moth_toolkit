@@ -7,7 +7,7 @@
 #include <catch2/catch_all.hpp>
 #include <memory>
 
-using namespace moth_graphics;
+using namespace moth::gfx;
 using namespace moth::core;
 
 // ---------------------------------------------------------------------------

@@ -4,7 +4,7 @@
 #include <catch2/catch_all.hpp>
 #include <memory>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 TEST_CASE("Group default constructor allows Update without crashing", "[group][animation]") {
     MockContext mc;

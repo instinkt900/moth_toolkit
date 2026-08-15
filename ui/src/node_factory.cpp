@@ -6,7 +6,7 @@
 #include "moth_ui/nodes/node.h"
 #include "moth_ui/nodes/group.h"
 
-namespace moth_ui {
+namespace moth::ui {
     std::string NodeFactory::RegisterWidget(std::string const& className, CreationFunction const& func) {
         std::unique_lock lock(m_mutex);
         m_creationFunctions[className] = func;

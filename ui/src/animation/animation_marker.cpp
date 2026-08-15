@@ -1,7 +1,7 @@
 #include "common.h"
 #include "moth_ui/animation/animation_marker.h"
 
-namespace moth_ui {
+namespace moth::ui {
     void to_json(nlohmann::json& json, AnimationMarker const& marker) {
         json["frame"] = marker.frame;
         json["name"] = marker.name;

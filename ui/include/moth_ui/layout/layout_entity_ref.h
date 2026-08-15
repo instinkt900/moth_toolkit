@@ -8,7 +8,7 @@
 #include <map>
 #include <string>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief A LayoutEntityGroup that references an external layout file.
      *

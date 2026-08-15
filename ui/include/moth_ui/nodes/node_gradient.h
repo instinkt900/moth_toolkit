@@ -5,7 +5,7 @@
 
 #include <memory>
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief A Node that renders a two-stop linear gradient inside its bounds.
      *

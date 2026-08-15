@@ -1,9 +1,9 @@
 #pragma once
 
-// Moved to moth::core — re-exported here so existing moth_ui::Color keep working.
+// Moved to moth::core — re-exported here so existing moth::ui::Color keep working.
 #include <moth/core/color.h>
 
-namespace moth_ui {
+namespace moth::ui {
     using moth::core::Color;
     using moth::core::Normalize;
     using moth::core::Limit;

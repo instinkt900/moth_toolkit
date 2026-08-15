@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 namespace {
     // 10 fps so each 100 ms tick == 1 frame.

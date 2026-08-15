@@ -8,7 +8,7 @@
 #include <stdexcept>
 
 namespace moth::bridge {
-    Application::Application(moth_graphics::platform::IPlatform& platform, std::string_view title, int width, int height)
+    Application::Application(moth::gfx::platform::IPlatform& platform, std::string_view title, int width, int height)
         : m_platform(platform)
         , m_mainWindowTitle(title)
         , m_mainWindowWidth(width)
@@ -19,7 +19,7 @@ namespace moth::bridge {
         spdlog::info("Application: initializing");
         Startup();
         spdlog::info("Application: creating window '{}' ({}x{})", m_mainWindowTitle, m_mainWindowWidth, m_mainWindowHeight);
-        std::unique_ptr<moth_graphics::platform::Window> window;
+        std::unique_ptr<moth::gfx::platform::Window> window;
         try {
             window = m_platform.CreateWindow(m_mainWindowTitle, m_mainWindowWidth, m_mainWindowHeight);
         } catch (std::exception const& e) {
@@ -75,7 +75,7 @@ namespace moth::bridge {
     }
 
     void Application::Tick(uint32_t /*ticks*/) {
-        moth_graphics::platform::ImGuiContext* imgui = m_uiWindow->HasImGuiContext() ? &m_uiWindow->GetImGuiContext() : nullptr;
+        moth::gfx::platform::ImGuiContext* imgui = m_uiWindow->HasImGuiContext() ? &m_uiWindow->GetImGuiContext() : nullptr;
         if (imgui != nullptr) {
             imgui->NewFrame();
         }

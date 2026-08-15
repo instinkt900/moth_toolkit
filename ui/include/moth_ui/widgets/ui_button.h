@@ -4,7 +4,7 @@
 #include "moth_ui/flow/iclickable.h"
 #include "moth_ui/widgets/widget.h"
 
-namespace moth_ui {
+namespace moth::ui {
     /**
      * @brief Opt-in clickable button widget for moth_ui layouts.
      *

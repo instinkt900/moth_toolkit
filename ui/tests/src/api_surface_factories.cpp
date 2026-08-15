@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 TEST_CASE("IImageFactory method signatures are stable", "[api][factories][iimage]") {
     std::unique_ptr<IImage> (IImageFactory::*getImg)(std::filesystem::path const&)

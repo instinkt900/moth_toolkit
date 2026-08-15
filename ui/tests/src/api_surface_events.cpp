@@ -6,7 +6,7 @@
 #include <functional>
 #include <memory>
 
-using namespace moth_ui;
+using namespace moth::ui;
 
 namespace {
     // All-pairs uniqueness check: returns true iff every argument is distinct.

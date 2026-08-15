@@ -2,6 +2,6 @@
 
 #include <moth/core/blend_mode.h>
 
-namespace moth_graphics::graphics {
+namespace moth::gfx::graphics {
     using BlendMode = moth::core::BlendMode;
 }

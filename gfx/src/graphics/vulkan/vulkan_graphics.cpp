@@ -149,6 +149,80 @@ namespace moth::gfx::graphics::vulkan {
         m_currentTransform = transform;
     }
 
+    void Graphics::PushTransform(FloatMat4x4 const& transform) {
+        m_transformStack.push(m_currentTransform);
+        m_currentTransform = m_currentTransform * transform;
+    }
+
+    void Graphics::PopTransform() {
+        if (m_transformStack.empty()) {
+            return;
+        }
+        m_currentTransform = m_transformStack.top();
+        m_transformStack.pop();
+    }
+
+    void Graphics::DrawImage(Image const& image, Transform2D const& transform, FloatVec2 const& pivot, bool flipX, bool flipY) {
+        auto* context = CurrentContext();
+        if (context == nullptr) {
+            return;
+        }
+        auto texture = std::dynamic_pointer_cast<Texture>(image.GetTexture());
+        if (!texture) {
+            return;
+        }
+
+        auto const imageWidth = static_cast<float>(image.GetWidth());
+        auto const imageHeight = static_cast<float>(image.GetHeight());
+        FloatVec2 const pivotOffset{ imageWidth * pivot.x, imageHeight * pivot.y };
+
+        // Sprite local -> world, composed on top of the current (e.g. camera) transform.
+        auto const combined = CurrentTransform() * transform.ToMatrix(pivotOffset);
+
+        FloatRect imageRect = MakeRect(0.0f, 0.0f, imageWidth, imageHeight);
+        FloatVec2 const textureDimensions{
+            static_cast<float>(texture->GetVkExtent().width),
+            static_cast<float>(texture->GetVkExtent().height),
+        };
+        imageRect += static_cast<FloatVec2>(image.GetSourceRect().topLeft);
+        imageRect /= textureDimensions;
+
+        float u0 = imageRect.topLeft.x;
+        float u1 = imageRect.bottomRight.x;
+        float v0 = imageRect.topLeft.y;
+        float v1 = imageRect.bottomRight.y;
+        if (flipX) {
+            std::swap(u0, u1);
+        }
+        if (flipY) {
+            std::swap(v0, v1);
+        }
+
+        Vertex vertices[6];
+        vertices[0].xy = combined.TransformPoint({ 0.0f, 0.0f });
+        vertices[0].uv = { u0, v0 };
+        vertices[0].color = context->m_currentColor;
+        vertices[1].xy = combined.TransformPoint({ imageWidth, 0.0f });
+        vertices[1].uv = { u1, v0 };
+        vertices[1].color = context->m_currentColor;
+        vertices[2].xy = combined.TransformPoint({ 0.0f, imageHeight });
+        vertices[2].uv = { u0, v1 };
+        vertices[2].color = context->m_currentColor;
+
+        vertices[3].xy = combined.TransformPoint({ 0.0f, imageHeight });
+        vertices[3].uv = { u0, v1 };
+        vertices[3].color = context->m_currentColor;
+        vertices[4].xy = combined.TransformPoint({ imageWidth, imageHeight });
+        vertices[4].uv = { u1, v1 };
+        vertices[4].color = context->m_currentColor;
+        vertices[5].xy = combined.TransformPoint({ imageWidth, 0.0f });
+        vertices[5].uv = { u1, v0 };
+        vertices[5].color = context->m_currentColor;
+
+        VkDescriptorSet const descriptorSet = m_drawingShader->GetDescriptorSet(*texture);
+        SubmitVertices(vertices, 6, ETopologyType::Triangles, descriptorSet);
+    }
+
     void Graphics::DrawImage(Image const& image, IntVec2 const& pos, FloatVec2 const& pivot) {
         auto const imageWidth = image.GetWidth();
         auto const imageHeight = image.GetHeight();
@@ -317,6 +391,39 @@ namespace moth::gfx::graphics::vulkan {
             FloatVec2 const next = t.TransformPoint({
                 center.x + (std::cos(a) * radius),
                 center.y + (std::sin(a) * radius),
+            });
+            auto const base = static_cast<size_t>(i) * 3;
+            vertices[base + 0].xy = centerW;
+            vertices[base + 0].uv = { 0, 0 };
+            vertices[base + 0].color = context->m_currentColor;
+            vertices[base + 1].xy = prev;
+            vertices[base + 1].uv = { 0, 0 };
+            vertices[base + 1].color = context->m_currentColor;
+            vertices[base + 2].xy = next;
+            vertices[base + 2].uv = { 0, 0 };
+            vertices[base + 2].color = context->m_currentColor;
+            prev = next;
+        }
+        SubmitVertices(vertices.data(), static_cast<uint32_t>(vertices.size()), ETopologyType::Triangles);
+    }
+
+    void Graphics::DrawFillEllipseF(FloatVec2 const& center, float radiusX, float radiusY) {
+        auto* context = CurrentContext();
+        if (context == nullptr || radiusX <= 0.0f || radiusY <= 0.0f) {
+            return;
+        }
+        int const segments = detail::CircleSegmentCount(std::max(radiusX, radiusY));
+        auto const t = CurrentTransform();
+        auto const centerW = t.TransformPoint(center);
+        constexpr float kTwoPi = 6.28318530718f;
+
+        std::vector<Vertex> vertices(static_cast<size_t>(segments) * 3);
+        FloatVec2 prev = t.TransformPoint({ center.x + radiusX, center.y });
+        for (int i = 0; i < segments; ++i) {
+            float const a = (kTwoPi * static_cast<float>(i + 1)) / static_cast<float>(segments);
+            FloatVec2 const next = t.TransformPoint({
+                center.x + (std::cos(a) * radiusX),
+                center.y + (std::sin(a) * radiusY),
             });
             auto const base = static_cast<size_t>(i) * 3;
             vertices[base + 0].xy = centerW;
@@ -517,6 +624,40 @@ namespace moth::gfx::graphics::vulkan {
         vertices[1].color = context->m_currentColor;
 
         SubmitVertices(vertices, 2, ETopologyType::Lines);
+    }
+
+    void Graphics::DrawLineF(FloatVec2 const& p0, FloatVec2 const& p1, float thickness) {
+        auto* context = CurrentContext();
+        if (context == nullptr || thickness <= 0.0f) {
+            return;
+        }
+        FloatVec2 const delta = p1 - p0;
+        float const length = std::sqrt((delta.x * delta.x) + (delta.y * delta.y));
+        if (length <= 0.0f) {
+            return;
+        }
+        // Perpendicular unit vector scaled by half the thickness.
+        FloatVec2 const normal{ (-delta.y / length) * (thickness * 0.5f), (delta.x / length) * (thickness * 0.5f) };
+
+        auto const t = CurrentTransform();
+        FloatVec2 const q0 = t.TransformPoint(p0 + normal);
+        FloatVec2 const q1 = t.TransformPoint(p1 + normal);
+        FloatVec2 const q2 = t.TransformPoint(p0 - normal);
+        FloatVec2 const q3 = t.TransformPoint(p1 - normal);
+
+        Vertex vertices[6];
+        vertices[0].xy = q0;
+        vertices[1].xy = q1;
+        vertices[2].xy = q2;
+        vertices[3].xy = q2;
+        vertices[4].xy = q1;
+        vertices[5].xy = q3;
+        for (auto& vertex : vertices) {
+            vertex.uv = { 0, 0 };
+            vertex.color = context->m_currentColor;
+        }
+
+        SubmitVertices(vertices, 6, ETopologyType::Triangles);
     }
 
     void Graphics::DrawText(std::string_view text, IFont& font, IntRect const& destRect, TextHorizAlignment horizontalAlignment, TextVertAlignment verticalAlignment) {

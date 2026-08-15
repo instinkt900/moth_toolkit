@@ -66,12 +66,16 @@ namespace moth::gfx::graphics::vulkan {
         void SetColor(Color const& color) override;
         void Clear() override;
         void SetTransform(FloatMat4x4 const& transform) override;
+        void PushTransform(FloatMat4x4 const& transform) override;
+        void PopTransform() override;
         void DrawImage(Image const& image, IntVec2 const& pos, FloatVec2 const& pivot) override;
+        void DrawImage(Image const& image, Transform2D const& transform, FloatVec2 const& pivot, bool flipX, bool flipY) override;
         void DrawImage(Image const& image, IntRect const& destRect, IntRect const* sourceRect) override;
         void DrawImageTiled(Image const& image, IntRect const& destRect, IntRect const* sourceRect, float scale) override;
         void DrawRectF(FloatRect const& rect) override;
         void DrawFillRectF(FloatRect const& rect) override;
         void DrawFillCircleF(FloatVec2 const& center, float radius) override;
+        void DrawFillEllipseF(FloatVec2 const& center, float radiusX, float radiusY) override;
         void DrawFillPolygonF(FloatVec2 const* points, size_t count) override;
         void DrawTrianglesF(FloatVec2 const* vertices, size_t count) override;
         void DrawImageCircle(Image const& image, FloatVec2 const& center, float radius, IntRect const* sourceRect) override;
@@ -81,6 +85,7 @@ namespace moth::gfx::graphics::vulkan {
                               float angle,
                               float transitionLength) override;
         void DrawLineF(FloatVec2 const& p0, FloatVec2 const& p1) override;
+        void DrawLineF(FloatVec2 const& p0, FloatVec2 const& p1, float thickness) override;
         void DrawText(std::string_view text, IFont& font, IntRect const& destRect, TextHorizAlignment horizontalAlignment = TextHorizAlignment::Left, TextVertAlignment verticalAlignment = TextVertAlignment::Top) override;
         void SetClip(IntRect const* clipRect) override;
 
@@ -120,6 +125,7 @@ namespace moth::gfx::graphics::vulkan {
         SurfaceContext& m_surfaceContext;
         VkSurfaceKHR m_vkSurface = VK_NULL_HANDLE;
         FloatMat4x4 m_currentTransform = FloatMat4x4::Identity();
+        std::stack<FloatMat4x4> m_transformStack;
 
         struct PushConstants {
             FloatVec2 xyScale;

@@ -14,6 +14,7 @@
 // graphics — interfaces and core
 #include "moth_graphics/graphics/asset_context.h"
 #include "moth_graphics/graphics/blend_mode.h"
+#include "moth_graphics/graphics/camera.h"
 #include "moth_graphics/graphics/color.h"
 #include "moth_graphics/graphics/font_factory.h"
 #include "moth_graphics/graphics/ifont.h"
@@ -32,6 +33,9 @@
 #include "moth_graphics/graphics/texture_filter.h"
 
 // graphics — moth_ui bridge lives in the `bridge` module (moth/bridge).
+
+// scene — lightweight game-object model
+#include "moth_graphics/scene/scene.h"
 
 // platform
 #include "moth_graphics/platform/imgui_context.h"

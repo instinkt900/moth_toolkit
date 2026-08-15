@@ -52,6 +52,32 @@ namespace moth::gfx::graphics {
         /// @param transform Local-to-world transform for subsequent draw calls.
         virtual void SetTransform(FloatMat4x4 const& transform) = 0;
 
+        /// @brief Pushes a transform that composes on top of the current transform.
+        ///
+        /// Subsequent draw coordinates are transformed by @c current * @p transform
+        /// until @c PopTransform() restores the previous transform. This is how a
+        /// camera transform (@c SetTransform) composes with a per-entity transform.
+        virtual void PushTransform(FloatMat4x4 const& transform) = 0;
+
+        /// @brief Restores the transform saved by the matching @c PushTransform.
+        virtual void PopTransform() = 0;
+
+        /// @brief Draw an image with a full 2D transform (position, rotation, scale) plus pivot and flip.
+        ///
+        /// The image is drawn at its natural size. @p transform places, rotates,
+        /// and scales it; @p pivot (normalized) is the point within the image that
+        /// lands on @p transform.position. The sprite's transform composes on top
+        /// of the current transform (e.g. a camera view).
+        ///
+        /// @param image     The image to draw.
+        /// @param transform Position/rotation/scale in local space.
+        /// @param pivot     Normalized pivot: {0,0} = top-left, {0.5,0.5} = centre, {1,1} = bottom-right.
+        /// @param flipX     Mirror the image horizontally.
+        /// @param flipY     Mirror the image vertically.
+        virtual void DrawImage(Image const& image, Transform2D const& transform,
+                               FloatVec2 const& pivot = { 0.5f, 0.5f },
+                               bool flipX = false, bool flipY = false) = 0;
+
         /// @brief Draw an image into a destination rectangle in local space. The active transform is applied.
         /// @param image The image to draw.
         /// @param destRect Destination rectangle in local (pre-transform) space.
@@ -84,6 +110,12 @@ namespace moth::gfx::graphics {
         /// @param center Centre point in logical pixels (pre-transform).
         /// @param radius Radius in logical pixels.
         virtual void DrawFillCircleF(FloatVec2 const& center, float radius) = 0;
+
+        /// @brief Draw a filled ellipse using the current color.
+        /// @param center  Centre point in logical pixels (pre-transform).
+        /// @param radiusX Horizontal radius in logical pixels.
+        /// @param radiusY Vertical radius in logical pixels.
+        virtual void DrawFillEllipseF(FloatVec2 const& center, float radiusX, float radiusY) = 0;
 
         /// @brief Draw a filled polygon using the current color.
         ///
@@ -168,6 +200,12 @@ namespace moth::gfx::graphics {
         /// @param p0 Start point in logical pixels.
         /// @param p1 End point in logical pixels.
         virtual void DrawLineF(FloatVec2 const& p0, FloatVec2 const& p1) = 0;
+
+        /// @brief Draw a line segment of a given thickness using the current color.
+        /// @param p0        Start point in logical pixels.
+        /// @param p1        End point in logical pixels.
+        /// @param thickness Line thickness in logical pixels.
+        virtual void DrawLineF(FloatVec2 const& p0, FloatVec2 const& p1, float thickness) = 0;
 
         /// @brief Draw a string of text into a destination rectangle.
         /// @param text UTF-8 text to render.

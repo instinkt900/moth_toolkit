@@ -18,10 +18,14 @@ TEST_CASE("IGraphics method signatures are stable", "[api][graphics][igraphics]"
     void (IGraphics::*setColor)(Color const&)                 = &IGraphics::SetColor;
     void (IGraphics::*clear)()                                = &IGraphics::Clear;
     void (IGraphics::*setXform)(FloatMat4x4 const&)           = &IGraphics::SetTransform;
+    void (IGraphics::*pushXform)(FloatMat4x4 const&)          = &IGraphics::PushTransform;
+    void (IGraphics::*popXform)()                             = &IGraphics::PopTransform;
     void (IGraphics::*drawImg)(Image const&, IntRect const&,
                                IntRect const*)                = &IGraphics::DrawImage;
     void (IGraphics::*drawImgPivot)(Image const&, IntVec2 const&,
                                     FloatVec2 const&)         = &IGraphics::DrawImage;
+    void (IGraphics::*drawImgTransform)(Image const&, Transform2D const&,
+                                        FloatVec2 const&, bool, bool) = &IGraphics::DrawImage;
     void (IGraphics::*drawImgTiled)(Image const&, IntRect const&,
                                     IntRect const*, float)    = &IGraphics::DrawImageTiled;
     void (IGraphics::*drawRect)(FloatRect const&)             = &IGraphics::DrawRectF;
@@ -32,6 +36,10 @@ TEST_CASE("IGraphics method signatures are stable", "[api][graphics][igraphics]"
                                 size_t)                      = &IGraphics::DrawTrianglesF;
     void (IGraphics::*drawLine)(FloatVec2 const&,
                                 FloatVec2 const&)             = &IGraphics::DrawLineF;
+    void (IGraphics::*drawThickLine)(FloatVec2 const&,
+                                     FloatVec2 const&, float) = &IGraphics::DrawLineF;
+    void (IGraphics::*drawEllipse)(FloatVec2 const&,
+                                   float, float)             = &IGraphics::DrawFillEllipseF;
     void (IGraphics::*drawText)(std::string_view, IFont&,
                                 IntRect const&,
                                 TextHorizAlignment,
@@ -45,9 +53,9 @@ TEST_CASE("IGraphics method signatures are stable", "[api][graphics][igraphics]"
 
     (void)begin; (void)end;
     (void)setBlend; (void)setColor; (void)clear;
-    (void)setXform;
-    (void)drawImg; (void)drawImgPivot; (void)drawImgTiled;
-    (void)drawRect; (void)drawFill; (void)drawFillPoly; (void)drawTris; (void)drawLine; (void)drawText;
+    (void)setXform; (void)pushXform; (void)popXform;
+    (void)drawImg; (void)drawImgPivot; (void)drawImgTransform; (void)drawImgTiled;
+    (void)drawRect; (void)drawFill; (void)drawFillPoly; (void)drawTris; (void)drawLine; (void)drawThickLine; (void)drawEllipse; (void)drawText;
     (void)setClip; (void)createTarget; (void)getTarget; (void)setTarget;
     (void)setLogical;
     SUCCEED();

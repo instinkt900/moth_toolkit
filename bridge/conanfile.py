@@ -20,9 +20,11 @@ class MothBridge(ConanFile):
             self.version = load(self, "version.txt").strip()
 
     def requirements(self):
-        self.requires("moth_core/0.1.0")
-        self.requires("moth_graphics/1.2.0")
-        self.requires("moth_ui/1.1.2")
+        # Public headers expose moth::core/moth::gfx/moth::ui types, so their
+        # headers must reach our consumers.
+        self.requires("moth_core/0.1.0", transitive_headers=True)
+        self.requires("moth_graphics/1.2.0", transitive_headers=True)
+        self.requires("moth_ui/1.1.2", transitive_headers=True)
         self.requires("spdlog/[~1.14]", transitive_headers=True)
 
     def build_requirements(self):

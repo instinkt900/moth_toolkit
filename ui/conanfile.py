@@ -24,7 +24,7 @@ class MothUI(ConanFile):
         # consumer on a newer minor. That blocked the Camina engine, which takes
         # nlohmann_json 3.12 and gets fmt 12 through spdlog. Both APIs this
         # library uses are stable across those bumps, so accept a major range.
-        self.requires("moth_core/0.1.0")
+        self.requires("moth_core/0.1.0", transitive_headers=True)
         self.requires("nlohmann_json/[>=3.11 <4]", transitive_headers=True)
         self.requires("magic_enum/[~0.8]", transitive_headers=True)
         self.requires("range-v3/[~0.12]", transitive_headers=True)

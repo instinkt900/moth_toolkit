@@ -12,6 +12,8 @@ namespace moth::core {
         Left,    ///< Primary (left) mouse button.
         Middle,  ///< Middle mouse button / scroll wheel click.
         Right,   ///< Secondary (right) mouse button.
+
+        Count,   ///< Number of buttons (not a valid button).
     };
 
     /**

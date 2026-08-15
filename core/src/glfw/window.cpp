@@ -1,7 +1,9 @@
 #include "moth/core/glfw/window.h"
 #include "moth/core/glfw/events.h"
+#include "moth/core/glfw/gamepad.h"
 #include "moth/core/event_window.h"
 #include "moth/core/event_mouse.h"
+#include "moth/core/input.h"
 
 #include <cassert>
 
@@ -66,7 +68,9 @@ namespace moth::core::glfw {
     }
 
     void Window::Update(uint32_t /*ticks*/) {
+        Input::Get().BeginFrame();
         glfwPollEvents();
+        glfw::PollGamepads();
 
         if (glfwWindowShouldClose(m_glfwWindow) != 0) {
             glfwSetWindowShouldClose(m_glfwWindow, 0);
@@ -152,6 +156,7 @@ namespace moth::core::glfw {
                 return;
             }
             if (auto const translatedEvent = FromGLFW(key, scancode, action, mods)) {
+                Input::Get().ProcessEvent(*translatedEvent);
                 if (self->m_listener) {
                     self->m_listener->OnEvent(*translatedEvent);
                 } else {
@@ -177,6 +182,7 @@ namespace moth::core::glfw {
             auto const logicalPos = ToLogicalPos(windowSize, renderSize, newMousePos);
             auto const logicalDelta = ToLogicalDelta(windowSize, renderSize, windowDelta);
             EventMouseMove const translatedEvent{ logicalPos, logicalDelta };
+            Input::Get().ProcessEvent(translatedEvent);
             if (self->m_listener) {
                 self->m_listener->OnEvent(translatedEvent);
             } else {
@@ -198,6 +204,7 @@ namespace moth::core::glfw {
             auto const renderSize = self->m_listener ? self->m_listener->GetRenderSize() : self->GetRenderSize();
             auto const logicalPos = ToLogicalPos(windowSize, renderSize, self->m_lastMousePos);
             if (auto const translatedEvent = FromGLFW(button, action, mods, logicalPos)) {
+                Input::Get().ProcessEvent(*translatedEvent);
                 if (self->m_listener) {
                     self->m_listener->OnEvent(*translatedEvent);
                 } else {
@@ -222,6 +229,7 @@ namespace moth::core::glfw {
             EventMouseWheel const translatedEvent{
                 IntVec2{ static_cast<int>(xoffset), static_cast<int>(yoffset) },
                 logicalPos };
+            Input::Get().ProcessEvent(translatedEvent);
             if (self->m_listener) {
                 self->m_listener->OnEvent(translatedEvent);
             } else {

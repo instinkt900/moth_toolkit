@@ -47,6 +47,14 @@ namespace moth::core {
             return t;
         }
 
+        /// @brief Returns a pure XY scale transform.
+        static FloatMat4x4 Scale(FloatVec2 scale) {
+            FloatMat4x4 s;
+            s.m[0][0] = scale.x;
+            s.m[1][1] = scale.y;
+            return s;
+        }
+
         /// @brief Returns a clockwise rotation around Z in degrees, pivoting around @p pivot (in the same space as the points being transformed).
         static FloatMat4x4 Rotation(float degrees, FloatVec2 pivot) {
             float const rad = degrees * kDegToRad;

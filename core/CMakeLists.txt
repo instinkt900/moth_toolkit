@@ -23,7 +23,9 @@ else()
 endif()
 
 set(SOURCES
+    src/input.cpp
     src/glfw/events.cpp
+    src/glfw/gamepad.cpp
     src/glfw/window.cpp
 )
 

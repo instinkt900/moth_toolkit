@@ -30,6 +30,7 @@
 #include <moth/core/rect.h>
 #include <moth/core/color.h>
 #include <moth/core/transform.h>
+#include <moth/core/transform2d.h>
 #include <moth/core/blend_mode.h>
 #include <moth/core/text_alignment.h>
 #include <moth/core/interp.h>
@@ -40,6 +41,7 @@
 #include <moth/core/event_emitter.h>
 #include <moth/core/ticker.h>
 #include <moth/core/window.h>
+#include <moth/core/input.h>
 #endif
 
 #if MOTH_ENABLE_GFX

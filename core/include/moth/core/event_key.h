@@ -150,6 +150,8 @@ namespace moth::core {
         Rctrl,
         Rshift,
         Ralt,
+
+        Count, ///< Number of keys (not a valid key).
     };
 
     /**

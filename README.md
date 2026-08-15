@@ -6,18 +6,23 @@ compile-time toggles for each feature, while remaining independently usable.
 
 ## Status
 
-Early scaffolding. The `moth_ui` and `moth_graphics` repos have been imported
-(with full history) under `ui/` and `gfx/`. The module extraction (core,
-bridge) and toolkit aggregation are placeholders pending the roadmap work.
+The `moth_ui` and `moth_graphics` repos are imported (with full history) under
+`ui/` and `gfx/`. The `core`, `gfx`, `ui`, `bridge`, `ecs`, and `physics` modules
+are wired into the superbuild and Conan-packaged; `moth::ecs` (EnTT-backed
+entity-component system) replaced the interim `moth::gfx::scene::Scene`/`Entity`
+model, and `moth::physics` wraps Box2D. The remaining P1 modules (audio, tilemap,
+tween, RNG) are still to come — see the Obsidian vault roadmap.
 
 ## Layout
 
 ```
 CMakeLists.txt        superbuild: MOTH_ENABLE_* toggles + add_subdirectory
-core/                 moth::core    — loop/platform/math/events (placeholder)
+core/                 moth::core    — loop/platform/math/events
 gfx/                  moth::gfx     — 2D renderer + backends (imported)
 ui/                   moth::ui      — node graph/layers/animation (imported)
-bridge/               moth::bridge  — ui <-> gfx adapter (placeholder)
+ecs/                  moth::ecs     — EnTT entity-component system
+physics/              moth::physics — Box2D rigid bodies
+bridge/               moth::bridge  — ui <-> gfx adapter
 toolkit/              moth::toolkit — aggregate target + feature header
 cmake/features.h.in   generated MOTH_HAS_* compile-time flags
 examples/             sample games / consumption tests
@@ -30,9 +35,8 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ```
 
-Only the placeholder modules build for now; `gfx/` and `ui/` still build
-standalone (from their own directories) until they are wired into the
-superbuild.
+Modules build in-tree via the superbuild (gated by `MOTH_ENABLE_*` toggles) and
+standalone via their own `conanfile.py` / CMake install-export.
 
 ## Plan
 

@@ -27,3 +27,4 @@ class MothToolkitSuperbuild(ConanFile):
         self.requires("range-v3/[~0.12]", transitive_headers=True)
         self.requires("vulkan-memory-allocator/3.0.1", transitive_headers=True)
         self.requires("entt/[~3.13]", transitive_headers=True)
+        self.requires("box2d/2.4.1", transitive_headers=True)

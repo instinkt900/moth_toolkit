@@ -34,4 +34,8 @@ if(MOTH_ENABLE_ECS)
     target_link_libraries(moth_toolkit INTERFACE moth::ecs)
 endif()
 
+if(MOTH_ENABLE_PHYSICS)
+    target_link_libraries(moth_toolkit INTERFACE moth::physics)
+endif()
+
 install(DIRECTORY include/ DESTINATION include)

@@ -22,6 +22,7 @@ class MothToolkit(ConanFile):
         "enable_ui": [True, False],
         "enable_bridge": [True, False],
         "enable_ecs": [True, False],
+        "enable_physics": [True, False],
     }
     default_options = {
         "enable_core": True,
@@ -29,6 +30,7 @@ class MothToolkit(ConanFile):
         "enable_ui": True,
         "enable_bridge": True,
         "enable_ecs": True,
+        "enable_physics": True,
     }
 
     def set_version(self):
@@ -53,6 +55,10 @@ class MothToolkit(ConanFile):
             raise ConanInvalidConfiguration(
                 "moth::ecs requires moth::core — enable_core or disable ecs"
             )
+        if self.options.enable_physics and not self.options.enable_core:
+            raise ConanInvalidConfiguration(
+                "moth::physics requires moth::core — enable_core or disable physics"
+            )
 
     def requirements(self):
         # The modules are aggregated, so propagate their headers and libs through
@@ -68,6 +74,8 @@ class MothToolkit(ConanFile):
             self.requires("moth_bridge/0.1.0", transitive_headers=True, transitive_libs=True)
         if self.options.enable_ecs:
             self.requires("moth_ecs/0.1.0", transitive_headers=True, transitive_libs=True)
+        if self.options.enable_physics:
+            self.requires("moth_physics/0.1.0", transitive_headers=True, transitive_libs=True)
 
     def package(self):
         copy(self, "*.h", src=os.path.join(self.source_folder, "include"),
@@ -85,6 +93,7 @@ class MothToolkit(ConanFile):
             "MOTH_ENABLE_UI={}".format(1 if self.options.enable_ui else 0),
             "MOTH_ENABLE_BRIDGE={}".format(1 if self.options.enable_bridge else 0),
             "MOTH_ENABLE_ECS={}".format(1 if self.options.enable_ecs else 0),
+            "MOTH_ENABLE_PHYSICS={}".format(1 if self.options.enable_physics else 0),
         ]
 
         # Expose each enabled module as a transitive dependency so a consumer that
@@ -100,3 +109,5 @@ class MothToolkit(ConanFile):
             self.cpp_info.requires.append("moth_bridge::moth_bridge")
         if self.options.enable_ecs:
             self.cpp_info.requires.append("moth_ecs::moth_ecs")
+        if self.options.enable_physics:
+            self.cpp_info.requires.append("moth_physics::moth_physics")

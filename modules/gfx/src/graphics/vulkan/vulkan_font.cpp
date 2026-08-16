@@ -93,15 +93,27 @@ namespace {
 
 namespace moth::gfx::graphics::vulkan {
     std::unique_ptr<Font> Font::Load(std::filesystem::path const& path, int size, SurfaceContext& context) {
+        std::ifstream file(path, std::ios::binary);
+        if (!file) {
+            return nullptr;
+        }
+        std::vector<std::uint8_t> data(std::istreambuf_iterator<char>{ file }, std::istreambuf_iterator<char>{});
+        return Load(data, size, context);
+    }
+
+    std::unique_ptr<Font> Font::Load(std::vector<std::uint8_t> const& data, int size, SurfaceContext& context) {
         if (context.GetContext().ftLibrary == nullptr) {
             spdlog::error("Vulkan: Font::Load called with uninitialized FreeType library");
             return nullptr;
         }
+        std::vector<std::uint8_t> fontData(data.begin(), data.end());
         FT_Face face = nullptr;
-        if (FT_New_Face(context.GetContext().ftLibrary, path.string().c_str(), 0, &face) != 0) {
+        if (FT_New_Memory_Face(context.GetContext().ftLibrary, fontData.data(), static_cast<FT_Long>(fontData.size()), 0, &face) != 0) {
             return nullptr;
         }
-        return std::unique_ptr<Font>(new Font(face, size, context));
+        auto font = std::unique_ptr<Font>(new Font(face, size, context));
+        font->m_fontData = std::move(fontData);
+        return font;
     }
 
     Font::Font(FT_Face face, int size, SurfaceContext& context)

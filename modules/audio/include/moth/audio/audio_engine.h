@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <filesystem>
 #include <memory>
+#include <vector>
 
 namespace moth::audio {
     class Sound;
@@ -62,7 +63,15 @@ namespace moth::audio {
         /// @brief Loads (without playing) a streaming sound (music) from @p path.
         Sound LoadMusic(std::filesystem::path const& path);
 
+        /// @brief Loads (without playing) a fully-decoded sound from in-memory bytes.
+        Sound LoadSoundFromMemory(std::vector<std::uint8_t> const& data);
+
+        /// @brief Loads (without playing) a streaming sound (music) from in-memory bytes.
+        Sound LoadMusicFromMemory(std::vector<std::uint8_t> const& data);
+
     private:
+        Sound LoadFromMemory(std::vector<std::uint8_t> const& data, ma_uint32 flags);
+
         std::unique_ptr<ma_engine> m_engine;
     };
 }

@@ -142,6 +142,43 @@ std::vector<SpriteSheet::ClipEntry> ParseClips(
     return clips;
 }
 
+std::shared_ptr<SpriteSheet> BuildSpriteSheet(
+    nlohmann::json const& json, std::shared_ptr<ITexture> texture, std::string const& label) {
+    if (!texture) {
+        spdlog::error("SpriteSheetFactory: '{}' has no atlas texture", label);
+        return nullptr;
+    }
+    if (!json.contains("frames") || !json["frames"].is_array()) {
+        spdlog::error("SpriteSheetFactory: '{}' missing 'frames' array", label);
+        return nullptr;
+    }
+
+    Image image(texture);
+
+    auto frames = ParseFrames(json["frames"], label);
+    if (!frames) {
+        return nullptr;
+    }
+    if (frames->empty()) {
+        spdlog::error("SpriteSheetFactory: '{}' frames array is empty", label);
+        return nullptr;
+    }
+
+    int const totalFrames = static_cast<int>(frames->size());
+
+    std::vector<SpriteSheet::ClipEntry> clips;
+    if (json.contains("clips")) {
+        if (!json["clips"].is_array()) {
+            spdlog::error("SpriteSheetFactory: '{}' 'clips' field must be an array (got {})",
+                          label, json["clips"].type_name());
+            return nullptr;
+        }
+        clips = ParseClips(json["clips"], label, totalFrames);
+    }
+
+    return std::make_shared<SpriteSheet>(std::move(image), std::move(*frames), std::move(clips));
+}
+
 } // namespace
 
     SpriteSheetFactory::SpriteSheetFactory(AssetContext& context)
@@ -194,10 +231,6 @@ std::vector<SpriteSheet::ClipEntry> ParseClips(
             spdlog::error("SpriteSheetFactory: '{}' missing 'image' string field", path.string());
             return nullptr;
         }
-        if (!json.contains("frames") || !json["frames"].is_array()) {
-            spdlog::error("SpriteSheetFactory: '{}' missing 'frames' array", path.string());
-            return nullptr;
-        }
 
         ec = {};
         auto const rootPath = path.parent_path();
@@ -214,31 +247,25 @@ std::vector<SpriteSheet::ClipEntry> ParseClips(
                           path.string(), imageAbsPath.string());
             return nullptr;
         }
-        Image image(texture);
 
-        auto frames = ParseFrames(json["frames"], path.string());
-        if (!frames) {
-            return nullptr;
+        auto sheet = BuildSpriteSheet(json, std::move(texture), path.string());
+        if (sheet) {
+            m_cache.insert({ key, sheet });
         }
-        if (frames->empty()) {
-            spdlog::error("SpriteSheetFactory: '{}' frames array is empty", path.string());
-            return nullptr;
-        }
-
-        int const totalFrames = static_cast<int>(frames->size());
-
-        std::vector<SpriteSheet::ClipEntry> clips;
-        if (json.contains("clips")) {
-            if (!json["clips"].is_array()) {
-                spdlog::error("SpriteSheetFactory: '{}' 'clips' field must be an array (got {})",
-                              path.string(), json["clips"].type_name());
-                return nullptr;
-            }
-            clips = ParseClips(json["clips"], path.string(), totalFrames);
-        }
-
-        auto sheet = std::make_shared<SpriteSheet>(std::move(image), std::move(*frames), std::move(clips));
-        m_cache.insert({ key, sheet });
         return sheet;
+    }
+
+    std::shared_ptr<SpriteSheet> SpriteSheetFactory::GetSpriteSheetFromMemory(
+        std::vector<std::uint8_t> const& descriptorBytes,
+        std::shared_ptr<ITexture> imageTexture) {
+        nlohmann::json json;
+        try {
+            json = nlohmann::json::parse(descriptorBytes.begin(), descriptorBytes.end());
+        } catch (std::exception const& e) {
+            spdlog::error("SpriteSheetFactory: failed to parse in-memory descriptor: {}", e.what());
+            return nullptr;
+        }
+
+        return BuildSpriteSheet(json, std::move(imageTexture), "<memory>");
     }
 }

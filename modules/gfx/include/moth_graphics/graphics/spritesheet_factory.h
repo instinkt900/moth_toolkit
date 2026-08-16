@@ -7,6 +7,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace moth::gfx::graphics {
     /// @brief Cached sprite sheet loader.
@@ -27,6 +28,17 @@ namespace moth::gfx::graphics {
         /// @param path Path to the .flipbook.json descriptor file.
         /// @return Loaded sprite sheet, or @c nullptr on failure.
         std::shared_ptr<SpriteSheet> GetSpriteSheet(std::filesystem::path const& path);
+
+        /// @brief Build a sprite sheet from in-memory descriptor bytes and atlas texture.
+        ///
+        /// The descriptor is the same .flipbook.json format produced by moth_packer;
+        /// its @c "image" field is ignored (the atlas is supplied directly). Not cached.
+        /// @param descriptorBytes The .flipbook.json descriptor, as bytes.
+        /// @param imageTexture The atlas texture the descriptor's frames refer to.
+        /// @return Loaded sprite sheet, or @c nullptr on failure.
+        std::shared_ptr<SpriteSheet> GetSpriteSheetFromMemory(
+            std::vector<std::uint8_t> const& descriptorBytes,
+            std::shared_ptr<ITexture> imageTexture);
 
     private:
         AssetContext& m_context;

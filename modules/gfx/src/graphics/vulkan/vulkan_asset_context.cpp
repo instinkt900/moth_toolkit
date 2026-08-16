@@ -16,8 +16,16 @@ namespace moth::gfx::graphics::vulkan {
         return Font::Load(path, static_cast<int>(size), m_context);
     }
 
+    std::unique_ptr<IFont> AssetContext::FontFromMemory(std::vector<std::uint8_t> const& data, uint32_t size) {
+        return Font::Load(data, static_cast<int>(size), m_context);
+    }
+
     std::unique_ptr<ITexture> AssetContext::TextureFromFile(std::filesystem::path const& path) {
         return Texture::FromFile(m_context, path);
+    }
+
+    std::unique_ptr<ITexture> AssetContext::TextureFromMemory(std::vector<std::uint8_t> const& data) {
+        return Texture::FromMemory(m_context, data);
     }
 
     std::unique_ptr<ITexture> AssetContext::TextureFromPixels(int width, int height, uint8_t const* pixels) {

@@ -14,10 +14,19 @@ namespace moth::gfx::graphics::vulkan {
         if (!std::filesystem::exists(path)) {
             return nullptr;
         }
+        std::ifstream file(path, std::ios::binary);
+        if (!file) {
+            return nullptr;
+        }
+        std::vector<std::uint8_t> data(std::istreambuf_iterator<char>{ file }, std::istreambuf_iterator<char>{});
+        return FromMemory(context, data);
+    }
+
+    std::unique_ptr<Texture> Texture::FromMemory(SurfaceContext& context, std::vector<std::uint8_t> const& data) {
         int texWidth = 0;
         int texHeight = 0;
         int texChannels = 0;
-        stbi_uc* pixels = stbi_load(path.string().c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+        stbi_uc* pixels = stbi_load_from_memory(data.data(), static_cast<int>(data.size()), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
         if (pixels == nullptr) {
             return nullptr;
         }

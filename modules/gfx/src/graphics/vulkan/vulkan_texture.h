@@ -9,11 +9,13 @@
 #include <memory>
 #include <filesystem>
 #include <cstdint>
+#include <vector>
 
 namespace moth::gfx::graphics::vulkan {
     class Texture : public ITexture {
     public:
         static std::unique_ptr<Texture> FromFile(SurfaceContext& context, std::filesystem::path const& path);
+        static std::unique_ptr<Texture> FromMemory(SurfaceContext& context, std::vector<std::uint8_t> const& data);
         static std::unique_ptr<Texture> FromRGBA(SurfaceContext& context, int width, int height, unsigned char const* pixels);
         Texture(SurfaceContext& context);
         Texture(SurfaceContext& context, VkImage image, VkImageView view, VkExtent2D extent, VkFormat format, bool owning = true);

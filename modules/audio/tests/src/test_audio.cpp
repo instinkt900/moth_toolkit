@@ -2,6 +2,8 @@
 
 #include <catch2/catch_all.hpp>
 
+#include <atomic>
+#include <chrono>
 #include <cmath>
 #include <cstdint>
 #include <filesystem>
@@ -47,11 +49,23 @@ namespace {
 
     struct TempDir {
         std::filesystem::path path;
-        TempDir() : path(std::filesystem::temp_directory_path() / "moth_audio_test") {
+        TempDir() {
+            // Each instance gets a unique directory so parallel ctest invocations
+            // (the test preset runs with --jobs) don't race on a shared path.
+            static std::atomic<std::uint64_t> counter{ 0 };
+            auto const n = counter.fetch_add(1);
+            auto const tick = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+            path = std::filesystem::temp_directory_path()
+                / ("moth_audio_test_" + std::to_string(tick) + "_" + std::to_string(n));
             std::filesystem::create_directories(path);
         }
         ~TempDir() { std::filesystem::remove_all(path); }
     };
+
+    std::vector<std::uint8_t> ReadBytes(std::filesystem::path const& path) {
+        std::ifstream file(path, std::ios::binary);
+        return { std::istreambuf_iterator<char>{ file }, std::istreambuf_iterator<char>{} };
+    }
 }
 
 TEST_CASE("AudioEngine: initializes with a null device", "[audio][engine]") {
@@ -119,5 +133,47 @@ TEST_CASE("Music: streams from file", "[audio][sound]") {
 TEST_CASE("Sound: loading a missing file yields an invalid sound", "[audio][sound]") {
     AudioEngine engine(AudioEngineConfig{ true });
     Sound sound = engine.LoadSound("/nonexistent/does_not_exist.wav");
+    REQUIRE_FALSE(sound.IsValid());
+}
+
+TEST_CASE("Sound: loads and plays from in-memory bytes", "[audio][sound][memory]") {
+    TempDir dir;
+    auto const wav = dir.path / "tone.wav";
+    WriteSineWav(wav, 44100, 0.5f, 440.0f);
+    auto const data = ReadBytes(wav);
+
+    AudioEngine engine(AudioEngineConfig{ true });
+    engine.Start();
+
+    Sound sound = engine.LoadSoundFromMemory(data);
+    REQUIRE(sound.IsValid());
+    REQUIRE(sound.GetLengthSeconds() > 0.0f);
+
+    sound.Play();
+    REQUIRE(sound.IsPlaying());
+
+    sound.Pause();
+    REQUIRE_FALSE(sound.IsPlaying());
+}
+
+TEST_CASE("Music: streams from in-memory bytes", "[audio][sound][memory]") {
+    TempDir dir;
+    auto const wav = dir.path / "music.wav";
+    WriteSineWav(wav, 44100, 2.0f, 220.0f);
+    auto const data = ReadBytes(wav);
+
+    AudioEngine engine(AudioEngineConfig{ true });
+    Sound music = engine.LoadMusicFromMemory(data);
+    REQUIRE(music.IsValid());
+    REQUIRE(music.GetLengthSeconds() > 0.0f);
+
+    music.Play();
+    REQUIRE(music.IsPlaying());
+}
+
+TEST_CASE("Sound: invalid in-memory bytes yield an invalid sound", "[audio][sound][memory]") {
+    AudioEngine engine(AudioEngineConfig{ true });
+    std::vector<std::uint8_t> const garbage{ 0x00, 0x01, 0x02, 0x03 };
+    Sound sound = engine.LoadSoundFromMemory(garbage);
     REQUIRE_FALSE(sound.IsValid());
 }

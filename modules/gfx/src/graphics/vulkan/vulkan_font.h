@@ -27,6 +27,7 @@ namespace moth::gfx::graphics::vulkan {
     class Font : public IFont {
     public:
         static std::unique_ptr<Font> Load(std::filesystem::path const& path, int size, SurfaceContext& context);
+        static std::unique_ptr<Font> Load(std::vector<std::uint8_t> const& data, int size, SurfaceContext& context);
         virtual ~Font();
 
         IntVec2 Measure(std::string_view text) const override;
@@ -63,6 +64,10 @@ namespace moth::gfx::graphics::vulkan {
         int CodepointToIndex(int codepoint) const;
 
         SurfaceContext& m_context;
+
+        // Owned bytes backing a memory-loaded FreeType face (FT_New_Memory_Face
+        // does not copy the buffer). Must outlive m_hbFont, which owns the FT_Face.
+        std::vector<std::uint8_t> m_fontData;
 
         // harfbuzz stuff. this should probably be wrapped
         hb_font_t* m_hbFont = nullptr;

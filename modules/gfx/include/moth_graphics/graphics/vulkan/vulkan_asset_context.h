@@ -10,6 +10,7 @@
 
 #include <filesystem>
 #include <memory>
+#include <vector>
 
 namespace moth::gfx::graphics::vulkan {
     class SurfaceContext;
@@ -29,7 +30,9 @@ namespace moth::gfx::graphics::vulkan {
         graphics::SpriteSheetFactory& GetSpriteSheetFactory() override { return m_spriteSheetFactory; }
 
         std::unique_ptr<IFont> FontFromFile(std::filesystem::path const& path, uint32_t size) override;
+        std::unique_ptr<IFont> FontFromMemory(std::vector<std::uint8_t> const& data, uint32_t size) override;
         std::unique_ptr<ITexture> TextureFromFile(std::filesystem::path const& path) override;
+        std::unique_ptr<ITexture> TextureFromMemory(std::vector<std::uint8_t> const& data) override;
         std::unique_ptr<ITexture> TextureFromPixels(int width, int height, uint8_t const* pixels) override;
 
     private:

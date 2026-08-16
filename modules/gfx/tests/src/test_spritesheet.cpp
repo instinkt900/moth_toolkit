@@ -4,9 +4,17 @@
 #include "moth_graphics/utils/rect.h"
 #include "moth_graphics/utils/vector.h"
 
+#include "moth_graphics/graphics/asset_context.h"
+#include "moth_graphics/graphics/font_factory.h"
+#include "moth_graphics/graphics/ifont.h"
+#include "moth_graphics/graphics/spritesheet_factory.h"
+#include "moth_graphics/graphics/texture_factory.h"
+
 #include <catch2/catch_all.hpp>
+#include <cstdint>
 #include <memory>
 #include <string>
+#include <vector>
 
 using namespace moth::gfx;
 using namespace moth::gfx::graphics;
@@ -20,6 +28,27 @@ namespace {
         void DrawImGui(IntVec2 const&, FloatVec2 const&, FloatVec2 const&) const override {}
         void SaveToPNG(std::filesystem::path const&, IntRect const&) override {}
         void UpdatePixels(IntRect const&, uint8_t const*) override {}
+    };
+
+    struct MockAssetContext : AssetContext {
+        MockAssetContext()
+            : m_textureFactory(*this)
+            , m_fontFactory(*this)
+            , m_spriteSheetFactory(*this) {}
+
+        TextureFactory& GetTextureFactory() override { return m_textureFactory; }
+        FontFactory& GetFontFactory() override { return m_fontFactory; }
+        SpriteSheetFactory& GetSpriteSheetFactory() override { return m_spriteSheetFactory; }
+
+        std::unique_ptr<IFont> FontFromFile(std::filesystem::path const&, uint32_t) override { return nullptr; }
+        std::unique_ptr<IFont> FontFromMemory(std::vector<std::uint8_t> const&, uint32_t) override { return nullptr; }
+        std::unique_ptr<ITexture> TextureFromFile(std::filesystem::path const&) override { return nullptr; }
+        std::unique_ptr<ITexture> TextureFromMemory(std::vector<std::uint8_t> const&) override { return nullptr; }
+        std::unique_ptr<ITexture> TextureFromPixels(int, int, uint8_t const*) override { return nullptr; }
+
+        TextureFactory m_textureFactory;
+        FontFactory m_fontFactory;
+        SpriteSheetFactory m_spriteSheetFactory;
     };
 
     Image MakeDummyImage() {
@@ -111,4 +140,55 @@ TEST_CASE("SpriteSheet GetImage returns the image passed at construction", "[spr
     REQUIRE(sheet.GetImage().GetTexture() == tex);
     REQUIRE(sheet.GetImage().GetWidth() == 64);
     REQUIRE(sheet.GetImage().GetHeight() == 64);
+}
+
+TEST_CASE("SpriteSheetFactory builds a sheet from in-memory descriptor", "[spritesheet][factory]") {
+    MockAssetContext ctx;
+    SpriteSheetFactory factory(ctx);
+
+    std::string const json = R"({
+        "image": "atlas.png",
+        "frames": [
+            { "x": 0, "y": 0, "w": 16, "h": 16 },
+            { "x": 16, "y": 0, "w": 16, "h": 16, "pivot_x": 8, "pivot_y": 8 }
+        ],
+        "clips": [
+            { "name": "run", "loop": "loop", "frames": [ { "frame": 0, "duration_ms": 100 }, { "frame": 1, "duration_ms": 120 } ] }
+        ]
+    })";
+    std::vector<std::uint8_t> const bytes(json.begin(), json.end());
+
+    auto tex = std::make_shared<MockTexture>();
+    auto sheet = factory.GetSpriteSheetFromMemory(bytes, tex);
+
+    REQUIRE(sheet != nullptr);
+    REQUIRE(sheet->GetFrameCount() == 2);
+    REQUIRE(sheet->GetImage().GetTexture() == tex);
+
+    auto frame = sheet->GetFrameDesc(1);
+    REQUIRE(frame.has_value());
+    REQUIRE(frame->pivot.x == 8);
+    REQUIRE(frame->pivot.y == 8);
+
+    REQUIRE(sheet->GetClipCount() == 1);
+    REQUIRE(sheet->GetClipName(0) == "run");
+    auto clip = sheet->GetClipDesc("run");
+    REQUIRE(clip.has_value());
+    REQUIRE(clip->loop == SpriteSheet::LoopType::Loop);
+    REQUIRE(clip->frames.size() == 2);
+}
+
+TEST_CASE("SpriteSheetFactory rejects malformed in-memory descriptor", "[spritesheet][factory]") {
+    MockAssetContext ctx;
+    SpriteSheetFactory factory(ctx);
+
+    auto tex = std::make_shared<MockTexture>();
+    std::vector<std::uint8_t> const garbage{ 0x00, 0x01, 0x02, 0x03 };
+    REQUIRE(factory.GetSpriteSheetFromMemory(garbage, tex) == nullptr);
+
+    std::string const noFrames = R"({ "image": "atlas.png" })";
+    std::vector<std::uint8_t> const noFramesBytes(noFrames.begin(), noFrames.end());
+    REQUIRE(factory.GetSpriteSheetFromMemory(noFramesBytes, tex) == nullptr);
+
+    REQUIRE(factory.GetSpriteSheetFromMemory(noFramesBytes, nullptr) == nullptr);
 }

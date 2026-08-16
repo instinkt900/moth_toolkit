@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <vector>
 
 namespace moth::audio {
     class AudioEngine;
@@ -64,6 +65,8 @@ namespace moth::audio {
         Sound(std::unique_ptr<ma_sound> sound, std::uint32_t sampleRate);
 
         std::unique_ptr<ma_sound> m_sound;
+        std::unique_ptr<ma_decoder> m_decoder;  // owned for memory-backed sounds; must outlive m_sound's data source
+        std::vector<std::uint8_t> m_data;       // owned encoded bytes for memory-backed sounds
         std::uint32_t m_sampleRate = 0;
     };
 }

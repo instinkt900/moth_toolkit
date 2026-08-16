@@ -8,6 +8,7 @@
 #include <memory>
 #include <filesystem>
 #include <cstdint>
+#include <vector>
 
 namespace moth::gfx::graphics {
     class FontFactory;
@@ -36,9 +37,17 @@ namespace moth::gfx::graphics {
         /// @brief Load a font from a file at a given pixel size.
         virtual std::unique_ptr<IFont> FontFromFile(std::filesystem::path const& path, uint32_t size) = 0;
 
+        /// @brief Load a font from raw bytes (TTF/OTF) at a given pixel size.
+        /// @returns Loaded font, or @c nullptr on failure.
+        virtual std::unique_ptr<IFont> FontFromMemory(std::vector<std::uint8_t> const& data, uint32_t size) = 0;
+
         /// @brief Load a texture from an image file.
         /// @returns Loaded texture, or @c nullptr on failure.
         virtual std::unique_ptr<ITexture> TextureFromFile(std::filesystem::path const& path) = 0;
+
+        /// @brief Load a texture from encoded image bytes (e.g. PNG).
+        /// @returns Loaded texture, or @c nullptr on failure.
+        virtual std::unique_ptr<ITexture> TextureFromMemory(std::vector<std::uint8_t> const& data) = 0;
 
         /// @brief Create a texture from raw RGBA pixel data (4 bytes per pixel: R, G, B, A).
         /// @param width Texture width in pixels.

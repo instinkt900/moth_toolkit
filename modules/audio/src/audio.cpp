@@ -98,6 +98,39 @@ namespace moth::audio {
         return Sound(std::move(sound), GetSampleRate());
     }
 
+    Sound AudioEngine::LoadSoundFromMemory(std::vector<std::uint8_t> const& data) {
+        return LoadFromMemory(data, MA_SOUND_FLAG_NO_SPATIALIZATION);
+    }
+
+    Sound AudioEngine::LoadMusicFromMemory(std::vector<std::uint8_t> const& data) {
+        return LoadFromMemory(data, MA_SOUND_FLAG_STREAM | MA_SOUND_FLAG_NO_SPATIALIZATION);
+    }
+
+    Sound AudioEngine::LoadFromMemory(std::vector<std::uint8_t> const& data, ma_uint32 flags) {
+        if (!m_engine) {
+            return {};
+        }
+
+        std::vector<std::uint8_t> bytes(data.begin(), data.end());
+        auto decoder = std::make_unique<ma_decoder>();
+        ma_decoder_config const config = ma_decoder_config_init(ma_format_unknown, 0, 0);
+        if (ma_decoder_init_memory(bytes.data(), bytes.size(), &config, decoder.get()) != MA_SUCCESS) {
+            return {};
+        }
+
+        auto sound = std::make_unique<ma_sound>();
+        ma_result const result = ma_sound_init_from_data_source(
+            m_engine.get(), decoder.get(), flags, nullptr, sound.get());
+        if (result != MA_SUCCESS) {
+            return {};
+        }
+
+        Sound s(std::move(sound), GetSampleRate());
+        s.m_decoder = std::move(decoder);
+        s.m_data = std::move(bytes);
+        return s;
+    }
+
     Sound::Sound() = default;
 
     Sound::Sound(std::unique_ptr<ma_sound> sound, std::uint32_t sampleRate)
@@ -107,6 +140,9 @@ namespace moth::audio {
     Sound::~Sound() {
         if (m_sound) {
             ma_sound_uninit(m_sound.get());
+        }
+        if (m_decoder) {
+            ma_decoder_uninit(m_decoder.get());
         }
     }
 

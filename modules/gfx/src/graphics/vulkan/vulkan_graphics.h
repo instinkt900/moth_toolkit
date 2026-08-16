@@ -4,6 +4,7 @@
 #include "moth_graphics/graphics/color.h"
 #include "moth_graphics/graphics/ifont.h"
 #include "moth_graphics/graphics/igraphics.h"
+#include "moth_graphics/graphics/igraphics_device.h"
 #include "moth_graphics/graphics/image.h"
 #include "moth_graphics/graphics/itarget.h"
 #include "moth_graphics/graphics/text_alignment.h"
@@ -34,7 +35,7 @@
 #include <string>
 
 namespace moth::gfx::graphics::vulkan {
-    class Graphics : public IGraphics {
+    class Graphics : public IGraphics, public IGraphicsDevice {
     public:
         Graphics(SurfaceContext& context, VkSurfaceKHR surface, uint32_t surfaceWidth, uint32_t surfaceHeight);
         ~Graphics();
@@ -106,11 +107,14 @@ namespace moth::gfx::graphics::vulkan {
         void PushClip(IntRect const& rect) override;
         void PopClip() override;
 
-        std::unique_ptr<ITarget> CreateTarget(int width, int height) override;
         ITarget* GetTarget() override;
         void SetTarget(ITarget* target) override;
 
         void SetLogicalSize(IntVec2 const& logicalSize) override;
+
+        // ---- IGraphicsDevice -------------------------------------------------
+        std::unique_ptr<ITarget> CreateTarget(int width, int height) override;
+
         void Drain();
 
         Swapchain& GetSwapchain() const { return *m_swapchain; }

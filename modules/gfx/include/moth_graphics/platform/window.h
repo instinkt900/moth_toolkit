@@ -3,6 +3,7 @@
 #include <moth/core/window.h>
 
 #include "moth_graphics/graphics/igraphics.h"
+#include "moth_graphics/graphics/igraphics_device.h"
 #include "moth_graphics/graphics/texture_factory.h"
 
 #include <memory>
@@ -44,6 +45,9 @@ namespace moth::gfx::platform {
 
         /// @brief Returns the graphics interface for this window.
         graphics::IGraphics& GetGraphics() const { return *m_graphics; }
+
+        /// @brief Returns the graphics device (resource creation) for this window.
+        graphics::IGraphicsDevice& GetDevice() const;
 
         /// @brief Returns the texture factory for this window.
         graphics::TextureFactory& GetTextureFactory() const;

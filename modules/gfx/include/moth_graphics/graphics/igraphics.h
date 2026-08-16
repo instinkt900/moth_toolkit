@@ -348,16 +348,12 @@ namespace moth::gfx::graphics {
         /// @brief Restore the clip saved by the matching @c PushClip.
         virtual void PopClip() = 0;
 
-        /// @brief Create an off-screen render target.
-        /// @param width Width in pixels.
-        /// @param height Height in pixels.
-        /// @returns Ownership of a new render target.
-        virtual std::unique_ptr<ITarget> CreateTarget(int width, int height) = 0;
-
         /// @brief Returns the currently active render target, or @c nullptr if rendering to the swapchain.
         virtual ITarget* GetTarget() = 0;
 
         /// @brief Set the active render target. Pass @c nullptr to restore rendering to the swapchain.
+        ///
+        /// Render targets themselves are created by @c IGraphicsDevice::CreateTarget.
         /// @param target Render target to draw into, or @c nullptr.
         virtual void SetTarget(ITarget* target) = 0;
 

@@ -5,7 +5,7 @@
 namespace moth::gfx::graphics {
     /// @brief Abstract off-screen render target.
     ///
-    /// Created via @c IGraphics::CreateTarget(). Activate it with
+    /// Created via @c IGraphicsDevice::CreateTarget(). Activate it with
     /// @c IGraphics::SetTarget() to redirect draw calls, then read back
     /// the result through @c GetImage() to use it in subsequent draws.
     class ITarget {

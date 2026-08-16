@@ -100,7 +100,6 @@ namespace {
         void SetClip(IntRect const*) override {}
         void PushClip(IntRect const&) override {}
         void PopClip() override {}
-        std::unique_ptr<ITarget> CreateTarget(int, int) override { return nullptr; }
         ITarget* GetTarget() override { return nullptr; }
         void SetTarget(ITarget*) override {}
         void SetLogicalSize(IntVec2 const&) override {}

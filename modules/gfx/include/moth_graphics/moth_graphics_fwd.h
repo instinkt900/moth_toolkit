@@ -45,6 +45,7 @@ namespace moth::gfx::graphics {
     // -------------------------------------------------------------------------
     class AssetContext;
     class IGraphics;
+    class IGraphicsDevice;
     class Image;
     class IFont;
     class ITarget;

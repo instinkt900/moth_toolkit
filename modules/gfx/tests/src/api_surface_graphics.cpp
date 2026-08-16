@@ -63,8 +63,6 @@ TEST_CASE("IGraphics method signatures are stable", "[api][graphics][igraphics]"
     void (IGraphics::*setClip)(IntRect const*)                = &IGraphics::SetClip;
     void (IGraphics::*pushClip)(IntRect const&)               = &IGraphics::PushClip;
     void (IGraphics::*popClip)()                              = &IGraphics::PopClip;
-    std::unique_ptr<ITarget> (IGraphics::*createTarget)(int,
-                                                         int) = &IGraphics::CreateTarget;
     ITarget* (IGraphics::*getTarget)()                        = &IGraphics::GetTarget;
     void (IGraphics::*setTarget)(ITarget*)                    = &IGraphics::SetTarget;
     void (IGraphics::*setLogical)(IntVec2 const&)             = &IGraphics::SetLogicalSize;
@@ -79,8 +77,15 @@ TEST_CASE("IGraphics method signatures are stable", "[api][graphics][igraphics]"
     (void)drawRect; (void)drawFill; (void)drawFillPoly; (void)drawTris; (void)drawTexturedTris; (void)draw9Slice;
     (void)drawLine; (void)drawThickLine; (void)drawEllipse; (void)drawText;
     (void)setClip; (void)pushClip; (void)popClip;
-    (void)createTarget; (void)getTarget; (void)setTarget;
+    (void)getTarget; (void)setTarget;
     (void)setLogical;
+    SUCCEED();
+}
+
+TEST_CASE("IGraphicsDevice method signatures are stable", "[api][graphics][igraphicsdevice]") {
+    std::unique_ptr<ITarget> (IGraphicsDevice::*createTarget)(int,
+                                                              int) = &IGraphicsDevice::CreateTarget;
+    (void)createTarget;
     SUCCEED();
 }
 

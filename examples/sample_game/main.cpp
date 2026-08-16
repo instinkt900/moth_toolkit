@@ -18,7 +18,6 @@
 #include <vector>
 
 using namespace moth::gfx;
-using namespace moth::gfx;
 using namespace moth::gfx::platform;
 using namespace moth::core;
 using namespace moth::ecs;

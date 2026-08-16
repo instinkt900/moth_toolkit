@@ -10,7 +10,6 @@
 
 using namespace moth::gfx;
 using namespace moth::gfx::platform;
-using namespace moth::gfx;
 
 TEST_CASE("Ticker method signatures are stable", "[api][platform][ticker]") {
     uint32_t (Ticker::*getFixed)() const = &Ticker::GetFixedTicks;

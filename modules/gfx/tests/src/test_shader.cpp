@@ -8,7 +8,6 @@
 #include <memory>
 
 using namespace moth::gfx;
-using namespace moth::gfx;
 
 namespace {
     struct FakeShader : IShader {};

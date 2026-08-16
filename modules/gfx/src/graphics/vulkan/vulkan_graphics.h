@@ -186,7 +186,7 @@ namespace moth::gfx::graphics::vulkan {
         UniqueHandle<VkPipelineCache> m_vkPipelineCache;
         std::map<uint32_t, std::shared_ptr<Pipeline>> m_pipelines;
         std::map<uint32_t, std::shared_ptr<Pipeline>> m_fontPipelines;
-        std::map<std::pair<uint32_t, uint32_t>, std::shared_ptr<Pipeline>> m_shaderPipelines;
+        std::map<uint32_t, std::shared_ptr<Pipeline>> m_shaderPipelines;
         std::unique_ptr<RenderPass> m_renderPass;
         std::unique_ptr<RenderPass> m_rtRenderPass;
         std::unique_ptr<Swapchain> m_swapchain;

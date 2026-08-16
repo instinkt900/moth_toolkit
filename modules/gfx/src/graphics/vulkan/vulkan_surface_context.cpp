@@ -166,6 +166,7 @@ namespace moth::gfx::graphics::vulkan {
         m_assetContext.GetTextureFactory().FlushCache();
         m_assetContext.GetFontFactory().ClearFonts();
         m_assetContext.GetSpriteSheetFactory().FlushCache();
+        m_assetContext.GetShaderFactory().ClearCache();
         vkDestroyDescriptorPool(m_vkDevice, m_vkDescriptorPool, nullptr);
         vkDestroyCommandPool(m_vkDevice, m_vkCommandPool, nullptr);
         vmaDestroyAllocator(m_vmaAllocator);

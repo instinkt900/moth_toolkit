@@ -170,6 +170,11 @@ namespace moth::gfx::graphics::vulkan {
         hashes.push_back(CalcHash(m_rasterizationInfo.cullMode));
         hashes.push_back(CalcHash(m_rasterizationInfo.frontFace));
         hashes.push_back(CalcHash(m_rasterizationInfo.lineWidth));
+        if (m_shader) {
+            // Two pipelines differing only by shader must not collide in the
+            // pipeline cache (e.g. the drawing shader vs a custom shader).
+            hashes.push_back(m_shader->m_hash);
+        }
         for (const auto& colorBlend : m_colorBlendStates) {
             hashes.push_back(CalcHash(colorBlend));
         }

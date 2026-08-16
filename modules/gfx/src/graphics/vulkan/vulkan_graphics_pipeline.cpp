@@ -344,10 +344,9 @@ namespace moth::gfx::graphics::vulkan {
                                  .SetTopology(vkTopology);
 
         uint32_t const pipelineHash = builder.CalculateHash();
-        auto const key = std::make_pair(shader.GetShader()->m_hash, pipelineHash);
-        auto it = m_shaderPipelines.find(key);
+        auto it = m_shaderPipelines.find(pipelineHash);
         if (std::end(m_shaderPipelines) == it) {
-            auto const insertResult = m_shaderPipelines.insert(std::make_pair(key, builder.Build()));
+            auto const insertResult = m_shaderPipelines.insert(std::make_pair(pipelineHash, builder.Build()));
             it = insertResult.first;
         }
 

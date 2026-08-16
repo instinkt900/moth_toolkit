@@ -9,8 +9,7 @@ namespace moth::gfx::graphics::vulkan {
         // Graphics::PushConstants. Must match drawing_shader.vert.
         constexpr uint32_t kVertexPushConstantSize = 2 * 2 * sizeof(float);
 
-        VkDescriptorSet AllocateDescriptorSet(SurfaceContext& context, VkDescriptorSetLayout layout) {
-            VkDescriptorSet descriptorSet = VK_NULL_HANDLE;
+        VkDescriptorSet AllocateDescriptorSet(SurfaceContext& context, VkDescriptorSetLayout layout) {            VkDescriptorSet descriptorSet = VK_NULL_HANDLE;
             VkDescriptorSetAllocateInfo allocInfo{};
             allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
             allocInfo.descriptorPool = context.GetVkDescriptorPool();
@@ -18,6 +17,22 @@ namespace moth::gfx::graphics::vulkan {
             allocInfo.pSetLayouts = &layout;
             CHECK_VK_RESULT(vkAllocateDescriptorSets(context.GetVkDevice(), &allocInfo, &descriptorSet));
             return descriptorSet;
+        }
+    }
+
+    VulkanShader::~VulkanShader() {
+        // Free the channel descriptor sets while the pool they were allocated
+        // from is still alive (the factory cache is flushed before the device
+        // and pools are torn down).
+        if (!m_descriptorSets.empty()) {
+            std::vector<VkDescriptorSet> sets;
+            sets.reserve(m_descriptorSets.size());
+            for (auto const& [key, set] : m_descriptorSets) {
+                (void)key;
+                sets.push_back(set);
+            }
+            vkFreeDescriptorSets(m_context.GetVkDevice(), m_context.GetVkDescriptorPool(),
+                                 static_cast<std::uint32_t>(sets.size()), sets.data());
         }
     }
 

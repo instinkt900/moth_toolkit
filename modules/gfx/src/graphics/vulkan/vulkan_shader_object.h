@@ -20,6 +20,8 @@ namespace moth::gfx::graphics::vulkan {
     /// and the descriptor sets for the four @c iChannel samplers.
     class VulkanShader : public graphics::IShader {
     public:
+        ~VulkanShader() override;
+
         /// @brief The Shadertoy built-ins, packed std140 (three vec4s).
         struct Builtins {
             float resolution[4]; ///< x = width, y = height, z = pixel ratio, w = 1.

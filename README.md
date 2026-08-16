@@ -475,12 +475,3 @@ examples/             sample games / consumption tests
 tools/                moth new scaffold CLI + moth_pak asset cooker
 ```
 
-## Roadmap
-
-The toolkit grows in phases, each shippable on its own. It currently provides
-the core math/event/loop types, the Vulkan-backed `moth::gfx` renderer, the
-`moth::ui` node-graph system, an EnTT-backed ECS, Box2D physics, Tiled `.tmj`
-tilemaps, miniaudio playback, and id/path asset loading with a `.pak` pack
-format. Every module is Conan-packaged and usable on its own or through the
-superbuild; unprocessed projects keep loading assets by path, and `moth_pak`
-adds optional archive-based loading.

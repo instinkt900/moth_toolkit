@@ -1,6 +1,6 @@
 # .clangd
 CompileFlags:
-   CompilationDatabase: ./build/Debug
+   CompilationDatabase: ../../build
 
 ---
 # Suppress unused-includes warnings in catch-all / forwarding headers where

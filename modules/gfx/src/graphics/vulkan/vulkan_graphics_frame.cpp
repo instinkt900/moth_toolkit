@@ -97,7 +97,7 @@ namespace moth::gfx::graphics::vulkan {
         auto const& batch = *context->m_pendingBatch;
         auto& commandBuffer = context->m_target->GetCommandBuffer();
         commandBuffer.BindVertexBuffer(*context->m_vertexBuffer, 0);
-        commandBuffer.BindDescriptorSet(*m_drawingShader, batch.m_descriptorSet, 0);
+        commandBuffer.BindDescriptorSet(batch.m_pipelineLayout, batch.m_descriptorSet, 0);
         commandBuffer.Draw(batch.m_vertexCount, batch.m_firstVertex);
         context->m_pendingBatch.reset();
     }
@@ -232,7 +232,9 @@ namespace moth::gfx::graphics::vulkan {
             context->m_pendingBatch->m_vertexCount += vertCount;
         } else {
             FlushPendingBatch();
-            context->m_pendingBatch = DrawContext::PendingBatch{ existingVertexOffset, vertCount, resolvedDescriptorSet };
+            context->m_pendingBatch = DrawContext::PendingBatch{
+                existingVertexOffset, vertCount, resolvedDescriptorSet, pipeline.m_shader->m_pipelineLayout,
+            };
         }
 
         context->m_vertexCount += vertCount;

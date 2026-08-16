@@ -180,6 +180,7 @@ namespace moth::gfx::graphics::vulkan {
                 uint32_t m_firstVertex = 0;
                 uint32_t m_vertexCount = 0;
                 VkDescriptorSet m_descriptorSet = VK_NULL_HANDLE;
+                VkPipelineLayout m_pipelineLayout = VK_NULL_HANDLE;
             };
             std::optional<PendingBatch> m_pendingBatch;
         };

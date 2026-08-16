@@ -361,6 +361,10 @@ namespace moth::gfx::graphics::vulkan {
         vkCmdBindDescriptorSets(m_vkCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, shader.m_pipelineLayout, index, 1, &descriptorSet, 0, nullptr);
     }
 
+    void CommandBuffer::BindDescriptorSet(VkPipelineLayout layout, VkDescriptorSet descriptorSet, uint32_t index) {
+        vkCmdBindDescriptorSets(m_vkCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, index, 1, &descriptorSet, 0, nullptr);
+    }
+
     void CommandBuffer::BindPipeline(Pipeline const& pipeline) {
         vkCmdBindPipeline(m_vkCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.m_pipeline);
     }

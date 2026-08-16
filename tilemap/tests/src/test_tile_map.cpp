@@ -118,3 +118,60 @@ TEST_CASE("Layer: SetTile writes and respects bounds", "[tilemap][map]") {
     layer.SetTile(5, 5, TileId::FromGid(9)); // ignored
     REQUIRE(layer.GetTile(5, 5).IsEmpty());
 }
+
+TEST_CASE("ResolveTileId: non-animated tiles resolve to themselves", "[tilemap][animation]") {
+    Tileset ts = MakeTileset(1, 4, 8);
+    REQUIRE(ResolveTileId(ts, 3, 0) == 3);
+}
+
+TEST_CASE("ResolveTileId: animated tiles cycle through frames", "[tilemap][animation]") {
+    Tileset ts = MakeTileset(1, 4, 8);
+    ts.animations[0] = { { 0, 100 }, { 1, 100 }, { 2, 100 } };
+
+    REQUIRE(ResolveTileId(ts, 0, 0) == 0);
+    REQUIRE(ResolveTileId(ts, 0, 99) == 0);
+    REQUIRE(ResolveTileId(ts, 0, 100) == 1);
+    REQUIRE(ResolveTileId(ts, 0, 200) == 2);
+    REQUIRE(ResolveTileId(ts, 0, 300) == 0); // wraps
+}
+
+TEST_CASE("ResolveTileId: respects per-frame durations", "[tilemap][animation]") {
+    Tileset ts = MakeTileset(1, 4, 8);
+    ts.animations[0] = { { 0, 1000 }, { 1, 100 } };
+
+    REQUIRE(ResolveTileId(ts, 0, 500) == 0);
+    REQUIRE(ResolveTileId(ts, 0, 1000) == 1);
+    REQUIRE(ResolveTileId(ts, 0, 1099) == 1);
+    REQUIRE(ResolveTileId(ts, 0, 1100) == 0); // wraps
+}
+
+TEST_CASE("Layer: infinite chunks resolve via floor division", "[tilemap][infinite]") {
+    Layer layer;
+    layer.infinite = true;
+    Chunk chunk;
+    chunk.x = 0;
+    chunk.y = 0;
+    chunk.tiles[0] = TileId::FromGid(1);  // tile (0, 0)
+    chunk.tiles[1] = TileId::FromGid(2);  // tile (1, 0)
+    chunk.tiles[16] = TileId::FromGid(3); // tile (0, 1)
+    layer.chunks.push_back(chunk);
+
+    REQUIRE(layer.GetTile(0, 0).id == 1);
+    REQUIRE(layer.GetTile(1, 0).id == 2);
+    REQUIRE(layer.GetTile(0, 1).id == 3);
+    REQUIRE(layer.GetTile(2, 0).IsEmpty());   // empty tile within the chunk
+    REQUIRE(layer.GetTile(20, 0).IsEmpty());  // no chunk at (1, 0)
+}
+
+TEST_CASE("Layer: infinite chunks handle negative coordinates", "[tilemap][infinite]") {
+    Layer layer;
+    layer.infinite = true;
+    Chunk chunk;
+    chunk.x = -1;
+    chunk.y = 0;
+    chunk.tiles[15] = TileId::FromGid(7); // tile (-1, 0) -> chunk (-1, 0), local (15, 0)
+    layer.chunks.push_back(chunk);
+
+    REQUIRE(layer.GetTile(-1, 0).id == 7);
+    REQUIRE(layer.GetTile(0, 0).IsEmpty()); // chunk (0, 0) absent
+}

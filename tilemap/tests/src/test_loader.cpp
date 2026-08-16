@@ -282,3 +282,61 @@ TEST_CASE("Loader: external .tsj tilesets are resolved relative to the map", "[t
 
     std::filesystem::remove_all(dir);
 }
+
+TEST_CASE("Loader: tile animations parse", "[tilemap][loader]") {
+    std::string const json = R"({
+        "width": 1, "height": 1, "tilewidth": 16, "tileheight": 16,
+        "tilesets": [
+            { "firstgid": 1, "tilewidth": 16, "tileheight": 16, "columns": 4, "tilecount": 4,
+              "tiles": [ { "id": 0, "animation": [ { "tileid": 0, "duration": 100 }, { "tileid": 1, "duration": 200 } ] } ] }
+        ],
+        "layers": [ { "type": "tilelayer", "name": "ground", "data": [1] } ]
+    })";
+
+    TileMap const map = LoadTileMap(json);
+    auto const& animations = map.GetTileset(0).animations;
+    REQUIRE(animations.count(0) == 1);
+    REQUIRE(animations.at(0).size() == 2);
+    REQUIRE(animations.at(0)[0].tileId == 0);
+    REQUIRE(animations.at(0)[0].durationMs == 100);
+    REQUIRE(animations.at(0)[1].tileId == 1);
+    REQUIRE(animations.at(0)[1].durationMs == 200);
+}
+
+TEST_CASE("Loader: infinite maps parse chunks", "[tilemap][loader]") {
+    nlohmann::json chunk;
+    chunk["x"] = 0;
+    chunk["y"] = 0;
+    chunk["width"] = 16;
+    chunk["height"] = 16;
+    chunk["data"] = nlohmann::json::array();
+    for (int i = 0; i < 16 * 16; ++i) {
+        chunk["data"].push_back(0);
+    }
+    chunk["data"][0] = 1; // tile (0, 0)
+    chunk["data"][1] = 2; // tile (1, 0)
+
+    nlohmann::json layer;
+    layer["type"] = "tilelayer";
+    layer["name"] = "ground";
+    layer["startx"] = 0;
+    layer["starty"] = 0;
+    layer["chunks"] = nlohmann::json::array({ chunk });
+
+    nlohmann::json doc;
+    doc["width"] = 32;
+    doc["height"] = 32;
+    doc["tilewidth"] = 16;
+    doc["tileheight"] = 16;
+    doc["infinite"] = true;
+    doc["layers"] = nlohmann::json::array({ layer });
+
+    TileMap const map = LoadTileMapFromJson(doc);
+    REQUIRE(map.infinite);
+    REQUIRE(map.GetLayerCount() == 1);
+    REQUIRE(map.GetLayer(0).infinite);
+    REQUIRE(map.GetLayer(0).chunks.size() == 1);
+    REQUIRE(map.GetTile(0, 0, 0).id == 1);
+    REQUIRE(map.GetTile(0, 1, 0).id == 2);
+    REQUIRE(map.GetTile(0, 2, 0).IsEmpty());
+}

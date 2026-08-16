@@ -15,11 +15,19 @@ namespace moth::tilemap {
      * beforehand. @p tilesetImages[i] is the atlas image for @c map.tilesets[i];
      * tiles whose tileset image is empty are skipped. Layer order is preserved
      * (bottom-up) and each layer's opacity is applied via @c SetColor (the draw
-     * colour is reset to opaque white afterwards). Horizontal/vertical flips are
-     * honoured; the diagonal flip is unpacked but not yet rendered.
+     * colour is reset to opaque white afterwards). Horizontal/vertical/diagonal
+     * flips are honoured.
+     *
+     * @p timeMs advances tile animations (Tiled semantics: all instances of an
+     * animated tile share one phase); pass the accumulated game time in
+     * milliseconds, or leave 0 for static maps.
+     *
+     * Infinite maps are culled at chunk granularity; finite maps at tile
+     * granularity.
      */
     void DrawTileMap(moth::gfx::graphics::IGraphics& graphics,
                      TileMap const& map,
                      std::vector<moth::gfx::graphics::Image> const& tilesetImages,
-                     FloatRect const& viewRect);
+                     FloatRect const& viewRect,
+                     std::uint32_t timeMs = 0);
 }

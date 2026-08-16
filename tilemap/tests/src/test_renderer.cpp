@@ -254,3 +254,51 @@ TEST_CASE("Renderer: skips tiles whose tileset image is missing", "[tilemap][ren
 
     REQUIRE(graphics.drawCalls.empty());
 }
+
+TEST_CASE("Renderer: animated tiles resolve frames over time", "[tilemap][renderer]") {
+    TileMap map = MakeMap(1, 1);
+    map.tilesets[0].animations[0] = { { 0, 100 }, { 1, 100 } };
+    AddLayer(map, { 1 }); // GID 1 = local id 0 (animated)
+
+    MockGraphics graphics;
+    std::vector<Image> tilesetImages{ Image(std::make_shared<MockTexture>()) };
+
+    DrawTileMap(graphics, map, tilesetImages, MakeRect(0.0f, 0.0f, 16.0f, 16.0f), 0);
+    REQUIRE(graphics.drawCalls.size() == 1);
+    REQUIRE(graphics.drawCalls[0].sourceRect == MakeRect(0, 0, 16, 16)); // frame 0 -> tile 0
+
+    graphics.drawCalls.clear();
+    DrawTileMap(graphics, map, tilesetImages, MakeRect(0.0f, 0.0f, 16.0f, 16.0f), 100);
+    REQUIRE(graphics.drawCalls.size() == 1);
+    REQUIRE(graphics.drawCalls[0].sourceRect == MakeRect(16, 0, 16, 16)); // frame 1 -> tile 1
+}
+
+TEST_CASE("Renderer: infinite maps cull at chunk granularity", "[tilemap][renderer]") {
+    TileMap map = MakeMap(32, 32);
+    map.infinite = true;
+
+    Layer layer;
+    layer.infinite = true;
+    layer.visible = true;
+    Chunk c0;
+    c0.x = 0;
+    c0.y = 0;
+    c0.tiles[0] = TileId::FromGid(1);
+    Chunk c1;
+    c1.x = 1;
+    c1.y = 0;
+    c1.tiles[0] = TileId::FromGid(1);
+    layer.chunks.push_back(c0);
+    layer.chunks.push_back(c1);
+    map.layers.push_back(layer);
+
+    MockGraphics graphics;
+    std::vector<Image> tilesetImages{ Image(std::make_shared<MockTexture>()) };
+
+    // View covers only chunk (0, 0)'s world area: pixels [0, 256) x [0, 16).
+    DrawTileMap(graphics, map, tilesetImages, MakeRect(0.0f, 0.0f, 256.0f, 16.0f));
+
+    REQUIRE(graphics.drawCalls.size() == 1);
+    REQUIRE(graphics.drawCalls[0].position.x == 0.0f);
+    REQUIRE(graphics.drawCalls[0].position.y == 0.0f);
+}

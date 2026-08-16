@@ -188,6 +188,16 @@ namespace moth::tilemap {
                     if (tileEntry.contains("properties")) {
                         tileset.tileProperties[tileId] = ParseProperties(tileEntry["properties"]);
                     }
+                    if (tileEntry.contains("animation") && tileEntry["animation"].is_array()) {
+                        std::vector<AnimationFrame> frames;
+                        for (auto const& frameEntry : tileEntry["animation"]) {
+                            AnimationFrame frame;
+                            frame.tileId = frameEntry.value("tileid", 0);
+                            frame.durationMs = frameEntry.value("duration", 0);
+                            frames.push_back(frame);
+                        }
+                        tileset.animations[tileId] = std::move(frames);
+                    }
                 }
             }
             return tileset;
@@ -200,6 +210,7 @@ namespace moth::tilemap {
         map.height = json.value("height", 0);
         map.tileWidth = json.value("tilewidth", 0);
         map.tileHeight = json.value("tileheight", 0);
+        map.infinite = json.value("infinite", false);
 
         if (map.width <= 0 || map.height <= 0 || map.tileWidth <= 0 || map.tileHeight <= 0) {
             throw std::runtime_error("TMJ map must have positive width, height, tilewidth, and tileheight");
@@ -237,14 +248,32 @@ namespace moth::tilemap {
                     layer.opacity = entry.value("opacity", 1.0f);
                     layer.width = entry.value("width", map.width);
                     layer.height = entry.value("height", map.height);
+                    layer.infinite = map.infinite;
                     if (entry.contains("properties")) {
                         layer.properties = ParseProperties(entry["properties"]);
                     }
 
-                    auto const gids = DecodeGids(entry.at("data"), static_cast<std::size_t>(layer.width) * static_cast<std::size_t>(layer.height), compression);
-                    layer.tiles.reserve(gids.size());
-                    for (auto const gid : gids) {
-                        layer.tiles.push_back(TileId::FromGid(gid));
+                    if (layer.infinite) {
+                        if (entry.contains("chunks") && entry["chunks"].is_array()) {
+                            for (auto const& chunkEntry : entry["chunks"]) {
+                                Chunk chunk;
+                                chunk.x = chunkEntry.value("x", 0);
+                                chunk.y = chunkEntry.value("y", 0);
+                                auto const gids = DecodeGids(chunkEntry.at("data"),
+                                                              static_cast<std::size_t>(kChunkSize) * kChunkSize,
+                                                              compression);
+                                for (std::size_t i = 0; i < gids.size() && i < chunk.tiles.size(); ++i) {
+                                    chunk.tiles[i] = TileId::FromGid(gids[i]);
+                                }
+                                layer.chunks.push_back(std::move(chunk));
+                            }
+                        }
+                    } else {
+                        auto const gids = DecodeGids(entry.at("data"), static_cast<std::size_t>(layer.width) * static_cast<std::size_t>(layer.height), compression);
+                        layer.tiles.reserve(gids.size());
+                        for (auto const gid : gids) {
+                            layer.tiles.push_back(TileId::FromGid(gid));
+                        }
                     }
                     map.layers.push_back(std::move(layer));
                 } else if (layerType == "objectgroup") {

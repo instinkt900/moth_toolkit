@@ -6,8 +6,10 @@
 #include "moth/tilemap/properties.h"
 #include "moth/tilemap/tile.h"
 
+#include <array>
 #include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -17,6 +19,15 @@ namespace moth::tilemap {
     using moth::core::IntRect;
     using moth::core::IntVec2;
     using moth::core::MakeRect;
+
+    /// @brief The fixed chunk size (in tiles) of Tiled's infinite maps.
+    constexpr int kChunkSize = 16;
+
+    /// @brief A single frame of an animated tile.
+    struct AnimationFrame {
+        int tileId = 0;     ///< Local tile id to display for this frame.
+        int durationMs = 100; ///< How long this frame is displayed, in milliseconds.
+    };
 
     /**
      * @brief A Tiled tileset: an image atlas plus the id -> source-rect mapping.
@@ -36,6 +47,7 @@ namespace moth::tilemap {
 
         Properties properties;                    ///< Tileset-level custom properties.
         std::map<int, Properties> tileProperties; ///< Per-tile properties, keyed by local tile id.
+        std::map<int, std::vector<AnimationFrame>> animations; ///< Animated tiles, keyed by local tile id.
 
         /// @brief Returns @c true if this tileset owns @p gid.
         bool ContainsGid(std::uint32_t gid) const {
@@ -59,7 +71,61 @@ namespace moth::tilemap {
     };
 
     /**
+     * @brief Resolves the local tile id to display for @p localId at @p timeMs.
+     *
+     * If @p localId has an animation, the frame at @p timeMs (mod the total
+     * animation length) is returned; otherwise @p localId is returned unchanged.
+     * All instances of an animated tile share one phase (Tiled semantics).
+     */
+    inline int ResolveTileId(Tileset const& tileset, int localId, std::uint32_t timeMs) {
+        auto const it = tileset.animations.find(localId);
+        if (it == tileset.animations.end() || it->second.empty()) {
+            return localId;
+        }
+        auto const& frames = it->second;
+
+        std::uint64_t total = 0;
+        for (auto const& frame : frames) {
+            total += static_cast<std::uint64_t>(frame.durationMs);
+        }
+        if (total == 0) {
+            return frames.front().tileId;
+        }
+
+        std::uint64_t const t = static_cast<std::uint64_t>(timeMs) % total;
+        std::uint64_t accumulated = 0;
+        for (auto const& frame : frames) {
+            accumulated += static_cast<std::uint64_t>(frame.durationMs);
+            if (t < accumulated) {
+                return frame.tileId;
+            }
+        }
+        return frames.back().tileId;
+    }
+
+    /**
+     * @brief A 16x16 chunk of tiles, positioned in chunk coordinates (not tile
+     * coordinates). Used by Tiled's infinite maps.
+     */
+    struct Chunk {
+        int x = 0; ///< Chunk coordinate (chunk index) along the horizontal axis.
+        int y = 0; ///< Chunk coordinate (chunk index) along the vertical axis.
+        std::array<TileId, kChunkSize * kChunkSize> tiles{}; ///< Row-major 16x16 tile grid.
+    };
+
+    /// @brief Floors @p a / @p b (both the dividend's and divisor's sign handled correctly).
+    inline int FloorDiv(int a, int b) {
+        int const q = a / b;
+        int const r = a % b;
+        return (r != 0 && ((r < 0) != (b < 0))) ? q - 1 : q;
+    }
+
+    /**
      * @brief A tile layer: a grid of tile references plus visibility/opacity.
+     *
+     * Finite layers use the flat @c tiles grid; infinite layers (Tiled
+     * `"infinite": true`) store their data as @c chunks instead and have no
+     * meaningful @c width/@c height.
      */
     struct Layer {
         std::string name;
@@ -67,20 +133,47 @@ namespace moth::tilemap {
         float opacity = 1.0f;
         int width = 0;
         int height = 0;
-        std::vector<TileId> tiles; ///< width * height, row-major (index = y * width + x).
+        bool infinite = false;
+        std::vector<TileId> tiles; ///< width * height, row-major (index = y * width + x); finite layers only.
+        std::vector<Chunk> chunks; ///< 16x16 chunks; infinite layers only.
 
         Properties properties; ///< Layer-level custom properties.
 
-        /// @brief Returns the tile at (@p x, @p y), or an empty tile if out of bounds.
+        /// @brief Returns the tile at (@p x, @p y), or an empty tile if out of bounds/absent.
         TileId GetTile(int x, int y) const {
+            if (infinite) {
+                int const cx = FloorDiv(x, kChunkSize);
+                int const cy = FloorDiv(y, kChunkSize);
+                for (auto const& chunk : chunks) {
+                    if (chunk.x == cx && chunk.y == cy) {
+                        int const lx = x - cx * kChunkSize;
+                        int const ly = y - cy * kChunkSize;
+                        return chunk.tiles[static_cast<std::size_t>(ly) * kChunkSize + static_cast<std::size_t>(lx)];
+                    }
+                }
+                return {};
+            }
             if (x < 0 || y < 0 || x >= width || y >= height) {
                 return {};
             }
             return tiles[static_cast<std::size_t>(y) * static_cast<std::size_t>(width) + static_cast<std::size_t>(x)];
         }
 
-        /// @brief Writes the tile at (@p x, @p y); ignores out-of-bounds coordinates.
+        /// @brief Writes the tile at (@p x, @p y); ignores out-of-bounds coordinates (and absent chunks).
         void SetTile(int x, int y, TileId tile) {
+            if (infinite) {
+                int const cx = FloorDiv(x, kChunkSize);
+                int const cy = FloorDiv(y, kChunkSize);
+                for (auto& chunk : chunks) {
+                    if (chunk.x == cx && chunk.y == cy) {
+                        int const lx = x - cx * kChunkSize;
+                        int const ly = y - cy * kChunkSize;
+                        chunk.tiles[static_cast<std::size_t>(ly) * kChunkSize + static_cast<std::size_t>(lx)] = tile;
+                        return;
+                    }
+                }
+                return;
+            }
             if (x < 0 || y < 0 || x >= width || y >= height) {
                 return;
             }
@@ -144,6 +237,7 @@ namespace moth::tilemap {
         int height = 0;     ///< Map height in tiles.
         int tileWidth = 0;  ///< Tile width in pixels.
         int tileHeight = 0; ///< Tile height in pixels.
+        bool infinite = false; ///< @c true for Tiled infinite maps (chunked tile layers).
         std::vector<Layer> layers;
         std::vector<Tileset> tilesets;
         std::vector<ObjectLayer> objectLayers;

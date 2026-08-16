@@ -13,6 +13,7 @@
 #include "vulkan_pipeline.h"
 #include "vulkan_renderpass.h"
 #include "vulkan_shader.h"
+#include "vulkan_shader_object.h"
 #include "moth_graphics/graphics/vulkan/vulkan_surface_context.h"
 #include "vulkan_swapchain.h"
 #include "vulkan_texture.h"
@@ -23,6 +24,7 @@
 
 #include <vulkan/vulkan_core.h>
 
+#include <chrono>
 #include <cstdint>
 #include <filesystem>
 #include <map>
@@ -87,6 +89,8 @@ namespace moth::gfx::graphics::vulkan {
         void DrawLineF(FloatVec2 const& p0, FloatVec2 const& p1) override;
         void DrawLineF(FloatVec2 const& p0, FloatVec2 const& p1, float thickness) override;
         void DrawText(std::string_view text, IFont& font, IntRect const& destRect, TextHorizAlignment horizontalAlignment = TextHorizAlignment::Left, TextVertAlignment verticalAlignment = TextVertAlignment::Top) override;
+        void DrawShader(graphics::Shader const& shader) override;
+        void DrawShader(graphics::Shader const& shader, FloatRect const& destRect) override;
         void SetClip(IntRect const* clipRect) override;
 
         std::unique_ptr<ITarget> CreateTarget(int width, int height) override;
@@ -182,12 +186,19 @@ namespace moth::gfx::graphics::vulkan {
         UniqueHandle<VkPipelineCache> m_vkPipelineCache;
         std::map<uint32_t, std::shared_ptr<Pipeline>> m_pipelines;
         std::map<uint32_t, std::shared_ptr<Pipeline>> m_fontPipelines;
+        std::map<std::pair<uint32_t, uint32_t>, std::shared_ptr<Pipeline>> m_shaderPipelines;
         std::unique_ptr<RenderPass> m_renderPass;
         std::unique_ptr<RenderPass> m_rtRenderPass;
         std::unique_ptr<Swapchain> m_swapchain;
         std::shared_ptr<Shader> m_drawingShader;
         std::shared_ptr<Shader> m_fontShader;
         std::unique_ptr<Texture> m_defaultImage;
+
+        // Shader clock + frame counter feeding iTime/iTimeDelta/iFrame.
+        std::chrono::steady_clock::time_point m_shaderStartTime = std::chrono::steady_clock::now();
+        std::chrono::steady_clock::time_point m_shaderLastFrameTime = std::chrono::steady_clock::now();
+        float m_shaderLastDelta = 0.0f;
+        std::uint64_t m_frameCount = 0;
 
         DrawContext m_defaultContext;
         DrawContext m_overrideContext;
@@ -202,6 +213,7 @@ namespace moth::gfx::graphics::vulkan {
         RenderPass& GetCurrentRenderPass();
         Pipeline& GetCurrentPipeline(ETopologyType topology);
         Pipeline& GetCurrentFontPipeline();
+        Pipeline& GetShaderPipeline(VulkanShader& shader);
 
         /// @brief Returns the current draw context, or @c nullptr for a null frame.
         ///

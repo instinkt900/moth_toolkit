@@ -7,6 +7,8 @@
 #include "moth_graphics/graphics/asset_context.h"
 #include "moth_graphics/graphics/font_factory.h"
 #include "moth_graphics/graphics/ifont.h"
+#include "moth_graphics/graphics/shader.h"
+#include "moth_graphics/graphics/shader_factory.h"
 #include "moth_graphics/graphics/spritesheet_factory.h"
 #include "moth_graphics/graphics/texture_factory.h"
 
@@ -34,21 +36,26 @@ namespace {
         MockAssetContext()
             : m_textureFactory(*this)
             , m_fontFactory(*this)
-            , m_spriteSheetFactory(*this) {}
+            , m_spriteSheetFactory(*this)
+            , m_shaderFactory(*this) {}
 
         TextureFactory& GetTextureFactory() override { return m_textureFactory; }
         FontFactory& GetFontFactory() override { return m_fontFactory; }
         SpriteSheetFactory& GetSpriteSheetFactory() override { return m_spriteSheetFactory; }
+        ShaderFactory& GetShaderFactory() override { return m_shaderFactory; }
 
         std::unique_ptr<IFont> FontFromFile(std::filesystem::path const&, uint32_t) override { return nullptr; }
         std::unique_ptr<IFont> FontFromMemory(std::vector<std::uint8_t> const&, uint32_t) override { return nullptr; }
         std::unique_ptr<ITexture> TextureFromFile(std::filesystem::path const&) override { return nullptr; }
         std::unique_ptr<ITexture> TextureFromMemory(std::vector<std::uint8_t> const&) override { return nullptr; }
         std::unique_ptr<ITexture> TextureFromPixels(int, int, uint8_t const*) override { return nullptr; }
+        std::shared_ptr<Shader> CreateShaderFromGLSL(std::string const&, std::string const&) override { return nullptr; }
+        std::shared_ptr<Shader> CreateShaderFromSpirV(std::string const&, std::vector<std::uint8_t> const&) override { return nullptr; }
 
         TextureFactory m_textureFactory;
         FontFactory m_fontFactory;
         SpriteSheetFactory m_spriteSheetFactory;
+        ShaderFactory m_shaderFactory;
     };
 
     Image MakeDummyImage() {

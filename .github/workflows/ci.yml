@@ -77,7 +77,7 @@ jobs:
       - name: Build and run gfx tests
         working-directory: modules/gfx/tests
         run: |
-          conan install . --build=missing -s build_type=Release
+          conan install . --build=missing -s build_type=Release -o enable_glslang=True
           cmake --preset conan-release
           cmake --build --preset conan-release
           ctest --preset conan-release --output-on-failure
@@ -157,6 +157,15 @@ jobs:
       - name: Build a packaged consumer (hello_game via find_package)
         working-directory: examples/hello_game
         run: |
+          conan install . --build=missing -s build_type=Release
+          cmake --preset conan-release
+          cmake --build --preset conan-release
+
+      - name: Build the shader demo against a glslang-enabled moth_graphics
+        run: |
+          set -e
+          (cd modules/gfx && conan create . --build=missing -s build_type=Release -o enable_glslang=True)
+          cd examples/shader_demo
           conan install . --build=missing -s build_type=Release
           cmake --preset conan-release
           cmake --build --preset conan-release

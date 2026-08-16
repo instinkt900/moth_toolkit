@@ -8,10 +8,13 @@
 #include <memory>
 #include <filesystem>
 #include <cstdint>
+#include <string>
 #include <vector>
 
 namespace moth::gfx::graphics {
     class FontFactory;
+    class Shader;
+    class ShaderFactory;
     class SpriteSheetFactory;
     class TextureFactory;
 
@@ -34,6 +37,9 @@ namespace moth::gfx::graphics {
         /// @brief Returns the cached sprite sheet factory for this context.
         virtual SpriteSheetFactory& GetSpriteSheetFactory() = 0;
 
+        /// @brief Returns the cached shader factory for this context.
+        virtual ShaderFactory& GetShaderFactory() = 0;
+
         /// @brief Load a font from a file at a given pixel size.
         virtual std::unique_ptr<IFont> FontFromFile(std::filesystem::path const& path, uint32_t size) = 0;
 
@@ -55,5 +61,15 @@ namespace moth::gfx::graphics {
         /// @param pixels Pointer to @c width * height * 4 bytes of RGBA data.
         /// @returns Loaded texture, or @c nullptr on failure.
         virtual std::unique_ptr<ITexture> TextureFromPixels(int width, int height, uint8_t const* pixels) = 0;
+
+        /// @brief Compile a Shadertoy-style GLSL fragment shader at runtime.
+        ///
+        /// @returns Compiled shader, or an invalid @c Shader when GLSL compilation
+        ///          is unavailable (build-time opt-in) or the source fails to compile.
+        virtual std::shared_ptr<Shader> CreateShaderFromGLSL(std::string const& name, std::string const& fragSource) = 0;
+
+        /// @brief Load a precompiled SPIR-V fragment shader.
+        /// @returns Loaded shader, or an invalid @c Shader on failure.
+        virtual std::shared_ptr<Shader> CreateShaderFromSpirV(std::string const& name, std::vector<std::uint8_t> const& fragSpv) = 0;
     };
 }

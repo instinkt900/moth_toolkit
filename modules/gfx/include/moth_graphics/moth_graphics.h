@@ -26,6 +26,8 @@
 #include "moth_graphics/graphics/sprite.h"
 #include "moth_graphics/graphics/spritesheet.h"
 #include "moth_graphics/graphics/spritesheet_factory.h"
+#include "moth_graphics/graphics/shader.h"
+#include "moth_graphics/graphics/shader_factory.h"
 #include "moth_graphics/graphics/surface_context.h"
 #include "moth_graphics/graphics/text_alignment.h"
 #include "moth_graphics/graphics/texture_address_mode.h"

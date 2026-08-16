@@ -15,6 +15,9 @@ class MothToolkitSuperbuild(ConanFile):
 
     settings = "os", "compiler", "build_type", "arch"
 
+    options = {"enable_glslang": [True, False]}
+    default_options = {"enable_glslang": False}
+
     # No name/version: this recipe is a local dev convenience, not a package.
     generators = "CMakeToolchain", "CMakeDeps"
 
@@ -30,3 +33,7 @@ class MothToolkitSuperbuild(ConanFile):
         self.requires("box2d/2.4.1", transitive_headers=True)
         self.requires("zlib/1.3.2")
         self.requires("miniaudio/0.11.18", transitive_headers=True)
+        # Runtime GLSL compilation for custom shaders (opt-in; pairs with the
+        # MOTH_GRAPHICS_ENABLE_GLSLANG CMake option).
+        if self.options.enable_glslang:
+            self.requires("glslang/1.3.268.0")

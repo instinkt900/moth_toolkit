@@ -322,4 +322,35 @@ namespace moth::gfx::graphics::vulkan {
 
         return *it->second;
     }
+
+    Pipeline& Graphics::GetShaderPipeline(VulkanShader& shader) {
+        auto* context = CurrentContext();
+        auto const vkTopology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+        auto const blendAttachment = ToVulkan(context->m_currentBlendMode);
+        auto const vertexInputBinding = getVertexBindingDescription();
+        auto const vertexAttributeBindings = getVertexAttributeDescriptions();
+
+        auto const builder = PipelineBuilder(m_surfaceContext.GetVkDevice())
+                                 .SetPipelineCache(m_vkPipelineCache)
+                                 .SetRenderPass(GetCurrentRenderPass())
+                                 .SetShader(shader.GetShader())
+                                 .AddVertexInputBinding(vertexInputBinding)
+                                 .AddVertexAttribute(vertexAttributeBindings[0])
+                                 .AddVertexAttribute(vertexAttributeBindings[1])
+                                 .AddVertexAttribute(vertexAttributeBindings[2])
+                                 .AddColorBlendAttachment(blendAttachment)
+                                 .AddDynamicState(VK_DYNAMIC_STATE_VIEWPORT)
+                                 .AddDynamicState(VK_DYNAMIC_STATE_SCISSOR)
+                                 .SetTopology(vkTopology);
+
+        uint32_t const pipelineHash = builder.CalculateHash();
+        auto const key = std::make_pair(shader.GetShader()->m_hash, pipelineHash);
+        auto it = m_shaderPipelines.find(key);
+        if (std::end(m_shaderPipelines) == it) {
+            auto const insertResult = m_shaderPipelines.insert(std::make_pair(key, builder.Build()));
+            it = insertResult.first;
+        }
+
+        return *it->second;
+    }
 }

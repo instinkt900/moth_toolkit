@@ -82,6 +82,27 @@ it can later be addressed by id or by path. Load the archive at runtime with
 loader (e.g. `AudioEngine::LoadSoundFromMemory`). See
 `examples/packed_audio_demo/` for a complete cook → load-by-id → play loop.
 
+## Custom shaders
+
+`moth::gfx` can draw Shadertoy-style fragment shaders on quads or fullscreen
+passes. Compile GLSL at runtime (opt-in, needs glslang) or load precompiled
+SPIR-V, then draw with `IGraphics::DrawShader`:
+
+```cpp
+auto shader = assetContext.GetShaderFactory().CreateFromGLSL("plasma", R"GLSL(
+    void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+        vec2 uv = fragCoord / iResolution.xy;
+        fragColor = vec4(0.5 + 0.5 * cos(iTime + uv.xyx + vec3(0, 2, 4)), 1.0);
+    }
+)GLSL");
+graphics.DrawShader(*shader);
+```
+
+`iTime`, `iResolution`, and `iMouse` are filled automatically; bind `iChannel0..3`
+with `Shader::SetChannel`. Runtime GLSL compilation is off by default — enable it
+with `-DMOTH_GRAPHICS_ENABLE_GLSLANG=ON` (and `-o enable_glslang=True` for Conan).
+See `examples/shader_demo/` for a full sample.
+
 ## Roadmap
 
 The toolkit grows in phases, each shippable on its own. It currently provides

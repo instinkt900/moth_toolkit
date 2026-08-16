@@ -16,9 +16,11 @@ class MothGraphics(ConanFile):
 
     options = {
         "disable_vulkan": [True, False],
+        "enable_glslang": [True, False],
     }
     default_options = {
         "disable_vulkan": False,
+        "enable_glslang": False,
     }
 
     exports_sources = "CMakeLists.txt", "version.txt", "include/*", "src/*", "external/imgui/*", "external/murmurhash.c/*", "external/stb/*"
@@ -53,6 +55,9 @@ class MothGraphics(ConanFile):
         # Public headers re-export moth::core types (Vector/Rect/events), so
         # moth_core's headers must reach our consumers.
         self.requires("moth_core/0.1.0", transitive_headers=True)
+        # Runtime GLSL compilation for custom shaders (opt-in).
+        if self.options.enable_glslang:
+            self.requires("glslang/1.3.268.0")
 
     def system_requirements(self):
         if self.settings.os == "Linux":
@@ -84,6 +89,7 @@ class MothGraphics(ConanFile):
         deps.generate()
         tc = CMakeToolchain(self)
         tc.cache_variables["MOTH_GRAPHICS_DISABLE_VULKAN"] = bool(self.options.disable_vulkan)
+        tc.cache_variables["MOTH_GRAPHICS_ENABLE_GLSLANG"] = bool(self.options.enable_glslang)
         tc.generate()
 
     def build(self):

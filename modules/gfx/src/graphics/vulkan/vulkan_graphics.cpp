@@ -47,6 +47,11 @@ namespace moth::gfx::graphics::vulkan {
     }
 
     void Graphics::Begin() {
+        auto const now = std::chrono::steady_clock::now();
+        m_shaderLastDelta = std::chrono::duration<float>(now - m_shaderLastFrameTime).count();
+        m_shaderLastFrameTime = now;
+        ++m_frameCount;
+
         m_defaultContext.m_target = m_swapchain->GetNextFramebuffer();
         if (m_defaultContext.m_target == nullptr) {
             VkSurfaceCapabilitiesKHR caps{};

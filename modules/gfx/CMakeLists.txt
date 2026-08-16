@@ -19,6 +19,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(MOTH_GRAPHICS_DISABLE_VULKAN "Disable the Vulkan/GLFW backend" OFF)
+option(MOTH_GRAPHICS_ENABLE_GLSLANG "Enable runtime GLSL compilation for custom shaders (requires glslang)" OFF)
 
 if(MOTH_GRAPHICS_DISABLE_VULKAN)
     message(FATAL_ERROR "Vulkan is the only backend; it cannot be disabled (a future backend can re-introduce the toggle).")
@@ -36,6 +37,7 @@ set(SOURCES
     src/graphics/spritesheet_factory.cpp
     src/graphics/font_factory.cpp
     src/graphics/texture_factory.cpp
+    src/graphics/shader_factory.cpp
     src/graphics/stb_image.cpp
     src/graphics/stb_image_write.cpp
     src/graphics/stb_rect_pack.cpp
@@ -59,9 +61,12 @@ if(NOT MOTH_GRAPHICS_DISABLE_VULKAN)
         src/graphics/vulkan/vulkan_graphics.cpp
         src/graphics/vulkan/vulkan_graphics_frame.cpp
         src/graphics/vulkan/vulkan_graphics_pipeline.cpp
+        src/graphics/vulkan/vulkan_graphics_shader.cpp
         src/graphics/vulkan/vulkan_pipeline.cpp
         src/graphics/vulkan/vulkan_renderpass.cpp
         src/graphics/vulkan/vulkan_shader.cpp
+        src/graphics/vulkan/vulkan_shader_object.cpp
+        src/graphics/vulkan/glsl_compiler.cpp
         src/graphics/vulkan/vulkan_asset_context.cpp
         src/graphics/vulkan/vulkan_surface_context.cpp
         src/graphics/vulkan/vulkan_swapchain.cpp
@@ -91,6 +96,10 @@ if(NOT MOTH_GRAPHICS_DISABLE_VULKAN)
     endif()
     find_package(Vulkan REQUIRED)
     find_package(VulkanMemoryAllocator REQUIRED)
+endif()
+
+if(MOTH_GRAPHICS_ENABLE_GLSLANG)
+    find_package(glslang REQUIRED)
 endif()
 
 find_package(spdlog REQUIRED)
@@ -127,6 +136,13 @@ endif()
 
 target_link_libraries(${PROJECT_NAME} PUBLIC spdlog::spdlog)
 target_link_libraries(${PROJECT_NAME} PUBLIC moth::core)
+
+if(MOTH_GRAPHICS_ENABLE_GLSLANG)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE MOTH_GRAPHICS_ENABLE_GLSLANG=1)
+    target_link_libraries(${PROJECT_NAME} PUBLIC glslang::glslang glslang::SPIRV glslang::glslang-default-resource-limits)
+else()
+    target_compile_definitions(${PROJECT_NAME} PRIVATE MOTH_GRAPHICS_ENABLE_GLSLANG=0)
+endif()
 
 if(MSVC)
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/ignore:4099")

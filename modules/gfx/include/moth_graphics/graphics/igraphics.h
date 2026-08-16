@@ -5,6 +5,7 @@
 #include "moth_graphics/graphics/ifont.h"
 #include "moth_graphics/graphics/image.h"
 #include "moth_graphics/graphics/itarget.h"
+#include "moth_graphics/graphics/shader.h"
 #include "moth_graphics/graphics/text_alignment.h"
 #include "moth_graphics/utils/rect.h"
 #include "moth_graphics/utils/transform.h"
@@ -214,6 +215,22 @@ namespace moth::gfx::graphics {
         /// @param horizontalAlignment Horizontal alignment within @p destRect.
         /// @param verticalAlignment Vertical alignment within @p destRect.
         virtual void DrawText(std::string_view text, IFont& font, IntRect const& destRect, TextHorizAlignment horizontalAlignment = TextHorizAlignment::Left, TextVertAlignment verticalAlignment = TextVertAlignment::Top) = 0;
+
+        /// @brief Draw a Shadertoy-style shader across the whole logical viewport.
+        ///
+        /// The built-in uniforms @c iTime/@c iResolution/@c iMouse are filled
+        /// automatically; @c iChannel0..3 come from @c Shader::SetChannel. Useful
+        /// as a fullscreen post-processing pass over a render target.
+        /// @param shader The shader to run.
+        virtual void DrawShader(Shader const& shader) = 0;
+
+        /// @brief Draw a Shadertoy-style shader inside @p destRect (logical pixels).
+        ///
+        /// The shader's @c fragCoord spans @p destRect (origin at the rect's
+        /// top-left); the active transform still applies to the quad's placement.
+        /// @param shader   The shader to run.
+        /// @param destRect Destination rectangle in logical pixels.
+        virtual void DrawShader(Shader const& shader, FloatRect const& destRect) = 0;
 
         /// @brief Set the scissor clip rectangle. Pass @c nullptr to clear clipping.
         /// @param rect Clip rectangle in logical pixels, or @c nullptr to disable.

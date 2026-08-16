@@ -264,6 +264,19 @@ namespace moth::gfx::graphics::vulkan {
         return { GetStringWidth(text), m_lineHeight };
     }
 
+    IntVec2 Font::MeasureWrapped(std::string_view text, int maxWidth) const {
+        if (maxWidth <= 0) {
+            return Measure(text);
+        }
+        auto const lines = WrapString(std::string(text), maxWidth);
+        int32_t width = 0;
+        for (auto const& line : lines) {
+            width = std::max(width, line.lineWidth);
+        }
+        auto const height = static_cast<int32_t>(lines.size()) * m_lineHeight;
+        return IntVec2{ width, height };
+    }
+
     int32_t Font::GetColumnHeight(std::string const& str, int32_t width) const {
         auto const lines = WrapString(str, width);
         return static_cast<int32_t>(m_lineHeight * lines.size());

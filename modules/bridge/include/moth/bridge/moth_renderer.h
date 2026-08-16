@@ -45,9 +45,7 @@ namespace moth::bridge {
     private:
         moth::gfx::graphics::IGraphics& m_graphics;
         std::stack<moth::gfx::graphics::Color> m_drawColor;
-        std::stack<moth::gfx::graphics::BlendMode> m_blendMode;
         std::stack<moth::ui::FloatMat4x4> m_transform;
-        std::stack<moth::core::IntRect> m_clip;
         std::stack<moth::ui::TextureFilter> m_textureFilter;
     };
 }

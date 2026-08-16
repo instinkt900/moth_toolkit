@@ -81,6 +81,18 @@ namespace moth::gfx::platform::glfw {
                 }
             }
 
+            void Image(moth::gfx::graphics::ITexture const& texture,
+                       IntVec2 const& size, FloatVec2 const& uv0, FloatVec2 const& uv1) override {
+                auto const* vkTexture = dynamic_cast<moth::gfx::graphics::vulkan::Texture const*>(&texture);
+                if (vkTexture == nullptr) {
+                    return;
+                }
+                ImGui::Image(vkTexture->GetDescriptorSet(),
+                             ImVec2(static_cast<float>(size.x), static_cast<float>(size.y)),
+                             ImVec2(uv0.x, uv0.y),
+                             ImVec2(uv1.x, uv1.y));
+            }
+
         private:
             bool m_initialized = false;
             moth::gfx::graphics::vulkan::Graphics* m_vkGraphics = nullptr;

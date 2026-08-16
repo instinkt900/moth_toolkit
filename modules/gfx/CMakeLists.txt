@@ -32,7 +32,9 @@ set(SOURCES
     external/imgui/imgui_tables.cpp
     external/imgui/imgui_widgets.cpp
     src/graphics/image.cpp
+    src/graphics/polygon_triangulation.cpp
     src/graphics/sprite.cpp
+    src/graphics/sprite_batch.cpp
     src/graphics/spritesheet.cpp
     src/graphics/spritesheet_factory.cpp
     src/graphics/font_factory.cpp

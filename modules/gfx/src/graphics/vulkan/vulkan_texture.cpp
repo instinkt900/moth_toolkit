@@ -217,13 +217,6 @@ namespace moth::gfx::graphics::vulkan {
         m_magFilter = (magFilter == TextureFilter::Nearest) ? VK_FILTER_NEAREST : VK_FILTER_LINEAR;
     }
 
-    void Texture::DrawImGui(IntVec2 const& size, FloatVec2 const& uv0, FloatVec2 const& uv1) const {
-        ImGui::Image(GetDescriptorSet(),
-                     ImVec2(static_cast<float>(size.x), static_cast<float>(size.y)),
-                     ImVec2(uv0.x, uv0.y),
-                     ImVec2(uv1.x, uv1.y));
-    }
-
     void Texture::SaveToPNG(std::filesystem::path const& path, IntRect const& sourceRect) {
         auto const targetWidth = static_cast<uint32_t>(sourceRect.w());
         auto const targetHeight = static_cast<uint32_t>(sourceRect.h());

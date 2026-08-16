@@ -56,6 +56,11 @@ namespace moth::gfx::graphics {
     class SurfaceContext;
     class FontFactory;
     class TextureFactory;
+    class Shader;
+    class ShaderFactory;
+    class SpriteSheet;
+    class SpriteSheetFactory;
+    class Camera;
 
 } // namespace moth::gfx::graphics
 

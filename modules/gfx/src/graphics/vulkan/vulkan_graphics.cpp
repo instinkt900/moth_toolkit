@@ -6,12 +6,28 @@
 #include "vulkan_utils.h"
 #include "stb_image_write.h"
 
-#include "moth_graphics/utils/circle_tessellation.h"
+#include "graphics/circle_tessellation.h"
 #include "moth_graphics/utils/polygon_triangulation.h"
 
+#include <algorithm>
 #include <cmath>
 
 namespace moth::gfx::graphics::vulkan {
+    namespace {
+        // Nested-clip intersection: clamp b inside a, collapsing to a zero-area
+        // rect when the two don't overlap (so the resulting scissor clips away).
+        IntRect IntersectRects(IntRect const& a, IntRect const& b) {
+            IntRect r;
+            r.topLeft.x = std::max(a.topLeft.x, b.topLeft.x);
+            r.topLeft.y = std::max(a.topLeft.y, b.topLeft.y);
+            r.bottomRight.x = std::min(a.bottomRight.x, b.bottomRight.x);
+            r.bottomRight.y = std::min(a.bottomRight.y, b.bottomRight.y);
+            r.bottomRight.x = std::max(r.topLeft.x, r.bottomRight.x);
+            r.bottomRight.y = std::max(r.topLeft.y, r.bottomRight.y);
+            return r;
+        }
+    }
+
     Graphics::Graphics(SurfaceContext& context, VkSurfaceKHR surface, uint32_t surfaceWidth, uint32_t surfaceHeight)
         : m_surfaceContext(context)
         , m_vkSurface(surface) {
@@ -87,10 +103,9 @@ namespace moth::gfx::graphics::vulkan {
         // keeps stale content from the previous frame in this swapchain image.
         // BeginContext leaves viewport/scissor/m_logicalExtent at the full target
         // extent, so this clears everything before any letterboxing applies.
-        Color const savedColor = m_defaultContext.m_currentColor;
-        SetColor(BasicColors::Black);
-        Clear();
-        SetColor(savedColor);
+        // Clear(Color) leaves the draw color untouched, so the frame's first draw
+        // call doesn't inherit a stray black tint.
+        Clear(BasicColors::Black);
     }
 
     void Graphics::End() {
@@ -130,12 +145,48 @@ namespace moth::gfx::graphics::vulkan {
         context->m_currentBlendMode = mode;
     }
 
+    void Graphics::PushBlendMode(BlendMode mode) {
+        auto* context = CurrentContext();
+        if (context == nullptr) {
+            return;
+        }
+        context->m_blendModeStack.push(context->m_currentBlendMode);
+        context->m_currentBlendMode = mode;
+    }
+
+    void Graphics::PopBlendMode() {
+        auto* context = CurrentContext();
+        if (context == nullptr || context->m_blendModeStack.empty()) {
+            return;
+        }
+        context->m_currentBlendMode = context->m_blendModeStack.top();
+        context->m_blendModeStack.pop();
+    }
+
     void Graphics::SetColor(Color const& color) {
         auto* context = CurrentContext();
         if (context == nullptr) {
             return;
         }
         context->m_currentColor = color;
+    }
+
+    void Graphics::PushColor(Color const& color) {
+        auto* context = CurrentContext();
+        if (context == nullptr) {
+            return;
+        }
+        context->m_colorStack.push(context->m_currentColor);
+        context->m_currentColor = color;
+    }
+
+    void Graphics::PopColor() {
+        auto* context = CurrentContext();
+        if (context == nullptr || context->m_colorStack.empty()) {
+            return;
+        }
+        context->m_currentColor = context->m_colorStack.top();
+        context->m_colorStack.pop();
     }
 
     void Graphics::SetShader(graphics::Shader const* shader) {
@@ -155,7 +206,20 @@ namespace moth::gfx::graphics::vulkan {
         if (context == nullptr) {
             return;
         }
+        Clear(context->m_currentColor);
+    }
+
+    void Graphics::Clear(Color const& color) {
+        auto* context = CurrentContext();
+        if (context == nullptr) {
+            return;
+        }
+        // Clearing must not mutate the active draw color, so save/restore around
+        // the fill (DrawFillRectF tints by the current color).
+        Color const savedColor = context->m_currentColor;
+        context->m_currentColor = color;
         DrawFillRectF({ { 0, 0 }, { static_cast<float>(context->m_logicalExtent.width), static_cast<float>(context->m_logicalExtent.height) } });
+        context->m_currentColor = savedColor;
     }
 
     FloatMat4x4 Graphics::CurrentTransform() const {
@@ -239,15 +303,26 @@ namespace moth::gfx::graphics::vulkan {
         SubmitVertices(vertices, 6, ETopologyType::Triangles, texture);    }
 
     void Graphics::DrawImage(Image const& image, IntVec2 const& pos, FloatVec2 const& pivot) {
-        auto const imageWidth = image.GetWidth();
-        auto const imageHeight = image.GetHeight();
-        auto const offsetX = static_cast<int>(static_cast<float>(imageWidth) * pivot.x);
-        auto const offsetY = static_cast<int>(static_cast<float>(imageHeight) * pivot.y);
-        IntRect destRect = MakeRect(pos.x, pos.y, imageWidth, imageHeight);
-        DrawImage(image, destRect - IntVec2{ offsetX, offsetY }, nullptr);
+        auto const imageWidth = static_cast<float>(image.GetWidth());
+        auto const imageHeight = static_cast<float>(image.GetHeight());
+        auto const offsetX = imageWidth * pivot.x;
+        auto const offsetY = imageHeight * pivot.y;
+        DrawImage(image, MakeRect(static_cast<float>(pos.x) - offsetX, static_cast<float>(pos.y) - offsetY, imageWidth, imageHeight), nullptr);
+    }
+
+    void Graphics::DrawImage(Image const& image, FloatVec2 const& pos, FloatVec2 const& pivot) {
+        auto const imageWidth = static_cast<float>(image.GetWidth());
+        auto const imageHeight = static_cast<float>(image.GetHeight());
+        auto const offsetX = imageWidth * pivot.x;
+        auto const offsetY = imageHeight * pivot.y;
+        DrawImage(image, MakeRect(pos.x - offsetX, pos.y - offsetY, imageWidth, imageHeight), nullptr);
     }
 
     void Graphics::DrawImage(Image const& image, IntRect const& destRect, IntRect const* sourceRect) {
+        DrawImage(image, static_cast<FloatRect>(destRect), sourceRect);
+    }
+
+    void Graphics::DrawImage(Image const& image, FloatRect const& destRect, IntRect const* sourceRect) {
         auto* context = CurrentContext();
         if (context == nullptr) {
             return;
@@ -257,8 +332,6 @@ namespace moth::gfx::graphics::vulkan {
             return;
         }
 
-        FloatRect fDestRect = static_cast<FloatRect>(destRect);
-
         FloatRect imageRect;
         if (sourceRect != nullptr) {
             imageRect = static_cast<FloatRect>(*sourceRect);
@@ -266,30 +339,30 @@ namespace moth::gfx::graphics::vulkan {
             imageRect = MakeRect(0.0f, 0.0f, static_cast<float>(image.GetWidth()), static_cast<float>(image.GetHeight()));
         }
 
-        FloatVec2 textureDimensions = FloatVec2{ texture->GetVkExtent().width, texture->GetVkExtent().height };
+        FloatVec2 textureDimensions = FloatVec2{ static_cast<float>(texture->GetVkExtent().width), static_cast<float>(texture->GetVkExtent().height) };
         imageRect += static_cast<FloatVec2>(image.GetSourceRect().topLeft);
         imageRect /= textureDimensions;
 
         auto const t = CurrentTransform();
         Vertex vertices[6];
 
-        vertices[0].xy = t.TransformPoint({ fDestRect.topLeft.x, fDestRect.topLeft.y });
+        vertices[0].xy = t.TransformPoint({ destRect.topLeft.x, destRect.topLeft.y });
         vertices[0].uv = { imageRect.topLeft.x, imageRect.topLeft.y };
         vertices[0].color = context->m_currentColor;
-        vertices[1].xy = t.TransformPoint({ fDestRect.bottomRight.x, fDestRect.topLeft.y });
+        vertices[1].xy = t.TransformPoint({ destRect.bottomRight.x, destRect.topLeft.y });
         vertices[1].uv = { imageRect.bottomRight.x, imageRect.topLeft.y };
         vertices[1].color = context->m_currentColor;
-        vertices[2].xy = t.TransformPoint({ fDestRect.topLeft.x, fDestRect.bottomRight.y });
+        vertices[2].xy = t.TransformPoint({ destRect.topLeft.x, destRect.bottomRight.y });
         vertices[2].uv = { imageRect.topLeft.x, imageRect.bottomRight.y };
         vertices[2].color = context->m_currentColor;
 
-        vertices[3].xy = t.TransformPoint({ fDestRect.topLeft.x, fDestRect.bottomRight.y });
+        vertices[3].xy = t.TransformPoint({ destRect.topLeft.x, destRect.bottomRight.y });
         vertices[3].uv = { imageRect.topLeft.x, imageRect.bottomRight.y };
         vertices[3].color = context->m_currentColor;
-        vertices[4].xy = t.TransformPoint({ fDestRect.bottomRight.x, fDestRect.bottomRight.y });
+        vertices[4].xy = t.TransformPoint({ destRect.bottomRight.x, destRect.bottomRight.y });
         vertices[4].uv = { imageRect.bottomRight.x, imageRect.bottomRight.y };
         vertices[4].color = context->m_currentColor;
-        vertices[5].xy = t.TransformPoint({ fDestRect.bottomRight.x, fDestRect.topLeft.y });
+        vertices[5].xy = t.TransformPoint({ destRect.bottomRight.x, destRect.topLeft.y });
         vertices[5].uv = { imageRect.bottomRight.x, imageRect.topLeft.y };
         vertices[5].color = context->m_currentColor;
 
@@ -297,18 +370,22 @@ namespace moth::gfx::graphics::vulkan {
     }
 
     void Graphics::DrawImageTiled(Image const& image, IntRect const& destRect, IntRect const* sourceRect, float scale) {
+        DrawImageTiled(image, static_cast<FloatRect>(destRect), sourceRect, scale);
+    }
+
+    void Graphics::DrawImageTiled(Image const& image, FloatRect const& destRect, IntRect const* sourceRect, float scale) {
         IntRect const imageRect = MakeRect(0, 0, image.GetWidth(), image.GetHeight());
         if (sourceRect == nullptr) {
             sourceRect = &imageRect;
         }
-        auto const imageWidth = static_cast<int>(static_cast<float>(sourceRect->w()) * scale);
-        auto const imageHeight = static_cast<int>(static_cast<float>(sourceRect->h()) * scale);
-        if (imageWidth <= 0 || imageHeight <= 0) {
+        auto const imageWidth = static_cast<float>(sourceRect->w()) * scale;
+        auto const imageHeight = static_cast<float>(sourceRect->h()) * scale;
+        if (imageWidth <= 0.0f || imageHeight <= 0.0f) {
             return;
         }
         for (auto y = destRect.topLeft.y; y < destRect.bottomRight.y; y += imageHeight) {
             for (auto x = destRect.topLeft.x; x < destRect.bottomRight.x; x += imageWidth) {
-                IntRect const tiledDstRect{ { x, y }, { x + imageWidth, y + imageHeight } };
+                FloatRect const tiledDstRect{ { x, y }, { x + imageWidth, y + imageHeight } };
                 DrawImage(image, tiledDstRect, sourceRect);
             }
         }
@@ -504,6 +581,33 @@ namespace moth::gfx::graphics::vulkan {
         SubmitVertices(verts.data(), static_cast<uint32_t>(verts.size()), ETopologyType::Triangles);
     }
 
+    void Graphics::DrawTexturedTrianglesF(ITexture& texture, TexturedVertex const* vertices, size_t count) {
+        auto* context = CurrentContext();
+        if (context == nullptr) {
+            return;
+        }
+        auto* vkTexture = dynamic_cast<Texture*>(&texture);
+        if (vkTexture == nullptr) {
+            return;
+        }
+        size_t const triVerts = count - (count % 3);
+        if (vertices == nullptr || triVerts < 3) {
+            return;
+        }
+
+        auto const t = CurrentTransform();
+        std::vector<Vertex> verts(triVerts);
+        for (size_t i = 0; i < triVerts; ++i) {
+            verts[i].xy = t.TransformPoint(vertices[i].position);
+            verts[i].uv = vertices[i].uv;
+            verts[i].color = vertices[i].color;
+        }
+
+        // Non-owning alias — the caller keeps the texture alive for the frame.
+        std::shared_ptr<Texture> alias(vkTexture, [](Texture*) {});
+        SubmitVertices(verts.data(), static_cast<uint32_t>(verts.size()), ETopologyType::Triangles, alias);
+    }
+
     void Graphics::DrawImageCircle(Image const& image, FloatVec2 const& center, float radius, IntRect const* sourceRect) {
         auto* context = CurrentContext();
         if (context == nullptr || radius <= 0.0f) {
@@ -569,6 +673,61 @@ namespace moth::gfx::graphics::vulkan {
         }
 
         SubmitVertices(vertices.data(), static_cast<uint32_t>(vertices.size()), ETopologyType::Triangles, texture);
+    }
+
+    void Graphics::DrawImage9Slice(Image const& image, FloatRect const& destRect, NineSliceBorders const& borders) {
+        float const srcW = static_cast<float>(image.GetWidth());
+        float const srcH = static_cast<float>(image.GetHeight());
+        if (srcW <= 0.0f || srcH <= 0.0f) {
+            return;
+        }
+
+        // Clamp borders so they stay within the source rect.
+        float const left = std::clamp(borders.left, 0.0f, srcW);
+        float const top = std::clamp(borders.top, 0.0f, srcH);
+        float const right = std::clamp(borders.right, 0.0f, srcW - left);
+        float const bottom = std::clamp(borders.bottom, 0.0f, srcH - top);
+
+        float const dstW = destRect.bottomRight.x - destRect.topLeft.x;
+        float const dstH = destRect.bottomRight.y - destRect.topLeft.y;
+
+        // Destination border sizes: shrink proportionally if the destination is
+        // smaller than the borders, so the corners never overlap.
+        float leftDst = left;
+        float rightDst = right;
+        if (left + right > dstW) {
+            float const factor = dstW / (left + right);
+            leftDst *= factor;
+            rightDst *= factor;
+        }
+        float topDst = top;
+        float bottomDst = bottom;
+        if (top + bottom > dstH) {
+            float const factor = dstH / (top + bottom);
+            topDst *= factor;
+            bottomDst *= factor;
+        }
+
+        float const srcXs[4] = { 0.0f, left, srcW - right, srcW };
+        float const srcYs[4] = { 0.0f, top, srcH - bottom, srcH };
+        float const dstXs[4] = { 0.0f, leftDst, dstW - rightDst, dstW };
+        float const dstYs[4] = { 0.0f, topDst, dstH - bottomDst, dstH };
+
+        for (int iy = 0; iy < 3; ++iy) {
+            for (int ix = 0; ix < 3; ++ix) {
+                float const sw = srcXs[ix + 1] - srcXs[ix];
+                float const sh = srcYs[iy + 1] - srcYs[iy];
+                float const dw = dstXs[ix + 1] - dstXs[ix];
+                float const dh = dstYs[iy + 1] - dstYs[iy];
+                if (sw <= 0.0f || sh <= 0.0f || dw <= 0.0f || dh <= 0.0f) {
+                    continue;
+                }
+                IntRect const src = MakeRect(static_cast<int>(srcXs[ix]), static_cast<int>(srcYs[iy]),
+                                             static_cast<int>(sw), static_cast<int>(sh));
+                FloatRect const dst = MakeRect(destRect.topLeft.x + dstXs[ix], destRect.topLeft.y + dstYs[iy], dw, dh);
+                DrawImage(image, dst, &src);
+            }
+        }
     }
 
     void Graphics::DrawGradientRect(FloatRect const& destRect,
@@ -815,48 +974,91 @@ namespace moth::gfx::graphics::vulkan {
             return;
         }
         FlushPendingBatch();
-        auto& commandBuffer = context->m_target->GetCommandBuffer();
-        if (clipRect != nullptr) {
-            // The clip rect arrives in logical coordinates. Geometry is mapped
-            // logical -> physical through the letterbox viewport (scale + offset
-            // from SetLogicalSize); the scissor must follow the same mapping, or
-            // it lands in the wrong place at the wrong size whenever the logical
-            // size differs from the physical extent. Then clamp to the letterbox
-            // scissor so it never spills into the black bars.
-            float const scaleX = context->m_logicalExtent.width > 0
-                ? context->m_viewport.width / static_cast<float>(context->m_logicalExtent.width)
-                : 1.0f;
-            float const scaleY = context->m_logicalExtent.height > 0
-                ? context->m_viewport.height / static_cast<float>(context->m_logicalExtent.height)
-                : 1.0f;
+        // Absolute clip: discard any nested clip state and set (or clear) the clip.
+        while (!context->m_clipStack.empty()) {
+            context->m_clipStack.pop();
+        }
+        context->m_clipRect = clipRect != nullptr ? std::optional<IntRect>(*clipRect) : std::nullopt;
+        ApplyClipScissor();
+    }
 
-            float const left = context->m_viewport.x + (static_cast<float>(clipRect->x()) * scaleX);
-            float const top = context->m_viewport.y + (static_cast<float>(clipRect->y()) * scaleY);
-            float const right = left + (static_cast<float>(clipRect->w()) * scaleX);
-            float const bottom = top + (static_cast<float>(clipRect->h()) * scaleY);
+    void Graphics::PushClip(IntRect const& rect) {
+        auto* context = CurrentContext();
+        if (context == nullptr) {
+            return;
+        }
+        FlushPendingBatch();
+        context->m_clipStack.push(context->m_clipRect);
+        context->m_clipRect = context->m_clipRect
+            ? std::optional<IntRect>(IntersectRects(*context->m_clipRect, rect))
+            : std::optional<IntRect>(rect);
+        ApplyClipScissor();
+    }
 
-            VkRect2D const& bounds = context->m_scissor;
-            int32_t const boundsLeft = bounds.offset.x;
-            int32_t const boundsTop = bounds.offset.y;
-            int32_t const boundsRight = bounds.offset.x + static_cast<int32_t>(bounds.extent.width);
-            int32_t const boundsBottom = bounds.offset.y + static_cast<int32_t>(bounds.extent.height);
-
-            int32_t const clampedLeft = std::min(std::max(static_cast<int32_t>(std::floor(left)), boundsLeft), boundsRight);
-            int32_t const clampedTop = std::min(std::max(static_cast<int32_t>(std::floor(top)), boundsTop), boundsBottom);
-            int32_t const clampedRight = std::min(std::max(static_cast<int32_t>(std::ceil(right)), boundsLeft), boundsRight);
-            int32_t const clampedBottom = std::min(std::max(static_cast<int32_t>(std::ceil(bottom)), boundsTop), boundsBottom);
-
-            VkRect2D scissor;
-            scissor.offset.x = clampedLeft;
-            scissor.offset.y = clampedTop;
-            scissor.extent.width = static_cast<uint32_t>(clampedRight - clampedLeft);
-            scissor.extent.height = static_cast<uint32_t>(clampedBottom - clampedTop);
-            commandBuffer.SetScissor(scissor);
+    void Graphics::PopClip() {
+        auto* context = CurrentContext();
+        if (context == nullptr) {
+            return;
+        }
+        FlushPendingBatch();
+        if (context->m_clipStack.empty()) {
+            context->m_clipRect.reset();
         } else {
+            context->m_clipRect = context->m_clipStack.top();
+            context->m_clipStack.pop();
+        }
+        ApplyClipScissor();
+    }
+
+    void Graphics::ApplyClipScissor() {
+        auto* context = CurrentContext();
+        if (context == nullptr) {
+            return;
+        }
+        auto& commandBuffer = context->m_target->GetCommandBuffer();
+        if (!context->m_clipRect) {
             // Restore the letterbox scissor (the no-clip state set by
             // SetLogicalSize / BeginContext), not the raw physical extent.
             commandBuffer.SetScissor(context->m_scissor);
+            return;
         }
+        IntRect const& clipRect = *context->m_clipRect;
+
+        // The clip rect arrives in logical coordinates. Geometry is mapped
+        // logical -> physical through the letterbox viewport (scale + offset
+        // from SetLogicalSize); the scissor must follow the same mapping, or
+        // it lands in the wrong place at the wrong size whenever the logical
+        // size differs from the physical extent. Then clamp to the letterbox
+        // scissor so it never spills into the black bars.
+        float const scaleX = context->m_logicalExtent.width > 0
+            ? context->m_viewport.width / static_cast<float>(context->m_logicalExtent.width)
+            : 1.0f;
+        float const scaleY = context->m_logicalExtent.height > 0
+            ? context->m_viewport.height / static_cast<float>(context->m_logicalExtent.height)
+            : 1.0f;
+
+        float const left = context->m_viewport.x + (static_cast<float>(clipRect.x()) * scaleX);
+        float const top = context->m_viewport.y + (static_cast<float>(clipRect.y()) * scaleY);
+        float const right = left + (static_cast<float>(clipRect.w()) * scaleX);
+        float const bottom = top + (static_cast<float>(clipRect.h()) * scaleY);
+
+        VkRect2D const& bounds = context->m_scissor;
+        int32_t const boundsLeft = bounds.offset.x;
+        int32_t const boundsTop = bounds.offset.y;
+        int32_t const boundsRight = bounds.offset.x + static_cast<int32_t>(bounds.extent.width);
+        int32_t const boundsBottom = bounds.offset.y + static_cast<int32_t>(bounds.extent.height);
+
+        int32_t const clampedLeft = std::min(std::max(static_cast<int32_t>(std::floor(left)), boundsLeft), boundsRight);
+        int32_t const clampedTop = std::min(std::max(static_cast<int32_t>(std::floor(top)), boundsTop), boundsBottom);
+        int32_t const clampedRight = std::min(std::max(static_cast<int32_t>(std::ceil(right)), boundsLeft), boundsRight);
+        int32_t const clampedBottom = std::min(std::max(static_cast<int32_t>(std::ceil(bottom)), boundsTop), boundsBottom);
+
+        VkRect2D scissor;
+        scissor.offset.x = clampedLeft;
+        scissor.offset.y = clampedTop;
+        scissor.extent.width = static_cast<uint32_t>(clampedRight - clampedLeft);
+        scissor.extent.height = static_cast<uint32_t>(clampedBottom - clampedTop);
+        commandBuffer.SetScissor(scissor);
     }
 
     std::unique_ptr<ITarget> Graphics::CreateTarget(int width, int height) {

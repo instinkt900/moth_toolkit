@@ -65,23 +65,33 @@ namespace moth::gfx::graphics::vulkan {
         void End() override;
 
         void SetBlendMode(BlendMode mode) override;
+        void PushBlendMode(BlendMode mode) override;
+        void PopBlendMode() override;
         void SetColor(Color const& color) override;
+        void PushColor(Color const& color) override;
+        void PopColor() override;
         void SetShader(graphics::Shader const* shader) override;
         void Clear() override;
+        void Clear(Color const& color) override;
         void SetTransform(FloatMat4x4 const& transform) override;
         void PushTransform(FloatMat4x4 const& transform) override;
         void PopTransform() override;
         void DrawImage(Image const& image, IntVec2 const& pos, FloatVec2 const& pivot) override;
+        void DrawImage(Image const& image, FloatVec2 const& pos, FloatVec2 const& pivot) override;
         void DrawImage(Image const& image, Transform2D const& transform, FloatVec2 const& pivot, bool flipX, bool flipY) override;
         void DrawImage(Image const& image, IntRect const& destRect, IntRect const* sourceRect) override;
+        void DrawImage(Image const& image, FloatRect const& destRect, IntRect const* sourceRect) override;
         void DrawImageTiled(Image const& image, IntRect const& destRect, IntRect const* sourceRect, float scale) override;
+        void DrawImageTiled(Image const& image, FloatRect const& destRect, IntRect const* sourceRect, float scale) override;
         void DrawRectF(FloatRect const& rect) override;
         void DrawFillRectF(FloatRect const& rect) override;
         void DrawFillCircleF(FloatVec2 const& center, float radius) override;
         void DrawFillEllipseF(FloatVec2 const& center, float radiusX, float radiusY) override;
         void DrawFillPolygonF(FloatVec2 const* points, size_t count) override;
         void DrawTrianglesF(FloatVec2 const* vertices, size_t count) override;
+        void DrawTexturedTrianglesF(ITexture& texture, TexturedVertex const* vertices, size_t count) override;
         void DrawImageCircle(Image const& image, FloatVec2 const& center, float radius, IntRect const* sourceRect) override;
+        void DrawImage9Slice(Image const& image, FloatRect const& destRect, NineSliceBorders const& borders) override;
         void DrawGradientRect(FloatRect const& destRect,
                               Color startColor, Color endColor,
                               FloatVec2 midpoint,
@@ -93,6 +103,8 @@ namespace moth::gfx::graphics::vulkan {
         void DrawShader(graphics::Shader const& shader) override;
         void DrawShader(graphics::Shader const& shader, FloatRect const& destRect) override;
         void SetClip(IntRect const* clipRect) override;
+        void PushClip(IntRect const& rect) override;
+        void PopClip() override;
 
         std::unique_ptr<ITarget> CreateTarget(int width, int height) override;
         ITarget* GetTarget() override;
@@ -149,6 +161,14 @@ namespace moth::gfx::graphics::vulkan {
 
             BlendMode m_currentBlendMode = BlendMode::Replace;
             Color m_currentColor = BasicColors::White;
+
+            std::stack<BlendMode> m_blendModeStack;
+            std::stack<Color> m_colorStack;
+
+            // Current clip in logical coordinates (nullopt = no clip), plus the
+            // stack saved by PushClip/PopClip.
+            std::optional<IntRect> m_clipRect;
+            std::stack<std::optional<IntRect>> m_clipStack;
 
             std::unique_ptr<Buffer> m_vertexBuffer;
             Vertex* m_vertexBufferData = nullptr;
@@ -233,6 +253,7 @@ namespace moth::gfx::graphics::vulkan {
 
         void BeginContext(DrawContext* context);
         void ApplyProjection();
+        void ApplyClipScissor();
         void RestartContext();
         void EndContext();
         void StartCommands();

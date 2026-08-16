@@ -62,6 +62,20 @@ namespace moth::gfx::graphics {
         /// @returns Loaded texture, or @c nullptr on failure.
         virtual std::unique_ptr<ITexture> TextureFromPixels(int width, int height, uint8_t const* pixels) = 0;
 
+        /// @brief Save a sub-region of a texture to a PNG file.
+        ///
+        /// Tooling helper: reads the region back from the GPU and writes it as
+        /// an RGBA PNG. Kept here (rather than on @c ITexture) so the core
+        /// texture resource stays free of serialization concerns. @p texture is
+        /// non-const because the backend readback requires staging access.
+        /// @param texture    The texture to read from.
+        /// @param path       Destination file path.
+        /// @param sourceRect Sub-region to save, in texture-space pixels.
+        ///        @c sourceRect.w() and @c sourceRect.h() determine the output
+        ///        image dimensions; @c sourceRect.topLeft is the offset within
+        ///        the texture to start reading from.
+        virtual void SaveTextureToPNG(ITexture& texture, std::filesystem::path const& path, IntRect const& sourceRect) = 0;
+
         /// @brief Compile a Shadertoy-style GLSL fragment shader at runtime.
         ///
         /// @returns Compiled shader, or an invalid @c Shader when GLSL compilation

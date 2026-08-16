@@ -21,42 +21,30 @@ namespace moth::bridge {
     MothRenderer::MothRenderer(IGraphics& graphics)
         : m_graphics(graphics) {
         m_drawColor.push({ 1.0f, 1.0f, 1.0f, 1.0f });
-        m_blendMode.push(BlendMode::Replace);
         m_transform.push(moth::ui::FloatMat4x4::Identity());
         m_graphics.SetTransform(m_transform.top());
         m_textureFilter.push(moth::ui::TextureFilter::Linear);
     }
 
     void MothRenderer::PushBlendMode(moth::ui::BlendMode mode) {
-        m_blendMode.push(mode);
+        m_graphics.PushBlendMode(mode);
     }
 
     void MothRenderer::PopBlendMode() {
-        if (m_blendMode.size() > 1) {
-            m_blendMode.pop();
-        }
+        m_graphics.PopBlendMode();
     }
 
     void MothRenderer::PushColor(moth::ui::Color const& color) {
         auto const modColor = m_drawColor.top() * color;
         m_drawColor.push(modColor);
+        m_graphics.PushColor(modColor);
     }
 
     void MothRenderer::PopColor() {
         if (m_drawColor.size() > 1) {
             m_drawColor.pop();
         }
-    }
-
-    IntRect ClipRect(IntRect const& parentRect, IntRect const& childRect) {
-        IntRect result;
-        result.topLeft.x = std::max(parentRect.topLeft.x, childRect.topLeft.x);
-        result.topLeft.y = std::max(parentRect.topLeft.y, childRect.topLeft.y);
-        result.bottomRight.x = std::min(parentRect.bottomRight.x, childRect.bottomRight.x);
-        result.bottomRight.y = std::min(parentRect.bottomRight.y, childRect.bottomRight.y);
-        result.bottomRight.x = std::max(result.topLeft.x, result.bottomRight.x);
-        result.bottomRight.y = std::max(result.topLeft.y, result.bottomRight.y);
-        return result;
+        m_graphics.PopColor();
     }
 
     void MothRenderer::PushTransform(moth::ui::FloatMat4x4 const& transform) {
@@ -72,29 +60,11 @@ namespace moth::bridge {
     }
 
     void MothRenderer::PushClip(moth::ui::IntRect const& rect) {
-        if (m_clip.empty()) {
-            m_clip.push(rect);
-        } else {
-            // want to clip rect within the current clip
-            auto const parentRect = m_clip.top();
-            auto const newRect = ClipRect(parentRect, rect);
-            m_clip.push(newRect);
-        }
-
-        m_graphics.SetClip(&m_clip.top());
+        m_graphics.PushClip(rect);
     }
 
     void MothRenderer::PopClip() {
-        if (m_clip.empty()) {
-            return;
-        }
-        m_clip.pop();
-
-        if (m_clip.empty()) {
-            m_graphics.SetClip(nullptr);
-        } else {
-            m_graphics.SetClip(&m_clip.top());
-        }
+        m_graphics.PopClip();
     }
 
     void MothRenderer::PushTextureFilter(moth::ui::TextureFilter filter) {
@@ -108,19 +78,14 @@ namespace moth::bridge {
     }
 
     void MothRenderer::RenderRect(moth::ui::IntRect const& rect) {
-        m_graphics.SetBlendMode(m_blendMode.top());
-        m_graphics.SetColor(m_drawColor.top());
         m_graphics.DrawRectF(static_cast<FloatRect>(rect));
     }
 
     void MothRenderer::RenderFilledRect(moth::ui::IntRect const& rect) {
-        m_graphics.SetBlendMode(m_blendMode.top());
-        m_graphics.SetColor(m_drawColor.top());
         m_graphics.DrawFillRectF(static_cast<FloatRect>(rect));
     }
 
     void MothRenderer::RenderGradientRect(moth::ui::IntRect const& rect, moth::ui::LinearGradient const& gradient) {
-        m_graphics.SetBlendMode(m_blendMode.top());
         // Modulate gradient stop colours by the current renderer colour stack so
         // ancestor SetColor / alpha overrides compose with the gradient the same
         // way they do with RenderFilledRect.
@@ -162,9 +127,6 @@ namespace moth::bridge {
     }
 
     void MothRenderer::RenderImage(moth::ui::IImage const& image, moth::ui::IntRect const& sourceRect, moth::ui::IntRect const& destRect, moth::ui::ImageScaleType scaleType, float scale) {
-        m_graphics.SetBlendMode(m_blendMode.top());
-        m_graphics.SetColor(m_drawColor.top());
-
         auto const* mothImagePtr = dynamic_cast<MothImage const*>(&image);
         if (mothImagePtr == nullptr) {
             return;
@@ -192,9 +154,6 @@ namespace moth::bridge {
     }
 
     void MothRenderer::RenderText(std::string_view text, moth::ui::IFont& font, moth::ui::TextHorizAlignment horizontalAlignment, moth::ui::TextVertAlignment verticalAlignment, moth::ui::IntRect const& destRect) {
-        m_graphics.SetBlendMode(m_blendMode.top());
-        m_graphics.SetColor(m_drawColor.top());
-
         auto* fcFontPtr = dynamic_cast<MothFont*>(&font);
         if (fcFontPtr == nullptr) {
             return;

@@ -37,6 +37,7 @@ namespace moth::gfx::graphics::vulkan {
         std::unique_ptr<ITexture> TextureFromFile(std::filesystem::path const& path) override;
         std::unique_ptr<ITexture> TextureFromMemory(std::vector<std::uint8_t> const& data) override;
         std::unique_ptr<ITexture> TextureFromPixels(int width, int height, uint8_t const* pixels) override;
+        void SaveTextureToPNG(ITexture& texture, std::filesystem::path const& path, IntRect const& sourceRect) override;
         std::shared_ptr<graphics::Shader> CreateShaderFromGLSL(std::string const& name, std::string const& fragSource) override;
         std::shared_ptr<graphics::Shader> CreateShaderFromSpirV(std::string const& name, std::vector<std::uint8_t> const& fragSpv) override;
 

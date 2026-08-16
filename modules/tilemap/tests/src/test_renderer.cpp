@@ -25,6 +25,7 @@ using moth::gfx::graphics::TextHorizAlignment;
 using moth::gfx::graphics::TextVertAlignment;
 using moth::gfx::graphics::TextureAddressMode;
 using moth::gfx::graphics::TextureFilter;
+using moth::gfx::graphics::TexturedVertex;
 
 namespace {
     struct MockTexture : ITexture {
@@ -32,8 +33,6 @@ namespace {
         int GetHeight() const override { return 256; }
         void SetFilter(TextureFilter, TextureFilter) override {}
         void SetAddressMode(TextureAddressMode, TextureAddressMode) override {}
-        void DrawImGui(IntVec2 const&, FloatVec2 const&, FloatVec2 const&) const override {}
-        void SaveToPNG(std::filesystem::path const&, IntRect const&) override {}
         void UpdatePixels(IntRect const&, uint8_t const*) override {}
     };
 
@@ -53,8 +52,13 @@ namespace {
         void Begin() override {}
         void End() override {}
         void SetBlendMode(BlendMode) override {}
+        void PushBlendMode(BlendMode) override {}
+        void PopBlendMode() override {}
         void SetColor(Color const& color) override { setColors.push_back(color); }
+        void PushColor(Color const&) override {}
+        void PopColor() override {}
         void Clear() override {}
+        void Clear(Color const&) override {}
         void SetTransform(FloatMat4x4 const&) override {}
         void PushTransform(FloatMat4x4 const&) override {}
         void PopTransform() override {}
@@ -72,15 +76,20 @@ namespace {
         }
 
         void DrawImage(Image const&, IntRect const&, IntRect const*) override {}
+        void DrawImage(Image const&, FloatRect const&, IntRect const*) override {}
         void DrawImage(Image const&, IntVec2 const&, FloatVec2 const&) override {}
+        void DrawImage(Image const&, FloatVec2 const&, FloatVec2 const&) override {}
         void DrawImageTiled(Image const&, IntRect const&, IntRect const*, float) override {}
+        void DrawImageTiled(Image const&, FloatRect const&, IntRect const*, float) override {}
         void DrawRectF(FloatRect const&) override {}
         void DrawFillRectF(FloatRect const&) override {}
         void DrawFillCircleF(FloatVec2 const&, float) override {}
         void DrawFillEllipseF(FloatVec2 const&, float, float) override {}
         void DrawFillPolygonF(FloatVec2 const*, size_t) override {}
         void DrawTrianglesF(FloatVec2 const*, size_t) override {}
+        void DrawTexturedTrianglesF(ITexture&, TexturedVertex const*, size_t) override {}
         void DrawImageCircle(Image const&, FloatVec2 const&, float, IntRect const*) override {}
+        void DrawImage9Slice(Image const&, FloatRect const&, NineSliceBorders const&) override {}
         void DrawGradientRect(FloatRect const&, Color, Color, FloatVec2, float, float) override {}
         void DrawLineF(FloatVec2 const&, FloatVec2 const&) override {}
         void DrawLineF(FloatVec2 const&, FloatVec2 const&, float) override {}
@@ -89,6 +98,8 @@ namespace {
         void DrawShader(Shader const&, FloatRect const&) override {}
         void SetShader(Shader const*) override {}
         void SetClip(IntRect const*) override {}
+        void PushClip(IntRect const&) override {}
+        void PopClip() override {}
         std::unique_ptr<ITarget> CreateTarget(int, int) override { return nullptr; }
         ITarget* GetTarget() override { return nullptr; }
         void SetTarget(ITarget*) override {}

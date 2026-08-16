@@ -27,8 +27,6 @@ namespace {
         int GetHeight() const override { return 64; }
         void SetFilter(TextureFilter, TextureFilter) override {}
         void SetAddressMode(TextureAddressMode, TextureAddressMode) override {}
-        void DrawImGui(IntVec2 const&, FloatVec2 const&, FloatVec2 const&) const override {}
-        void SaveToPNG(std::filesystem::path const&, IntRect const&) override {}
         void UpdatePixels(IntRect const&, uint8_t const*) override {}
     };
 
@@ -49,6 +47,7 @@ namespace {
         std::unique_ptr<ITexture> TextureFromFile(std::filesystem::path const&) override { return nullptr; }
         std::unique_ptr<ITexture> TextureFromMemory(std::vector<std::uint8_t> const&) override { return nullptr; }
         std::unique_ptr<ITexture> TextureFromPixels(int, int, uint8_t const*) override { return nullptr; }
+        void SaveTextureToPNG(ITexture&, std::filesystem::path const&, IntRect const&) override {}
         std::shared_ptr<Shader> CreateShaderFromGLSL(std::string const&, std::string const&) override { return nullptr; }
         std::shared_ptr<Shader> CreateShaderFromSpirV(std::string const&, std::vector<std::uint8_t> const&) override { return nullptr; }
 

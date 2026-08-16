@@ -79,7 +79,9 @@ namespace moth::gfx::graphics::vulkan {
         auto& commandBuffer = context->m_target->GetCommandBuffer();
 
         commandBuffer.SetViewport(context->m_viewport);
-        commandBuffer.SetScissor(context->m_scissor);
+        // Re-apply the clip (if any) rather than the raw letterbox scissor, so a
+        // nested clip survives SetLogicalSize / mid-frame RestartContext.
+        ApplyClipScissor();
 
         PushConstants pushConstants;
         pushConstants.xyScale = { 2.0f / static_cast<float>(context->m_logicalExtent.width),

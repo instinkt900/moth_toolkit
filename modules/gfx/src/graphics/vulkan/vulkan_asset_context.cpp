@@ -35,6 +35,15 @@ namespace moth::gfx::graphics::vulkan {
         return Texture::FromRGBA(m_context, width, height, pixels);
     }
 
+    void AssetContext::SaveTextureToPNG(ITexture& texture, std::filesystem::path const& path, IntRect const& sourceRect) {
+        auto* vkTexture = dynamic_cast<Texture*>(&texture);
+        if (vkTexture == nullptr) {
+            moth::core::log::warn("SaveTextureToPNG: texture has no Vulkan backend; skipping");
+            return;
+        }
+        vkTexture->SaveToPNG(path, sourceRect);
+    }
+
     std::shared_ptr<graphics::Shader> AssetContext::CreateShaderFromGLSL(std::string const& name, std::string const& fragSource) {
         std::vector<std::uint32_t> spv;
         std::string log;

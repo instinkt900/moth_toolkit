@@ -18,6 +18,15 @@ namespace moth::gfx::graphics {
         /// @return Width and height in pixels.
         virtual IntVec2 Measure(std::string_view text) const = 0;
 
+        /// @brief Measure the dimensions of text wrapped to a maximum width.
+        ///
+        /// The text is word-wrapped to @p maxWidth pixels. The returned width is
+        /// the widest line and the height spans every line.
+        /// @param text UTF-8 text to measure.
+        /// @param maxWidth Maximum line width in pixels (<= 0 = no wrap).
+        /// @return Width and height in pixels.
+        virtual IntVec2 MeasureWrapped(std::string_view text, int maxWidth) const = 0;
+
         /// @brief Returns the distance between consecutive baselines in pixels.
         virtual int GetLineHeight() const = 0;
 

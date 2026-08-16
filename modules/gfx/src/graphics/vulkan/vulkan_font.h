@@ -31,6 +31,7 @@ namespace moth::gfx::graphics::vulkan {
         virtual ~Font();
 
         IntVec2 Measure(std::string_view text) const override;
+        IntVec2 MeasureWrapped(std::string_view text, int maxWidth) const override;
 
         int GetLineHeight() const override { return m_lineHeight; }
         int GetAscent() const override { return m_ascent; }

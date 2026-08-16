@@ -18,8 +18,6 @@ namespace {
         int GetHeight() const override { return 8; }
         void SetFilter(TextureFilter, TextureFilter) override {}
         void SetAddressMode(TextureAddressMode, TextureAddressMode) override {}
-        void DrawImGui(IntVec2 const&, FloatVec2 const&, FloatVec2 const&) const override {}
-        void SaveToPNG(std::filesystem::path const&, IntRect const&) override {}
         void UpdatePixels(IntRect const&, uint8_t const*) override {}
     };
 }

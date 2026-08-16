@@ -30,6 +30,16 @@ TEST_CASE("IPlatform method signatures are stable", "[api][platform][iplatform]"
     SUCCEED();
 }
 
+TEST_CASE("ImGuiContext method signatures are stable", "[api][platform][imgui]") {
+    void (ImGuiContext::*newFrame)()                     = &ImGuiContext::NewFrame;
+    void (ImGuiContext::*render)(graphics::IGraphics&)   = &ImGuiContext::Render;
+    void (ImGuiContext::*shutdown)()                     = &ImGuiContext::Shutdown;
+    void (ImGuiContext::*image)(graphics::ITexture const&, IntVec2 const&,
+                                FloatVec2 const&, FloatVec2 const&) = &ImGuiContext::Image;
+    (void)newFrame; (void)render; (void)shutdown; (void)image;
+    SUCCEED();
+}
+
 TEST_CASE("Window inherits EventEmitter and IEventListener", "[api][platform][window]") {
     static_assert(std::is_base_of_v<EventEmitter, Window>);
     static_assert(std::is_base_of_v<moth::core::IEventListener, Window>);

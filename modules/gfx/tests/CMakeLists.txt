@@ -14,6 +14,7 @@ set(SOURCES
     src/main.cpp
     src/test_spritesheet.cpp
     src/test_sprite.cpp
+    src/test_sprite_batch.cpp
     src/test_shader.cpp
     src/test_ticker.cpp
     src/test_event_emitter.cpp

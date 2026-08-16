@@ -8,13 +8,17 @@ project(moth_assets
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+find_package(nlohmann_json REQUIRED)
+
 # Sibling module: in the superbuild the target already exists, standalone it is
 # located via find_package.
 if(NOT TARGET moth::core)
     find_package(moth_core CONFIG REQUIRED)
 endif()
 
-add_library(moth_assets src/assets.cpp)
+add_library(moth_assets
+    src/assets.cpp
+    src/pak.cpp)
 set_target_properties(moth_assets PROPERTIES EXPORT_NAME assets)
 
 target_include_directories(moth_assets PUBLIC
@@ -22,6 +26,7 @@ target_include_directories(moth_assets PUBLIC
     $<INSTALL_INTERFACE:include>)
 target_include_directories(moth_assets PRIVATE src)
 
+target_link_libraries(moth_assets PUBLIC nlohmann_json::nlohmann_json)
 target_link_libraries(moth_assets PUBLIC moth::core)
 
 # Install + export only when built standalone; in the superbuild the modules are consumed

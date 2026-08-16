@@ -30,6 +30,11 @@ namespace moth::assets {
         return a.value != b.value;
     }
 
+    /// @brief Orders ids by value (for use in sorted containers).
+    inline bool operator<(AssetId a, AssetId b) {
+        return a.value < b.value;
+    }
+
     /**
      * @brief Derives a deterministic id from a name/path (FNV-1a 64-bit).
      *
@@ -58,6 +63,15 @@ namespace moth::assets {
 
         /// @brief Returns @c true if the asset at @p path exists.
         virtual bool Exists(std::string_view path) const = 0;
+
+        /// @brief Reads the asset with @p id, or empty if unsupported/absent.
+        ///
+        /// Id addressing is optional: path-addressed sources (physical) leave the
+        /// default (empty); id-addressed sources (packed) override it.
+        virtual Bytes Read(AssetId id) const { return {}; }
+
+        /// @brief Returns @c true if the asset with @p id exists (and is id-addressable).
+        virtual bool Exists(AssetId id) const { return false; }
     };
 
     /**
@@ -90,6 +104,12 @@ namespace moth::assets {
 
         /// @brief Returns @c true if any mounted source has @p path.
         bool Exists(std::string_view path) const;
+
+        /// @brief Reads @p id, searching the mounted sources in order (id-addressed sources only).
+        Bytes Read(AssetId id) const;
+
+        /// @brief Returns @c true if any mounted source has @p id.
+        bool Exists(AssetId id) const;
 
         /// @brief Mounts a source (later sources are fallbacks).
         void Mount(std::unique_ptr<AssetSource> source);

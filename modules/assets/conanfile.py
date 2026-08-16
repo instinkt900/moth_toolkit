@@ -20,6 +20,8 @@ class MothAssets(ConanFile):
             self.version = load(self, "version.txt").strip()
 
     def requirements(self):
+        # The manifest is written as JSON (nlohmann_json is already a core dep).
+        self.requires("nlohmann_json/[>=3.11 <4]", transitive_headers=True)
         self.requires("moth_core/0.1.0", transitive_headers=True)
 
     def build_requirements(self):

@@ -92,6 +92,7 @@
 
 #if MOTH_ENABLE_ASSETS
 #include <moth/assets/assets.h>
+#include <moth/assets/pak.h>
 #endif
 
 #if MOTH_ENABLE_BRIDGE

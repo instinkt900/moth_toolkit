@@ -39,6 +39,24 @@ namespace moth::assets {
         return false;
     }
 
+    Bytes AssetLibrary::Read(AssetId id) const {
+        for (auto const& source : m_sources) {
+            if (source->Exists(id)) {
+                return source->Read(id);
+            }
+        }
+        return {};
+    }
+
+    bool AssetLibrary::Exists(AssetId id) const {
+        for (auto const& source : m_sources) {
+            if (source->Exists(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     void AssetLibrary::Mount(std::unique_ptr<AssetSource> source) {
         m_sources.push_back(std::move(source));
     }

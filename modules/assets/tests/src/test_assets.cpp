@@ -1,4 +1,5 @@
 #include "moth/assets/assets.h"
+#include "moth/assets/pak.h"
 
 #include <catch2/catch_all.hpp>
 
@@ -71,4 +72,61 @@ TEST_CASE("AssetLibrary resolves through mounted directories, first wins", "[ass
     REQUIRE(library.Exists("only-b.txt"));
     REQUIRE_FALSE(library.Exists("missing.txt"));
     REQUIRE(library.Read("missing.txt").empty());
+}
+
+TEST_CASE("Pak: a directory round-trips by id and by path", "[assets][pak]") {
+    TempDir dir("moth_assets_pak_test");
+    std::filesystem::create_directories(dir.path / "sub");
+    {
+        std::ofstream(dir.path / "a.txt") << "alpha";
+        std::ofstream(dir.path / "sub" / "b.txt") << "beta";
+    }
+
+    auto const pakPath = dir.path / "assets.pak";
+    auto const manifestPath = dir.path / "manifest.json";
+    PackDirectory(dir.path, pakPath, manifestPath);
+
+    REQUIRE(std::filesystem::is_regular_file(pakPath));
+    REQUIRE(std::filesystem::is_regular_file(manifestPath));
+
+    auto const source = PackedAssetSource::Load(pakPath);
+    REQUIRE(source.IsValid());
+    REQUIRE(source.GetEntryCount() == 2);
+
+    // By id.
+    REQUIRE(source.Exists(MakeAssetId("a.txt")));
+    Bytes const a = source.Read(MakeAssetId("a.txt"));
+    REQUIRE(std::string(a.begin(), a.end()) == "alpha");
+
+    // By path (hashes to the same id the packer assigned).
+    REQUIRE(source.Exists("sub/b.txt"));
+    Bytes const b = source.Read("sub/b.txt");
+    REQUIRE(std::string(b.begin(), b.end()) == "beta");
+
+    // Missing.
+    REQUIRE_FALSE(source.Exists(MakeAssetId("nope.txt")));
+    REQUIRE(source.Read(MakeAssetId("nope.txt")).empty());
+}
+
+TEST_CASE("Pak: a packed source mounts into an AssetLibrary", "[assets][pak]") {
+    TempDir dir("moth_assets_pak_library_test");
+    {
+        std::ofstream(dir.path / "data.txt") << "packed-data";
+    }
+    PackDirectory(dir.path, dir.path / "assets.pak", dir.path / "manifest.json");
+
+    AssetLibrary library;
+    library.Mount(std::make_unique<PackedAssetSource>(PackedAssetSource::Load(dir.path / "assets.pak")));
+
+    REQUIRE(library.Exists(MakeAssetId("data.txt")));
+    Bytes const bytes = library.Read(MakeAssetId("data.txt"));
+    REQUIRE(std::string(bytes.begin(), bytes.end()) == "packed-data");
+}
+
+TEST_CASE("Pak: rejects malformed data", "[assets][pak]") {
+    Bytes const junk{ 1, 2, 3, 4, 5, 6, 7, 8 };
+    auto const source = PackedAssetSource::FromBytes(junk);
+    REQUIRE_FALSE(source.IsValid());
+    REQUIRE(source.GetEntryCount() == 0);
+    REQUIRE(source.Read(MakeAssetId("x")).empty());
 }

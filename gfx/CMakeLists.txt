@@ -39,6 +39,7 @@ set(SOURCES
     src/graphics/stb_image.cpp
     src/graphics/stb_image_write.cpp
     src/graphics/stb_rect_pack.cpp
+    src/game/game.cpp
     src/platform/window.cpp
     external/murmurhash.c/murmurhash.c
 )

@@ -4,6 +4,18 @@ Sample projects and games that exercise the toolkit. Intended to be built
 standalone (each with its own CMakeLists) so they double as consumption tests
 for the packaged modules.
 
+## `hello_game/`
+
+The minimal starting point — a window, a scene, and a moving square, via the
+`moth::gfx::game::Game` facade. Use this as the scaffold for a new game:
+
+```cpp
+int main() {
+    moth::gfx::game::Game game{ "My Game", 1280, 720 };
+    return game.Run(std::make_unique<MyScene>());
+}
+```
+
 ## `sample_game/`
 
 A single-`main.cpp` game that exercises the Phase 5 P0 features plus the Phase 6

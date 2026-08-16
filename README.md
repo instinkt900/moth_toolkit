@@ -1,4 +1,4 @@
-# moth_toolkit
+# Moth Toolkit
 
 A modular, code-first 2D game engine toolkit — a collection of C++ libraries
 under the `moth::` namespace that assemble into a complete engine with

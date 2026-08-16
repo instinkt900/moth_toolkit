@@ -1,0 +1,190 @@
+name: Release & Publish Conan Packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      modules:
+        description: 'Space-separated module dirs to force-release (empty = auto-detect from version.txt changes). e.g. "core gfx ui"'
+        required: false
+        default: ''
+  push:
+    branches: [ master ]
+    paths:
+      - 'modules/**'
+
+permissions:
+  contents: write
+
+# Serialize runs: publishing to a shared Conan remote must not race.
+concurrency:
+  group: release-publish
+  cancel-in-progress: false
+
+jobs:
+  detect:
+    name: Detect changed versions
+    runs-on: ubuntu-latest
+    outputs:
+      release_modules: ${{ steps.detect.outputs.release_modules }}
+      touched_modules: ${{ steps.detect.outputs.touched_modules }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine modules to publish
+        id: detect
+        shell: bash
+        run: |
+          set -uo pipefail
+
+          manual="${{ github.event.inputs.modules }}"
+          release_modules=""
+          touched_modules=""
+
+          if [ -n "$manual" ]; then
+            release_modules="$manual"
+            touched_modules="$manual"
+          else
+            if [ "$GITHUB_EVENT_NAME" == "push" ]; then
+              BASE="${{ github.event.before }}"
+              HEAD="${{ github.sha }}"
+            else
+              BASE="HEAD~1"
+              HEAD="HEAD"
+            fi
+            if [ "$BASE" == "0000000000000000000000000000000000000000" ]; then
+              BASE="HEAD~1"
+            fi
+
+            changed_files="$(git diff --name-only "$BASE" "$HEAD" 2>/dev/null || true)"
+
+            # Modules whose version.txt changed -> release.
+            release_modules="$(echo "$changed_files" \
+              | grep -E '^modules/[^/]+/version\.txt$' \
+              | sed -E 's#modules/([^/]+)/version\.txt#\1#' | sort -u | tr '\n' ' ')"
+
+            # Any module touched (code or version) -> publish (snapshot for the
+            # non-release ones).
+            touched_modules="$(echo "$changed_files" \
+              | grep -E '^modules/[^/]+/' \
+              | sed -E 's#modules/([^/]+)/.*#\1#' | sort -u | tr '\n' ' ')"
+          fi
+
+          echo "release_modules=$release_modules" >> "$GITHUB_OUTPUT"
+          echo "touched_modules=$touched_modules" >> "$GITHUB_OUTPUT"
+          echo "Release: [$release_modules]"
+          echo "Touched: [$touched_modules]"
+
+  publish:
+    name: Build & upload
+    needs: detect
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libglfw3-dev libfreetype-dev libharfbuzz-dev libvulkan-dev
+
+      - uses: conan-io/setup-conan@v1
+        with:
+          cache_packages: true
+
+      - name: Add private artifactory remote
+        run: |
+          conan remote add artifactory "${{ vars.ARTIFACTORY_URL }}" --force
+          conan remote login artifactory ci -p "${{ secrets.ARTIFACTS_TOKEN }}"
+
+      - name: Build and upload packages in dependency order
+        shell: bash
+        env:
+          RELEASE_MODULES: ${{ needs.detect.outputs.release_modules }}
+          TOUCHED_MODULES: ${{ needs.detect.outputs.touched_modules }}
+        run: |
+          set -euo pipefail
+          declare -A PKG=(
+            [core]=moth_core [gfx]=moth_graphics [ui]=moth_ui
+            [ecs]=moth_ecs [physics]=moth_physics [tilemap]=moth_tilemap
+            [audio]=moth_audio [assets]=moth_assets [bridge]=moth_bridge
+            [toolkit]=moth_toolkit
+          )
+          ORDER=(core gfx ui ecs physics tilemap audio assets bridge toolkit)
+
+          for m in "${ORDER[@]}"; do
+            pkg="${PKG[$m]}"
+            if [[ " $RELEASE_MODULES " == *" $m "* ]]; then
+              version="$(tr -d '[:space:]' < "modules/$m/version.txt")"
+              echo "::group::publish ${pkg}/${version} (release)"
+              (cd "modules/$m" && conan create . --build=missing -s build_type=Release)
+              conan upload "${pkg}/${version}:*" --confirm -r artifactory
+              echo "::endgroup::"
+            elif [[ " $TOUCHED_MODULES " == *" $m "* ]]; then
+              echo "::group::publish ${pkg}/develop@moth/snapshot"
+              (cd "modules/$m" && conan create . --build=missing -s build_type=Release --version develop --user moth --channel snapshot)
+              conan upload "${pkg}/develop@moth/snapshot:*" --confirm -r artifactory
+              echo "::endgroup::"
+            else
+              echo "skip ${pkg} (unchanged)"
+            fi
+          done
+
+  release:
+    name: Tag & GitHub Release
+    if: needs.detect.outputs.release_modules != ''
+    needs: [detect, publish]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create tags and releases
+        shell: bash
+        env:
+          RELEASE_MODULES: ${{ needs.detect.outputs.release_modules }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          declare -A PKG=(
+            [core]=moth_core [gfx]=moth_graphics [ui]=moth_ui
+            [ecs]=moth_ecs [physics]=moth_physics [tilemap]=moth_tilemap
+            [audio]=moth_audio [assets]=moth_assets [bridge]=moth_bridge
+            [toolkit]=moth_toolkit
+          )
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          for m in $RELEASE_MODULES; do
+            pkg="${PKG[$m]}"
+            version="$(tr -d '[:space:]' < "modules/$m/version.txt")"
+            tag="${pkg}/${version}"
+
+            if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+              echo "tag $tag already exists; skipping release"
+              continue
+            fi
+
+            # Release notes: commits touching this module since its last tag.
+            prev_tag="$(git describe --tags --abbrev=0 --match "${pkg}/*" 2>/dev/null || true)"
+            if [ -n "$prev_tag" ]; then
+              notes="$(git log --oneline "$prev_tag..HEAD" -- "modules/$m" | sed 's/^/- /' || true)"
+            else
+              notes="$(git log --oneline -- "modules/$m" | sed 's/^/- /' || true)"
+            fi
+            [ -n "$notes" ] || notes="Release ${pkg} ${version}"
+
+            echo "tagging $tag and creating release"
+            git tag "$tag"
+            git push origin "$tag"
+
+            gh release create "$tag" \
+              --title "${pkg} ${version}" \
+              --notes "$notes"
+          done

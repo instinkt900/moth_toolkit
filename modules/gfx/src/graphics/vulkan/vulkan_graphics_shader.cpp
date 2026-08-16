@@ -55,7 +55,7 @@ namespace moth::gfx::graphics::vulkan {
 
         auto impl = std::dynamic_pointer_cast<VulkanShader>(shader.GetImpl());
         if (!impl) {
-            spdlog::warn("DrawShader: shader has no Vulkan backend; skipping");
+            moth::core::log::warn("DrawShader: shader has no Vulkan backend; skipping");
             return;
         }
 

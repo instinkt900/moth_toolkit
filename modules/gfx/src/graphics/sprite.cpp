@@ -23,7 +23,7 @@ namespace moth::gfx::graphics {
             m_currentClip = std::move(*clipDesc);
             m_currentClipName = name;
         } else {
-            spdlog::warn("Sprite::SetClip: clip '{}' not found", name);
+            moth::core::log::warn("Sprite::SetClip: clip '{}' not found", name);
             m_playing = false;
         }
     }

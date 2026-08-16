@@ -7,8 +7,6 @@
 #include <moth/core/event_window.h>
 #include <moth/core/log.h>
 
-#include <spdlog/spdlog.h>
-
 using namespace moth::gfx;
 using namespace moth::gfx::graphics;
 using namespace moth::gfx::platform;
@@ -17,18 +15,6 @@ using namespace moth::core;
 namespace {
     constexpr int kLogicalWidth = 1280;
     constexpr int kLogicalHeight = 720;
-
-    // Routes moth::core logging to spdlog's default (console) logger.
-    struct SpdlogLogger : moth::core::ILogger {
-        void Log(moth::core::LogLevel level, std::string_view message) override {
-            switch (level) {
-            case moth::core::LogLevel::Debug:   spdlog::debug("{}", message); break;
-            case moth::core::LogLevel::Info:    spdlog::info("{}", message); break;
-            case moth::core::LogLevel::Warning: spdlog::warn("{}", message); break;
-            case moth::core::LogLevel::Error:   spdlog::error("{}", message); break;
-            }
-        }
-    };
 
     // Animated plasma, driven by the auto-filled iTime/iResolution built-ins.
     constexpr char const* kShaderSource = R"GLSL(
@@ -41,9 +27,6 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 }
 
 int main() {
-    SpdlogLogger logger;
-    moth::core::SetLogger(&logger);
-
     moth::gfx::platform::glfw::Platform platform;
     if (!platform.Startup()) {
         return 1;

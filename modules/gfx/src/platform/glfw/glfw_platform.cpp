@@ -89,13 +89,13 @@ namespace moth::gfx::platform::glfw {
 
     bool Platform::Startup() {
         if (glfwInit() == 0) {
-            spdlog::error("GLFW: initialization failed");
+            moth::core::log::error("GLFW: initialization failed");
             return false;
         }
-        spdlog::info("GLFW: initialized");
+        moth::core::log::info("GLFW: initialized");
         m_context = std::make_unique<graphics::vulkan::ManagedContext>();
         if (!m_context->Startup()) {
-            spdlog::error("GLFW: graphics context startup failed");
+            moth::core::log::error("GLFW: graphics context startup failed");
             m_context.reset();
             glfwTerminate();
             return false;
@@ -112,7 +112,7 @@ namespace moth::gfx::platform::glfw {
         if (!m_initialized) {
             return;
         }
-        spdlog::info("GLFW: shutting down");
+        moth::core::log::info("GLFW: shutting down");
         if (m_context) {
             m_context->Shutdown();
             m_context.reset();
@@ -123,7 +123,7 @@ namespace moth::gfx::platform::glfw {
 
     std::unique_ptr<moth::gfx::platform::Window> Platform::CreateWindow(std::string_view title, int width, int height) {
         if (m_context == nullptr) {
-            spdlog::error("GLFW: Platform::CreateWindow called without an active graphics context");
+            moth::core::log::error("GLFW: Platform::CreateWindow called without an active graphics context");
             return nullptr;
         }
         return std::make_unique<platform::glfw::Window>(m_context->GetContext(), title, width, height);
@@ -133,13 +133,13 @@ namespace moth::gfx::platform::glfw {
         moth::gfx::platform::Window& window, moth::gfx::graphics::IGraphics& graphics, bool enableViewports) {
         auto* glfwWindowPtr = dynamic_cast<moth::gfx::platform::glfw::Window*>(&window);
         if (glfwWindowPtr == nullptr) {
-            spdlog::error("Vulkan: CreateImGuiContext called with non-GLFW window");
+            moth::core::log::error("Vulkan: CreateImGuiContext called with non-GLFW window");
             return nullptr;
         }
 
         auto* vkGraphicsPtr = dynamic_cast<moth::gfx::graphics::vulkan::Graphics*>(&graphics);
         if (vkGraphicsPtr == nullptr) {
-            spdlog::error("Vulkan: CreateImGuiContext called with non-Vulkan graphics");
+            moth::core::log::error("Vulkan: CreateImGuiContext called with non-Vulkan graphics");
             return nullptr;
         }
 
@@ -160,7 +160,7 @@ namespace moth::gfx::platform::glfw {
         auto const& glfwWindow = *glfwWindowPtr;
 
         if (!ImGui_ImplGlfw_InitForVulkan(glfwWindow.GetGLFWWindow(), true)) {
-            spdlog::error("Vulkan: ImGui_ImplGlfw_InitForVulkan failed");
+            moth::core::log::error("Vulkan: ImGui_ImplGlfw_InitForVulkan failed");
             ImGui::DestroyContext();
             return nullptr;
         }
@@ -183,7 +183,7 @@ namespace moth::gfx::platform::glfw {
         initInfo.Allocator = nullptr;
         initInfo.CheckVkResultFn = checkVkResult;
         if (!ImGui_ImplVulkan_Init(&initInfo)) {
-            spdlog::error("Vulkan: ImGui_ImplVulkan_Init failed");
+            moth::core::log::error("Vulkan: ImGui_ImplVulkan_Init failed");
             ImGui_ImplGlfw_Shutdown();
             ImGui::DestroyContext();
             return nullptr;

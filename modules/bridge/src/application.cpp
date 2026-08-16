@@ -3,7 +3,7 @@
 
 #include <moth/core/event_window.h>
 
-#include <spdlog/spdlog.h>
+#include <moth/core/log.h>
 
 #include <stdexcept>
 
@@ -16,32 +16,32 @@ namespace moth::bridge {
     }
 
     void Application::Init() {
-        spdlog::info("Application: initializing");
+        moth::core::log::info("Application: initializing");
         Startup();
-        spdlog::info("Application: creating window '{}' ({}x{})", m_mainWindowTitle, m_mainWindowWidth, m_mainWindowHeight);
+        moth::core::log::info("Application: creating window '{}' ({}x{})", m_mainWindowTitle, m_mainWindowWidth, m_mainWindowHeight);
         std::unique_ptr<moth::gfx::platform::Window> window;
         try {
             window = m_platform.CreateWindow(m_mainWindowTitle, m_mainWindowWidth, m_mainWindowHeight);
         } catch (std::exception const& e) {
-            spdlog::error("Application: failed to create window: {}", e.what());
+            moth::core::log::error("Application: failed to create window: {}", e.what());
             throw;
         }
         m_uiWindow = std::make_unique<UiWindow>(std::move(window));
         m_uiWindow->GetWindow().AddEventListener(this);
         auto imguiContext = m_platform.CreateImGuiContext(m_uiWindow->GetWindow(), m_uiWindow->GetGraphics(), m_imguiViewportsEnabled);
         if (!imguiContext) {
-            spdlog::error("Application: ImGui context initialization failed");
+            moth::core::log::error("Application: ImGui context initialization failed");
             throw std::runtime_error("ImGui context initialization failed");
         }
         m_uiWindow->SetImGuiContext(std::move(imguiContext));
         PostCreateWindow();
-        spdlog::info("Application: ready");
+        moth::core::log::info("Application: ready");
     }
 
     void Application::Run() {
-        spdlog::info("Application: running");
+        moth::core::log::info("Application: running");
         TickSync();
-        spdlog::info("Application: shutting down");
+        moth::core::log::info("Application: shutting down");
         Shutdown();
         // Tear down the window before main() calls platform.Shutdown() (which
         // destroys the Vulkan instance).

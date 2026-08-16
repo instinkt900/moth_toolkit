@@ -24,9 +24,13 @@ TEST_CASE("GetLogger returns valid reference without explicit SetLogger", "[logg
     REQUIRE_NOTHROW(logger.Log(LogLevel::Info, "test"));
 }
 
-TEST_CASE("SetLogger with NullLogger does not throw", "[logger][global]") {
+TEST_CASE("SetLogger restores the default logger on nullptr", "[logger][global]") {
     NullLogger null;
     REQUIRE_NOTHROW(SetLogger(&null));
-    REQUIRE_NOTHROW(SetLogger(nullptr));
     REQUIRE(dynamic_cast<NullLogger*>(&GetLogger()) != nullptr);
+
+    REQUIRE_NOTHROW(SetLogger(nullptr));
+    // nullptr reverts to the default console logger, not the silent NullLogger.
+    REQUIRE(dynamic_cast<NullLogger*>(&GetLogger()) == nullptr);
+    REQUIRE_NOTHROW(GetLogger().Log(LogLevel::Info, "test"));
 }

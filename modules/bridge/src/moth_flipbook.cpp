@@ -1,4 +1,4 @@
-#include <spdlog/spdlog.h>
+#include <moth/core/log.h>
 #include "moth/bridge/moth_flipbook.h"
 
 namespace moth::bridge {

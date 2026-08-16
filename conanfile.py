@@ -25,7 +25,7 @@ class MothToolkitSuperbuild(ConanFile):
         # Union of the third-party deps across core/gfx/ui/bridge.
         self.requires("nlohmann_json/[>=3.11 <4]", transitive_headers=True)
         self.requires("spdlog/[~1.14]", transitive_headers=True)
-        self.requires("fmt/[>=10.2 <13]", transitive_headers=True)
+        self.requires("fmt/[~10.2]", transitive_headers=True)
         self.requires("magic_enum/[~0.8]", transitive_headers=True)
         self.requires("range-v3/[~0.12]", transitive_headers=True)
         self.requires("vulkan-memory-allocator/3.0.1", transitive_headers=True)

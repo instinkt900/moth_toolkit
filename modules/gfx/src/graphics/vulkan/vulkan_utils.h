@@ -2,7 +2,7 @@
 
 #include "murmurhash.h"
 
-#include <spdlog/spdlog.h>
+#include <moth/core/log.h>
 
 #include <string>
 #include <vector>
@@ -14,7 +14,7 @@
     {                                                                                                         \
         VkResult result_ = expr;                                                                              \
         if (result_ != VK_SUCCESS) {                                                                          \
-            spdlog::error("File: {} Line: {} {} = {}", __FILE__, __LINE__, #expr, static_cast<int>(result_)); \
+            moth::core::log::error("File: {} Line: {} {} = {}", __FILE__, __LINE__, #expr, static_cast<int>(result_)); \
             abort();                                                                                          \
         }                                                                                                     \
     }

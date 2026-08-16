@@ -28,7 +28,7 @@ namespace moth::gfx::graphics::vulkan {
             throw std::invalid_argument("Vulkan: BYO-device SurfaceContext requires non-null physicalDevice, device, and queue");
         }
         vkGetPhysicalDeviceProperties(m_vkPhysicalDevice, &m_vkDeviceProperties);
-        spdlog::info("Vulkan: surface context wrapping existing device: {}",
+        moth::core::log::info("Vulkan: surface context wrapping existing device: {}",
                      m_vkDeviceProperties.deviceName);
         initPools();
     }
@@ -36,7 +36,7 @@ namespace moth::gfx::graphics::vulkan {
     SurfaceContext::SurfaceContext(Context& context)
         : m_context(context)
         , m_assetContext(*this) {
-        spdlog::info("Vulkan: initializing surface context");
+        moth::core::log::info("Vulkan: initializing surface context");
 
         // select device
         {
@@ -44,7 +44,7 @@ namespace moth::gfx::graphics::vulkan {
             CHECK_VK_RESULT(vkEnumeratePhysicalDevices(m_context.instance, &gpuCount, nullptr));
             std::vector<VkPhysicalDevice> gpus(gpuCount);
             CHECK_VK_RESULT(vkEnumeratePhysicalDevices(m_context.instance, &gpuCount, gpus.data()));
-            spdlog::info("Vulkan: {} physical device(s) found", gpuCount);
+            moth::core::log::info("Vulkan: {} physical device(s) found", gpuCount);
 
             if (gpuCount == 0) {
                 throw std::runtime_error("Vulkan: no physical devices found");
@@ -56,7 +56,7 @@ namespace moth::gfx::graphics::vulkan {
                 VkPhysicalDeviceProperties properties;
                 vkGetPhysicalDeviceProperties(gpus[i], &properties);
                 vkGetPhysicalDeviceFeatures(gpus[i], &features);
-                spdlog::info("Vulkan: device {}: {}", i, properties.deviceName);
+                moth::core::log::info("Vulkan: device {}: {}", i, properties.deviceName);
                 if (properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && features.samplerAnisotropy == VK_TRUE) {
                     selectedGpu = i;
                     m_vkDeviceProperties = properties;
@@ -65,7 +65,7 @@ namespace moth::gfx::graphics::vulkan {
             }
 
             m_vkPhysicalDevice = gpus[selectedGpu];
-            spdlog::info("Vulkan: selected device: {}", m_vkDeviceProperties.deviceName);
+            moth::core::log::info("Vulkan: selected device: {}", m_vkDeviceProperties.deviceName);
         }
 
         // queue family
@@ -103,11 +103,11 @@ namespace moth::gfx::graphics::vulkan {
             createInfo.pEnabledFeatures = &deviceFeatures;
             CHECK_VK_RESULT(vkCreateDevice(m_vkPhysicalDevice, &createInfo, nullptr, &m_vkDevice));
             vkGetDeviceQueue(m_vkDevice, m_vkQueueFamily, 0, &m_vkQueue);
-            spdlog::info("Vulkan: logical device created (queue family {})", m_vkQueueFamily);
+            moth::core::log::info("Vulkan: logical device created (queue family {})", m_vkQueueFamily);
         }
 
         initPools();
-        spdlog::info("Vulkan: surface context ready");
+        moth::core::log::info("Vulkan: surface context ready");
     }
 
     void SurfaceContext::initPools() {
@@ -156,7 +156,7 @@ namespace moth::gfx::graphics::vulkan {
     }
 
     SurfaceContext::~SurfaceContext() {
-        spdlog::info("Vulkan: destroying surface context");
+        moth::core::log::info("Vulkan: destroying surface context");
         vkDeviceWaitIdle(m_vkDevice);
         // Flush factory caches before tearing down VMA. The factories are owned
         // by m_assetContext (a value member), which is destroyed after this

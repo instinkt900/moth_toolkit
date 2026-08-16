@@ -1,13 +1,13 @@
 #pragma once
 
-// fmt/spdlog formatters for moth_ui types.
+// fmt formatters for moth_ui types.
 // Placed in moth_graphics to keep moth_ui free of formatting dependencies.
 //
-// Include this header wherever you want to use moth_ui types in fmt/spdlog calls.
+// Include this header wherever you want to use moth_ui types in fmt calls.
 // It supersedes rect_format.h — including both is safe (rect_format.h includes
 // this header), but including just this one is sufficient.
 
-#include <spdlog/fmt/fmt.h>
+#include <fmt/format.h>
 #include <magic_enum.hpp>
 
 #include <moth_ui/utils/vector.h>

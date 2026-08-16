@@ -23,7 +23,7 @@
 #include <GLFW/glfw3.h>
 #endif
 
-#include <spdlog/spdlog.h>
+#include <moth/core/log.h>
 #include <nlohmann/json.hpp>
 #include <imgui.h>
 #if !MOTH_GRAPHICS_DISABLE_VULKAN

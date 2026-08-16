@@ -1,4 +1,4 @@
-#include <spdlog/spdlog.h>
+#include <moth/core/log.h>
 #include "moth/bridge/moth_image_factory.h"
 #include "moth/bridge/moth_image.h"
 

@@ -12,8 +12,9 @@ class MothTilemapTests(ConanFile):
         self.requires("catch2/3.13.0")
         # core, gfx, and tilemap are all built from source via add_subdirectory;
         # list their external Conan dependencies here. moth::core needs
-        # nlohmann_json; moth::gfx needs spdlog and the Vulkan stack (GLFW and
-        # FreeType/HarfBuzz come from the system package manager on Linux).
+        # nlohmann_json + fmt/spdlog (its logging facade); moth::gfx needs the
+        # Vulkan stack (GLFW and FreeType/HarfBuzz come from the system package
+        # manager on Linux).
         self.requires("nlohmann_json/[>=3.11 <4]", transitive_headers=True)
         self.requires("zlib/1.3.2")
         self.requires("spdlog/[~1.14]", transitive_headers=True)

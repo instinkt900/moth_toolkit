@@ -39,7 +39,7 @@ namespace moth::gfx::graphics::vulkan {
         std::vector<std::uint32_t> spv;
         std::string log;
         if (!CompileFragmentShaderGLSL(fragSource, spv, log)) {
-            spdlog::error("CreateShaderFromGLSL '{}': {}", name, log);
+            moth::core::log::error("CreateShaderFromGLSL '{}': {}", name, log);
             return std::make_shared<graphics::Shader>();
         }
 
@@ -52,7 +52,7 @@ namespace moth::gfx::graphics::vulkan {
 
     std::shared_ptr<graphics::Shader> AssetContext::CreateShaderFromSpirV(std::string const& name, std::vector<std::uint8_t> const& fragSpv) {
         if (fragSpv.size() % sizeof(std::uint32_t) != 0) {
-            spdlog::error("CreateShaderFromSpirV '{}': bytecode size {} is not word-aligned", name, fragSpv.size());
+            moth::core::log::error("CreateShaderFromSpirV '{}': bytecode size {} is not word-aligned", name, fragSpv.size());
             return std::make_shared<graphics::Shader>();
         }
 

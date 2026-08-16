@@ -25,8 +25,11 @@ class MothCore(ConanFile):
     def requirements(self):
         # JSON serialisation of the core math types (Vector/Rect).
         self.requires("nlohmann_json/[>=3.11 <4]", transitive_headers=True)
-        # The logging facade (moth/core/log.h) formats via fmt.
-        self.requires("fmt/[>=10.2 <13]", transitive_headers=True)
+        # The logging facade (moth/core/log.h) formats via fmt; its default
+        # logger routes to spdlog's console sink. spdlog 1.14 pins fmt to 10.2,
+        # so keep fmt on that line to avoid a version conflict.
+        self.requires("fmt/[~10.2]", transitive_headers=True)
+        self.requires("spdlog/[~1.14]", transitive_headers=True)
         # GLFW windowing backend: system on Linux, Conan on Windows.
         if self.settings.os == "Windows":
             self.requires("glfw/3.3.8", transitive_headers=True)

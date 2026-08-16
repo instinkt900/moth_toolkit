@@ -4,7 +4,6 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include <spdlog/spdlog.h>
 
 namespace {
     std::vector<char const*> const validationLayers = {
@@ -26,16 +25,16 @@ namespace {
         void* pUserData) {
         switch (messageSeverity) {
         case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-            spdlog::info("Validation Layer: {}", pCallbackData->pMessage);
+            moth::core::log::info("Validation Layer: {}", pCallbackData->pMessage);
             break;
         case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
-            spdlog::info("Validation Layer: {}", pCallbackData->pMessage);
+            moth::core::log::info("Validation Layer: {}", pCallbackData->pMessage);
             break;
         case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-            spdlog::warn("Validation Layer: {}", pCallbackData->pMessage);
+            moth::core::log::warn("Validation Layer: {}", pCallbackData->pMessage);
             break;
         case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-            spdlog::error("Validation Layer: {}", pCallbackData->pMessage);
+            moth::core::log::error("Validation Layer: {}", pCallbackData->pMessage);
             break;
         default:
             break;
@@ -81,9 +80,9 @@ namespace {
 
 namespace moth::gfx::graphics::vulkan {
     bool ManagedContext::Startup() {
-        spdlog::info("Vulkan: initializing context");
+        moth::core::log::info("Vulkan: initializing context");
 
-        spdlog::info("Vulkan: initializing FreeType");
+        moth::core::log::info("Vulkan: initializing FreeType");
         FT_Library ftLibrary = nullptr;
         FT_CHECK(FT_Init_FreeType(&ftLibrary));
 
@@ -116,7 +115,7 @@ namespace moth::gfx::graphics::vulkan {
                     }
 
                     if (!layerFound) {
-                        spdlog::error("Could not find validation layer {}.", layerName);
+                        moth::core::log::error("Could not find validation layer {}.", layerName);
                         success = false;
                         break;
                     }
@@ -134,7 +133,7 @@ namespace moth::gfx::graphics::vulkan {
             uint32_t glfwExtensionCount = 0;
             char const** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
             if (glfwExtensions == nullptr) {
-                spdlog::error("Vulkan: glfwGetRequiredInstanceExtensions returned nullptr");
+                moth::core::log::error("Vulkan: glfwGetRequiredInstanceExtensions returned nullptr");
                 glfwExtensionCount = 0;
             }
             std::vector<char const*> extensions;
@@ -149,16 +148,16 @@ namespace moth::gfx::graphics::vulkan {
             createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
             createInfo.ppEnabledExtensionNames = extensions.data();
             CHECK_VK_RESULT(vkCreateInstance(&createInfo, nullptr, &vkInstance));
-            spdlog::info("Vulkan: instance created");
+            moth::core::log::info("Vulkan: instance created");
         }
 
         if (enableValidationLayers) {
-            spdlog::info("Vulkan: enabling validation layers");
+            moth::core::log::info("Vulkan: enabling validation layers");
             VkDebugUtilsMessengerCreateInfoEXT createInfo{};
             populateDebugMessengerCreateInfo(createInfo);
             CHECK_VK_RESULT(CreateDebugUtilsMessengerEXT(vkInstance, &createInfo, nullptr, &vkDebugMessenger));
         }
-        spdlog::info("Vulkan: context ready");
+        moth::core::log::info("Vulkan: context ready");
 
         m_context.instance = vkInstance;
         m_context.ftLibrary = ftLibrary;
@@ -167,7 +166,7 @@ namespace moth::gfx::graphics::vulkan {
     }
 
     void ManagedContext::Shutdown() {
-        spdlog::info("Vulkan: destroying context");
+        moth::core::log::info("Vulkan: destroying context");
         if (enableValidationLayers) {
             DestroyDebugUtilsMessengerEXT(m_context.instance, m_debugMessenger, nullptr);
         }

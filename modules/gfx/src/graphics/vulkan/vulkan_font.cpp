@@ -103,7 +103,7 @@ namespace moth::gfx::graphics::vulkan {
 
     std::unique_ptr<Font> Font::Load(std::vector<std::uint8_t> const& data, int size, SurfaceContext& context) {
         if (context.GetContext().ftLibrary == nullptr) {
-            spdlog::error("Vulkan: Font::Load called with uninitialized FreeType library");
+            moth::core::log::error("Vulkan: Font::Load called with uninitialized FreeType library");
             return nullptr;
         }
         std::vector<std::uint8_t> fontData(data.begin(), data.end());

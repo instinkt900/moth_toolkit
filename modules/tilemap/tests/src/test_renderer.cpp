@@ -20,6 +20,7 @@ using moth::gfx::graphics::IGraphics;
 using moth::gfx::graphics::Image;
 using moth::gfx::graphics::ITarget;
 using moth::gfx::graphics::ITexture;
+using moth::gfx::graphics::Shader;
 using moth::gfx::graphics::TextHorizAlignment;
 using moth::gfx::graphics::TextVertAlignment;
 using moth::gfx::graphics::TextureAddressMode;
@@ -84,6 +85,9 @@ namespace {
         void DrawLineF(FloatVec2 const&, FloatVec2 const&) override {}
         void DrawLineF(FloatVec2 const&, FloatVec2 const&, float) override {}
         void DrawText(std::string_view, IFont&, IntRect const&, TextHorizAlignment, TextVertAlignment) override {}
+        void DrawShader(Shader const&) override {}
+        void DrawShader(Shader const&, FloatRect const&) override {}
+        void SetShader(Shader const*) override {}
         void SetClip(IntRect const*) override {}
         std::unique_ptr<ITarget> CreateTarget(int, int) override { return nullptr; }
         ITarget* GetTarget() override { return nullptr; }

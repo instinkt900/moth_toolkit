@@ -58,7 +58,7 @@ namespace moth::gfx::graphics::vulkan {
             VkResult const capsResult = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
                 m_surfaceContext.GetVkPhysicalDevice(), m_vkSurface, &caps);
             if (capsResult != VK_SUCCESS) {
-                spdlog::warn("Vulkan: vkGetPhysicalDeviceSurfaceCapabilitiesKHR returned {} — starting null frame",
+                moth::core::log::warn("Vulkan: vkGetPhysicalDeviceSurfaceCapabilitiesKHR returned {} — starting null frame",
                              static_cast<int>(capsResult));
                 m_contextStack.push(nullptr);
                 return;
@@ -115,10 +115,10 @@ namespace moth::gfx::graphics::vulkan {
         if (presentResult == VK_ERROR_OUT_OF_DATE_KHR || presentResult == VK_SUBOPTIMAL_KHR) {
             // Swapchain is no longer optimal.  The next Begin() will detect the
             // out-of-date condition via vkAcquireNextImageKHR and recreate it.
-            spdlog::warn("Vulkan: swapchain present returned {} — swapchain will be recreated on next frame",
+            moth::core::log::warn("Vulkan: swapchain present returned {} — swapchain will be recreated on next frame",
                          static_cast<int>(presentResult));
         } else if (presentResult != VK_SUCCESS) {
-            spdlog::error("Vulkan: vkQueuePresentKHR failed: {}", static_cast<int>(presentResult));
+            moth::core::log::error("Vulkan: vkQueuePresentKHR failed: {}", static_cast<int>(presentResult));
         }
     }
 
@@ -144,7 +144,7 @@ namespace moth::gfx::graphics::vulkan {
             return;
         }
         if (!std::dynamic_pointer_cast<VulkanShader>(shader->GetImpl())) {
-            spdlog::warn("SetShader: shader has no Vulkan backend; ignoring");
+            moth::core::log::warn("SetShader: shader has no Vulkan backend; ignoring");
             return;
         }
         m_activeShader = *shader;
@@ -708,7 +708,7 @@ namespace moth::gfx::graphics::vulkan {
         std::string const textStr(text);
         auto* vulkanFontPtr = dynamic_cast<Font*>(&font);
         if (vulkanFontPtr == nullptr) {
-            spdlog::warn("DrawText: font is not a Vulkan Font; skipping");
+            moth::core::log::warn("DrawText: font is not a Vulkan Font; skipping");
             return;
         }
         Font& vulkanFont = *vulkanFontPtr;
@@ -726,7 +726,7 @@ namespace moth::gfx::graphics::vulkan {
         // use this to actually submit characters at a position
         auto SubmitCharacter = [&](uint32_t glyphIndex, FloatVec2 const& pos) {
             if (context->m_glyphCount >= 1024) {
-                spdlog::warn("DrawText: glyph buffer full (1024 limit); remaining glyphs will not be rendered");
+                moth::core::log::warn("DrawText: glyph buffer full (1024 limit); remaining glyphs will not be rendered");
                 return;
             }
 

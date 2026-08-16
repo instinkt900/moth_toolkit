@@ -84,12 +84,12 @@ namespace moth::gfx::platform::glfw {
     }
 
     bool Window::CreateSurface() {
-        spdlog::info("GLFW: creating window '{}' ({}x{})", m_title, GetWidth(), GetHeight());
+        moth::core::log::info("GLFW: creating window '{}' ({}x{})", m_title, GetWidth(), GetHeight());
         CHECK_VK_RESULT(glfwCreateWindowSurface(m_context.instance, m_nativeWindow->GetGLFWWindow(), nullptr, &m_customVkSurface));
         m_surfaceContext = std::make_unique<graphics::vulkan::SurfaceContext>(m_context);
 
         SetGraphics(std::make_unique<graphics::vulkan::Graphics>(*m_surfaceContext, m_customVkSurface, GetWidth(), GetHeight()));
-        spdlog::info("GLFW: window '{}' ready", m_title);
+        moth::core::log::info("GLFW: window '{}' ready", m_title);
         return true;
     }
 }

@@ -102,8 +102,6 @@ if(MOTH_GRAPHICS_ENABLE_GLSLANG)
     find_package(glslang REQUIRED)
 endif()
 
-find_package(spdlog REQUIRED)
-
 # Core is a sibling module; in the superbuild the target already exists, standalone it is located via find_package.
 if(NOT TARGET moth::core)
     find_package(moth_core CONFIG REQUIRED)
@@ -134,7 +132,6 @@ else()
     target_compile_definitions(${PROJECT_NAME} PUBLIC MOTH_GRAPHICS_DISABLE_VULKAN=1)
 endif()
 
-target_link_libraries(${PROJECT_NAME} PUBLIC spdlog::spdlog)
 target_link_libraries(${PROJECT_NAME} PUBLIC moth::core)
 
 if(MOTH_GRAPHICS_ENABLE_GLSLANG)

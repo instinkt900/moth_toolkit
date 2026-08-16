@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(nlohmann_json REQUIRED)
 find_package(fmt REQUIRED)
+find_package(spdlog REQUIRED)
 
 # GLFW provides the native windowing backend. It comes from the system on Linux
 # (to match the GLFW/GTK3 stack already loaded by other tooling) and Conan on
@@ -42,6 +43,7 @@ target_include_directories(moth_core PRIVATE src)
 
 target_link_libraries(moth_core PUBLIC nlohmann_json::nlohmann_json)
 target_link_libraries(moth_core PUBLIC fmt::fmt)
+target_link_libraries(moth_core PUBLIC spdlog::spdlog)
 target_link_libraries(moth_core PUBLIC ${MOTH_CORE_GLFW_LINK})
 
 # Install + export so other modules (and external consumers) can find_package(moth_core).

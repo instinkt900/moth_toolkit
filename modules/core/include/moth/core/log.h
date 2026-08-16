@@ -64,7 +64,7 @@ namespace moth::core {
     /**
      * @brief Logger implementation that silently discards all messages.
      *
-     * Used as the default when no logger has been registered via @c SetLogger().
+     * Register one via @c SetLogger to mute the default console output.
      */
     class NullLogger : public ILogger {
     public:
@@ -73,12 +73,13 @@ namespace moth::core {
     };
 
     /// @brief Registers a logger for use by the moth libraries. Thread-safe.
-    ///        Pass @c nullptr to revert to the silent NullLogger.
+    ///        Pass @c nullptr to revert to the default console logger.
     /// @note The caller must guarantee the logger outlives all usage.
     ///       Call @c SetLogger(nullptr) before destroying the logger.
     void SetLogger(ILogger* logger);
 
-    /// @brief Returns the active logger, or a NullLogger if none has been set. Thread-safe.
+    /// @brief Returns the active logger, or the default console logger if none
+    ///        has been set. Thread-safe.
     ILogger& GetLogger();
 
     /// @brief Convenience free functions mirroring @c ILogger's formatted methods.

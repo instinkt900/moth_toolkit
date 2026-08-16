@@ -19,7 +19,6 @@ endif()
 if(NOT TARGET moth_ui)
     find_package(moth_ui CONFIG REQUIRED)
 endif()
-find_package(spdlog REQUIRED)
 
 set(SOURCES
     src/moth_flipbook.cpp
@@ -43,7 +42,6 @@ target_include_directories(moth_bridge PUBLIC
 target_link_libraries(moth_bridge PUBLIC moth::core)
 target_link_libraries(moth_bridge PUBLIC moth_graphics::moth_graphics)
 target_link_libraries(moth_bridge PUBLIC moth_ui::moth_ui)
-target_link_libraries(moth_bridge PUBLIC spdlog::spdlog)
 
 # Install + export only when built standalone; in the superbuild the modules are consumed
 # in-tree and packaged individually via Conan.

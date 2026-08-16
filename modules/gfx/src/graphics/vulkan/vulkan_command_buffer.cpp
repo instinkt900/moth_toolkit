@@ -225,7 +225,7 @@ namespace moth::gfx::graphics::vulkan {
                 };
             }
             // ... Add others as needed
-            spdlog::error("GetTransitionInfo: unsupported layout transition {} -> {}",
+            moth::core::log::error("GetTransitionInfo: unsupported layout transition {} -> {}",
                           static_cast<int>(oldLayout), static_cast<int>(newLayout));
             abort();
         }

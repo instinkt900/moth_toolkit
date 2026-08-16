@@ -23,13 +23,13 @@ std::optional<std::vector<SpriteSheet::FrameEntry>> ParseFrames(
     for (auto const& frameJson : framesJson) {
         if (!frameJson.contains("x") || !frameJson.contains("y") ||
             !frameJson.contains("w") || !frameJson.contains("h")) {
-            spdlog::error("SpriteSheetFactory: '{}' frame {} missing x/y/w/h fields — aborting",
+            moth::core::log::error("SpriteSheetFactory: '{}' frame {} missing x/y/w/h fields — aborting",
                           path, frameJson.dump());
             return std::nullopt;
         }
         if (!frameJson["x"].is_number_integer() || !frameJson["y"].is_number_integer() ||
             !frameJson["w"].is_number_integer() || !frameJson["h"].is_number_integer()) {
-            spdlog::error("SpriteSheetFactory: '{}' frame {} x/y/w/h must be integers — aborting",
+            moth::core::log::error("SpriteSheetFactory: '{}' frame {} x/y/w/h must be integers — aborting",
                           path, frameJson.dump());
             return std::nullopt;
         }
@@ -38,7 +38,7 @@ std::optional<std::vector<SpriteSheet::FrameEntry>> ParseFrames(
         int const w = frameJson["w"].get<int>();
         int const h = frameJson["h"].get<int>();
         if (w <= 0 || h <= 0) {
-            spdlog::error("SpriteSheetFactory: '{}' frame {} has non-positive w/h ({},{}) — aborting",
+            moth::core::log::error("SpriteSheetFactory: '{}' frame {} has non-positive w/h ({},{}) — aborting",
                           path, frameJson.dump(), w, h);
             return std::nullopt;
         }
@@ -47,7 +47,7 @@ std::optional<std::vector<SpriteSheet::FrameEntry>> ParseFrames(
         entry.pivot.x = 0;
         if (frameJson.contains("pivot_x")) {
             if (!frameJson["pivot_x"].is_number_integer()) {
-                spdlog::error("SpriteSheetFactory: '{}' pivot_x must be an integer — aborting",
+                moth::core::log::error("SpriteSheetFactory: '{}' pivot_x must be an integer — aborting",
                               path);
                 return std::nullopt;
             }
@@ -56,7 +56,7 @@ std::optional<std::vector<SpriteSheet::FrameEntry>> ParseFrames(
         entry.pivot.y = 0;
         if (frameJson.contains("pivot_y")) {
             if (!frameJson["pivot_y"].is_number_integer()) {
-                spdlog::error("SpriteSheetFactory: '{}' pivot_y must be an integer — aborting",
+                moth::core::log::error("SpriteSheetFactory: '{}' pivot_y must be an integer — aborting",
                               path);
                 return std::nullopt;
             }
@@ -70,12 +70,12 @@ std::optional<std::vector<SpriteSheet::FrameEntry>> ParseFrames(
 std::optional<SpriteSheet::ClipEntry> ParseClipEntry(
     nlohmann::json const& clipJson, std::string const& path, int totalFrames) {
     if (!clipJson.contains("name") || !clipJson["name"].is_string()) {
-        spdlog::warn("SpriteSheetFactory: '{}' skipping clip with missing or non-string 'name'",
+        moth::core::log::warn("SpriteSheetFactory: '{}' skipping clip with missing or non-string 'name'",
                      path);
         return std::nullopt;
     }
     if (!clipJson.contains("frames") || !clipJson["frames"].is_array()) {
-        spdlog::warn("SpriteSheetFactory: '{}' skipping clip '{}': missing 'frames' array",
+        moth::core::log::warn("SpriteSheetFactory: '{}' skipping clip '{}': missing 'frames' array",
                      path, clipJson["name"].get<std::string>());
         return std::nullopt;
     }
@@ -86,13 +86,13 @@ std::optional<SpriteSheet::ClipEntry> ParseClipEntry(
     bool valid = true;
     for (auto const& stepJson : clipJson["frames"]) {
         if (!stepJson.contains("frame") || !stepJson.contains("duration_ms")) {
-            spdlog::warn("SpriteSheetFactory: '{}' clip '{}': step missing frame/duration_ms",
+            moth::core::log::warn("SpriteSheetFactory: '{}' clip '{}': step missing frame/duration_ms",
                          path, entry.name);
             valid = false;
             break;
         }
         if (!stepJson["frame"].is_number_integer() || !stepJson["duration_ms"].is_number_integer()) {
-            spdlog::warn("SpriteSheetFactory: '{}' clip '{}': frame/duration_ms must be integers",
+            moth::core::log::warn("SpriteSheetFactory: '{}' clip '{}': frame/duration_ms must be integers",
                          path, entry.name);
             valid = false;
             break;
@@ -101,13 +101,13 @@ std::optional<SpriteSheet::ClipEntry> ParseClipEntry(
         step.frameIndex = stepJson["frame"].get<int>();
         step.durationMs = stepJson["duration_ms"].get<int>();
         if (step.frameIndex < 0 || step.frameIndex >= totalFrames) {
-            spdlog::warn("SpriteSheetFactory: '{}' clip '{}': frame index {} out of range [0, {})",
+            moth::core::log::warn("SpriteSheetFactory: '{}' clip '{}': frame index {} out of range [0, {})",
                          path, entry.name, step.frameIndex, totalFrames);
             valid = false;
             break;
         }
         if (step.durationMs <= 0) {
-            spdlog::warn("SpriteSheetFactory: '{}' clip '{}': duration_ms must be > 0 (got {})",
+            moth::core::log::warn("SpriteSheetFactory: '{}' clip '{}': duration_ms must be > 0 (got {})",
                          path, entry.name, step.durationMs);
             valid = false;
             break;
@@ -116,7 +116,7 @@ std::optional<SpriteSheet::ClipEntry> ParseClipEntry(
     }
 
     if (!valid || entry.desc.frames.empty()) {
-        spdlog::warn("SpriteSheetFactory: '{}' skipping empty or invalid clip '{}'",
+        moth::core::log::warn("SpriteSheetFactory: '{}' skipping empty or invalid clip '{}'",
                      path, entry.name);
         return std::nullopt;
     }
@@ -145,11 +145,11 @@ std::vector<SpriteSheet::ClipEntry> ParseClips(
 std::shared_ptr<SpriteSheet> BuildSpriteSheet(
     nlohmann::json const& json, std::shared_ptr<ITexture> texture, std::string const& label) {
     if (!texture) {
-        spdlog::error("SpriteSheetFactory: '{}' has no atlas texture", label);
+        moth::core::log::error("SpriteSheetFactory: '{}' has no atlas texture", label);
         return nullptr;
     }
     if (!json.contains("frames") || !json["frames"].is_array()) {
-        spdlog::error("SpriteSheetFactory: '{}' missing 'frames' array", label);
+        moth::core::log::error("SpriteSheetFactory: '{}' missing 'frames' array", label);
         return nullptr;
     }
 
@@ -160,7 +160,7 @@ std::shared_ptr<SpriteSheet> BuildSpriteSheet(
         return nullptr;
     }
     if (frames->empty()) {
-        spdlog::error("SpriteSheetFactory: '{}' frames array is empty", label);
+        moth::core::log::error("SpriteSheetFactory: '{}' frames array is empty", label);
         return nullptr;
     }
 
@@ -169,7 +169,7 @@ std::shared_ptr<SpriteSheet> BuildSpriteSheet(
     std::vector<SpriteSheet::ClipEntry> clips;
     if (json.contains("clips")) {
         if (!json["clips"].is_array()) {
-            spdlog::error("SpriteSheetFactory: '{}' 'clips' field must be an array (got {})",
+            moth::core::log::error("SpriteSheetFactory: '{}' 'clips' field must be an array (got {})",
                           label, json["clips"].type_name());
             return nullptr;
         }
@@ -193,7 +193,7 @@ std::shared_ptr<SpriteSheet> BuildSpriteSheet(
         std::error_code ec;
         auto const absPath = std::filesystem::absolute(path, ec);
         if (ec) {
-            spdlog::error("SpriteSheetFactory: failed to resolve path '{}': {}", path.string(), ec.message());
+            moth::core::log::error("SpriteSheetFactory: failed to resolve path '{}': {}", path.string(), ec.message());
             return nullptr;
         }
         auto const key = absPath.lexically_normal().string();
@@ -205,17 +205,17 @@ std::shared_ptr<SpriteSheet> BuildSpriteSheet(
 
         bool const fileExists = std::filesystem::exists(absPath, ec);
         if (ec) {
-            spdlog::error("SpriteSheetFactory: failed to check existence of '{}': {}", path.string(), ec.message());
+            moth::core::log::error("SpriteSheetFactory: failed to check existence of '{}': {}", path.string(), ec.message());
             return nullptr;
         }
         if (!fileExists) {
-            spdlog::error("SpriteSheetFactory: '{}' does not exist", path.string());
+            moth::core::log::error("SpriteSheetFactory: '{}' does not exist", path.string());
             return nullptr;
         }
 
         std::ifstream ifile(absPath);
         if (!ifile.is_open()) {
-            spdlog::error("SpriteSheetFactory: failed to open '{}'", absPath.string());
+            moth::core::log::error("SpriteSheetFactory: failed to open '{}'", absPath.string());
             return nullptr;
         }
 
@@ -223,12 +223,12 @@ std::shared_ptr<SpriteSheet> BuildSpriteSheet(
         try {
             ifile >> json;
         } catch (std::exception const& e) {
-            spdlog::error("SpriteSheetFactory: failed to parse '{}': {}", path.string(), e.what());
+            moth::core::log::error("SpriteSheetFactory: failed to parse '{}': {}", path.string(), e.what());
             return nullptr;
         }
 
         if (!json.contains("image") || !json["image"].is_string()) {
-            spdlog::error("SpriteSheetFactory: '{}' missing 'image' string field", path.string());
+            moth::core::log::error("SpriteSheetFactory: '{}' missing 'image' string field", path.string());
             return nullptr;
         }
 
@@ -237,13 +237,13 @@ std::shared_ptr<SpriteSheet> BuildSpriteSheet(
         auto const imageAbsPath = std::filesystem::absolute(
             rootPath / json["image"].get<std::string>(), ec).lexically_normal();
         if (ec) {
-            spdlog::error("SpriteSheetFactory: '{}' failed to resolve image path: {}", path.string(), ec.message());
+            moth::core::log::error("SpriteSheetFactory: '{}' failed to resolve image path: {}", path.string(), ec.message());
             return nullptr;
         }
 
         std::shared_ptr<ITexture> texture(m_context.TextureFromFile(imageAbsPath));
         if (!texture) {
-            spdlog::error("SpriteSheetFactory: '{}' failed to load image '{}'",
+            moth::core::log::error("SpriteSheetFactory: '{}' failed to load image '{}'",
                           path.string(), imageAbsPath.string());
             return nullptr;
         }
@@ -262,7 +262,7 @@ std::shared_ptr<SpriteSheet> BuildSpriteSheet(
         try {
             json = nlohmann::json::parse(descriptorBytes.begin(), descriptorBytes.end());
         } catch (std::exception const& e) {
-            spdlog::error("SpriteSheetFactory: failed to parse in-memory descriptor: {}", e.what());
+            moth::core::log::error("SpriteSheetFactory: failed to parse in-memory descriptor: {}", e.what());
             return nullptr;
         }
 

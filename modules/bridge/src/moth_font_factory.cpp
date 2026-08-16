@@ -1,4 +1,4 @@
-#include <spdlog/spdlog.h>
+#include <moth/core/log.h>
 #include "moth/bridge/moth_font_factory.h"
 #include "moth_graphics/graphics/font_factory.h"
 #include "moth/bridge/moth_font.h"
@@ -24,7 +24,7 @@ namespace moth::bridge {
            }
            return std::make_shared<MothFont>(font);
         }
-        spdlog::warn("MothFontFactory: font '{}' not registered (call AddFont first)", name);
+        moth::core::log::warn("MothFontFactory: font '{}' not registered (call AddFont first)", name);
         return nullptr;
     }
 }

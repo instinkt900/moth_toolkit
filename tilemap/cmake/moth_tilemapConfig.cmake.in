@@ -2,6 +2,7 @@
 
 include(CMakeFindDependencyMacro)
 find_dependency(nlohmann_json)
+find_dependency(ZLIB)
 find_dependency(moth_core)
 find_dependency(moth_graphics)
 

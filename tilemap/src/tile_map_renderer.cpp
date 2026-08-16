@@ -59,16 +59,35 @@ namespace moth::tilemap {
                     }
 
                     IntRect const sourceRect = tileset->GetTileRect(tileset->LocalId(tile.id));
-                    FloatVec2 const position = map.TileToWorld(tx, ty);
+                    FloatVec2 const topLeft = map.TileToWorld(tx, ty);
+
+                    // Tiled's flip flags compose as (rotation, flipX, flipY):
+                    // the anti-diagonal flag is a 90-degree clockwise rotation
+                    // about the tile centre plus a horizontal flip, applied
+                    // before the H/V mirrors. Square tiles only — non-square
+                    // tiles are not supported for the diagonal flip.
+                    FloatVec2 position = topLeft;
+                    FloatVec2 pivot{ 0.0f, 0.0f };
+                    float rotation = 0.0f;
+                    bool flipX = tile.flipHorizontal;
+                    bool flipY = tile.flipVertical;
+
+                    if (tile.flipDiagonal) {
+                        position += FloatVec2{ static_cast<float>(map.tileWidth) * 0.5f,
+                                               static_cast<float>(map.tileHeight) * 0.5f };
+                        pivot = FloatVec2{ 0.5f, 0.5f };
+                        rotation = 90.0f;
+                        flipX = !tile.flipHorizontal;
+                    }
 
                     // Wrap the tile's atlas sub-region in an Image so the flip
                     // flags can be honoured by the transform-based draw call.
                     Image const tileImage(atlas.GetTexture(), sourceRect);
                     graphics.DrawImage(tileImage,
-                                       Transform2D{ position, 0.0f, FloatVec2{ 1.0f, 1.0f } },
-                                       FloatVec2{ 0.0f, 0.0f },
-                                       tile.flipHorizontal,
-                                       tile.flipVertical);
+                                       Transform2D{ position, rotation, FloatVec2{ 1.0f, 1.0f } },
+                                       pivot,
+                                       flipX,
+                                       flipY);
                 }
             }
         }

@@ -21,8 +21,10 @@ class MothTilemap(ConanFile):
 
     def requirements(self):
         # TMJ parsing uses nlohmann_json; the renderer uses moth::gfx types. Both
-        # appear in our public headers, so they must reach consumers.
+        # appear in our public headers, so they must reach consumers. zlib is a
+        # compiled link dependency (compressed tile data) and stays private.
         self.requires("nlohmann_json/[>=3.11 <4]", transitive_headers=True)
+        self.requires("zlib/1.3.2")
         self.requires("moth_core/0.1.0", transitive_headers=True)
         self.requires("moth_graphics/1.2.0", transitive_headers=True)
 

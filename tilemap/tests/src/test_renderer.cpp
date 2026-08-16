@@ -40,6 +40,8 @@ namespace {
         struct DrawCall {
             FloatVec2 position;
             IntRect sourceRect;
+            FloatVec2 pivot;
+            float rotation = 0.0f;
             bool flipX;
             bool flipY;
         };
@@ -57,10 +59,12 @@ namespace {
         void PopTransform() override {}
 
         void DrawImage(Image const& image, Transform2D const& transform,
-                       FloatVec2 const&, bool flipX, bool flipY) override {
+                       FloatVec2 const& pivot, bool flipX, bool flipY) override {
             DrawCall call;
             call.position = transform.position;
             call.sourceRect = image.GetSourceRect();
+            call.pivot = pivot;
+            call.rotation = transform.rotation;
             call.flipX = flipX;
             call.flipY = flipY;
             drawCalls.push_back(call);
@@ -172,6 +176,43 @@ TEST_CASE("Renderer: honours horizontal and vertical flips", "[tilemap][renderer
     REQUIRE_FALSE(graphics.drawCalls[0].flipY);
     REQUIRE_FALSE(graphics.drawCalls[1].flipX);
     REQUIRE(graphics.drawCalls[1].flipY);
+}
+
+TEST_CASE("Renderer: diagonal flip rotates 90 degrees and toggles the horizontal flip", "[tilemap][renderer]") {
+    TileMap map = MakeMap(1, 1);
+    AddLayer(map, { 0x20000001u }); // id 1, anti-diagonal flip
+
+    MockGraphics graphics;
+    std::vector<Image> tilesetImages{ Image(std::make_shared<MockTexture>()) };
+
+    DrawTileMap(graphics, map, tilesetImages, MakeRect(0.0f, 0.0f, 16.0f, 16.0f));
+
+    REQUIRE(graphics.drawCalls.size() == 1);
+    auto const& call = graphics.drawCalls[0];
+    REQUIRE(call.rotation == Catch::Approx(90.0f));
+    REQUIRE(call.flipX);
+    REQUIRE_FALSE(call.flipY);
+    REQUIRE(call.pivot.x == Catch::Approx(0.5f));
+    REQUIRE(call.pivot.y == Catch::Approx(0.5f));
+    // Position is now the tile centre.
+    REQUIRE(call.position.x == Catch::Approx(8.0f));
+    REQUIRE(call.position.y == Catch::Approx(8.0f));
+}
+
+TEST_CASE("Renderer: diagonal + horizontal flip cancels the horizontal flip", "[tilemap][renderer]") {
+    TileMap map = MakeMap(1, 1);
+    AddLayer(map, { 0xA0000001u }); // id 1, H + anti-diagonal -> 90-degree rotation, no flip
+
+    MockGraphics graphics;
+    std::vector<Image> tilesetImages{ Image(std::make_shared<MockTexture>()) };
+
+    DrawTileMap(graphics, map, tilesetImages, MakeRect(0.0f, 0.0f, 16.0f, 16.0f));
+
+    REQUIRE(graphics.drawCalls.size() == 1);
+    auto const& call = graphics.drawCalls[0];
+    REQUIRE(call.rotation == Catch::Approx(90.0f));
+    REQUIRE_FALSE(call.flipX);
+    REQUIRE_FALSE(call.flipY);
 }
 
 TEST_CASE("Renderer: skips invisible layers", "[tilemap][renderer]") {

@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(nlohmann_json REQUIRED)
+find_package(ZLIB REQUIRED)
 
 # Sibling modules: in the superbuild the targets already exist, standalone they
 # are located via find_package.
@@ -40,6 +41,7 @@ target_include_directories(moth_tilemap PUBLIC
 target_include_directories(moth_tilemap PRIVATE src)
 
 target_link_libraries(moth_tilemap PUBLIC nlohmann_json::nlohmann_json)
+target_link_libraries(moth_tilemap PUBLIC ZLIB::ZLIB)
 target_link_libraries(moth_tilemap PUBLIC moth::core)
 target_link_libraries(moth_tilemap PUBLIC ${MOTH_TILEMAP_GFX})
 

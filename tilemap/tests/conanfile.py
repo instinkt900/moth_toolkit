@@ -15,6 +15,7 @@ class MothTilemapTests(ConanFile):
         # nlohmann_json; moth::gfx needs spdlog and the Vulkan stack (GLFW and
         # FreeType/HarfBuzz come from the system package manager on Linux).
         self.requires("nlohmann_json/[>=3.11 <4]", transitive_headers=True)
+        self.requires("zlib/1.3.2")
         self.requires("spdlog/[~1.14]", transitive_headers=True)
         if self.settings.os == "Windows":
             self.requires("glfw/3.3.8", transitive_headers=True)

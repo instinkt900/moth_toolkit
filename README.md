@@ -13,8 +13,7 @@ and Conan-packaged; `moth::ecs` (EnTT-backed entity-component system) replaced
 the interim `moth::gfx::scene::Scene`/`Entity` model, `moth::physics` wraps
 Box2D, `moth::tilemap` loads and renders Tiled `.tmj` maps, `moth::audio` wraps
 miniaudio, and `moth::assets` adds id/path asset addressing plus a `.pak` pack
-format (cooked by the `moth_pak` CLI). See the Obsidian vault roadmap for the
-remaining work (Phase 8 asset pipeline).
+format (cooked by the `moth_pak` CLI).
 
 ## Layout
 
@@ -74,7 +73,7 @@ Assets load by path by default. To cook a folder into a single `.pak` archive
 plus a `manifest.json`, use `moth_pak` (built with `-DMOTH_ENABLE_TOOLS=ON`):
 
 ```bash
-./build/moth_pak assets/ --pak out/assets.pak --manifest out/manifest.json
+./build/tools/moth_pak/moth_pak assets/ --pak out/assets.pak --manifest out/manifest.json
 ```
 
 Each asset's id is the FNV-1a hash of its path relative to the input folder, so
@@ -83,8 +82,12 @@ it can later be addressed by id or by path. Load the archive at runtime with
 loader (e.g. `AudioEngine::LoadSoundFromMemory`). See
 `examples/packed_audio_demo/` for a complete cook → load-by-id → play loop.
 
-## Plan
+## Roadmap
 
-The full design lives in the Obsidian vault (`Moth_Toolkit/`), covering vision,
-architecture, feature gaps, the renderer review, the roadmap, open decisions,
-and the monorepo migration guide.
+The toolkit grows in phases, each shippable on its own. It currently provides
+the core math/event/loop types, the Vulkan-backed `moth::gfx` renderer, the
+`moth::ui` node-graph system, an EnTT-backed ECS, Box2D physics, Tiled `.tmj`
+tilemaps, miniaudio playback, and id/path asset loading with a `.pak` pack
+format. Every module is Conan-packaged and usable on its own or through the
+superbuild; unprocessed projects keep loading assets by path, and `moth_pak`
+adds optional archive-based loading.

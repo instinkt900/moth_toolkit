@@ -37,3 +37,5 @@ class MothToolkitSuperbuild(ConanFile):
         # MOTH_GRAPHICS_ENABLE_GLSLANG CMake option).
         if self.options.enable_glslang:
             self.requires("glslang/1.3.268.0")
+            # glslang's public SPIR-V headers include spirv-tools/libspirv.h.
+            self.requires("spirv-tools/1.3.268.0")

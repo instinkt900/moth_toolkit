@@ -27,6 +27,9 @@ class MothGraphicsTests(ConanFile):
         self.requires("vulkan-memory-allocator/3.0.1", transitive_headers=True)
         if self.options.enable_glslang:
             self.requires("glslang/1.3.268.0")
+            # glslang's public SPIR-V headers include spirv-tools/libspirv.h,
+            # so spirv-tools' headers must be visible while we build.
+            self.requires("spirv-tools/1.3.268.0")
 
     def system_requirements(self):
         if self.settings.os == "Linux":

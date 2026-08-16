@@ -38,4 +38,8 @@ if(MOTH_ENABLE_PHYSICS)
     target_link_libraries(moth_toolkit INTERFACE moth::physics)
 endif()
 
+if(MOTH_ENABLE_TILEMAP)
+    target_link_libraries(moth_toolkit INTERFACE moth::tilemap)
+endif()
+
 install(DIRECTORY include/ DESTINATION include)

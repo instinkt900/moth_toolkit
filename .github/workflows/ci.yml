@@ -161,18 +161,18 @@ jobs:
           cmake --preset conan-release
           cmake --build --preset conan-release
 
-      - name: Build and smoke-test moth_packer (packaged)
-        working-directory: tools/moth_packer
+      - name: Build and smoke-test moth_pak (packaged)
+        working-directory: tools/moth_pak
         run: |
           conan install . --build=missing -s build_type=Release
           cmake --preset conan-release
           cmake --build --preset conan-release
-          mkdir -p /tmp/moth_packer_smoke/input/sub
-          printf 'hello' > /tmp/moth_packer_smoke/input/a.txt
-          printf 'world' > /tmp/moth_packer_smoke/input/sub/b.txt
-          ./build/Release/moth_packer /tmp/moth_packer_smoke/input --pak /tmp/moth_packer_smoke/out.pak --manifest /tmp/moth_packer_smoke/manifest.json
-          test -s /tmp/moth_packer_smoke/out.pak
-          test -s /tmp/moth_packer_smoke/manifest.json
+          mkdir -p /tmp/moth_pak_smoke/input/sub
+          printf 'hello' > /tmp/moth_pak_smoke/input/a.txt
+          printf 'world' > /tmp/moth_pak_smoke/input/sub/b.txt
+          ./build/Release/moth_pak /tmp/moth_pak_smoke/input --pak /tmp/moth_pak_smoke/out.pak --manifest /tmp/moth_pak_smoke/manifest.json
+          test -s /tmp/moth_pak_smoke/out.pak
+          test -s /tmp/moth_pak_smoke/manifest.json
 
       - name: Build and run the packed-audio example (headless)
         working-directory: examples/packed_audio_demo

@@ -1,7 +1,7 @@
-// moth_packer — cooks a folder of assets into a .pak + manifest.json.
+// moth_pak — cooks a folder of assets into a .pak + manifest.json.
 //
 // Usage:
-//   moth_packer <input-dir> [--pak PATH] [--manifest PATH]
+//   moth_pak <input-dir> [--pak PATH] [--manifest PATH]
 //
 // Defaults: --pak assets.pak and --manifest manifest.json, both in the current
 // working directory. Each asset's id is the FNV-1a hash of its path relative to
@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
 
     std::error_code ec;
     if (!std::filesystem::is_directory(options.inputDir, ec)) {
-        std::printf("moth_packer: '%s' is not a directory\n", options.inputDir.string().c_str());
+        std::printf("moth_pak: '%s' is not a directory\n", options.inputDir.string().c_str());
         return 1;
     }
 
@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
     // Round-trip check: read the archive back and report what was packed.
     auto const packed = moth::assets::PackedAssetSource::Load(options.pakPath);
     if (!packed.IsValid()) {
-        std::printf("moth_packer: failed to write a valid .pak to '%s'\n", options.pakPath.string().c_str());
+        std::printf("moth_pak: failed to write a valid .pak to '%s'\n", options.pakPath.string().c_str());
         return 1;
     }
 

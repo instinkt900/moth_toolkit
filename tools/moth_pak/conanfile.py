@@ -2,8 +2,8 @@ from conan import ConanFile
 from conan.tools.cmake import cmake_layout
 
 
-class MothPacker(ConanFile):
-    name = "moth_packer"
+class MothPak(ConanFile):
+    name = "moth_pak"
     settings = "os", "compiler", "build_type", "arch"
     generators = "CMakeToolchain", "CMakeDeps"
 

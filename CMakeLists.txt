@@ -27,7 +27,7 @@ option(MOTH_ENABLE_TILEMAP "Build the moth::tilemap module (Tiled .tmj maps)"   
 option(MOTH_ENABLE_AUDIO   "Build the moth::audio module (miniaudio playback)"          ON)
 option(MOTH_ENABLE_ASSETS  "Build the moth::assets module (id/path asset loading)"      ON)
 option(MOTH_ENABLE_TOOLKIT "Build the moth::toolkit aggregate target"                 ON)
-option(MOTH_ENABLE_TOOLS "Build the moth_packer CLI tool (requires moth::assets)"     OFF)
+option(MOTH_ENABLE_TOOLS "Build the moth_pak CLI tool (requires moth::assets)"       OFF)
 option(MOTH_ENABLE_EXAMPLES "Build the example projects"                              OFF)
 
 # ---------------------------------------------------------------------------
@@ -131,7 +131,7 @@ if(MOTH_ENABLE_TOOLKIT)
 endif()
 
 if(MOTH_ENABLE_TOOLS)
-    add_subdirectory(tools/moth_packer)
+    add_subdirectory(tools/moth_pak)
 endif()
 
 if(MOTH_ENABLE_EXAMPLES)

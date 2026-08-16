@@ -13,7 +13,7 @@ and Conan-packaged; `moth::ecs` (EnTT-backed entity-component system) replaced
 the interim `moth::gfx::scene::Scene`/`Entity` model, `moth::physics` wraps
 Box2D, `moth::tilemap` loads and renders Tiled `.tmj` maps, `moth::audio` wraps
 miniaudio, and `moth::assets` adds id/path asset addressing plus a `.pak` pack
-format (cooked by the `moth_packer` CLI). See the Obsidian vault roadmap for the
+format (cooked by the `moth_pak` CLI). See the Obsidian vault roadmap for the
 remaining work (Phase 8 asset pipeline).
 
 ## Layout
@@ -33,7 +33,7 @@ modules/              the moth:: libraries (each Conan-packaged)
   toolkit/              moth::toolkit — aggregate target + feature header
 cmake/features.h.in   generated MOTH_HAS_* compile-time flags
 examples/             sample games / consumption tests
-tools/                moth new scaffold CLI + moth_packer asset cooker
+tools/                moth new scaffold CLI + moth_pak asset cooker
 ```
 
 ## Building
@@ -71,10 +71,10 @@ See `examples/` for fuller samples (ECS sprites, physics, tilemaps, audio).
 ## Packing assets
 
 Assets load by path by default. To cook a folder into a single `.pak` archive
-plus a `manifest.json`, use `moth_packer` (built with `-DMOTH_ENABLE_TOOLS=ON`):
+plus a `manifest.json`, use `moth_pak` (built with `-DMOTH_ENABLE_TOOLS=ON`):
 
 ```bash
-./build/moth_packer assets/ --pak out/assets.pak --manifest out/manifest.json
+./build/moth_pak assets/ --pak out/assets.pak --manifest out/manifest.json
 ```
 
 Each asset's id is the FNV-1a hash of its path relative to the input folder, so

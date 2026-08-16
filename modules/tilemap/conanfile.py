@@ -26,7 +26,7 @@ class MothTilemap(ConanFile):
         self.requires("nlohmann_json/[>=3.11 <4]", transitive_headers=True)
         self.requires("zlib/1.3.2")
         self.requires("moth_core/0.1.0", transitive_headers=True)
-        self.requires("moth_graphics/1.2.0", transitive_headers=True)
+        self.requires("moth_graphics/2.0.0", transitive_headers=True)
 
     def build_requirements(self):
         self.tool_requires("cmake/[>=3.27.0]")

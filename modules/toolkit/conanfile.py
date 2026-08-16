@@ -85,9 +85,9 @@ class MothToolkit(ConanFile):
         if self.options.enable_core:
             self.requires("moth_core/0.1.0", transitive_headers=True, transitive_libs=True)
         if self.options.enable_gfx:
-            self.requires("moth_graphics/1.2.0", transitive_headers=True, transitive_libs=True)
+            self.requires("moth_graphics/2.0.0", transitive_headers=True, transitive_libs=True)
         if self.options.enable_ui:
-            self.requires("moth_ui/1.1.2", transitive_headers=True, transitive_libs=True)
+            self.requires("moth_ui/2.0.0", transitive_headers=True, transitive_libs=True)
         if self.options.enable_bridge:
             self.requires("moth_bridge/0.1.0", transitive_headers=True, transitive_libs=True)
         if self.options.enable_ecs:

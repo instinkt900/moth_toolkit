@@ -9,7 +9,7 @@ class MothGameTemplate(ConanFile):
     generators = "CMakeToolchain", "CMakeDeps"
 
     def requirements(self):
-        self.requires("moth_graphics/1.2.0")
+        self.requires("moth_graphics/2.0.0")
 
     def build_requirements(self):
         self.tool_requires("cmake/[>=3.27.0]")

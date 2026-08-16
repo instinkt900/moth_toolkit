@@ -45,6 +45,8 @@
 #include <moth/core/blend_mode.h>
 #include <moth/core/text_alignment.h>
 #include <moth/core/interp.h>
+#include <moth/core/timer.h>
+#include <moth/core/tween.h>
 #include <moth/core/event.h>
 #include <moth/core/event_dispatch.h>
 #include <moth/core/event_key.h>

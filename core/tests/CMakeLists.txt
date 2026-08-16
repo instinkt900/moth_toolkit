@@ -19,6 +19,8 @@ set(SOURCES
     src/test_angle.cpp
     src/test_random.cpp
     src/test_noise.cpp
+    src/test_timer.cpp
+    src/test_tween.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

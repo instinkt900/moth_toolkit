@@ -3,9 +3,8 @@
 #include "moth/bridge/moth_flipbook.h"
 
 namespace moth::bridge {
-    using namespace moth::gfx::graphics;
+    using namespace moth::gfx;
     using namespace moth::core;
-    namespace graphics = moth::gfx::graphics;
     MothFlipbookFactory::MothFlipbookFactory(SpriteSheetFactory& factoryImpl)
         : m_factoryImpl(factoryImpl) {
     }

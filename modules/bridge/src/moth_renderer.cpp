@@ -7,9 +7,8 @@
 #include <cmath>
 
 namespace moth::bridge {
-    using namespace moth::gfx::graphics;
+    using namespace moth::gfx;
     using namespace moth::core;
-    namespace graphics = moth::gfx::graphics;
     namespace {
         TextureFilter ToGraphicsFilter(moth::ui::TextureFilter f) {
             return f == moth::ui::TextureFilter::Nearest

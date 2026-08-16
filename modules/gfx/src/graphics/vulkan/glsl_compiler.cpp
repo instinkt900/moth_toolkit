@@ -6,7 +6,7 @@
 #include <glslang/Public/ResourceLimits.h>
 #include <glslang/SPIRV/GlslangToSpv.h>
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     namespace {
         // Prepended to every user shader: the Shadertoy built-ins (auto-filled
         // uniform buffer + channel samplers) and the vertex->fragment interface.
@@ -105,7 +105,7 @@ void main() {
     }
 }
 #else
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     bool CompileFragmentShaderGLSL(std::string const& source,
                                    std::vector<std::uint32_t>& outSpv,
                                    std::string& outLog) {

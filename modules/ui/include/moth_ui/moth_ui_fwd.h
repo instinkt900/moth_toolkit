@@ -136,6 +136,3 @@ namespace moth::ui {
     using moth::core::Color;
 }
 
-// Transitional alias — see moth_ui.h.
-namespace moth_ui = moth::ui;
-

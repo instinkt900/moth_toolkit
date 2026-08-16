@@ -3,7 +3,7 @@
 #include <cmath>
 #include <moth/core/color.h>
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     using moth::core::Color;
     namespace BasicColors = moth::core::BasicColors;
     using moth::core::Clamp;

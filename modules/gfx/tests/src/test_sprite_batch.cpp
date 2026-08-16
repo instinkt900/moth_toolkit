@@ -11,7 +11,7 @@
 #include <vector>
 
 using namespace moth::gfx;
-using namespace moth::gfx::graphics;
+using namespace moth::gfx;
 
 namespace {
     struct MockTexture : ITexture {

@@ -11,7 +11,7 @@
 #include <vector>
 #include <cstdint>
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     struct FrameSlot {
         UniqueHandle<VkSemaphore> imageAvailable;
         UniqueHandle<VkSemaphore> renderFinished;

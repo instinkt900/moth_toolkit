@@ -2,21 +2,20 @@
 #include "moth/bridge/moth_flipbook.h"
 
 namespace moth::bridge {
-    using namespace moth::gfx::graphics;
+    using namespace moth::gfx;
     using namespace moth::core;
-    namespace graphics = moth::gfx::graphics;
     namespace {
-        moth::ui::IFlipbook::LoopType ToMothLoopType(graphics::SpriteSheet::LoopType t) {
+        moth::ui::IFlipbook::LoopType ToMothLoopType(moth::gfx::SpriteSheet::LoopType t) {
             switch (t) {
-            case graphics::SpriteSheet::LoopType::Stop:  return moth::ui::IFlipbook::LoopType::Stop;
-            case graphics::SpriteSheet::LoopType::Reset: return moth::ui::IFlipbook::LoopType::Reset;
-            case graphics::SpriteSheet::LoopType::Loop:  return moth::ui::IFlipbook::LoopType::Loop;
+            case moth::gfx::SpriteSheet::LoopType::Stop:  return moth::ui::IFlipbook::LoopType::Stop;
+            case moth::gfx::SpriteSheet::LoopType::Reset: return moth::ui::IFlipbook::LoopType::Reset;
+            case moth::gfx::SpriteSheet::LoopType::Loop:  return moth::ui::IFlipbook::LoopType::Loop;
             default:                                      return moth::ui::IFlipbook::LoopType::Stop;
             }
         }
     }
 
-    MothFlipbook::MothFlipbook(std::shared_ptr<graphics::SpriteSheet> spriteSheet)
+    MothFlipbook::MothFlipbook(std::shared_ptr<moth::gfx::SpriteSheet> spriteSheet)
         : m_spriteSheet(spriteSheet)
         , m_image(spriteSheet->GetImage()) {
     }

@@ -14,10 +14,10 @@
 #include <memory>
 #include <vector>
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     class SurfaceContext;
 
-    class AssetContext : public graphics::AssetContext {
+    class AssetContext : public moth::gfx::AssetContext {
     public:
         explicit AssetContext(SurfaceContext& context);
         ~AssetContext() override = default;
@@ -27,10 +27,10 @@ namespace moth::gfx::graphics::vulkan {
         AssetContext(AssetContext&&) = delete;
         AssetContext& operator=(AssetContext&&) = delete;
 
-        graphics::TextureFactory& GetTextureFactory() override { return m_textureFactory; }
-        graphics::FontFactory& GetFontFactory() override { return m_fontFactory; }
-        graphics::SpriteSheetFactory& GetSpriteSheetFactory() override { return m_spriteSheetFactory; }
-        graphics::ShaderFactory& GetShaderFactory() override { return m_shaderFactory; }
+        moth::gfx::TextureFactory& GetTextureFactory() override { return m_textureFactory; }
+        moth::gfx::FontFactory& GetFontFactory() override { return m_fontFactory; }
+        moth::gfx::SpriteSheetFactory& GetSpriteSheetFactory() override { return m_spriteSheetFactory; }
+        moth::gfx::ShaderFactory& GetShaderFactory() override { return m_shaderFactory; }
 
         std::unique_ptr<IFont> FontFromFile(std::filesystem::path const& path, uint32_t size) override;
         std::unique_ptr<IFont> FontFromMemory(std::vector<std::uint8_t> const& data, uint32_t size) override;
@@ -38,14 +38,14 @@ namespace moth::gfx::graphics::vulkan {
         std::unique_ptr<ITexture> TextureFromMemory(std::vector<std::uint8_t> const& data) override;
         std::unique_ptr<ITexture> TextureFromPixels(int width, int height, uint8_t const* pixels) override;
         void SaveTextureToPNG(ITexture& texture, std::filesystem::path const& path, IntRect const& sourceRect) override;
-        std::shared_ptr<graphics::Shader> CreateShaderFromGLSL(std::string const& name, std::string const& fragSource) override;
-        std::shared_ptr<graphics::Shader> CreateShaderFromSpirV(std::string const& name, std::vector<std::uint8_t> const& fragSpv) override;
+        std::shared_ptr<moth::gfx::Shader> CreateShaderFromGLSL(std::string const& name, std::string const& fragSource) override;
+        std::shared_ptr<moth::gfx::Shader> CreateShaderFromSpirV(std::string const& name, std::vector<std::uint8_t> const& fragSpv) override;
 
     private:
         SurfaceContext& m_context;
-        graphics::TextureFactory m_textureFactory;
-        graphics::FontFactory m_fontFactory;
-        graphics::SpriteSheetFactory m_spriteSheetFactory;
-        graphics::ShaderFactory m_shaderFactory;
+        moth::gfx::TextureFactory m_textureFactory;
+        moth::gfx::FontFactory m_fontFactory;
+        moth::gfx::SpriteSheetFactory m_spriteSheetFactory;
+        moth::gfx::ShaderFactory m_shaderFactory;
     };
 }

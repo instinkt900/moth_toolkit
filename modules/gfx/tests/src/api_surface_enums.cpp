@@ -8,7 +8,7 @@
 #include <type_traits>
 
 using namespace moth::gfx;
-using namespace moth::gfx::graphics;
+using namespace moth::gfx;
 
 TEST_CASE("BlendMode enum values are stable", "[api][enums][blend_mode]") {
     using U = std::underlying_type_t<BlendMode>;

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     /// @brief Compiles a Shadertoy-style GLSL fragment shader to SPIR-V.
     ///
     /// @p source declares a @c mainImage(out vec4 fragColor, in vec2 fragCoord)

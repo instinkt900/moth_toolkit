@@ -7,7 +7,7 @@
 #include <cassert>
 
 namespace moth::gfx::platform::glfw {
-    Window::Window(graphics::vulkan::Context& context, std::string_view title, int width, int height)
+    Window::Window(moth::gfx::vulkan::Context& context, std::string_view title, int width, int height)
         : moth::gfx::platform::Window(title, width, height)
         , m_context(context) {
         m_nativeWindow = std::make_unique<moth::core::glfw::Window>(title, width, height);
@@ -28,7 +28,7 @@ namespace moth::gfx::platform::glfw {
         m_nativeWindow.reset();    // destroys the GLFW window
     }
 
-    graphics::SurfaceContext& Window::GetSurfaceContext() const {
+    moth::gfx::SurfaceContext& Window::GetSurfaceContext() const {
         assert(m_surfaceContext && "GetSurfaceContext called on a window without a valid surface context (CreateWindow failed or already destroyed)");
         return *m_surfaceContext;
     }
@@ -76,7 +76,7 @@ namespace moth::gfx::platform::glfw {
     }
 
     void Window::OnResize(int width, int height) {
-        auto* graphics = dynamic_cast<graphics::vulkan::Graphics*>(GetGraphicsPtr());
+        auto* graphics = dynamic_cast<moth::gfx::vulkan::Graphics*>(GetGraphicsPtr());
         if (graphics == nullptr) {
             return;
         }
@@ -86,9 +86,9 @@ namespace moth::gfx::platform::glfw {
     bool Window::CreateSurface() {
         moth::core::log::info("GLFW: creating window '{}' ({}x{})", m_title, GetWidth(), GetHeight());
         CHECK_VK_RESULT(glfwCreateWindowSurface(m_context.instance, m_nativeWindow->GetGLFWWindow(), nullptr, &m_customVkSurface));
-        m_surfaceContext = std::make_unique<graphics::vulkan::SurfaceContext>(m_context);
+        m_surfaceContext = std::make_unique<moth::gfx::vulkan::SurfaceContext>(m_context);
 
-        SetGraphics(std::make_unique<graphics::vulkan::Graphics>(*m_surfaceContext, m_customVkSurface, GetWidth(), GetHeight()));
+        SetGraphics(std::make_unique<moth::gfx::vulkan::Graphics>(*m_surfaceContext, m_customVkSurface, GetWidth(), GetHeight()));
         moth::core::log::info("GLFW: window '{}' ready", m_title);
         return true;
     }

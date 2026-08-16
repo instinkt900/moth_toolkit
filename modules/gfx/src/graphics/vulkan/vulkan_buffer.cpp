@@ -2,7 +2,7 @@
 #include "vulkan_buffer.h"
 #include "vulkan_utils.h"
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     Buffer::Buffer(SurfaceContext& context, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties)
         : m_context(context)
         , m_vkBuffer(VK_NULL_HANDLE)

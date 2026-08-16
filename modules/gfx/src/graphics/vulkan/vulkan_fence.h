@@ -5,7 +5,7 @@
 
 #include <vulkan/vulkan_core.h>
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     class Fence {
     public:
         Fence(SurfaceContext& context);

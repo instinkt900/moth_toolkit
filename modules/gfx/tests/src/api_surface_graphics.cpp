@@ -9,7 +9,7 @@
 #include <memory>
 
 using namespace moth::gfx;
-using namespace moth::gfx::graphics;
+using namespace moth::gfx;
 
 TEST_CASE("IGraphics method signatures are stable", "[api][graphics][igraphics]") {
     void (IGraphics::*begin)()                                  = &IGraphics::Begin;

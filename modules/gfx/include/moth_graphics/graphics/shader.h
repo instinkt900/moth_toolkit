@@ -5,7 +5,7 @@
 #include <array>
 #include <memory>
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     /// @brief Backend handle for a compiled shader (Vulkan shader module etc.).
     ///
     /// Consumers never touch this — they use @c Shader, which wraps one of these

@@ -19,7 +19,7 @@
         }                                                                                                     \
     }
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     static constexpr uint32_t HashSeed = 0xc00db11c;
 
     template <typename T>

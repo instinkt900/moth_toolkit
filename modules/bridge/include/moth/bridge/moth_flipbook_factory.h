@@ -10,12 +10,12 @@
 namespace moth::bridge {
     class MothFlipbookFactory : public moth::ui::IFlipbookFactory {
     public:
-        explicit MothFlipbookFactory(moth::gfx::graphics::SpriteSheetFactory& factoryImpl);
+        explicit MothFlipbookFactory(moth::gfx::SpriteSheetFactory& factoryImpl);
         ~MothFlipbookFactory() override = default;
 
         std::unique_ptr<moth::ui::IFlipbook> GetFlipbook(std::filesystem::path const& path) override;
 
     private:
-        moth::gfx::graphics::SpriteSheetFactory& m_factoryImpl;
+        moth::gfx::SpriteSheetFactory& m_factoryImpl;
     };
 }

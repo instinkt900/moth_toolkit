@@ -9,7 +9,7 @@
 #include <memory>
 #include <string_view>
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     class SurfaceContext;
 }
 
@@ -41,23 +41,23 @@ namespace moth::gfx::platform {
         UiDelegate* GetUiDelegate() const { return m_uiDelegate; }
 
         /// @brief Returns the per-window GPU resource context.
-        virtual graphics::SurfaceContext& GetSurfaceContext() const = 0;
+        virtual moth::gfx::SurfaceContext& GetSurfaceContext() const = 0;
 
         /// @brief Returns the graphics interface for this window.
-        graphics::IGraphics& GetGraphics() const { return *m_graphics; }
+        moth::gfx::IGraphics& GetGraphics() const { return *m_graphics; }
 
         /// @brief Returns the graphics device (resource creation) for this window.
-        graphics::IGraphicsDevice& GetDevice() const;
+        moth::gfx::IGraphicsDevice& GetDevice() const;
 
         /// @brief Returns the texture factory for this window.
-        graphics::TextureFactory& GetTextureFactory() const;
+        moth::gfx::TextureFactory& GetTextureFactory() const;
 
     protected:
-        void SetGraphics(std::unique_ptr<graphics::IGraphics> graphics) { m_graphics = std::move(graphics); }
-        graphics::IGraphics* GetGraphicsPtr() const { return m_graphics.get(); }
+        void SetGraphics(std::unique_ptr<moth::gfx::IGraphics> graphics) { m_graphics = std::move(graphics); }
+        moth::gfx::IGraphics* GetGraphicsPtr() const { return m_graphics.get(); }
 
     private:
         UiDelegate* m_uiDelegate = nullptr;
-        std::unique_ptr<graphics::IGraphics> m_graphics;
+        std::unique_ptr<moth::gfx::IGraphics> m_graphics;
     };
 }

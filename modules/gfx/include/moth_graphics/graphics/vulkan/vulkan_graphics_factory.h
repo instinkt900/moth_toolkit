@@ -7,7 +7,7 @@
 #include <memory>
 #include <cstdint>
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     class SurfaceContext;
 
     /// @brief Create a Vulkan graphics instance for standalone use.

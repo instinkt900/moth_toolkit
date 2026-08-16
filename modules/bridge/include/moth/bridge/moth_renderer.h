@@ -17,7 +17,7 @@ namespace moth::bridge {
     /// @brief Adapts a moth::gfx IGraphics to the moth::ui IRenderer interface.
     class MothRenderer : public moth::ui::IRenderer {
     public:
-        explicit MothRenderer(moth::gfx::graphics::IGraphics& graphics);
+        explicit MothRenderer(moth::gfx::IGraphics& graphics);
         ~MothRenderer() override = default;
 
         void PushBlendMode(moth::ui::BlendMode mode) override;
@@ -43,8 +43,8 @@ namespace moth::bridge {
         void SetRendererLogicalSize(moth::ui::IntVec2 const& size) override;
 
     private:
-        moth::gfx::graphics::IGraphics& m_graphics;
-        std::stack<moth::gfx::graphics::Color> m_drawColor;
+        moth::gfx::IGraphics& m_graphics;
+        std::stack<moth::gfx::Color> m_drawColor;
         std::stack<moth::ui::FloatMat4x4> m_transform;
         std::stack<moth::ui::TextureFilter> m_textureFilter;
     };

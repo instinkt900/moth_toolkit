@@ -7,7 +7,7 @@
 
 #include <cstring>
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     void Graphics::UpdateShaderBuiltins(VulkanShader& shader) {
         auto* context = CurrentContext();
         if (context == nullptr) {
@@ -35,7 +35,7 @@ namespace moth::gfx::graphics::vulkan {
         shader.GetBuiltinsBuffer().Unmap();
     }
 
-    void Graphics::DrawShader(graphics::Shader const& shader) {
+    void Graphics::DrawShader(moth::gfx::Shader const& shader) {
         auto* context = CurrentContext();
         if (context == nullptr) {
             return;
@@ -47,7 +47,7 @@ namespace moth::gfx::graphics::vulkan {
         DrawShader(shader, fullscreen);
     }
 
-    void Graphics::DrawShader(graphics::Shader const& shader, FloatRect const& destRect) {
+    void Graphics::DrawShader(moth::gfx::Shader const& shader, FloatRect const& destRect) {
         auto* context = CurrentContext();
         if (context == nullptr) {
             return;

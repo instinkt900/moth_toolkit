@@ -5,7 +5,7 @@
 
 #include <memory>
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     struct Context;
     class ManagedContext;
 }
@@ -21,7 +21,7 @@ namespace moth::gfx::platform::glfw {
 
         std::unique_ptr<moth::gfx::platform::Window> CreateWindow(std::string_view title, int width, int height) override;
 
-        std::unique_ptr<ImGuiContext> CreateImGuiContext(platform::Window& window, graphics::IGraphics& graphics, bool enableViewports) override;
+        std::unique_ptr<ImGuiContext> CreateImGuiContext(platform::Window& window, moth::gfx::IGraphics& graphics, bool enableViewports) override;
 
     private:
         void ShutdownImpl();
@@ -33,7 +33,7 @@ namespace moth::gfx::platform::glfw {
         // make_unique<Platform> call site), which then fails the incomplete-
         // type sizeof check on ManagedContext. The destructor body for
         // Platform is defined in glfw_platform.cpp where the type is complete.
-        std::unique_ptr<moth::gfx::graphics::vulkan::ManagedContext> m_context;
+        std::unique_ptr<moth::gfx::vulkan::ManagedContext> m_context;
         bool m_initialized = false;
     };
 }

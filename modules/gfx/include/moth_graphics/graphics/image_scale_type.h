@@ -1,6 +1,6 @@
 #pragma once
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     enum class ImageScaleType {
         Stretch,
         Tile,

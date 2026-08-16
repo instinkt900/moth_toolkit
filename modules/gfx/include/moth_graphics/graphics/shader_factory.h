@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     /**
      * @brief Cached shader loader/compiler.
      *

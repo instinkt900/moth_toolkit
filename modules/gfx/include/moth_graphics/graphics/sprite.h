@@ -8,7 +8,7 @@
 #include <string>
 #include <string_view>
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     class IGraphics;
 
     /// @brief Animated sprite driven by a SpriteSheet.

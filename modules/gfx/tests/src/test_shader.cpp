@@ -8,7 +8,7 @@
 #include <memory>
 
 using namespace moth::gfx;
-using namespace moth::gfx::graphics;
+using namespace moth::gfx;
 
 namespace {
     struct FakeShader : IShader {};
@@ -64,7 +64,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 
     std::vector<std::uint32_t> spv;
     std::string log;
-    REQUIRE(moth::gfx::graphics::vulkan::CompileFragmentShaderGLSL(source, spv, log));
+    REQUIRE(moth::gfx::vulkan::CompileFragmentShaderGLSL(source, spv, log));
     REQUIRE(!spv.empty());
     REQUIRE(spv.front() == 0x07230203u); // SPIR-V magic number
 }
@@ -72,7 +72,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 TEST_CASE("glsl compiler rejects malformed source", "[shader][glslang]") {
     std::vector<std::uint32_t> spv;
     std::string log;
-    REQUIRE_FALSE(moth::gfx::graphics::vulkan::CompileFragmentShaderGLSL("void mainImage( {", spv, log));
+    REQUIRE_FALSE(moth::gfx::vulkan::CompileFragmentShaderGLSL("void mainImage( {", spv, log));
     REQUIRE(!log.empty());
 }
 
@@ -85,7 +85,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 
     std::vector<std::uint32_t> spv;
     std::string log;
-    REQUIRE(moth::gfx::graphics::vulkan::CompileFragmentShaderGLSL(source, spv, log));
+    REQUIRE(moth::gfx::vulkan::CompileFragmentShaderGLSL(source, spv, log));
     REQUIRE(!spv.empty());
 }
 #endif

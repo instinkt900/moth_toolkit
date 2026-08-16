@@ -14,18 +14,18 @@ using moth::core::IntRect;
 using moth::core::IntVec2;
 using moth::core::MakeRect;
 using moth::core::Transform2D;
-using moth::gfx::graphics::BlendMode;
-using moth::gfx::graphics::IFont;
-using moth::gfx::graphics::IGraphics;
-using moth::gfx::graphics::Image;
-using moth::gfx::graphics::ITarget;
-using moth::gfx::graphics::ITexture;
-using moth::gfx::graphics::Shader;
-using moth::gfx::graphics::TextHorizAlignment;
-using moth::gfx::graphics::TextVertAlignment;
-using moth::gfx::graphics::TextureAddressMode;
-using moth::gfx::graphics::TextureFilter;
-using moth::gfx::graphics::TexturedVertex;
+using moth::gfx::BlendMode;
+using moth::gfx::IFont;
+using moth::gfx::IGraphics;
+using moth::gfx::Image;
+using moth::gfx::ITarget;
+using moth::gfx::ITexture;
+using moth::gfx::Shader;
+using moth::gfx::TextHorizAlignment;
+using moth::gfx::TextVertAlignment;
+using moth::gfx::TextureAddressMode;
+using moth::gfx::TextureFilter;
+using moth::gfx::TexturedVertex;
 
 namespace {
     struct MockTexture : ITexture {

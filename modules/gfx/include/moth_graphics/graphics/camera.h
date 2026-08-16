@@ -6,7 +6,7 @@
 #include <cmath>
 #include <cstdint>
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     namespace {
         constexpr float kPi = 3.14159265f;
     }

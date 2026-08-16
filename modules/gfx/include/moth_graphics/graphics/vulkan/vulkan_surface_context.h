@@ -9,8 +9,8 @@
 
 #include <cstdint>
 
-namespace moth::gfx::graphics::vulkan {
-    class SurfaceContext : public graphics::SurfaceContext {
+namespace moth::gfx::vulkan {
+    class SurfaceContext : public moth::gfx::SurfaceContext {
     public:
         /// @brief Create a surface context that selects a physical device and
         ///        creates a logical device, descriptor pool, command pool, and
@@ -28,7 +28,7 @@ namespace moth::gfx::graphics::vulkan {
 
         ~SurfaceContext() override;
 
-        graphics::AssetContext& GetAssetContext() override { return m_assetContext; }
+        moth::gfx::AssetContext& GetAssetContext() override { return m_assetContext; }
 
         // Extension methods — not on the base SurfaceContext interface.
         Context& GetContext() const { return m_context; }

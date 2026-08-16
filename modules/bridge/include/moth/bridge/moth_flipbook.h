@@ -10,7 +10,7 @@
 namespace moth::bridge {
     class MothFlipbook : public moth::ui::IFlipbook {
     public:
-        explicit MothFlipbook(std::shared_ptr<moth::gfx::graphics::SpriteSheet> spriteSheet);
+        explicit MothFlipbook(std::shared_ptr<moth::gfx::SpriteSheet> spriteSheet);
         ~MothFlipbook() override = default;
 
         moth::ui::IImage const& GetImage() const override;
@@ -21,7 +21,7 @@ namespace moth::bridge {
         bool GetClipDesc(std::string_view name, moth::ui::IFlipbook::ClipDesc& outDesc) const override;
 
     private:
-        std::shared_ptr<moth::gfx::graphics::SpriteSheet> m_spriteSheet;
+        std::shared_ptr<moth::gfx::SpriteSheet> m_spriteSheet;
         MothImage m_image;
     };
 }

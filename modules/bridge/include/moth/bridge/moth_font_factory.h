@@ -10,13 +10,13 @@
 namespace moth::bridge {
     class MothFontFactory : public moth::ui::FontFactory {
     public:
-        explicit MothFontFactory(moth::gfx::graphics::FontFactory& factoryImpl);
+        explicit MothFontFactory(moth::gfx::FontFactory& factoryImpl);
         ~MothFontFactory() override = default;
 
         void ClearFonts() override;
         std::shared_ptr<moth::ui::IFont> GetFont(std::string const& name, int size) override;
 
     private:
-        moth::gfx::graphics::FontFactory& m_factoryImpl;
+        moth::gfx::FontFactory& m_factoryImpl;
     };
 }

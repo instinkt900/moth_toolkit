@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <utility>
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     void SpriteBatch::Add(Sprite sprite) {
         m_sprites.push_back(std::move(sprite));
     }

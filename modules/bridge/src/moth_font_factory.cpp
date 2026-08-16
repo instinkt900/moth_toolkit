@@ -4,10 +4,9 @@
 #include "moth/bridge/moth_font.h"
 
 namespace moth::bridge {
-    using namespace moth::gfx::graphics;
+    using namespace moth::gfx;
     using namespace moth::core;
-    namespace graphics = moth::gfx::graphics;
-    MothFontFactory::MothFontFactory(moth::gfx::graphics::FontFactory& factoryImpl)
+    MothFontFactory::MothFontFactory(moth::gfx::FontFactory& factoryImpl)
         : m_factoryImpl(factoryImpl) {
     }
 

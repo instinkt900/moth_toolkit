@@ -7,7 +7,7 @@
 
 #include <cstdint>
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     /// @brief Abstract GPU texture resource.
     ///
     /// Owns raw pixel data on the GPU. Wrap in an @c Image to use with draw

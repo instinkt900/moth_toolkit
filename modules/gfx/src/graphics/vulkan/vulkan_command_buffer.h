@@ -13,7 +13,7 @@
 #include <cstdint>
 #include <stddef.h>
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     class CommandBuffer {
     public:
         CommandBuffer(SurfaceContext& context);

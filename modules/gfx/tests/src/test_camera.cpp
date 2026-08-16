@@ -5,7 +5,7 @@
 #include <cmath>
 
 using namespace moth::gfx;
-using namespace moth::gfx::graphics;
+using namespace moth::gfx;
 
 namespace {
     bool Near(float a, float b, float eps = 1e-3f) {

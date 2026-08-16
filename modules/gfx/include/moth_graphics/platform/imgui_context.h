@@ -19,7 +19,7 @@ namespace moth::gfx::platform {
         virtual ~ImGuiContext() = default;
 
         virtual void NewFrame() = 0;
-        virtual void Render(graphics::IGraphics& graphics) = 0;
+        virtual void Render(moth::gfx::IGraphics& graphics) = 0;
         virtual void Shutdown() = 0;
 
         /// @brief Draw a texture as an ImGui image widget.
@@ -30,7 +30,7 @@ namespace moth::gfx::platform {
         /// @param size    Display size in ImGui pixels.
         /// @param uv0     Top-left UV coordinate (texture-space, 0..1).
         /// @param uv1     Bottom-right UV coordinate (texture-space, 0..1).
-        virtual void Image(graphics::ITexture const& texture, IntVec2 const& size,
+        virtual void Image(moth::gfx::ITexture const& texture, IntVec2 const& size,
                            FloatVec2 const& uv0, FloatVec2 const& uv1) = 0;
     };
 

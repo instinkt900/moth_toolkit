@@ -3,7 +3,7 @@
 
 #include <optional>
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     SpriteSheet::SpriteSheet(Image image,
                              std::vector<FrameEntry> frames,
                              std::vector<ClipEntry> clips)

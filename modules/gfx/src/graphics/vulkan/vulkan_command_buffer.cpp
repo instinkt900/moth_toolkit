@@ -2,7 +2,7 @@
 #include "vulkan_command_buffer.h"
 #include "vulkan_utils.h"
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     CommandBuffer::CommandBuffer(SurfaceContext& context)
         : m_context(context)
         , m_vkCommandBuffer(VK_NULL_HANDLE) {

@@ -9,7 +9,7 @@
 #include <string_view>
 
 using namespace moth::gfx;
-using namespace moth::gfx::graphics;
+using namespace moth::gfx;
 
 TEST_CASE("SpriteSheet method signatures are stable", "[api][sprite][spritesheet]") {
     // Nested type field layout

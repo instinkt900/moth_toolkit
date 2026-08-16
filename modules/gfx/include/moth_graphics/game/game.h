@@ -8,7 +8,7 @@
 #include <string>
 
 namespace moth::gfx::game {
-    using moth::gfx::graphics::IGraphics;
+    using moth::gfx::IGraphics;
 
     /**
      * @brief A single game state with Update/Draw hooks.

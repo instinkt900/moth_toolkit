@@ -9,7 +9,7 @@
 #include <string_view>
 #include <vector>
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     /// @brief A loaded sprite sheet animation.
     ///
     /// Holds a sprite sheet image plus per-frame rects/pivots and named clip data.

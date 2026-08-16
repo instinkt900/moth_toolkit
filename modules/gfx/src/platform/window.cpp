@@ -11,15 +11,15 @@ namespace moth::gfx::platform {
 
     Window::~Window() = default;
 
-    graphics::TextureFactory& Window::GetTextureFactory() const {
+    moth::gfx::TextureFactory& Window::GetTextureFactory() const {
         return GetSurfaceContext().GetAssetContext().GetTextureFactory();
     }
 
-    graphics::IGraphicsDevice& Window::GetDevice() const {
+    moth::gfx::IGraphicsDevice& Window::GetDevice() const {
         // The graphics implementation doubles as the device (resource-creation)
         // backend; the interfaces are split so drawing and resource creation can
         // diverge later (e.g. a shared device for a future 3D backend).
-        auto* device = dynamic_cast<graphics::IGraphicsDevice*>(m_graphics.get());
+        auto* device = dynamic_cast<moth::gfx::IGraphicsDevice*>(m_graphics.get());
         assert(device != nullptr && "GetDevice called on a window whose graphics backend is not an IGraphicsDevice");
         return *device;
     }

@@ -78,7 +78,7 @@ namespace {
     while (0)               \
         ;
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     bool ManagedContext::Startup() {
         moth::core::log::info("Vulkan: initializing context");
 

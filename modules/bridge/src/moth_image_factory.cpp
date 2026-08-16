@@ -3,10 +3,9 @@
 #include "moth/bridge/moth_image.h"
 
 namespace moth::bridge {
-    using namespace moth::gfx::graphics;
+    using namespace moth::gfx;
     using namespace moth::core;
-    namespace graphics = moth::gfx::graphics;
-    MothImageFactory::MothImageFactory(graphics::TextureFactory& factoryImpl)
+    MothImageFactory::MothImageFactory(moth::gfx::TextureFactory& factoryImpl)
         : m_factoryImpl(factoryImpl) {
     }
 

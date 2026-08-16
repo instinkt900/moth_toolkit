@@ -25,9 +25,9 @@ namespace moth::tilemap {
      * Infinite maps are culled at chunk granularity; finite maps at tile
      * granularity.
      */
-    void DrawTileMap(moth::gfx::graphics::IGraphics& graphics,
+    void DrawTileMap(moth::gfx::IGraphics& graphics,
                      TileMap const& map,
-                     std::vector<moth::gfx::graphics::Image> const& tilesetImages,
+                     std::vector<moth::gfx::Image> const& tilesetImages,
                      FloatRect const& viewRect,
                      std::uint32_t timeMs = 0);
 }

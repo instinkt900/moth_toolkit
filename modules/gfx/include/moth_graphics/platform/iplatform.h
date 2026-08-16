@@ -36,6 +36,6 @@ namespace moth::gfx::platform {
         /// @param enableViewports Whether to enable multi-viewport support.
         /// @returns A fully initialized ImGui context, or @c nullptr on failure.
         virtual std::unique_ptr<ImGuiContext> CreateImGuiContext(
-            Window& window, graphics::IGraphics& graphics, bool enableViewports) = 0;
+            Window& window, moth::gfx::IGraphics& graphics, bool enableViewports) = 0;
     };
 }

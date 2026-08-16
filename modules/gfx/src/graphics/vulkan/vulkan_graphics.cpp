@@ -12,7 +12,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     namespace {
         // Nested-clip intersection: clamp b inside a, collapsing to a zero-area
         // rect when the two don't overlap (so the resulting scissor clips away).
@@ -189,9 +189,9 @@ namespace moth::gfx::graphics::vulkan {
         context->m_colorStack.pop();
     }
 
-    void Graphics::SetShader(graphics::Shader const* shader) {
+    void Graphics::SetShader(moth::gfx::Shader const* shader) {
         if (shader == nullptr || !shader->IsValid()) {
-            m_activeShader = graphics::Shader{};
+            m_activeShader = moth::gfx::Shader{};
             return;
         }
         if (!std::dynamic_pointer_cast<VulkanShader>(shader->GetImpl())) {

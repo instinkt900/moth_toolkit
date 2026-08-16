@@ -11,12 +11,12 @@
 namespace moth::bridge {
     class MothImageFactory : public moth::ui::IImageFactory {
     public:
-        explicit MothImageFactory(moth::gfx::graphics::TextureFactory& factoryImpl);
+        explicit MothImageFactory(moth::gfx::TextureFactory& factoryImpl);
         ~MothImageFactory() override = default;
 
         std::unique_ptr<moth::ui::IImage> GetImage(std::filesystem::path const& path) override;
 
     private:
-        moth::gfx::graphics::TextureFactory& m_factoryImpl;
+        moth::gfx::TextureFactory& m_factoryImpl;
     };
 }

@@ -38,7 +38,7 @@ namespace moth::gfx::platform {
 
 } // namespace moth::gfx::platform
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
 
     // -------------------------------------------------------------------------
     // Graphics interfaces
@@ -63,7 +63,5 @@ namespace moth::gfx::graphics {
     class SpriteSheetFactory;
     class Camera;
 
-} // namespace moth::gfx::graphics
+} // namespace moth::gfx
 
-// Transitional alias — see moth_graphics.h.
-namespace moth_graphics = moth::gfx;

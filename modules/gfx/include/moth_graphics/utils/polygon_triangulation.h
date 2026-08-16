@@ -5,7 +5,7 @@
 #include <cstddef>
 #include <vector>
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     // Triangulate a simple polygon perimeter into a flat list of triangle
     // vertices (three per triangle) ready to hand to @c IGraphics::DrawTrianglesF.
     // Convex and concave outlines are supported; holes are not; fewer than three

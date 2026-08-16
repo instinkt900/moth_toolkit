@@ -5,7 +5,7 @@
 #include "vulkan_swapchain.h"
 #include <vulkan/vulkan_core.h>
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     Framebuffer::Framebuffer(SurfaceContext& context, uint32_t width, uint32_t height, VkImage image, VkImageView view, VkFormat format, VkRenderPass renderPass, uint32_t swapchainIndex)
         : m_context(context)
         , m_swapchainIndex(swapchainIndex) {

@@ -2,7 +2,7 @@
 #include "common.h"
 #include "vulkan_fence.h"
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     Fence::Fence(SurfaceContext& context)
         : m_context(context) {
         VkFenceCreateInfo fenceInfo{};

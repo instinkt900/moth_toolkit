@@ -6,7 +6,7 @@
 
 #include <stddef.h>
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     class Buffer {
     public:
         Buffer(SurfaceContext& context, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties);

@@ -19,7 +19,7 @@ namespace moth::gfx::platform {
     class Window;
 }
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     /// @brief Abstract 2D rendering interface.
     ///
     /// All drawing operations are batched between a @c Begin() / @c End() pair.
@@ -191,7 +191,7 @@ namespace moth::gfx::graphics {
         ///
         /// Triangulation runs on every call, so this suits dynamic or
         /// modest-sized shapes. For large static geometry (e.g. land regions),
-        /// triangulate once with @c graphics::TriangulatePolygon and draw the
+        /// triangulate once with @c moth::gfx::TriangulatePolygon and draw the
         /// cached vertices each frame via @c DrawTrianglesF instead.
         ///
         /// @param points Perimeter points in local pixels.
@@ -203,7 +203,7 @@ namespace moth::gfx::graphics {
         /// @p vertices holds three points per triangle in local (pre-transform)
         /// space; the active transform is applied. Any trailing points that do
         /// not complete a triple are ignored. This is the cached counterpart to
-        /// @c DrawFillPolygonF: pair it with @c graphics::TriangulatePolygon to
+        /// @c DrawFillPolygonF: pair it with @c moth::gfx::TriangulatePolygon to
         /// triangulate a polygon once and redraw it without re-triangulating.
         ///
         /// @param vertices Triangle vertices in local pixels (three per triangle).

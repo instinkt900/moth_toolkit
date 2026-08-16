@@ -3,7 +3,7 @@
 #include "moth_graphics/graphics/color.h"
 #include "moth_graphics/utils/vector.h"
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     /// @brief A textured vertex with per-vertex position, UV and color.
     ///
     /// Used with @c IGraphics::DrawTexturedTrianglesF. The UV is in texture

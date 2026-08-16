@@ -2,7 +2,7 @@
 
 #include "moth_graphics/graphics/vulkan/vulkan_context.h"
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     /// @brief Moth-managed Vulkan context.
     ///
     /// Creates and owns a VkInstance and FT_Library via Startup(), tears them

@@ -10,7 +10,7 @@
 
 using namespace moth::gfx;
 using namespace moth::gfx::platform;
-using namespace moth::gfx::graphics;
+using namespace moth::gfx;
 
 TEST_CASE("Ticker method signatures are stable", "[api][platform][ticker]") {
     uint32_t (Ticker::*getFixed)() const = &Ticker::GetFixedTicks;
@@ -25,16 +25,16 @@ TEST_CASE("IPlatform method signatures are stable", "[api][platform][iplatform]"
     void (IPlatform::*shutdown)()                                         = &IPlatform::Shutdown;
     std::unique_ptr<Window> (IPlatform::*createWin)(
         std::string_view, int, int)                                       = &IPlatform::CreateWindow;
-    std::unique_ptr<ImGuiContext> (IPlatform::*createImGui)(Window&, graphics::IGraphics&, bool) = &IPlatform::CreateImGuiContext;
+    std::unique_ptr<ImGuiContext> (IPlatform::*createImGui)(Window&, moth::gfx::IGraphics&, bool) = &IPlatform::CreateImGuiContext;
     (void)startup; (void)shutdown; (void)createWin; (void)createImGui;
     SUCCEED();
 }
 
 TEST_CASE("ImGuiContext method signatures are stable", "[api][platform][imgui]") {
     void (ImGuiContext::*newFrame)()                     = &ImGuiContext::NewFrame;
-    void (ImGuiContext::*render)(graphics::IGraphics&)   = &ImGuiContext::Render;
+    void (ImGuiContext::*render)(moth::gfx::IGraphics&)   = &ImGuiContext::Render;
     void (ImGuiContext::*shutdown)()                     = &ImGuiContext::Shutdown;
-    void (ImGuiContext::*image)(graphics::ITexture const&, IntVec2 const&,
+    void (ImGuiContext::*image)(moth::gfx::ITexture const&, IntVec2 const&,
                                 FloatVec2 const&, FloatVec2 const&) = &ImGuiContext::Image;
     (void)newFrame; (void)render; (void)shutdown; (void)image;
     SUCCEED();
@@ -48,7 +48,7 @@ TEST_CASE("Window inherits EventEmitter and IEventListener", "[api][platform][wi
 
 TEST_CASE("Window method signatures are stable", "[api][platform][window]") {
     void (Window::*update)(uint32_t)                            = &Window::Update;
-    graphics::SurfaceContext& (Window::*getSurface)() const     = &Window::GetSurfaceContext;
+    moth::gfx::SurfaceContext& (Window::*getSurface)() const     = &Window::GetSurfaceContext;
     void (Window::*setTitle)(std::string_view)                  = &Window::SetWindowTitle;
     bool (Window::*isMaximized)() const                         = &Window::IsMaximized;
     IntVec2 const& (Window::*getPos)() const                    = &Window::GetPosition;

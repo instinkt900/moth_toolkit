@@ -4,7 +4,7 @@
 
 #include <memory>
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     /// @brief Creates backend GPU resources, decoupled from drawing.
     ///
     /// @c IGraphics is immediate-mode 2D drawing only; this interface owns

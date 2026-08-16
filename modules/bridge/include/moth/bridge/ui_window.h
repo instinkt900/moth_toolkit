@@ -26,8 +26,8 @@ namespace moth::bridge {
         moth::gfx::platform::Window& GetWindow() const { return *m_window; }
 
         // Forwarding to the underlying graphics window.
-        moth::gfx::graphics::IGraphics& GetGraphics() const { return m_window->GetGraphics(); }
-        moth::gfx::graphics::SurfaceContext& GetSurfaceContext() const { return m_window->GetSurfaceContext(); }
+        moth::gfx::IGraphics& GetGraphics() const { return m_window->GetGraphics(); }
+        moth::gfx::SurfaceContext& GetSurfaceContext() const { return m_window->GetSurfaceContext(); }
         void Update(uint32_t ticks);
         void BeginFrame() { m_window->BeginFrame(); }
         void EndFrame() { m_window->EndFrame(); }

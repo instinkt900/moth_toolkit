@@ -2,7 +2,7 @@
 #include "moth_graphics/graphics/sprite.h"
 #include "moth_graphics/graphics/igraphics.h"
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     Sprite::Sprite(std::shared_ptr<SpriteSheet> spriteSheet)
         : m_spriteSheet(std::move(spriteSheet)) {
     }

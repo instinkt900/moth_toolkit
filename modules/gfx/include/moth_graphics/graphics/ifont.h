@@ -4,7 +4,7 @@
 
 #include <string_view>
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     /// @brief Abstract handle to a loaded font.
     ///
     /// Holds a reference to a backend-specific font resource. Obtain instances

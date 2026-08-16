@@ -2,7 +2,7 @@
 
 #include "moth_graphics/graphics/image.h"
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     /// @brief Abstract off-screen render target.
     ///
     /// Created via @c IGraphicsDevice::CreateTarget(). Activate it with

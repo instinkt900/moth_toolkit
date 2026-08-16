@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     /// @brief Cached sprite sheet loader.
     ///
     /// Parses .flipbook.json descriptors produced by moth_packer and loads the

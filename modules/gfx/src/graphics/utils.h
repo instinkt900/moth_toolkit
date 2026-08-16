@@ -20,7 +20,7 @@ namespace moth::gfx {
     }
 
     struct ColorComponents {
-        explicit ColorComponents(graphics::Color const& color)
+        explicit ColorComponents(moth::gfx::Color const& color)
             : r(static_cast<uint8_t>(255 * std::clamp(color.r, 0.0f, 1.0f)))
             , g(static_cast<uint8_t>(255 * std::clamp(color.g, 0.0f, 1.0f)))
             , b(static_cast<uint8_t>(255 * std::clamp(color.b, 0.0f, 1.0f)))

@@ -10,7 +10,7 @@
 #include <vector>
 #include <cstdint>
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     class Pipeline {
     public:
         Pipeline(uint32_t hash, VkDevice device, VkPipeline pipeline, std::shared_ptr<Shader> shader);

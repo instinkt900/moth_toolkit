@@ -4,7 +4,7 @@
 
 //NOLINTBEGIN(readability-function-cognitive-complexity)
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     TextureFactory::TextureFactory(AssetContext& context)
         : m_context(context) {
     }

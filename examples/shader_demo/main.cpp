@@ -8,7 +8,7 @@
 #include <moth/core/log.h>
 
 using namespace moth::gfx;
-using namespace moth::gfx::graphics;
+using namespace moth::gfx;
 using namespace moth::gfx::platform;
 using namespace moth::core;
 

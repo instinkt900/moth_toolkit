@@ -12,7 +12,7 @@
 #include <string_view>
 #include <cstdint>
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     struct Context;
     class SurfaceContext;
 }
@@ -25,10 +25,10 @@ namespace moth::gfx::platform::glfw {
     /// to the UI delegate installed via @c Window::SetUiDelegate.
     class Window : public moth::gfx::platform::Window, public moth::core::glfw::Window::Listener {
     public:
-        Window(graphics::vulkan::Context& context, std::string_view title, int width, int height);
+        Window(moth::gfx::vulkan::Context& context, std::string_view title, int width, int height);
         ~Window() override;
 
-        graphics::SurfaceContext& GetSurfaceContext() const override;
+        moth::gfx::SurfaceContext& GetSurfaceContext() const override;
         void SetWindowTitle(std::string_view title) override;
         GLFWwindow* GetGLFWWindow() const { return m_nativeWindow->GetGLFWWindow(); }
         VkSurfaceKHR GetVkSurface() const { return m_customVkSurface; }
@@ -51,9 +51,9 @@ namespace moth::gfx::platform::glfw {
     private:
         bool CreateSurface();
 
-        graphics::vulkan::Context& m_context;
+        moth::gfx::vulkan::Context& m_context;
         std::unique_ptr<moth::core::glfw::Window> m_nativeWindow;
-        std::unique_ptr<graphics::vulkan::SurfaceContext> m_surfaceContext;
+        std::unique_ptr<moth::gfx::vulkan::SurfaceContext> m_surfaceContext;
         VkSurfaceKHR m_customVkSurface = VK_NULL_HANDLE;
     };
 }

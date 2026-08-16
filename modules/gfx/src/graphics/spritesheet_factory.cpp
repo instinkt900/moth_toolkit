@@ -4,7 +4,7 @@
 
 #include <optional>
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
 namespace {
 
 SpriteSheet::LoopType ParseLoopType(std::string const& loopStr) {

@@ -8,7 +8,7 @@
 #include <memory>
 #include <cstdint>
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     class RenderPass {
     public:
         RenderPass(uint32_t hash, VkDevice device, VkRenderPass renderPass);

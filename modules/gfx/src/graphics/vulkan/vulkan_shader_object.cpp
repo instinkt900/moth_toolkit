@@ -3,7 +3,7 @@
 #include "vulkan_utils.h"
 #include "shaders/vulkan_shaders.h"
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     namespace {
         // The quad vertex shader's push constant block (xyScale/xyOffset), see
         // Graphics::PushConstants. Must match drawing_shader.vert.

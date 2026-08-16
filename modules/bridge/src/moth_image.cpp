@@ -2,9 +2,8 @@
 #include "moth/bridge/moth_image.h"
 
 namespace moth::bridge {
-    using namespace moth::gfx::graphics;
+    using namespace moth::gfx;
     using namespace moth::core;
-    namespace graphics = moth::gfx::graphics;
     MothImage::MothImage(Image baseImage)
         : m_baseImage(std::move(baseImage)) {
     }

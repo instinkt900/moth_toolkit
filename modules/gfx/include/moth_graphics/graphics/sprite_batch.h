@@ -6,7 +6,7 @@
 
 #include <vector>
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     class IGraphics;
 
     /// @brief Collects sprites and draws them in depth (z) order.

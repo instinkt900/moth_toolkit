@@ -12,13 +12,13 @@
 #include <utility>
 #include <vector>
 
-namespace moth::gfx::graphics::vulkan {
-    /// @brief Vulkan backend for @c graphics::Shader.
+namespace moth::gfx::vulkan {
+    /// @brief Vulkan backend for @c moth::gfx::Shader.
     ///
     /// Owns the pipeline-level @c Shader (quad vertex + user fragment), the
     /// auto-filled builtins uniform buffer (@c iTime/@c iResolution/@c iMouse),
     /// and the descriptor sets for the four @c iChannel samplers.
-    class VulkanShader : public graphics::IShader {
+    class VulkanShader : public moth::gfx::IShader {
     public:
         ~VulkanShader() override;
 

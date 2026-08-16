@@ -34,7 +34,7 @@
 #include <stack>
 #include <string>
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     class Graphics : public IGraphics, public IGraphicsDevice {
     public:
         Graphics(SurfaceContext& context, VkSurfaceKHR surface, uint32_t surfaceWidth, uint32_t surfaceHeight);
@@ -71,7 +71,7 @@ namespace moth::gfx::graphics::vulkan {
         void SetColor(Color const& color) override;
         void PushColor(Color const& color) override;
         void PopColor() override;
-        void SetShader(graphics::Shader const* shader) override;
+        void SetShader(moth::gfx::Shader const* shader) override;
         void Clear() override;
         void Clear(Color const& color) override;
         void SetTransform(FloatMat4x4 const& transform) override;
@@ -101,8 +101,8 @@ namespace moth::gfx::graphics::vulkan {
         void DrawLineF(FloatVec2 const& p0, FloatVec2 const& p1) override;
         void DrawLineF(FloatVec2 const& p0, FloatVec2 const& p1, float thickness) override;
         void DrawText(std::string_view text, IFont& font, IntRect const& destRect, TextHorizAlignment horizontalAlignment = TextHorizAlignment::Left, TextVertAlignment verticalAlignment = TextVertAlignment::Top) override;
-        void DrawShader(graphics::Shader const& shader) override;
-        void DrawShader(graphics::Shader const& shader, FloatRect const& destRect) override;
+        void DrawShader(moth::gfx::Shader const& shader) override;
+        void DrawShader(moth::gfx::Shader const& shader, FloatRect const& destRect) override;
         void SetClip(IntRect const* clipRect) override;
         void PushClip(IntRect const& rect) override;
         void PopClip() override;
@@ -221,7 +221,7 @@ namespace moth::gfx::graphics::vulkan {
         std::unique_ptr<Texture> m_defaultImage;
 
         // Active custom shader (SetShader); invalid when reset.
-        graphics::Shader m_activeShader;
+        moth::gfx::Shader m_activeShader;
 
         // Shader clock + frame counter feeding iTime/iTimeDelta/iFrame.
         std::chrono::steady_clock::time_point m_shaderStartTime = std::chrono::steady_clock::now();

@@ -6,7 +6,7 @@
 #include "vulkan_shader_object.h"
 #include "glsl_compiler.h"
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     AssetContext::AssetContext(SurfaceContext& context)
         : m_context(context)
         , m_textureFactory(*this)
@@ -44,25 +44,25 @@ namespace moth::gfx::graphics::vulkan {
         vkTexture->SaveToPNG(path, sourceRect);
     }
 
-    std::shared_ptr<graphics::Shader> AssetContext::CreateShaderFromGLSL(std::string const& name, std::string const& fragSource) {
+    std::shared_ptr<moth::gfx::Shader> AssetContext::CreateShaderFromGLSL(std::string const& name, std::string const& fragSource) {
         std::vector<std::uint32_t> spv;
         std::string log;
         if (!CompileFragmentShaderGLSL(fragSource, spv, log)) {
             moth::core::log::error("CreateShaderFromGLSL '{}': {}", name, log);
-            return std::make_shared<graphics::Shader>();
+            return std::make_shared<moth::gfx::Shader>();
         }
 
         auto impl = VulkanShader::Create(m_context, spv);
         if (!impl) {
-            return std::make_shared<graphics::Shader>();
+            return std::make_shared<moth::gfx::Shader>();
         }
-        return std::make_shared<graphics::Shader>(std::move(impl));
+        return std::make_shared<moth::gfx::Shader>(std::move(impl));
     }
 
-    std::shared_ptr<graphics::Shader> AssetContext::CreateShaderFromSpirV(std::string const& name, std::vector<std::uint8_t> const& fragSpv) {
+    std::shared_ptr<moth::gfx::Shader> AssetContext::CreateShaderFromSpirV(std::string const& name, std::vector<std::uint8_t> const& fragSpv) {
         if (fragSpv.size() % sizeof(std::uint32_t) != 0) {
             moth::core::log::error("CreateShaderFromSpirV '{}': bytecode size {} is not word-aligned", name, fragSpv.size());
-            return std::make_shared<graphics::Shader>();
+            return std::make_shared<moth::gfx::Shader>();
         }
 
         std::vector<std::uint32_t> spv(fragSpv.size() / sizeof(std::uint32_t));
@@ -70,8 +70,8 @@ namespace moth::gfx::graphics::vulkan {
 
         auto impl = VulkanShader::Create(m_context, spv);
         if (!impl) {
-            return std::make_shared<graphics::Shader>();
+            return std::make_shared<moth::gfx::Shader>();
         }
-        return std::make_shared<graphics::Shader>(std::move(impl));
+        return std::make_shared<moth::gfx::Shader>(std::move(impl));
     }
 }

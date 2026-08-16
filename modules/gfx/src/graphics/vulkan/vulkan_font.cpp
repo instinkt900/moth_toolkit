@@ -91,7 +91,7 @@ namespace {
     }
 }
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     std::unique_ptr<Font> Font::Load(std::filesystem::path const& path, int size, SurfaceContext& context) {
         std::ifstream file(path, std::ios::binary);
         if (!file) {

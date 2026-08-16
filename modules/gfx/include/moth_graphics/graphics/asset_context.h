@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-namespace moth::gfx::graphics {
+namespace moth::gfx {
     class FontFactory;
     class Shader;
     class ShaderFactory;

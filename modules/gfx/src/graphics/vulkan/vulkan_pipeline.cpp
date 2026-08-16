@@ -2,7 +2,7 @@
 #include "vulkan_pipeline.h"
 #include "vulkan_utils.h"
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     Pipeline::Pipeline(uint32_t hash, VkDevice device, VkPipeline pipeline, std::shared_ptr<Shader> shader)
         : m_hash(hash)
         , m_device(device)

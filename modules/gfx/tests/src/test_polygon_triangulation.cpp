@@ -8,8 +8,8 @@
 #include <vector>
 
 using moth::gfx::FloatVec2;
-using moth::gfx::graphics::TriangulatePolygon;
-using moth::gfx::graphics::detail::TriangulatePolygonIndices;
+using moth::gfx::TriangulatePolygon;
+using moth::gfx::detail::TriangulatePolygonIndices;
 
 namespace {
     float TriangleArea(FloatVec2 const& a, FloatVec2 const& b, FloatVec2 const& c) {

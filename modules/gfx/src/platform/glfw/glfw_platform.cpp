@@ -28,7 +28,7 @@ namespace moth::gfx::platform::glfw {
     namespace {
         class VulkanImGuiContext final : public moth::gfx::platform::ImGuiContext {
         public:
-            explicit VulkanImGuiContext(moth::gfx::graphics::vulkan::Graphics* vkGraphics)
+            explicit VulkanImGuiContext(moth::gfx::vulkan::Graphics* vkGraphics)
                 : m_initialized(true)
                 , m_vkGraphics(vkGraphics) {}
 
@@ -44,7 +44,7 @@ namespace moth::gfx::platform::glfw {
                 }
             }
 
-            void Render(moth::gfx::graphics::IGraphics& /*graphics*/) override {
+            void Render(moth::gfx::IGraphics& /*graphics*/) override {
                 if (!m_initialized || m_vkGraphics == nullptr) {
                     return;
                 }
@@ -81,9 +81,9 @@ namespace moth::gfx::platform::glfw {
                 }
             }
 
-            void Image(moth::gfx::graphics::ITexture const& texture,
+            void Image(moth::gfx::ITexture const& texture,
                        IntVec2 const& size, FloatVec2 const& uv0, FloatVec2 const& uv1) override {
-                auto const* vkTexture = dynamic_cast<moth::gfx::graphics::vulkan::Texture const*>(&texture);
+                auto const* vkTexture = dynamic_cast<moth::gfx::vulkan::Texture const*>(&texture);
                 if (vkTexture == nullptr) {
                     return;
                 }
@@ -95,7 +95,7 @@ namespace moth::gfx::platform::glfw {
 
         private:
             bool m_initialized = false;
-            moth::gfx::graphics::vulkan::Graphics* m_vkGraphics = nullptr;
+            moth::gfx::vulkan::Graphics* m_vkGraphics = nullptr;
         };
     }
 
@@ -105,7 +105,7 @@ namespace moth::gfx::platform::glfw {
             return false;
         }
         moth::core::log::info("GLFW: initialized");
-        m_context = std::make_unique<graphics::vulkan::ManagedContext>();
+        m_context = std::make_unique<moth::gfx::vulkan::ManagedContext>();
         if (!m_context->Startup()) {
             moth::core::log::error("GLFW: graphics context startup failed");
             m_context.reset();
@@ -142,14 +142,14 @@ namespace moth::gfx::platform::glfw {
     }
 
     std::unique_ptr<moth::gfx::platform::ImGuiContext> Platform::CreateImGuiContext(
-        moth::gfx::platform::Window& window, moth::gfx::graphics::IGraphics& graphics, bool enableViewports) {
+        moth::gfx::platform::Window& window, moth::gfx::IGraphics& graphics, bool enableViewports) {
         auto* glfwWindowPtr = dynamic_cast<moth::gfx::platform::glfw::Window*>(&window);
         if (glfwWindowPtr == nullptr) {
             moth::core::log::error("Vulkan: CreateImGuiContext called with non-GLFW window");
             return nullptr;
         }
 
-        auto* vkGraphicsPtr = dynamic_cast<moth::gfx::graphics::vulkan::Graphics*>(&graphics);
+        auto* vkGraphicsPtr = dynamic_cast<moth::gfx::vulkan::Graphics*>(&graphics);
         if (vkGraphicsPtr == nullptr) {
             moth::core::log::error("Vulkan: CreateImGuiContext called with non-Vulkan graphics");
             return nullptr;

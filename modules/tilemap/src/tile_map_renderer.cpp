@@ -9,8 +9,8 @@
 namespace moth::tilemap {
     using moth::core::Color;
     using moth::core::Transform2D;
-    using moth::gfx::graphics::IGraphics;
-    using moth::gfx::graphics::Image;
+    using moth::gfx::IGraphics;
+    using moth::gfx::Image;
 
     void DrawTileMap(IGraphics& graphics,
                      TileMap const& map,

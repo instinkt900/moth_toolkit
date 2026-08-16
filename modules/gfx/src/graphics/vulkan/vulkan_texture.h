@@ -11,7 +11,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace moth::gfx::graphics::vulkan {
+namespace moth::gfx::vulkan {
     class Texture : public ITexture {
     public:
         static std::unique_ptr<Texture> FromFile(SurfaceContext& context, std::filesystem::path const& path);

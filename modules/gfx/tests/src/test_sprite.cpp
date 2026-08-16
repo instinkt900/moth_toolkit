@@ -9,7 +9,7 @@
 #include <string>
 
 using namespace moth::gfx;
-using namespace moth::gfx::graphics;
+using namespace moth::gfx;
 
 // ---------------------------------------------------------------------------
 // Test helpers

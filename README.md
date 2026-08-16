@@ -7,12 +7,14 @@ compile-time toggles for each feature, while remaining independently usable.
 ## Status
 
 The `moth_ui` and `moth_graphics` repos are imported (with full history) under
-`ui/` and `gfx/`. The `core`, `gfx`, `ui`, `bridge`, `ecs`, `physics`, `tilemap`,
-and `audio` modules are wired into the superbuild and Conan-packaged; `moth::ecs`
-(EnTT-backed entity-component system) replaced the interim
-`moth::gfx::scene::Scene`/`Entity` model, `moth::physics` wraps Box2D,
-`moth::tilemap` loads and renders Tiled `.tmj` maps, and `moth::audio` wraps
-miniaudio. See the Obsidian vault roadmap for the remaining work (Phase 7 DX).
+`modules/ui/` and `modules/gfx/`. The `core`, `gfx`, `ui`, `bridge`, `ecs`,
+`physics`, `tilemap`, `audio`, and `assets` modules are wired into the superbuild
+and Conan-packaged; `moth::ecs` (EnTT-backed entity-component system) replaced
+the interim `moth::gfx::scene::Scene`/`Entity` model, `moth::physics` wraps
+Box2D, `moth::tilemap` loads and renders Tiled `.tmj` maps, `moth::audio` wraps
+miniaudio, and `moth::assets` adds id/path asset addressing plus a `.pak` pack
+format (cooked by the `moth_packer` CLI). See the Obsidian vault roadmap for the
+remaining work (Phase 8 asset pipeline).
 
 ## Layout
 
@@ -26,11 +28,12 @@ modules/              the moth:: libraries (each Conan-packaged)
   physics/              moth::physics — Box2D rigid bodies
   tilemap/              moth::tilemap — Tiled .tmj maps + tilesets
   audio/                moth::audio   — miniaudio sound + music
+  assets/               moth::assets  — id/path addressing + .pak format
   bridge/               moth::bridge  — ui <-> gfx adapter
   toolkit/              moth::toolkit — aggregate target + feature header
 cmake/features.h.in   generated MOTH_HAS_* compile-time flags
 examples/             sample games / consumption tests
-tools/                moth new scaffold CLI + template
+tools/                moth new scaffold CLI + moth_packer asset cooker
 ```
 
 ## Building
@@ -64,6 +67,21 @@ int main() {
 ```
 
 See `examples/` for fuller samples (ECS sprites, physics, tilemaps, audio).
+
+## Packing assets
+
+Assets load by path by default. To cook a folder into a single `.pak` archive
+plus a `manifest.json`, use `moth_packer` (built with `-DMOTH_ENABLE_TOOLS=ON`):
+
+```bash
+./build/moth_packer assets/ --pak out/assets.pak --manifest out/manifest.json
+```
+
+Each asset's id is the FNV-1a hash of its path relative to the input folder, so
+it can later be addressed by id or by path. Load the archive at runtime with
+`moth::assets::PackedAssetSource`, then feed the bytes to any `...FromMemory`
+loader (e.g. `AudioEngine::LoadSoundFromMemory`). See
+`examples/packed_audio_demo/` for a complete cook → load-by-id → play loop.
 
 ## Plan
 

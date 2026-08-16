@@ -14,7 +14,7 @@ jobs:
       matrix:
         config:
           - name: full
-            flags: ""
+            flags: "-DMOTH_ENABLE_TOOLS=ON"
           - name: core-only
             flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ECS=OFF -DMOTH_ENABLE_PHYSICS=OFF -DMOTH_ENABLE_TILEMAP=OFF -DMOTH_ENABLE_AUDIO=OFF -DMOTH_ENABLE_ASSETS=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
           - name: core-gfx
@@ -160,3 +160,24 @@ jobs:
           conan install . --build=missing -s build_type=Release
           cmake --preset conan-release
           cmake --build --preset conan-release
+
+      - name: Build and smoke-test moth_packer (packaged)
+        working-directory: tools/moth_packer
+        run: |
+          conan install . --build=missing -s build_type=Release
+          cmake --preset conan-release
+          cmake --build --preset conan-release
+          mkdir -p /tmp/moth_packer_smoke/input/sub
+          printf 'hello' > /tmp/moth_packer_smoke/input/a.txt
+          printf 'world' > /tmp/moth_packer_smoke/input/sub/b.txt
+          ./build/Release/moth_packer /tmp/moth_packer_smoke/input --pak /tmp/moth_packer_smoke/out.pak --manifest /tmp/moth_packer_smoke/manifest.json
+          test -s /tmp/moth_packer_smoke/out.pak
+          test -s /tmp/moth_packer_smoke/manifest.json
+
+      - name: Build and run the packed-audio example (headless)
+        working-directory: examples/packed_audio_demo
+        run: |
+          conan install . --build=missing -s build_type=Release
+          cmake --preset conan-release
+          cmake --build --preset conan-release
+          ./build/Release/packed_audio_demo --null

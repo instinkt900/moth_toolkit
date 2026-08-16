@@ -27,6 +27,7 @@ option(MOTH_ENABLE_TILEMAP "Build the moth::tilemap module (Tiled .tmj maps)"   
 option(MOTH_ENABLE_AUDIO   "Build the moth::audio module (miniaudio playback)"          ON)
 option(MOTH_ENABLE_ASSETS  "Build the moth::assets module (id/path asset loading)"      ON)
 option(MOTH_ENABLE_TOOLKIT "Build the moth::toolkit aggregate target"                 ON)
+option(MOTH_ENABLE_TOOLS "Build the moth_packer CLI tool (requires moth::assets)"     OFF)
 option(MOTH_ENABLE_EXAMPLES "Build the example projects"                              OFF)
 
 # ---------------------------------------------------------------------------
@@ -55,6 +56,9 @@ if(MOTH_ENABLE_AUDIO AND NOT MOTH_ENABLE_CORE)
 endif()
 if(MOTH_ENABLE_ASSETS AND NOT MOTH_ENABLE_CORE)
     message(FATAL_ERROR "moth::assets requires moth::core — enable MOTH_ENABLE_CORE or disable MOTH_ENABLE_ASSETS.")
+endif()
+if(MOTH_ENABLE_TOOLS AND NOT MOTH_ENABLE_ASSETS)
+    message(FATAL_ERROR "MOTH_ENABLE_TOOLS requires moth::assets — enable MOTH_ENABLE_ASSETS or disable MOTH_ENABLE_TOOLS.")
 endif()
 
 # ---------------------------------------------------------------------------
@@ -126,6 +130,10 @@ if(MOTH_ENABLE_TOOLKIT)
     add_subdirectory(modules/toolkit)
 endif()
 
+if(MOTH_ENABLE_TOOLS)
+    add_subdirectory(tools/moth_packer)
+endif()
+
 if(MOTH_ENABLE_EXAMPLES)
     if(MOTH_ENABLE_GFX)
         add_subdirectory(examples/sample_game)
@@ -139,6 +147,9 @@ if(MOTH_ENABLE_EXAMPLES)
     endif()
     if(MOTH_ENABLE_AUDIO)
         add_subdirectory(examples/audio_demo)
+    endif()
+    if(MOTH_ENABLE_AUDIO AND MOTH_ENABLE_ASSETS)
+        add_subdirectory(examples/packed_audio_demo)
     endif()
     if(NOT MOTH_ENABLE_GFX AND NOT MOTH_ENABLE_PHYSICS AND NOT MOTH_ENABLE_TILEMAP AND NOT MOTH_ENABLE_AUDIO)
         message(FATAL_ERROR "MOTH_ENABLE_EXAMPLES requires at least one example-capable module (gfx, physics, tilemap, or audio).")

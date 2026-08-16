@@ -383,8 +383,12 @@ namespace moth::gfx::vulkan {
         if (imageWidth <= 0.0f || imageHeight <= 0.0f) {
             return;
         }
-        for (auto y = destRect.topLeft.y; y < destRect.bottomRight.y; y += imageHeight) {
-            for (auto x = destRect.topLeft.x; x < destRect.bottomRight.x; x += imageWidth) {
+        int const columns = static_cast<int>(std::ceil((destRect.bottomRight.x - destRect.topLeft.x) / imageWidth));
+        int const rows = static_cast<int>(std::ceil((destRect.bottomRight.y - destRect.topLeft.y) / imageHeight));
+        for (int row = 0; row < rows; ++row) {
+            float const y = destRect.topLeft.y + (static_cast<float>(row) * imageHeight);
+            for (int column = 0; column < columns; ++column) {
+                float const x = destRect.topLeft.x + (static_cast<float>(column) * imageWidth);
                 FloatRect const tiledDstRect{ { x, y }, { x + imageWidth, y + imageHeight } };
                 DrawImage(image, tiledDstRect, sourceRect);
             }

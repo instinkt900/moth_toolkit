@@ -67,12 +67,12 @@ namespace moth::gfx::platform::glfw {
 
     moth::core::IntVec2 Window::GetRenderSize() const {
         auto* delegate = GetUiDelegate();
-        return delegate ? delegate->GetRenderSize() : moth::core::Window::GetRenderSize();
+        return delegate != nullptr ? delegate->GetRenderSize() : moth::core::Window::GetRenderSize();
     }
 
     bool Window::OnEvent(moth::core::Event const& event) {
         auto* delegate = GetUiDelegate();
-        return delegate ? delegate->OnEvent(event) : EmitEvent(event);
+        return delegate != nullptr ? delegate->OnEvent(event) : EmitEvent(event);
     }
 
     void Window::OnResize(int width, int height) {
@@ -84,11 +84,11 @@ namespace moth::gfx::platform::glfw {
     }
 
     bool Window::CreateSurface() {
-        moth::core::log::info("GLFW: creating window '{}' ({}x{})", m_title, GetWidth(), GetHeight());
+        moth::core::log::info("GLFW: creating window '{}' ({}x{})", m_title, m_nativeWindow->GetWidth(), m_nativeWindow->GetHeight());
         CHECK_VK_RESULT(glfwCreateWindowSurface(m_context.instance, m_nativeWindow->GetGLFWWindow(), nullptr, &m_customVkSurface));
         m_surfaceContext = std::make_unique<moth::gfx::vulkan::SurfaceContext>(m_context);
 
-        SetGraphics(std::make_unique<moth::gfx::vulkan::Graphics>(*m_surfaceContext, m_customVkSurface, GetWidth(), GetHeight()));
+        SetGraphics(std::make_unique<moth::gfx::vulkan::Graphics>(*m_surfaceContext, m_customVkSurface, m_nativeWindow->GetWidth(), m_nativeWindow->GetHeight()));
         moth::core::log::info("GLFW: window '{}' ready", m_title);
         return true;
     }

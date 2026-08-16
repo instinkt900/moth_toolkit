@@ -23,7 +23,7 @@ jobs:
           - name: game-example
             flags: "-DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF -DMOTH_ENABLE_EXAMPLES=ON"
           - name: core-ui
-            flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
+            flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF -DMOTH_ENABLE_TILEMAP=OFF"
     steps:
       - uses: actions/checkout@v4
         with:
@@ -37,6 +37,12 @@ jobs:
       - uses: conan-io/setup-conan@v1
         with:
           cache_packages: true
+
+      - name: Allow Conan to install missing system packages
+        run: |
+          conan config home
+          echo 'tools.system.package_manager:mode=install' >> "$(conan config home)/global.conf"
+          echo 'tools.system.package_manager:sudo=True' >> "$(conan config home)/global.conf"
 
       - name: Configure
         run: |
@@ -62,6 +68,12 @@ jobs:
       - uses: conan-io/setup-conan@v1
         with:
           cache_packages: true
+
+      - name: Allow Conan to install missing system packages
+        run: |
+          conan config home
+          echo 'tools.system.package_manager:mode=install' >> "$(conan config home)/global.conf"
+          echo 'tools.system.package_manager:sudo=True' >> "$(conan config home)/global.conf"
 
       - name: Create moth_core package (needed by the module tests)
         working-directory: modules/core
@@ -147,6 +159,12 @@ jobs:
       - uses: conan-io/setup-conan@v1
         with:
           cache_packages: true
+
+      - name: Allow Conan to install missing system packages
+        run: |
+          conan config home
+          echo 'tools.system.package_manager:mode=install' >> "$(conan config home)/global.conf"
+          echo 'tools.system.package_manager:sudo=True' >> "$(conan config home)/global.conf"
 
       - name: Create modules as packages (dependency order)
         run: |

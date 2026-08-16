@@ -36,7 +36,7 @@ namespace moth::gfx {
         /// @param descriptorBytes The .flipbook.json descriptor, as bytes.
         /// @param imageTexture The atlas texture the descriptor's frames refer to.
         /// @return Loaded sprite sheet, or @c nullptr on failure.
-        std::shared_ptr<SpriteSheet> GetSpriteSheetFromMemory(
+        static std::shared_ptr<SpriteSheet> GetSpriteSheetFromMemory(
             std::vector<std::uint8_t> const& descriptorBytes,
             std::shared_ptr<ITexture> imageTexture);
 

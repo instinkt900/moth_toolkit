@@ -25,6 +25,7 @@ option(MOTH_ENABLE_ECS     "Build the moth::ecs module (EnTT entity-component sy
 option(MOTH_ENABLE_PHYSICS "Build the moth::physics module (Box2D rigid bodies)"      ON)
 option(MOTH_ENABLE_TILEMAP "Build the moth::tilemap module (Tiled .tmj maps)"          ON)
 option(MOTH_ENABLE_AUDIO   "Build the moth::audio module (miniaudio playback)"          ON)
+option(MOTH_ENABLE_ASSETS  "Build the moth::assets module (id/path asset loading)"      ON)
 option(MOTH_ENABLE_TOOLKIT "Build the moth::toolkit aggregate target"                 ON)
 option(MOTH_ENABLE_EXAMPLES "Build the example projects"                              OFF)
 
@@ -51,6 +52,9 @@ if(MOTH_ENABLE_TILEMAP AND NOT (MOTH_ENABLE_CORE AND MOTH_ENABLE_GFX))
 endif()
 if(MOTH_ENABLE_AUDIO AND NOT MOTH_ENABLE_CORE)
     message(FATAL_ERROR "moth::audio requires moth::core — enable MOTH_ENABLE_CORE or disable MOTH_ENABLE_AUDIO.")
+endif()
+if(MOTH_ENABLE_ASSETS AND NOT MOTH_ENABLE_CORE)
+    message(FATAL_ERROR "moth::assets requires moth::core — enable MOTH_ENABLE_CORE or disable MOTH_ENABLE_ASSETS.")
 endif()
 
 # ---------------------------------------------------------------------------
@@ -110,6 +114,12 @@ if(MOTH_ENABLE_AUDIO)
     add_subdirectory(modules/audio)
     add_library(moth::audio ALIAS moth_audio)
     add_library(moth_audio::moth_audio ALIAS moth_audio)
+endif()
+
+if(MOTH_ENABLE_ASSETS)
+    add_subdirectory(modules/assets)
+    add_library(moth::assets ALIAS moth_assets)
+    add_library(moth_assets::moth_assets ALIAS moth_assets)
 endif()
 
 if(MOTH_ENABLE_TOOLKIT)

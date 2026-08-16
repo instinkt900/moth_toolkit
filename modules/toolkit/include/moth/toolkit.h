@@ -36,6 +36,9 @@
 #ifndef MOTH_ENABLE_AUDIO
 #define MOTH_ENABLE_AUDIO 1
 #endif
+#ifndef MOTH_ENABLE_ASSETS
+#define MOTH_ENABLE_ASSETS 1
+#endif
 
 #if MOTH_ENABLE_CORE
 #include <moth/core/vector.h>
@@ -85,6 +88,10 @@
 
 #if MOTH_ENABLE_AUDIO
 #include <moth/audio/audio.h>
+#endif
+
+#if MOTH_ENABLE_ASSETS
+#include <moth/assets/assets.h>
 #endif
 
 #if MOTH_ENABLE_BRIDGE

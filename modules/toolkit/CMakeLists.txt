@@ -46,4 +46,8 @@ if(MOTH_ENABLE_AUDIO)
     target_link_libraries(moth_toolkit INTERFACE moth::audio)
 endif()
 
+if(MOTH_ENABLE_ASSETS)
+    target_link_libraries(moth_toolkit INTERFACE moth::assets)
+endif()
+
 install(DIRECTORY include/ DESTINATION include)

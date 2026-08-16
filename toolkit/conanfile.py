@@ -24,6 +24,7 @@ class MothToolkit(ConanFile):
         "enable_ecs": [True, False],
         "enable_physics": [True, False],
         "enable_tilemap": [True, False],
+        "enable_audio": [True, False],
     }
     default_options = {
         "enable_core": True,
@@ -33,6 +34,7 @@ class MothToolkit(ConanFile):
         "enable_ecs": True,
         "enable_physics": True,
         "enable_tilemap": True,
+        "enable_audio": True,
     }
 
     def set_version(self):
@@ -65,6 +67,10 @@ class MothToolkit(ConanFile):
             raise ConanInvalidConfiguration(
                 "moth::tilemap requires moth::core and moth::gfx — enable those or disable tilemap"
             )
+        if self.options.enable_audio and not self.options.enable_core:
+            raise ConanInvalidConfiguration(
+                "moth::audio requires moth::core — enable_core or disable audio"
+            )
 
     def requirements(self):
         # The modules are aggregated, so propagate their headers and libs through
@@ -84,6 +90,8 @@ class MothToolkit(ConanFile):
             self.requires("moth_physics/0.1.0", transitive_headers=True, transitive_libs=True)
         if self.options.enable_tilemap:
             self.requires("moth_tilemap/0.1.0", transitive_headers=True, transitive_libs=True)
+        if self.options.enable_audio:
+            self.requires("moth_audio/0.1.0", transitive_headers=True, transitive_libs=True)
 
     def package(self):
         copy(self, "*.h", src=os.path.join(self.source_folder, "include"),
@@ -103,6 +111,7 @@ class MothToolkit(ConanFile):
             "MOTH_ENABLE_ECS={}".format(1 if self.options.enable_ecs else 0),
             "MOTH_ENABLE_PHYSICS={}".format(1 if self.options.enable_physics else 0),
             "MOTH_ENABLE_TILEMAP={}".format(1 if self.options.enable_tilemap else 0),
+            "MOTH_ENABLE_AUDIO={}".format(1 if self.options.enable_audio else 0),
         ]
 
         # Expose each enabled module as a transitive dependency so a consumer that
@@ -122,3 +131,5 @@ class MothToolkit(ConanFile):
             self.cpp_info.requires.append("moth_physics::moth_physics")
         if self.options.enable_tilemap:
             self.cpp_info.requires.append("moth_tilemap::moth_tilemap")
+        if self.options.enable_audio:
+            self.cpp_info.requires.append("moth_audio::moth_audio")

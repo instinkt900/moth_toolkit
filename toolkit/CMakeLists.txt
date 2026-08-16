@@ -42,4 +42,8 @@ if(MOTH_ENABLE_TILEMAP)
     target_link_libraries(moth_toolkit INTERFACE moth::tilemap)
 endif()
 
+if(MOTH_ENABLE_AUDIO)
+    target_link_libraries(moth_toolkit INTERFACE moth::audio)
+endif()
+
 install(DIRECTORY include/ DESTINATION include)

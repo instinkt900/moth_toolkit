@@ -1,6 +1,6 @@
-[submodule "gfx/external/imgui"]
-	path = gfx/external/imgui
+[submodule "modules/gfx/external/imgui"]
+	path = modules/gfx/external/imgui
 	url = https://github.com/ocornut/imgui.git
-[submodule "gfx/external/murmurhash.c"]
-	path = gfx/external/murmurhash.c
+[submodule "modules/gfx/external/murmurhash.c"]
+	path = modules/gfx/external/murmurhash.c
 	url = https://github.com/jwerle/murmurhash.c.git

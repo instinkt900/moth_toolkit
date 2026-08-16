@@ -63,11 +63,11 @@ jobs:
           cache_packages: true
 
       - name: Create moth_core package (needed by the module tests)
-        working-directory: core
+        working-directory: modules/core
         run: conan create . --build=missing -s build_type=Release
 
       - name: Build and run core tests
-        working-directory: core/tests
+        working-directory: modules/core/tests
         run: |
           conan install . --build=missing -s build_type=Release
           cmake --preset conan-release
@@ -75,7 +75,7 @@ jobs:
           ctest --preset conan-release --output-on-failure
 
       - name: Build and run gfx tests
-        working-directory: gfx/tests
+        working-directory: modules/gfx/tests
         run: |
           conan install . --build=missing -s build_type=Release
           cmake --preset conan-release
@@ -83,7 +83,7 @@ jobs:
           ctest --preset conan-release --output-on-failure
 
       - name: Build and run ui tests
-        working-directory: ui/tests
+        working-directory: modules/ui/tests
         run: |
           conan install . --build=missing -s build_type=Release
           cmake --preset conan-release
@@ -91,7 +91,7 @@ jobs:
           ctest --preset conan-release --output-on-failure
 
       - name: Build and run ecs tests
-        working-directory: ecs/tests
+        working-directory: modules/ecs/tests
         run: |
           conan install . --build=missing -s build_type=Release
           cmake --preset conan-release
@@ -99,7 +99,7 @@ jobs:
           ctest --preset conan-release --output-on-failure
 
       - name: Build and run physics tests
-        working-directory: physics/tests
+        working-directory: modules/physics/tests
         run: |
           conan install . --build=missing -s build_type=Release
           cmake --preset conan-release
@@ -107,7 +107,7 @@ jobs:
           ctest --preset conan-release --output-on-failure
 
       - name: Build and run tilemap tests
-        working-directory: tilemap/tests
+        working-directory: modules/tilemap/tests
         run: |
           conan install . --build=missing -s build_type=Release
           cmake --preset conan-release
@@ -115,7 +115,7 @@ jobs:
           ctest --preset conan-release --output-on-failure
 
       - name: Build and run audio tests
-        working-directory: audio/tests
+        working-directory: modules/audio/tests
         run: |
           conan install . --build=missing -s build_type=Release
           cmake --preset conan-release
@@ -143,7 +143,7 @@ jobs:
         run: |
           set -e
           for m in core gfx ui ecs physics tilemap audio bridge toolkit; do
-            (cd "$m" && conan create . --build=missing -s build_type=Release)
+            (cd "modules/$m" && conan create . --build=missing -s build_type=Release)
           done
 
       - name: Build a packaged consumer (hello_game via find_package)

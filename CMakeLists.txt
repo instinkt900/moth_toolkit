@@ -65,11 +65,11 @@ configure_file(
 # Modules
 # ---------------------------------------------------------------------------
 if(MOTH_ENABLE_CORE)
-    add_subdirectory(core)
+    add_subdirectory(modules/core)
 endif()
 
 if(MOTH_ENABLE_GFX)
-    add_subdirectory(gfx)
+    add_subdirectory(modules/gfx)
     # Namespaced aliases, resolved at this (top-level) scope so they are visible
     # to sibling modules (bridge, toolkit) added below. gfx defines the bare
     # target `moth_graphics`; the `moth_graphics::moth_graphics` name matches
@@ -79,41 +79,41 @@ if(MOTH_ENABLE_GFX)
 endif()
 
 if(MOTH_ENABLE_UI)
-    add_subdirectory(ui)
+    add_subdirectory(modules/ui)
     add_library(moth::ui ALIAS moth_ui)
     add_library(moth_ui::moth_ui ALIAS moth_ui)
 endif()
 
 if(MOTH_ENABLE_BRIDGE)
-    add_subdirectory(bridge)
+    add_subdirectory(modules/bridge)
 endif()
 
 if(MOTH_ENABLE_ECS)
-    add_subdirectory(ecs)
+    add_subdirectory(modules/ecs)
     add_library(moth::ecs ALIAS moth_ecs)
     add_library(moth_ecs::moth_ecs ALIAS moth_ecs)
 endif()
 
 if(MOTH_ENABLE_PHYSICS)
-    add_subdirectory(physics)
+    add_subdirectory(modules/physics)
     add_library(moth::physics ALIAS moth_physics)
     add_library(moth_physics::moth_physics ALIAS moth_physics)
 endif()
 
 if(MOTH_ENABLE_TILEMAP)
-    add_subdirectory(tilemap)
+    add_subdirectory(modules/tilemap)
     add_library(moth::tilemap ALIAS moth_tilemap)
     add_library(moth_tilemap::moth_tilemap ALIAS moth_tilemap)
 endif()
 
 if(MOTH_ENABLE_AUDIO)
-    add_subdirectory(audio)
+    add_subdirectory(modules/audio)
     add_library(moth::audio ALIAS moth_audio)
     add_library(moth_audio::moth_audio ALIAS moth_audio)
 endif()
 
 if(MOTH_ENABLE_TOOLKIT)
-    add_subdirectory(toolkit)
+    add_subdirectory(modules/toolkit)
 endif()
 
 if(MOTH_ENABLE_EXAMPLES)

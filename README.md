@@ -18,17 +18,19 @@ miniaudio. See the Obsidian vault roadmap for the remaining work (Phase 7 DX).
 
 ```
 CMakeLists.txt        superbuild: MOTH_ENABLE_* toggles + add_subdirectory
-core/                 moth::core    — loop/platform/math/events
-gfx/                  moth::gfx     — 2D renderer + backends (imported)
-ui/                   moth::ui      — node graph/layers/animation (imported)
-ecs/                  moth::ecs     — EnTT entity-component system
-physics/              moth::physics — Box2D rigid bodies
-tilemap/              moth::tilemap — Tiled .tmj maps + tilesets
-audio/                moth::audio   — miniaudio sound + music
-bridge/               moth::bridge  — ui <-> gfx adapter
-toolkit/              moth::toolkit — aggregate target + feature header
+modules/              the moth:: libraries (each Conan-packaged)
+  core/                 moth::core    — loop/platform/math/events
+  gfx/                  moth::gfx     — 2D renderer + backends (imported)
+  ui/                   moth::ui      — node graph/layers/animation (imported)
+  ecs/                  moth::ecs     — EnTT entity-component system
+  physics/              moth::physics — Box2D rigid bodies
+  tilemap/              moth::tilemap — Tiled .tmj maps + tilesets
+  audio/                moth::audio   — miniaudio sound + music
+  bridge/               moth::bridge  — ui <-> gfx adapter
+  toolkit/              moth::toolkit — aggregate target + feature header
 cmake/features.h.in   generated MOTH_HAS_* compile-time flags
 examples/             sample games / consumption tests
+tools/                moth new scaffold CLI + template
 ```
 
 ## Building

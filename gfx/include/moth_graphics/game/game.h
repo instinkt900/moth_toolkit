@@ -22,6 +22,18 @@ namespace moth::gfx::game {
     public:
         virtual ~Scene() = default;
 
+        /// @brief Called once, just before the game loop begins.
+        ///
+        /// Load resources and initialize state here. The window and graphics
+        /// are already valid, and the scene is destroyed before the window, so
+        /// GPU resources created here are released in the right order.
+        virtual void OnStart() {}
+
+        /// @brief Called once, just after the game loop exits.
+        ///
+        /// Release non-RAII resources here (the graphics context is still valid).
+        virtual void OnStop() {}
+
         /// @brief Per-frame logic. @p dt is the elapsed time in seconds.
         virtual void Update(float dt) {}
 

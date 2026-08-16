@@ -40,6 +40,8 @@ namespace moth::gfx::game {
             return false;
         });
 
+        scene->OnStart();
+
         auto lastTime = std::chrono::steady_clock::now();
         while (m_running) {
             auto const now = std::chrono::steady_clock::now();
@@ -54,6 +56,8 @@ namespace moth::gfx::game {
             scene->Draw(m_window->GetGraphics());
             m_window->EndFrame();
         }
+
+        scene->OnStop();
 
         return 0;
     }

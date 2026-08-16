@@ -112,7 +112,6 @@ set(SOURCES ${SOURCES}
 	src/flow/flow.cpp
 	src/flow/flow_graph.cpp
 	src/flow/transitioning_layer.cpp
-	src/logger.cpp
 	src/font_factory.cpp
 	src/layers/layer.cpp
 	src/layers/layer_stack.cpp

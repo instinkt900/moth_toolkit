@@ -1,7 +1,8 @@
-#include "moth_ui/ilogger.h"
+#include "moth/core/log.h"
+
 #include <atomic>
 
-namespace moth::ui {
+namespace moth::core {
     namespace {
         std::atomic<ILogger*> s_logger{ nullptr };
         NullLogger s_nullLogger;

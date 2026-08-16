@@ -19,6 +19,9 @@
 #include <moth/core/event_key.h>
 #include <moth/core/event_mouse.h>
 
+// The logging facility lives in moth::core now; pulled in for the aliases below.
+#include <moth/core/log.h>
+
 namespace moth::ui {
 
     // -------------------------------------------------------------------------
@@ -34,8 +37,8 @@ namespace moth::ui {
     class NodeFactory;
     class IFlipbook;
     class IFlipbookFactory;
-    class ILogger;
-    class NullLogger;
+    using moth::core::ILogger;
+    using moth::core::NullLogger;
 
     // -------------------------------------------------------------------------
     // Events

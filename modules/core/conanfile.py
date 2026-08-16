@@ -25,6 +25,8 @@ class MothCore(ConanFile):
     def requirements(self):
         # JSON serialisation of the core math types (Vector/Rect).
         self.requires("nlohmann_json/[>=3.11 <4]", transitive_headers=True)
+        # The logging facade (moth/core/log.h) formats via fmt.
+        self.requires("fmt/[>=10.2 <13]", transitive_headers=True)
         # GLFW windowing backend: system on Linux, Conan on Windows.
         if self.settings.os == "Windows":
             self.requires("glfw/3.3.8", transitive_headers=True)

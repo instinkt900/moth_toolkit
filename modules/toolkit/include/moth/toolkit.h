@@ -44,6 +44,7 @@
 #include <moth/core/vector.h>
 #include <moth/core/rect.h>
 #include <moth/core/color.h>
+#include <moth/core/log.h>
 #include <moth/core/transform.h>
 #include <moth/core/transform2d.h>
 #include <moth/core/aabb.h>

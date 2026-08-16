@@ -11,8 +11,10 @@ class MothCoreTests(ConanFile):
     def requirements(self):
         self.requires("catch2/3.13.0")
         # moth_core is built from source via add_subdirectory; list its external
-        # Conan dependencies here (JSON). GLFW comes from the system on Linux.
+        # Conan dependencies here (JSON + fmt for the logging facade). GLFW comes
+        # from the system on Linux.
         self.requires("nlohmann_json/[>=3.11 <4]", transitive_headers=True)
+        self.requires("fmt/[>=10.2 <13]", transitive_headers=True)
 
     def system_requirements(self):
         if self.settings.os == "Linux":

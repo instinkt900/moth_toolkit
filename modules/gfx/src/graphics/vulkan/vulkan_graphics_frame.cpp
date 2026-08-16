@@ -164,7 +164,7 @@ namespace moth::gfx::graphics::vulkan {
         commandBuffer.Submit(cmdFence, waitSemaphore, signalSemaphore);
     }
 
-    void Graphics::SubmitVertices(Vertex* vertices, uint32_t vertCount, ETopologyType topology, VkDescriptorSet descriptorSet) {
+    void Graphics::SubmitVertices(Vertex* vertices, uint32_t vertCount, ETopologyType topology, std::shared_ptr<Texture> texture) {
         auto* context = CurrentContext();
 
         // Compute the largest chunk that aligns to this topology's primitive boundary.
@@ -181,7 +181,7 @@ namespace moth::gfx::graphics::vulkan {
             uint32_t offset = 0;
             while (offset < vertCount) {
                 uint32_t const count = std::min(chunkMax, vertCount - offset);
-                SubmitVertices(vertices + offset, count, topology, descriptorSet);
+                SubmitVertices(vertices + offset, count, topology, texture);
                 offset += count;
             }
             return;
@@ -197,16 +197,36 @@ namespace moth::gfx::graphics::vulkan {
 
         auto& commandBuffer = context->m_target->GetCommandBuffer();
 
-        auto const& pipeline = GetCurrentPipeline(topology);
+        // Select the pipeline (and descriptor set) for the active shader, if any.
+        std::shared_ptr<VulkanShader> activeShader;
+        if (m_activeShader.IsValid()) {
+            activeShader = std::dynamic_pointer_cast<VulkanShader>(m_activeShader.GetImpl());
+        }
+
+        auto const& pipeline = activeShader ? GetShaderPipeline(*activeShader, topology) : GetCurrentPipeline(topology);
         if (context->m_currentPipelineId != pipeline.m_hash) {
             FlushPendingBatch();
             commandBuffer.BindPipeline(pipeline);
             context->m_currentPipelineId = pipeline.m_hash;
         }
 
-        VkDescriptorSet resolvedDescriptorSet = (descriptorSet != VK_NULL_HANDLE)
-            ? descriptorSet
-            : m_drawingShader->GetDescriptorSet(*m_defaultImage);
+        VkDescriptorSet resolvedDescriptorSet = VK_NULL_HANDLE;
+        if (activeShader) {
+            UpdateShaderBuiltins(*activeShader);
+            std::array<std::shared_ptr<Texture>, 4> channels{};
+            auto const& shaderChannels = m_activeShader.GetChannels();
+            for (std::size_t i = 0; i < channels.size(); ++i) {
+                channels[i] = std::dynamic_pointer_cast<Texture>(shaderChannels[i]);
+            }
+            if (texture) {
+                channels[0] = texture;
+            }
+            resolvedDescriptorSet = activeShader->GetDescriptorSet(channels);
+        } else {
+            resolvedDescriptorSet = texture
+                ? m_drawingShader->GetDescriptorSet(*texture)
+                : m_drawingShader->GetDescriptorSet(*m_defaultImage);
+        }
 
         if (context->m_pendingBatch && context->m_pendingBatch->m_descriptorSet == resolvedDescriptorSet) {
             context->m_pendingBatch->m_vertexCount += vertCount;

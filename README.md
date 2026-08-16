@@ -84,9 +84,9 @@ loader (e.g. `AudioEngine::LoadSoundFromMemory`). See
 
 ## Custom shaders
 
-`moth::gfx` can draw Shadertoy-style fragment shaders on quads or fullscreen
-passes. Compile GLSL at runtime (opt-in, needs glslang) or load precompiled
-SPIR-V, then draw with `IGraphics::DrawShader`:
+`moth::gfx` can draw Shadertoy-style fragment shaders. Compile GLSL at runtime
+(opt-in, needs glslang) or load precompiled SPIR-V, then set it as the active
+shader and draw shapes as usual:
 
 ```cpp
 auto shader = assetContext.GetShaderFactory().CreateFromGLSL("plasma", R"GLSL(
@@ -95,13 +95,20 @@ auto shader = assetContext.GetShaderFactory().CreateFromGLSL("plasma", R"GLSL(
         fragColor = vec4(0.5 + 0.5 * cos(iTime + uv.xyx + vec3(0, 2, 4)), 1.0);
     }
 )GLSL");
-graphics.DrawShader(*shader);
+
+graphics.SetShader(shader.get());          // every draw now uses this shader
+graphics.DrawFillRectF(rect);              // rasterised by the shader
+graphics.DrawFillCircleF(center, radius);  // likewise
+graphics.SetShader(nullptr);               // back to the default shader
 ```
 
-`iTime`, `iResolution`, and `iMouse` are filled automatically; bind `iChannel0..3`
-with `Shader::SetChannel`. Runtime GLSL compilation is off by default — enable it
-with `-DMOTH_GRAPHICS_ENABLE_GLSLANG=ON` (and `-o enable_glslang=True` for Conan).
-See `examples/shader_demo/` for a full sample.
+The shader receives the interpolated vertex colour (`SetColor`), the shape-local
+`uv` (0..1), and the Shadertoy built-ins `iTime`/`iResolution`/`iMouse`. Bind up
+to four images with `Shader::SetChannel(0..3, image)` (`iChannel0..3`); `DrawImage`
+also honours the shader and binds its image as `iChannel0`. `DrawText` ignores the
+active shader. Runtime GLSL compilation is off by default — enable it with
+`-DMOTH_GRAPHICS_ENABLE_GLSLANG=ON` (and `-o enable_glslang=True` for Conan). See
+`examples/shader_demo/` for a full sample.
 
 ## Roadmap
 

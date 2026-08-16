@@ -8,6 +8,33 @@
 #include <cstring>
 
 namespace moth::gfx::graphics::vulkan {
+    void Graphics::UpdateShaderBuiltins(VulkanShader& shader) {
+        auto* context = CurrentContext();
+        if (context == nullptr) {
+            return;
+        }
+
+        VulkanShader::Builtins builtins{};
+        builtins.resolution[0] = static_cast<float>(context->m_logicalExtent.width);
+        builtins.resolution[1] = static_cast<float>(context->m_logicalExtent.height);
+        builtins.resolution[2] = 1.0f;
+        builtins.resolution[3] = 1.0f;
+        builtins.time[0] = std::chrono::duration<float>(std::chrono::steady_clock::now() - m_shaderStartTime).count();
+        builtins.time[1] = m_shaderLastDelta;
+        builtins.time[2] = static_cast<float>(m_frameCount);
+        builtins.time[3] = 0.0f;
+        auto const& input = moth::core::Input::Get();
+        auto const mousePos = input.GetMousePos();
+        builtins.mouse[0] = mousePos.x;
+        builtins.mouse[1] = mousePos.y;
+        builtins.mouse[2] = input.IsMouseButtonDown(moth::core::MouseButton::Left) ? 1.0f : 0.0f;
+        builtins.mouse[3] = input.IsMouseButtonDown(moth::core::MouseButton::Right) ? 1.0f : 0.0f;
+
+        void* const mapped = shader.GetBuiltinsBuffer().Map();
+        std::memcpy(mapped, &builtins, sizeof(builtins));
+        shader.GetBuiltinsBuffer().Unmap();
+    }
+
     void Graphics::DrawShader(graphics::Shader const& shader) {
         auto* context = CurrentContext();
         if (context == nullptr) {
@@ -32,26 +59,7 @@ namespace moth::gfx::graphics::vulkan {
             return;
         }
 
-        // Fill the Shadertoy built-ins (iTime/iResolution/iMouse).
-        VulkanShader::Builtins builtins{};
-        builtins.resolution[0] = static_cast<float>(context->m_logicalExtent.width);
-        builtins.resolution[1] = static_cast<float>(context->m_logicalExtent.height);
-        builtins.resolution[2] = 1.0f;
-        builtins.resolution[3] = 1.0f;
-        builtins.time[0] = std::chrono::duration<float>(std::chrono::steady_clock::now() - m_shaderStartTime).count();
-        builtins.time[1] = m_shaderLastDelta;
-        builtins.time[2] = static_cast<float>(m_frameCount);
-        builtins.time[3] = 0.0f;
-        auto const& input = moth::core::Input::Get();
-        auto const mousePos = input.GetMousePos();
-        builtins.mouse[0] = mousePos.x;
-        builtins.mouse[1] = mousePos.y;
-        builtins.mouse[2] = input.IsMouseButtonDown(moth::core::MouseButton::Left) ? 1.0f : 0.0f;
-        builtins.mouse[3] = input.IsMouseButtonDown(moth::core::MouseButton::Right) ? 1.0f : 0.0f;
-
-        void* const mapped = impl->GetBuiltinsBuffer().Map();
-        std::memcpy(mapped, &builtins, sizeof(builtins));
-        impl->GetBuiltinsBuffer().Unmap();
+        UpdateShaderBuiltins(*impl);
 
         // Resolve the bound channel textures (null -> default 1x1 image).
         std::array<std::shared_ptr<Texture>, 4> channels{};
@@ -87,7 +95,7 @@ namespace moth::gfx::graphics::vulkan {
 
         auto& commandBuffer = context->m_target->GetCommandBuffer();
 
-        auto const& pipeline = GetShaderPipeline(*impl);
+        auto const& pipeline = GetShaderPipeline(*impl, ETopologyType::Triangles);
         if (context->m_currentPipelineId != pipeline.m_hash) {
             commandBuffer.BindPipeline(pipeline);
             context->m_currentPipelineId = pipeline.m_hash;

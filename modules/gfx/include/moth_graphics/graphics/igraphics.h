@@ -46,6 +46,23 @@ namespace moth::gfx::graphics {
         /// @param color The color to use (also modulates image draws).
         virtual void SetColor(Color const& color) = 0;
 
+        /// @brief Set the active custom shader, or @c nullptr to restore the default.
+        ///
+        /// While a shader is active, every filled-shape draw (rects, circles,
+        /// ellipses, polygons, triangles, lines) is rasterised with the shader's
+        /// fragment program instead of the default one. The shader receives the
+        /// interpolated vertex colour (via @c SetColor), the shape-local @c uv
+        /// (0..1 across the shape's bounds), the Shadertoy built-ins
+        /// (@c iTime/@c iResolution/@c iMouse), and the @c iChannel0..3 samplers.
+        ///
+        /// @c DrawImage (and @c DrawImageCircle) also honour the shader: the drawn
+        /// image is bound as @c iChannel0, and @c uv carries its texture
+        /// coordinates. @c DrawText is the exception — text always uses the font
+        /// renderer and ignores the active shader.
+        ///
+        /// @param shader Shader to apply to subsequent draws, or @c nullptr to reset.
+        virtual void SetShader(Shader const* shader) = 0;
+
         /// @brief Fill the entire render target with the current color.
         virtual void Clear() = 0;
 
@@ -209,6 +226,10 @@ namespace moth::gfx::graphics {
         virtual void DrawLineF(FloatVec2 const& p0, FloatVec2 const& p1, float thickness) = 0;
 
         /// @brief Draw a string of text into a destination rectangle.
+        ///
+        /// Text always renders through the font renderer and ignores
+        /// @c SetShader — the glyph atlas uses its own pipeline and descriptor
+        /// layout that a custom fragment shader cannot describe.
         /// @param text UTF-8 text to render.
         /// @param font Font to use for rendering.
         /// @param destRect Bounding rectangle in logical pixels.

@@ -11,7 +11,7 @@ namespace moth::gfx::graphics::vulkan {
         // Prepended to every user shader: the Shadertoy built-ins (auto-filled
         // uniform buffer + channel samplers) and the vertex->fragment interface.
         // Must match VulkanShader::Create's descriptor set layout (bindings 0..4)
-        // and drawing_shader.vert's location-1 UV output.
+        // and drawing_shader.vert's location-0 color / location-1 UV outputs.
         constexpr char const* kShaderPreamble = R"GLSL(
 #version 450
 
@@ -26,6 +26,7 @@ layout(binding = 2) uniform sampler2D moth_channel1;
 layout(binding = 3) uniform sampler2D moth_channel2;
 layout(binding = 4) uniform sampler2D moth_channel3;
 
+layout(location = 0) in vec4 moth_color;
 layout(location = 1) in vec2 moth_uv;
 layout(location = 0) out vec4 moth_fragColor;
 

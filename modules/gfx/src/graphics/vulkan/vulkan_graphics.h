@@ -66,6 +66,7 @@ namespace moth::gfx::graphics::vulkan {
 
         void SetBlendMode(BlendMode mode) override;
         void SetColor(Color const& color) override;
+        void SetShader(graphics::Shader const* shader) override;
         void Clear() override;
         void SetTransform(FloatMat4x4 const& transform) override;
         void PushTransform(FloatMat4x4 const& transform) override;
@@ -194,6 +195,9 @@ namespace moth::gfx::graphics::vulkan {
         std::shared_ptr<Shader> m_fontShader;
         std::unique_ptr<Texture> m_defaultImage;
 
+        // Active custom shader (SetShader); invalid when reset.
+        graphics::Shader m_activeShader;
+
         // Shader clock + frame counter feeding iTime/iTimeDelta/iFrame.
         std::chrono::steady_clock::time_point m_shaderStartTime = std::chrono::steady_clock::now();
         std::chrono::steady_clock::time_point m_shaderLastFrameTime = std::chrono::steady_clock::now();
@@ -213,7 +217,8 @@ namespace moth::gfx::graphics::vulkan {
         RenderPass& GetCurrentRenderPass();
         Pipeline& GetCurrentPipeline(ETopologyType topology);
         Pipeline& GetCurrentFontPipeline();
-        Pipeline& GetShaderPipeline(VulkanShader& shader);
+        Pipeline& GetShaderPipeline(VulkanShader& shader, ETopologyType topology);
+        void UpdateShaderBuiltins(VulkanShader& shader);
 
         /// @brief Returns the current draw context, or @c nullptr for a null frame.
         ///
@@ -232,7 +237,7 @@ namespace moth::gfx::graphics::vulkan {
         void StartCommands();
         void FlushCommands(bool isFinal);
         void FlushPendingBatch();
-        void SubmitVertices(Vertex* vertices, uint32_t vertCount, ETopologyType topology, VkDescriptorSet descriptorSet = VK_NULL_HANDLE);
+        void SubmitVertices(Vertex* vertices, uint32_t vertCount, ETopologyType topology, std::shared_ptr<Texture> texture = nullptr);
 
         bool IsRenderTarget() const;
     };

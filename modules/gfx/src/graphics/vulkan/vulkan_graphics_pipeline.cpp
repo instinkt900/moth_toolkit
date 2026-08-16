@@ -323,9 +323,9 @@ namespace moth::gfx::graphics::vulkan {
         return *it->second;
     }
 
-    Pipeline& Graphics::GetShaderPipeline(VulkanShader& shader) {
+    Pipeline& Graphics::GetShaderPipeline(VulkanShader& shader, ETopologyType topology) {
         auto* context = CurrentContext();
-        auto const vkTopology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+        auto const vkTopology = ToVulkan(topology);
         auto const blendAttachment = ToVulkan(context->m_currentBlendMode);
         auto const vertexInputBinding = getVertexBindingDescription();
         auto const vertexAttributeBindings = getVertexAttributeDescriptions();

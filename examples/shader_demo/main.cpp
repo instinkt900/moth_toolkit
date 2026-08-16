@@ -50,6 +50,7 @@ int main() {
             std::printf("shader demo: failed to compile the GLSL shader (enable_glslang?)\n");
         } else {
             std::printf("shader demo: compiled 'plasma' successfully\n");
+            graphics.SetShader(shader.get());
         }
 
         bool running = true;
@@ -66,7 +67,8 @@ int main() {
 
             window->BeginFrame();
             if (shader && shader->IsValid()) {
-                graphics.DrawShader(*shader);
+                // The active shader rasterises this fullscreen rect.
+                graphics.DrawFillRectF(FloatRect{ { 0.0f, 0.0f }, { kLogicalWidth, kLogicalHeight } });
             } else {
                 graphics.SetColor(Color{ 0.1f, 0.1f, 0.15f, 1.0f });
                 graphics.Clear();

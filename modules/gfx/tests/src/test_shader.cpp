@@ -77,4 +77,17 @@ TEST_CASE("glsl compiler rejects malformed source", "[shader][glslang]") {
     REQUIRE_FALSE(moth::gfx::graphics::vulkan::CompileFragmentShaderGLSL("void mainImage( {", spv, log));
     REQUIRE(!log.empty());
 }
+
+TEST_CASE("glsl compiler exposes interpolated color and uv", "[shader][glslang]") {
+    std::string const source = R"GLSL(
+void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+    fragColor = moth_color * vec4(moth_uv, 0.0, 1.0);
+}
+)GLSL";
+
+    std::vector<std::uint32_t> spv;
+    std::string log;
+    REQUIRE(moth::gfx::graphics::vulkan::CompileFragmentShaderGLSL(source, spv, log));
+    REQUIRE(!spv.empty());
+}
 #endif

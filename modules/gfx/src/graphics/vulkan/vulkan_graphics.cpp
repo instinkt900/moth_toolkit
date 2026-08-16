@@ -138,6 +138,18 @@ namespace moth::gfx::graphics::vulkan {
         context->m_currentColor = color;
     }
 
+    void Graphics::SetShader(graphics::Shader const* shader) {
+        if (shader == nullptr || !shader->IsValid()) {
+            m_activeShader = graphics::Shader{};
+            return;
+        }
+        if (!std::dynamic_pointer_cast<VulkanShader>(shader->GetImpl())) {
+            spdlog::warn("SetShader: shader has no Vulkan backend; ignoring");
+            return;
+        }
+        m_activeShader = *shader;
+    }
+
     void Graphics::Clear() {
         auto* context = CurrentContext();
         if (context == nullptr) {
@@ -224,9 +236,7 @@ namespace moth::gfx::graphics::vulkan {
         vertices[5].uv = { u1, v0 };
         vertices[5].color = context->m_currentColor;
 
-        VkDescriptorSet const descriptorSet = m_drawingShader->GetDescriptorSet(*texture);
-        SubmitVertices(vertices, 6, ETopologyType::Triangles, descriptorSet);
-    }
+        SubmitVertices(vertices, 6, ETopologyType::Triangles, texture);    }
 
     void Graphics::DrawImage(Image const& image, IntVec2 const& pos, FloatVec2 const& pivot) {
         auto const imageWidth = image.GetWidth();
@@ -283,8 +293,7 @@ namespace moth::gfx::graphics::vulkan {
         vertices[5].uv = { imageRect.bottomRight.x, imageRect.topLeft.y };
         vertices[5].color = context->m_currentColor;
 
-        VkDescriptorSet descriptorSet = m_drawingShader->GetDescriptorSet(*texture);
-        SubmitVertices(vertices, 6, ETopologyType::Triangles, descriptorSet);
+        SubmitVertices(vertices, 6, ETopologyType::Triangles, texture);
     }
 
     void Graphics::DrawImageTiled(Image const& image, IntRect const& destRect, IntRect const* sourceRect, float scale) {
@@ -321,22 +330,22 @@ namespace moth::gfx::graphics::vulkan {
         vertices[0].uv = { 0, 0 };
         vertices[0].color = context->m_currentColor;
         vertices[1].xy = tr;
-        vertices[1].uv = { 0, 0 };
+        vertices[1].uv = { 1, 0 };
         vertices[1].color = context->m_currentColor;
         vertices[2].xy = tr;
-        vertices[2].uv = { 0, 0 };
+        vertices[2].uv = { 1, 0 };
         vertices[2].color = context->m_currentColor;
         vertices[3].xy = br;
-        vertices[3].uv = { 0, 0 };
+        vertices[3].uv = { 1, 1 };
         vertices[3].color = context->m_currentColor;
         vertices[4].xy = br;
-        vertices[4].uv = { 0, 0 };
+        vertices[4].uv = { 1, 1 };
         vertices[4].color = context->m_currentColor;
         vertices[5].xy = bl;
-        vertices[5].uv = { 0, 0 };
+        vertices[5].uv = { 0, 1 };
         vertices[5].color = context->m_currentColor;
         vertices[6].xy = bl;
-        vertices[6].uv = { 0, 0 };
+        vertices[6].uv = { 0, 1 };
         vertices[6].color = context->m_currentColor;
         vertices[7].xy = tl;
         vertices[7].uv = { 0, 0 };
@@ -361,19 +370,19 @@ namespace moth::gfx::graphics::vulkan {
         vertices[0].uv = { 0, 0 };
         vertices[0].color = context->m_currentColor;
         vertices[1].xy = tr;
-        vertices[1].uv = { 0, 0 };
+        vertices[1].uv = { 1, 0 };
         vertices[1].color = context->m_currentColor;
         vertices[2].xy = bl;
-        vertices[2].uv = { 0, 0 };
+        vertices[2].uv = { 0, 1 };
         vertices[2].color = context->m_currentColor;
         vertices[3].xy = bl;
-        vertices[3].uv = { 0, 0 };
+        vertices[3].uv = { 0, 1 };
         vertices[3].color = context->m_currentColor;
         vertices[4].xy = br;
-        vertices[4].uv = { 0, 0 };
+        vertices[4].uv = { 1, 1 };
         vertices[4].color = context->m_currentColor;
         vertices[5].xy = tr;
-        vertices[5].uv = { 0, 0 };
+        vertices[5].uv = { 1, 0 };
         vertices[5].color = context->m_currentColor;
 
         SubmitVertices(vertices, 6, ETopologyType::Triangles);
@@ -389,7 +398,12 @@ namespace moth::gfx::graphics::vulkan {
         auto const centerW = t.TransformPoint(center);
         constexpr float kTwoPi = 6.28318530718f;
 
+        auto const uvForAngle = [](float a) {
+            return FloatVec2{ (std::cos(a) + 1.0f) * 0.5f, (std::sin(a) + 1.0f) * 0.5f };
+        };
+
         std::vector<Vertex> vertices(static_cast<size_t>(segments) * 3);
+        float prevAngle = 0.0f;
         FloatVec2 prev = t.TransformPoint({ center.x + radius, center.y });
         for (int i = 0; i < segments; ++i) {
             float const a = (kTwoPi * static_cast<float>(i + 1)) / static_cast<float>(segments);
@@ -399,15 +413,16 @@ namespace moth::gfx::graphics::vulkan {
             });
             auto const base = static_cast<size_t>(i) * 3;
             vertices[base + 0].xy = centerW;
-            vertices[base + 0].uv = { 0, 0 };
+            vertices[base + 0].uv = { 0.5f, 0.5f };
             vertices[base + 0].color = context->m_currentColor;
             vertices[base + 1].xy = prev;
-            vertices[base + 1].uv = { 0, 0 };
+            vertices[base + 1].uv = uvForAngle(prevAngle);
             vertices[base + 1].color = context->m_currentColor;
             vertices[base + 2].xy = next;
-            vertices[base + 2].uv = { 0, 0 };
+            vertices[base + 2].uv = uvForAngle(a);
             vertices[base + 2].color = context->m_currentColor;
             prev = next;
+            prevAngle = a;
         }
         SubmitVertices(vertices.data(), static_cast<uint32_t>(vertices.size()), ETopologyType::Triangles);
     }
@@ -422,7 +437,12 @@ namespace moth::gfx::graphics::vulkan {
         auto const centerW = t.TransformPoint(center);
         constexpr float kTwoPi = 6.28318530718f;
 
+        auto const uvForAngle = [](float a) {
+            return FloatVec2{ (std::cos(a) + 1.0f) * 0.5f, (std::sin(a) + 1.0f) * 0.5f };
+        };
+
         std::vector<Vertex> vertices(static_cast<size_t>(segments) * 3);
+        float prevAngle = 0.0f;
         FloatVec2 prev = t.TransformPoint({ center.x + radiusX, center.y });
         for (int i = 0; i < segments; ++i) {
             float const a = (kTwoPi * static_cast<float>(i + 1)) / static_cast<float>(segments);
@@ -432,15 +452,16 @@ namespace moth::gfx::graphics::vulkan {
             });
             auto const base = static_cast<size_t>(i) * 3;
             vertices[base + 0].xy = centerW;
-            vertices[base + 0].uv = { 0, 0 };
+            vertices[base + 0].uv = { 0.5f, 0.5f };
             vertices[base + 0].color = context->m_currentColor;
             vertices[base + 1].xy = prev;
-            vertices[base + 1].uv = { 0, 0 };
+            vertices[base + 1].uv = uvForAngle(prevAngle);
             vertices[base + 1].color = context->m_currentColor;
             vertices[base + 2].xy = next;
-            vertices[base + 2].uv = { 0, 0 };
+            vertices[base + 2].uv = uvForAngle(a);
             vertices[base + 2].color = context->m_currentColor;
             prev = next;
+            prevAngle = a;
         }
         SubmitVertices(vertices.data(), static_cast<uint32_t>(vertices.size()), ETopologyType::Triangles);
     }
@@ -459,11 +480,25 @@ namespace moth::gfx::graphics::vulkan {
         if (vertices == nullptr || triVerts < 3) {
             return;
         }
+
+        // Normalize UVs across the triangle set's bounding box (0..1).
+        FloatVec2 minPoint = vertices[0];
+        FloatVec2 maxPoint = vertices[0];
+        for (size_t i = 1; i < triVerts; ++i) {
+            minPoint.x = std::min(minPoint.x, vertices[i].x);
+            minPoint.y = std::min(minPoint.y, vertices[i].y);
+            maxPoint.x = std::max(maxPoint.x, vertices[i].x);
+            maxPoint.y = std::max(maxPoint.y, vertices[i].y);
+        }
+        FloatVec2 const extent = maxPoint - minPoint;
+
         auto const t = CurrentTransform();
         std::vector<Vertex> verts(triVerts);
         for (size_t i = 0; i < triVerts; ++i) {
             verts[i].xy = t.TransformPoint(vertices[i]);
-            verts[i].uv = { 0, 0 };
+            verts[i].uv = (extent.x > 0.0f && extent.y > 0.0f)
+                ? (vertices[i] - minPoint) / extent
+                : FloatVec2{ 0.0f, 0.0f };
             verts[i].color = context->m_currentColor;
         }
         SubmitVertices(verts.data(), static_cast<uint32_t>(verts.size()), ETopologyType::Triangles);
@@ -533,8 +568,7 @@ namespace moth::gfx::graphics::vulkan {
             prevUv = nextUv;
         }
 
-        VkDescriptorSet const descriptorSet = m_drawingShader->GetDescriptorSet(*texture);
-        SubmitVertices(vertices.data(), static_cast<uint32_t>(vertices.size()), ETopologyType::Triangles, descriptorSet);
+        SubmitVertices(vertices.data(), static_cast<uint32_t>(vertices.size()), ETopologyType::Triangles, texture);
     }
 
     void Graphics::DrawGradientRect(FloatRect const& destRect,
@@ -625,7 +659,7 @@ namespace moth::gfx::graphics::vulkan {
         vertices[0].uv = { 0, 0 };
         vertices[0].color = context->m_currentColor;
         vertices[1].xy = t.TransformPoint(p1);
-        vertices[1].uv = { 0, 0 };
+        vertices[1].uv = { 1, 0 };
         vertices[1].color = context->m_currentColor;
 
         SubmitVertices(vertices, 2, ETopologyType::Lines);
@@ -652,13 +686,18 @@ namespace moth::gfx::graphics::vulkan {
 
         Vertex vertices[6];
         vertices[0].xy = q0;
+        vertices[0].uv = { 0, 1 };
         vertices[1].xy = q1;
+        vertices[1].uv = { 1, 1 };
         vertices[2].xy = q2;
+        vertices[2].uv = { 0, 0 };
         vertices[3].xy = q2;
+        vertices[3].uv = { 0, 0 };
         vertices[4].xy = q1;
+        vertices[4].uv = { 1, 1 };
         vertices[5].xy = q3;
+        vertices[5].uv = { 1, 0 };
         for (auto& vertex : vertices) {
-            vertex.uv = { 0, 0 };
             vertex.color = context->m_currentColor;
         }
 

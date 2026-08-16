@@ -41,6 +41,28 @@ cmake --build build
 Modules build in-tree via the superbuild (gated by `MOTH_ENABLE_*` toggles) and
 standalone via their own `conanfile.py` / CMake install-export.
 
+## Starting a new game
+
+Scaffold a project from the bundled template:
+
+```bash
+python3 tools/moth_new.py my_game
+cd my_game
+conan install . --build=missing -s build_type=Release
+cmake --preset conan-release && cmake --build --preset conan-release
+```
+
+That drops you into a compiling game loop using `moth::gfx::game::Game`:
+
+```cpp
+int main() {
+    moth::gfx::game::Game game{ "My Game", 1280, 720 };
+    return game.Run(std::make_unique<MyScene>());
+}
+```
+
+See `examples/` for fuller samples (ECS sprites, physics, tilemaps, audio).
+
 ## Plan
 
 The full design lives in the Obsidian vault (`Moth_Toolkit/`), covering vision,

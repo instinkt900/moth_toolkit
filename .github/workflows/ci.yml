@@ -62,6 +62,10 @@ jobs:
         with:
           cache_packages: true
 
+      - name: Create moth_core package (needed by the module tests)
+        working-directory: core
+        run: conan create . --build=missing -s build_type=Release
+
       - name: Build and run core tests
         working-directory: core/tests
         run: |
@@ -117,3 +121,34 @@ jobs:
           cmake --preset conan-release
           cmake --build --preset conan-release
           ctest --preset conan-release --output-on-failure
+
+  packaged-consumption:
+    name: packaged consumption (conan create + find_package)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libglfw3-dev libfreetype-dev libharfbuzz-dev libvulkan-dev
+
+      - uses: conan-io/setup-conan@v1
+        with:
+          cache_packages: true
+
+      - name: Create modules as packages (dependency order)
+        run: |
+          set -e
+          for m in core gfx ui ecs physics tilemap audio bridge toolkit; do
+            (cd "$m" && conan create . --build=missing -s build_type=Release)
+          done
+
+      - name: Build a packaged consumer (hello_game via find_package)
+        working-directory: examples/hello_game
+        run: |
+          conan install . --build=missing -s build_type=Release
+          cmake --preset conan-release
+          cmake --build --preset conan-release

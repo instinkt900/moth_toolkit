@@ -1,5 +1,5 @@
 #include "common.h"
-#include "moth_graphics/graphics/spritesheet.h"
+#include "moth/graphics/graphics/spritesheet.h"
 
 #include <optional>
 

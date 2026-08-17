@@ -1,9 +1,9 @@
 #pragma once
 
-#include "moth_graphics/graphics/font_factory.h"
+#include "moth/graphics/graphics/font_factory.h"
 
-#include <moth_ui/font_factory.h>
-#include <moth_ui/graphics/ifont.h>
+#include <moth/ui/font_factory.h>
+#include <moth/ui/graphics/ifont.h>
 
 #include <memory>
 

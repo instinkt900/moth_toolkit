@@ -68,11 +68,11 @@
 #endif
 
 #if MOTH_ENABLE_GFX
-#include <moth_graphics/moth_graphics.h>
+#include <moth/graphics/moth_graphics.h>
 #endif
 
 #if MOTH_ENABLE_UI
-#include <moth_ui/moth_ui.h>
+#include <moth/ui/moth_ui.h>
 #endif
 
 #if MOTH_ENABLE_ECS

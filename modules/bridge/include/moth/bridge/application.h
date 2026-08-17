@@ -1,7 +1,7 @@
 #pragma once
 
 #include "moth/bridge/ui_window.h"
-#include "moth_graphics/platform/iplatform.h"
+#include "moth/graphics/platform/iplatform.h"
 
 #include <moth/core/event.h>
 #include <moth/core/event_listener.h>

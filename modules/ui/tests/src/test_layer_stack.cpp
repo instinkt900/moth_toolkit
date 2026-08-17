@@ -1,7 +1,7 @@
 #include "mock_context.h"
-#include "moth_ui/layers/layer_stack.h"
-#include "moth_ui/layers/layer.h"
-#include "moth_ui/events/event.h"
+#include "moth/ui/layers/layer_stack.h"
+#include "moth/ui/layers/layer.h"
+#include "moth/ui/events/event.h"
 #include <catch2/catch_all.hpp>
 #include <memory>
 

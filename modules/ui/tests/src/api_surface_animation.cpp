@@ -1,6 +1,6 @@
 // Pins the animation system types: Keyframe, AnimationTrack, AnimationClip, AnimationMarker.
 
-#include "moth_ui/moth_ui.h"
+#include "moth/ui/moth_ui.h"
 
 #include <catch2/catch_all.hpp>
 #include <type_traits>

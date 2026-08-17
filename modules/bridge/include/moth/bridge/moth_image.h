@@ -1,9 +1,9 @@
 #pragma once
 
-#include "moth_graphics/graphics/image.h"
+#include "moth/graphics/graphics/image.h"
 
-#include <moth_ui/utils/vector.h>
-#include <moth_ui/graphics/iimage.h>
+#include <moth/ui/utils/vector.h>
+#include <moth/ui/graphics/iimage.h>
 
 namespace moth::bridge {
     /// @brief moth::ui::IImage adapter wrapping a moth_graphics Image.

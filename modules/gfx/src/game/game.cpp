@@ -1,4 +1,4 @@
-#include "moth_graphics/game/game.h"
+#include "moth/graphics/game/game.h"
 
 #include <moth/core/event_window.h>
 

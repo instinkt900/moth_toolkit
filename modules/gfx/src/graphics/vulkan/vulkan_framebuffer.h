@@ -1,9 +1,9 @@
 #pragma once
 
-#include "moth_graphics/graphics/image.h"
-#include "moth_graphics/graphics/itarget.h"
+#include "moth/graphics/graphics/image.h"
+#include "moth/graphics/graphics/itarget.h"
 #include "vulkan_fence.h"
-#include "moth_graphics/graphics/vulkan/vulkan_surface_context.h"
+#include "moth/graphics/graphics/vulkan/vulkan_surface_context.h"
 #include "vulkan_texture.h"
 #include "vulkan_unique.h"
 

@@ -1,5 +1,5 @@
 #include "common.h"
-#include "moth_ui/flow/flow_graph.h"
+#include "moth/ui/flow/flow_graph.h"
 
 #include <fmt/format.h>
 #include <magic_enum.hpp>

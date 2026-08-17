@@ -1,7 +1,7 @@
 #include "common.h"
-#include "moth_ui/widgets/ui_button.h"
+#include "moth/ui/widgets/ui_button.h"
 
-#include "moth_ui/events/event_dispatch.h"
+#include "moth/ui/events/event_dispatch.h"
 
 namespace moth::ui {
     UIButton::UIButton(Context& context, std::shared_ptr<LayoutEntityGroup> entity)

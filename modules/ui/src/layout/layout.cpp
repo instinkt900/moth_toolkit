@@ -1,10 +1,10 @@
 #include "common.h"
-#include "moth_ui/layout/layout.h"
-#include "moth_ui/animation/animation_clip.h"
-#include "moth_ui/animation/animation_marker.h"
-#include "moth_ui/context.h"
-#include "moth_ui/node_factory.h"
-#include "moth_ui/nodes/group.h"
+#include "moth/ui/layout/layout.h"
+#include "moth/ui/animation/animation_clip.h"
+#include "moth/ui/animation/animation_marker.h"
+#include "moth/ui/context.h"
+#include "moth/ui/node_factory.h"
+#include "moth/ui/nodes/group.h"
 
 namespace moth::ui {
     int const Layout::Version = 1;

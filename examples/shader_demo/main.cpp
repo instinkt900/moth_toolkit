@@ -1,8 +1,8 @@
 // Shader demo: compiles a Shadertoy-style fragment shader at runtime and draws
 // it fullscreen. Exercises the custom-shader pipeline (ShaderFactory + IGraphics::DrawShader).
 
-#include <moth_graphics/moth_graphics.h>
-#include <moth_graphics/platform/glfw/glfw_platform.h>
+#include <moth/graphics/moth_graphics.h>
+#include <moth/graphics/platform/glfw/glfw_platform.h>
 
 #include <moth/core/event_window.h>
 #include <moth/core/log.h>

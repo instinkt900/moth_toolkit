@@ -1,8 +1,8 @@
 #include "common.h"
-#include "moth_ui/nodes/node_text.h"
-#include "moth_ui/layout/layout_entity.h"
-#include "moth_ui/layout/layout_entity_text.h"
-#include "moth_ui/context.h"
+#include "moth/ui/nodes/node_text.h"
+#include "moth/ui/layout/layout_entity.h"
+#include "moth/ui/layout/layout_entity_text.h"
+#include "moth/ui/context.h"
 
 namespace moth::ui {
     NodeText::NodeText(Context& context)

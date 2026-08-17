@@ -1,5 +1,5 @@
 #include "common.h"
-#include "moth_ui/font_factory.h"
+#include "moth/ui/font_factory.h"
 
 namespace moth::ui {
     void FontFactory::AddFont(std::string const& name, std::filesystem::path const& path) {

@@ -1,10 +1,10 @@
 #include "common.h"
-#include "moth_ui/animation/animation_controller.h"
-#include "moth_ui/animation/animation_track_controller.h"
-#include "moth_ui/animation/discrete_animation_track_controller.h"
-#include "moth_ui/layout/layout_entity.h"
-#include "moth_ui/nodes/node.h"
-#include "moth_ui/nodes/node_gradient.h"
+#include "moth/ui/animation/animation_controller.h"
+#include "moth/ui/animation/animation_track_controller.h"
+#include "moth/ui/animation/discrete_animation_track_controller.h"
+#include "moth/ui/layout/layout_entity.h"
+#include "moth/ui/nodes/node.h"
+#include "moth/ui/nodes/node_gradient.h"
 
 namespace moth::ui {
     float* AnimationController::GradientTargetReference(NodeGradient* node, AnimationTarget target) {

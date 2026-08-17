@@ -1,7 +1,7 @@
 // hello_game — the shortest possible moth game: a window, a scene, and a moving
 // square. Demonstrates the moth::gfx::game::Game facade (no UI required).
 
-#include <moth_graphics/game/game.h>
+#include <moth/graphics/game/game.h>
 
 #include <cmath>
 

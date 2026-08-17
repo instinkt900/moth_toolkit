@@ -1,8 +1,8 @@
 #include "common.h"
-#include "moth_ui/widgets/widget.h"
+#include "moth/ui/widgets/widget.h"
 
-#include "moth_ui/widgets/ui_button.h"
-#include "moth_ui/widgets/ui_scroll_view.h"
+#include "moth/ui/widgets/ui_button.h"
+#include "moth/ui/widgets/ui_scroll_view.h"
 
 namespace moth::ui {
     void EnsureWidgetsRegistered() {

@@ -83,7 +83,7 @@ if (input.IsActionPressed("jump")) { /* ... */ }
 
 ### moth::gfx
 
-**Package** `moth_graphics` · **Namespace** `moth::gfx` · **Umbrella** `<moth_graphics/moth_graphics.h>`
+**Package** `moth_graphics` · **Namespace** `moth::gfx` · **Umbrella** `<moth/graphics/moth_graphics.h>`
 
 The Vulkan-backed 2D renderer. `IGraphics` (immediate-mode draw calls between
 `Begin`/`End`, render targets, push/pop state, float coords, textured quads,
@@ -96,7 +96,7 @@ Scene}` for a minimal run loop. Depends on `moth_core` + GLFW/FreeType/HarfBuzz
 (system on Linux) + Vulkan, optionally `glslang`.
 
 ```cpp
-#include <moth_graphics/game/game.h>
+#include <moth/graphics/game/game.h>
 
 using namespace moth::gfx;
 using namespace moth::gfx::game;
@@ -125,7 +125,7 @@ resource creator; `SurfaceContext::GetAssetContext()` loads textures/fonts.
 
 ### moth::ui
 
-**Package** `moth_ui` · **Namespace** `moth::ui` · **Umbrella** `<moth_ui/moth_ui.h>`
+**Package** `moth_ui` · **Namespace** `moth::ui` · **Umbrella** `<moth/ui/moth_ui.h>`
 
 A node-graph UI system: `Context`, `LayerStack`, `Node` hierarchy, keyframe
 animation, and screen flow. It defines renderer-agnostic abstractions
@@ -134,7 +134,7 @@ rendering happens through `moth::bridge` (see below). Depends on `moth_core` +
 `nlohmann_json`, `magic_enum`, `range-v3`, `fmt`.
 
 ```cpp
-#include <moth_ui/moth_ui.h>
+#include <moth/ui/moth_ui.h>
 
 using namespace moth::ui;
 // Build a Context (node graph + layer stack), populate a Node hierarchy, and
@@ -154,7 +154,7 @@ gfx `Window` with a `moth::ui` context + ImGui (`UiWindow`), and provides
 
 ```cpp
 #include <moth/bridge/application.h>
-#include <moth_graphics/platform/glfw/glfw_platform.h>
+#include <moth/graphics/platform/glfw/glfw_platform.h>
 
 class MyGame : public moth::bridge::Application {
 public:

@@ -1,4 +1,4 @@
-#include "moth_graphics/utils/ticker.h"
+#include "moth/graphics/utils/ticker.h"
 
 #include <catch2/catch_all.hpp>
 #include <atomic>

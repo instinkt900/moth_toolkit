@@ -1,4 +1,4 @@
-#include "moth_graphics/graphics/camera.h"
+#include "moth/graphics/graphics/camera.h"
 
 #include <catch2/catch_all.hpp>
 

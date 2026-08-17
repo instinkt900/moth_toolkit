@@ -1,5 +1,5 @@
-#include "moth_graphics/graphics/sprite_batch.h"
-#include "moth_graphics/graphics/igraphics.h"
+#include "moth/graphics/graphics/sprite_batch.h"
+#include "moth/graphics/graphics/igraphics.h"
 
 #include <algorithm>
 #include <utility>

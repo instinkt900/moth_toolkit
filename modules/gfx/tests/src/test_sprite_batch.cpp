@@ -1,10 +1,10 @@
-#include "moth_graphics/graphics/sprite_batch.h"
-#include "moth_graphics/graphics/igraphics.h"
-#include "moth_graphics/graphics/image.h"
-#include "moth_graphics/graphics/itexture.h"
-#include "moth_graphics/graphics/vertex.h"
-#include "moth_graphics/utils/transform.h"
-#include "moth_graphics/utils/vector.h"
+#include "moth/graphics/graphics/sprite_batch.h"
+#include "moth/graphics/graphics/igraphics.h"
+#include "moth/graphics/graphics/image.h"
+#include "moth/graphics/graphics/itexture.h"
+#include "moth/graphics/graphics/vertex.h"
+#include "moth/graphics/utils/transform.h"
+#include "moth/graphics/utils/vector.h"
 
 #include <catch2/catch_all.hpp>
 #include <memory>

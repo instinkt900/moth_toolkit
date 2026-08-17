@@ -1,5 +1,5 @@
-#include "moth_graphics/events/event_emitter.h"
-#include "moth_graphics/events/event_window.h"
+#include "moth/graphics/events/event_emitter.h"
+#include "moth/graphics/events/event_window.h"
 
 #include <moth/core/event.h>
 #include <moth/core/event_listener.h>

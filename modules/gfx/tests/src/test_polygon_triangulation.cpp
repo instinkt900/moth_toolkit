@@ -1,4 +1,4 @@
-#include "moth_graphics/utils/polygon_triangulation.h"
+#include "moth/graphics/utils/polygon_triangulation.h"
 #include "graphics/polygon_triangulation_detail.h"
 
 #include <catch2/catch_all.hpp>

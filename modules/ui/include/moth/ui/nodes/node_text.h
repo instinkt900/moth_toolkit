@@ -1,0 +1,108 @@
+#pragma once
+
+#include "moth/ui/graphics/text_alignment.h"
+#include "moth/ui/nodes/node.h"
+
+#include <memory>
+#include <string>
+#include <string_view>
+
+namespace moth::ui {
+    /**
+     * @brief A Node that renders a text string using a named font.
+     *
+     * Supports horizontal and vertical alignment, and optional drop-shadow.
+     */
+    class NodeText : public Node {
+    public:
+        NodeText(NodeText const& other) = delete;
+        NodeText(NodeText&& other) = default;
+        NodeText& operator=(NodeText const&) = delete;
+        NodeText& operator=(NodeText&&) = delete;
+        ~NodeText() override = default;
+
+        /**
+         * @brief Creates a NodeText with no layout entity.
+         * @param context Active rendering context.
+         * @return A shared_ptr managing the new node.
+         */
+        static std::shared_ptr<NodeText> Create(Context& context);
+
+        /**
+         * @brief Creates a NodeText from a serialised layout entity.
+         * @param context      Active rendering context.
+         * @param layoutEntity Deserialised text description.
+         * @return A shared_ptr managing the new node.
+         */
+        static std::shared_ptr<NodeText> Create(Context& context, std::shared_ptr<LayoutEntityText> layoutEntity);
+
+        /**
+         * @brief Loads a font by name and point size from the font factory.
+         * @param fontName Name of the font registered with the font factory.
+         * @param size     Point size to load.
+         */
+        void Load(std::string_view fontName, int size);
+
+        /**
+         * @brief Returns the currently loaded font, or @c nullptr.
+         */
+        IFont const* GetFont() const {
+            return m_font.get();
+        }
+
+        /**
+         * @brief Sets the text string to display.
+         * @param text UTF-8 string.
+         */
+        void SetText(std::string_view text) { m_text = text; }
+
+        /// @brief Returns the text string currently displayed.
+        std::string const& GetText() const { return m_text; }
+
+        /// @brief Returns the horizontal text alignment.
+        TextHorizAlignment GetHorizontalAlignment() const { return m_horizontalAlignment; }
+
+        /// @brief Sets the horizontal text alignment.
+        void SetHorizontalAlignment(TextHorizAlignment alignment) { m_horizontalAlignment = alignment; }
+
+        /// @brief Returns the vertical text alignment.
+        TextVertAlignment GetVerticalAlignment() const { return m_verticalAlignment; }
+
+        /// @brief Sets the vertical text alignment.
+        void SetVerticalAlignment(TextVertAlignment alignment) { m_verticalAlignment = alignment; }
+
+        /// @brief Returns @c true if a drop-shadow is rendered.
+        bool IsDropShadow() const { return m_dropShadow; }
+
+        /// @brief Returns the drop-shadow pixel offset.
+        IntVec2 const& GetDropShadowOffset() const { return m_dropShadowOffset; }
+
+    protected:
+        /**
+         * @brief Constructs a NodeText with no layout entity.
+         * @param context Active rendering context.
+         */
+        NodeText(Context& context);
+
+        /**
+         * @brief Constructs a NodeText from a serialised layout entity.
+         * @param context      Active rendering context.
+         * @param layoutEntity Deserialised text description.
+         */
+        NodeText(Context& context, std::shared_ptr<LayoutEntityText> layoutEntity);
+
+        std::shared_ptr<IFont> m_font;
+        std::string m_text;
+        TextHorizAlignment m_horizontalAlignment;
+        TextVertAlignment m_verticalAlignment;
+        bool m_dropShadow;
+        IntVec2 m_dropShadowOffset;
+        Color m_dropShadowColor;
+
+        void ReloadEntityInternal() override;
+        void DrawInternal() override;
+
+    private:
+        LayoutEntityText* m_typedLayout = nullptr;
+    };
+}

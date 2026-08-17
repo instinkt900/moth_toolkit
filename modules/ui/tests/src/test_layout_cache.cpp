@@ -1,6 +1,6 @@
 #include "mock_context.h"
-#include "moth_ui/layout/layout_cache.h"
-#include "moth_ui/layout/layout.h"
+#include "moth/ui/layout/layout_cache.h"
+#include "moth/ui/layout/layout.h"
 #include <catch2/catch_all.hpp>
 #include <filesystem>
 #include <fstream>

@@ -10,16 +10,16 @@
 #include <fmt/format.h>
 #include <magic_enum.hpp>
 
-#include <moth_ui/utils/vector.h>
-#include <moth_ui/utils/rect.h>
-#include <moth_ui/utils/color.h>
-#include <moth_ui/layout/layout_rect.h>
-#include <moth_ui/graphics/blend_mode.h>
-#include <moth_ui/graphics/image_scale_type.h>
-#include <moth_ui/graphics/text_alignment.h>
-#include <moth_ui/utils/interp.h>
-#include <moth_ui/animation/animation_track.h>
-#include <moth_ui/animation/animation_clip.h>
+#include <moth/ui/utils/vector.h>
+#include <moth/ui/utils/rect.h>
+#include <moth/ui/utils/color.h>
+#include <moth/ui/layout/layout_rect.h>
+#include <moth/ui/graphics/blend_mode.h>
+#include <moth/ui/graphics/image_scale_type.h>
+#include <moth/ui/graphics/text_alignment.h>
+#include <moth/ui/utils/interp.h>
+#include <moth/ui/animation/animation_track.h>
+#include <moth/ui/animation/animation_clip.h>
 
 // ---------------------------------------------------------------------------
 // Vector<T, Dim>

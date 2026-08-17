@@ -1,6 +1,6 @@
 #include "common.h"
-#include "moth_ui/animation/animation_track.h"
-#include "moth_ui/animation/keyframe.h"
+#include "moth/ui/animation/animation_track.h"
+#include "moth/ui/animation/keyframe.h"
 
 namespace moth::ui {
     void to_json(nlohmann::json& json, AnimationTrack const& track) {

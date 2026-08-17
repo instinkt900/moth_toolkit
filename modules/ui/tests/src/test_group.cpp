@@ -1,6 +1,6 @@
 #include "mock_context.h"
-#include "moth_ui/nodes/group.h"
-#include "moth_ui/nodes/node.h"
+#include "moth/ui/nodes/group.h"
+#include "moth/ui/nodes/node.h"
 #include <catch2/catch_all.hpp>
 #include <memory>
 

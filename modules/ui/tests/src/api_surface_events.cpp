@@ -1,6 +1,6 @@
 // Pins the event type constants, all event class signatures, and EventDispatch.
 
-#include "moth_ui/moth_ui.h"
+#include "moth/ui/moth_ui.h"
 
 #include <catch2/catch_all.hpp>
 #include <functional>

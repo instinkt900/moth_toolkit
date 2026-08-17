@@ -1,8 +1,8 @@
 #pragma once
 
-#include "moth_graphics/graphics/ifont.h"
+#include "moth/graphics/graphics/ifont.h"
 
-#include <moth_ui/graphics/ifont.h>
+#include <moth/ui/graphics/ifont.h>
 
 #include <memory>
 

@@ -1,4 +1,4 @@
-#include "moth_ui/utils/interp.h"
+#include "moth/ui/utils/interp.h"
 #include <catch2/catch_all.hpp>
 #include <magic_enum.hpp>
 

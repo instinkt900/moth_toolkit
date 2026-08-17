@@ -1,6 +1,6 @@
 #include "common.h"
-#include "moth_ui/layers/layer.h"
-#include "moth_ui/layers/layer_stack.h"
+#include "moth/ui/layers/layer.h"
+#include "moth/ui/layers/layer_stack.h"
 
 namespace moth::ui {
     bool Layer::OnEvent(Event const& event) {

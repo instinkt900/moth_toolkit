@@ -1,7 +1,7 @@
 #include "common.h"
-#include "moth_ui/layout/layout_entity_clip.h"
-#include "moth_ui/nodes/node_clip.h"
-#include "moth_ui/animation/animation_controller.h"
+#include "moth/ui/layout/layout_entity_clip.h"
+#include "moth/ui/nodes/node_clip.h"
+#include "moth/ui/animation/animation_controller.h"
 
 namespace moth::ui {
     LayoutEntityClip::LayoutEntityClip(LayoutRect const& initialBounds)

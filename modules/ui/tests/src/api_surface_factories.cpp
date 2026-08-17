@@ -1,6 +1,6 @@
 // Pins the factory interface and Context signatures.
 
-#include "moth_ui/moth_ui.h"
+#include "moth/ui/moth_ui.h"
 
 #include <catch2/catch_all.hpp>
 #include <filesystem>

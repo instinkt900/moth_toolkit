@@ -1,5 +1,5 @@
 #include "common.h"
-#include "moth_ui/animation/animation_marker.h"
+#include "moth/ui/animation/animation_marker.h"
 
 namespace moth::ui {
     void to_json(nlohmann::json& json, AnimationMarker const& marker) {

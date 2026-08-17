@@ -1,6 +1,6 @@
 #include "common.h"
-#include "moth_ui/layout/layout_entity_text.h"
-#include "moth_ui/nodes/node_text.h"
+#include "moth/ui/layout/layout_entity_text.h"
+#include "moth/ui/nodes/node_text.h"
 
 namespace moth::ui {
     LayoutEntityText::LayoutEntityText(LayoutRect const& initialBounds)

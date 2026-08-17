@@ -1,7 +1,7 @@
 // Pins the public method signatures of the node hierarchy.
 
 #include "mock_context.h"
-#include "moth_ui/moth_ui.h"
+#include "moth/ui/moth_ui.h"
 
 #include <catch2/catch_all.hpp>
 #include <memory>

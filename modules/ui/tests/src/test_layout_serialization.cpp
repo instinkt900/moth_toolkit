@@ -1,11 +1,11 @@
-#include "moth_ui/layout/layout.h"
-#include "moth_ui/layout/layout_entity_clip.h"
-#include "moth_ui/layout/layout_entity_rect.h"
-#include "moth_ui/layout/layout_entity_text.h"
-#include "moth_ui/layout/layout_rect.h"
-#include "moth_ui/animation/animation_clip.h"
-#include "moth_ui/animation/animation_marker.h"
-#include "moth_ui/graphics/text_alignment.h"
+#include "moth/ui/layout/layout.h"
+#include "moth/ui/layout/layout_entity_clip.h"
+#include "moth/ui/layout/layout_entity_rect.h"
+#include "moth/ui/layout/layout_entity_text.h"
+#include "moth/ui/layout/layout_rect.h"
+#include "moth/ui/animation/animation_clip.h"
+#include "moth/ui/animation/animation_marker.h"
+#include "moth/ui/graphics/text_alignment.h"
 #include <catch2/catch_all.hpp>
 #include <nlohmann/json.hpp>
 

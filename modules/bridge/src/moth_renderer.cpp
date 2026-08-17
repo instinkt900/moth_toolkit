@@ -1,5 +1,5 @@
 #include "moth/bridge/moth_renderer.h"
-#include "moth_graphics/graphics/igraphics.h"
+#include "moth/graphics/graphics/igraphics.h"
 #include "moth/bridge/moth_font.h"
 #include "moth/bridge/moth_image.h"
 

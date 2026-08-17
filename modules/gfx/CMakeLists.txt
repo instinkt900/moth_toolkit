@@ -7,8 +7,8 @@ string(REGEX REPLACE "[-+].*$" "" PROJECT_VERSION "${PROJECT_VERSION_FULL}")
 project(moth_graphics VERSION ${PROJECT_VERSION} DESCRIPTION "A basic graphical framework.")
 
 configure_file(
-    include/moth_graphics/version.h.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/moth_graphics/version.h
+    include/moth/graphics/version.h.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/moth/graphics/version.h
 )
 
 message("Building with CMake version: ${CMAKE_VERSION}")
@@ -114,7 +114,9 @@ endif()
 add_library(${PROJECT_NAME} ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 target_compile_definitions(${PROJECT_NAME} PUBLIC IMGUI_DEFINE_MATH_OPERATORS)
-target_include_directories(${PROJECT_NAME} PUBLIC include)
+target_include_directories(${PROJECT_NAME} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>)
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external/imgui>
     $<INSTALL_INTERFACE:external/imgui>

@@ -1,7 +1,7 @@
 #include "common.h"
-#include "moth_ui/layout/layout_entity_group.h"
-#include "moth_ui/animation/animation_clip.h"
-#include "moth_ui/animation/animation_marker.h"
+#include "moth/ui/layout/layout_entity_group.h"
+#include "moth/ui/animation/animation_clip.h"
+#include "moth/ui/animation/animation_marker.h"
 
 namespace moth::ui {
     LayoutEntityGroup::LayoutEntityGroup(LayoutRect const& initialBounds)

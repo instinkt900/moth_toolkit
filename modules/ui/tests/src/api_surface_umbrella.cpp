@@ -3,8 +3,8 @@
 // consumer pattern — a header forward-declares via moth_ui_fwd.h, then the
 // corresponding .cpp includes the full moth_ui.h.
 
-#include "moth_ui/moth_ui_fwd.h"
-#include "moth_ui/moth_ui.h"
+#include "moth/ui/moth_ui_fwd.h"
+#include "moth/ui/moth_ui.h"
 
 #include <catch2/catch_all.hpp>
 

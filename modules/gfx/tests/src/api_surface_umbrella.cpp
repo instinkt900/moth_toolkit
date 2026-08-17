@@ -3,8 +3,8 @@
 // is the common consumer pattern — a header forward-declares via the fwd header,
 // then the corresponding .cpp includes the full aggregate header.
 
-#include "moth_graphics/moth_graphics_fwd.h"
-#include "moth_graphics/moth_graphics.h"
+#include "moth/graphics/moth_graphics_fwd.h"
+#include "moth/graphics/moth_graphics.h"
 
 #include <catch2/catch_all.hpp>
 

@@ -1,9 +1,9 @@
 #include "common.h"
-#include "moth_ui/nodes/node.h"
-#include "moth_ui/layout/layout_entity.h"
-#include "moth_ui/animation/animation_controller.h"
-#include "moth_ui/nodes/group.h"
-#include "moth_ui/context.h"
+#include "moth/ui/nodes/node.h"
+#include "moth/ui/layout/layout_entity.h"
+#include "moth/ui/animation/animation_controller.h"
+#include "moth/ui/nodes/group.h"
+#include "moth/ui/context.h"
 
 namespace moth::ui {
     Node::Node(Context& context)

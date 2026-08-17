@@ -1,10 +1,10 @@
 #include "mock_context.h"
-#include "moth_ui/events/event_key.h"
-#include "moth_ui/flow/flow.h"
-#include "moth_ui/flow/flow_graph.h"
-#include "moth_ui/flow/transition_participant.h"
-#include "moth_ui/layers/layer.h"
-#include "moth_ui/layers/layer_stack.h"
+#include "moth/ui/events/event_key.h"
+#include "moth/ui/flow/flow.h"
+#include "moth/ui/flow/flow_graph.h"
+#include "moth/ui/flow/transition_participant.h"
+#include "moth/ui/layers/layer.h"
+#include "moth/ui/layers/layer_stack.h"
 
 #include <catch2/catch_all.hpp>
 

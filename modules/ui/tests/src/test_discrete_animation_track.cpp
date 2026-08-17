@@ -1,5 +1,5 @@
-#include "moth_ui/animation/animation_track.h"
-#include "moth_ui/animation/discrete_animation_track.h"
+#include "moth/ui/animation/animation_track.h"
+#include "moth/ui/animation/discrete_animation_track.h"
 #include <catch2/catch_all.hpp>
 #include <nlohmann/json.hpp>
 

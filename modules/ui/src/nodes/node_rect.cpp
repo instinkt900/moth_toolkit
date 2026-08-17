@@ -1,7 +1,7 @@
 #include "common.h"
-#include "moth_ui/nodes/node_rect.h"
-#include "moth_ui/layout/layout_entity_rect.h"
-#include "moth_ui/context.h"
+#include "moth/ui/nodes/node_rect.h"
+#include "moth/ui/layout/layout_entity_rect.h"
+#include "moth/ui/context.h"
 
 namespace moth::ui {
     NodeRect::NodeRect(Context& context)

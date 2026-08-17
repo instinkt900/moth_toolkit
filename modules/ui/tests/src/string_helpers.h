@@ -1,7 +1,7 @@
 #pragma once
 
 #include <ostream>
-#include <moth_ui/utils/vector.h>
+#include <moth/ui/utils/vector.h>
 
 namespace moth::ui {
     template <typename T, int Dim>

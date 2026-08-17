@@ -1,6 +1,6 @@
 #include "common.h"
-#include "moth_ui/layout/layout_cache.h"
-#include "moth_ui/layout/layout.h"
+#include "moth/ui/layout/layout_cache.h"
+#include "moth/ui/layout/layout.h"
 
 namespace moth::ui {
     void LayoutCache::SetLayoutRoot(std::string_view path) {

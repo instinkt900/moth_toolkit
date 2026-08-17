@@ -1,15 +1,15 @@
 #pragma once
 
-#include "moth_graphics/graphics/igraphics.h"
-#include "moth_graphics/graphics/color.h"
-#include "moth_graphics/graphics/blend_mode.h"
-#include "moth_graphics/utils/rect.h"
+#include "moth/graphics/graphics/igraphics.h"
+#include "moth/graphics/graphics/color.h"
+#include "moth/graphics/graphics/blend_mode.h"
+#include "moth/graphics/utils/rect.h"
 
-#include <moth_ui/graphics/irenderer.h>
-#include <moth_ui/graphics/blend_mode.h>
-#include <moth_ui/graphics/texture_filter.h>
-#include <moth_ui/utils/color.h>
-#include <moth_ui/utils/rect.h>
+#include <moth/ui/graphics/irenderer.h>
+#include <moth/ui/graphics/blend_mode.h>
+#include <moth/ui/graphics/texture_filter.h>
+#include <moth/ui/utils/color.h>
+#include <moth/ui/utils/rect.h>
 
 #include <stack>
 

@@ -2,7 +2,7 @@
 // SpriteSheet::LoopType, and MothGraphicsEventType.  Any rename, reorder, or
 // renumber will fail to compile.
 
-#include "moth_graphics/moth_graphics.h"
+#include "moth/graphics/moth_graphics.h"
 
 #include <catch2/catch_all.hpp>
 #include <type_traits>

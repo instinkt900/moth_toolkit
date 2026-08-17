@@ -2,7 +2,7 @@
 // IFont, and ITarget. Every method pointer assignment fails to compile if a
 // method is renamed, removed, or its signature changes.
 
-#include "moth_graphics/moth_graphics.h"
+#include "moth/graphics/moth_graphics.h"
 
 #include <catch2/catch_all.hpp>
 #include <filesystem>

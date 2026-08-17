@@ -4,11 +4,11 @@
 #include "moth/bridge/moth_font_factory.h"
 #include "moth/bridge/moth_image_factory.h"
 #include "moth/bridge/moth_renderer.h"
-#include "moth_graphics/platform/imgui_context.h"
-#include "moth_graphics/platform/window.h"
+#include "moth/graphics/platform/imgui_context.h"
+#include "moth/graphics/platform/window.h"
 
-#include <moth_ui/context.h>
-#include <moth_ui/layers/layer_stack.h>
+#include <moth/ui/context.h>
+#include <moth/ui/layers/layer_stack.h>
 
 #include <memory>
 #include <string_view>

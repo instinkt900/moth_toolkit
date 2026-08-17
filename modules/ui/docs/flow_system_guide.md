@@ -20,7 +20,7 @@ side effects, so layer code stays focused on its own job instead of
 push/pop plumbing and double-click guards.
 
 It's pure moth_ui — no moth_graphics dependency. Existing moth_ui apps
-that roll their own layer management can ignore the `moth_ui/flow/`
+that roll their own layer management can ignore the `moth/ui/flow/`
 headers entirely and lose nothing.
 
 ## The two halves
@@ -403,10 +403,10 @@ All opt-in; including none leaves existing moth_ui users unaffected.
 
 | Header                                  | Provides                                  |
 |-----------------------------------------|-------------------------------------------|
-| `moth_ui/flow/flow.h`                   | the `Flow` runtime                        |
-| `moth_ui/flow/flow_graph.h`             | `FlowGraph`, `LayerSpec`, `TransitionSpec`, `TriggerSpec`, the enums, the validator, and JSON loaders |
-| `moth_ui/flow/transition_participant.h` | the `ITransitionParticipant` interface    |
-| `moth_ui/flow/transitioning_layer.h`    | the `.mothui`-backed layer base           |
-| `moth_ui/flow/code_driven_layer.h`      | the code-driven layer base                |
-| `moth_ui/flow/iclickable.h`             | the `IClickable` interface                |
-| `moth_ui/widgets/ui_button.h`           | the bundled `UIButton` widget             |
+| `moth/ui/flow/flow.h`                   | the `Flow` runtime                        |
+| `moth/ui/flow/flow_graph.h`             | `FlowGraph`, `LayerSpec`, `TransitionSpec`, `TriggerSpec`, the enums, the validator, and JSON loaders |
+| `moth/ui/flow/transition_participant.h` | the `ITransitionParticipant` interface    |
+| `moth/ui/flow/transitioning_layer.h`    | the `.mothui`-backed layer base           |
+| `moth/ui/flow/code_driven_layer.h`      | the code-driven layer base                |
+| `moth/ui/flow/iclickable.h`             | the `IClickable` interface                |
+| `moth/ui/widgets/ui_button.h`           | the bundled `UIButton` widget             |

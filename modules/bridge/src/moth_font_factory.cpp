@@ -1,6 +1,6 @@
 #include <moth/core/log.h>
 #include "moth/bridge/moth_font_factory.h"
-#include "moth_graphics/graphics/font_factory.h"
+#include "moth/graphics/graphics/font_factory.h"
 #include "moth/bridge/moth_font.h"
 
 namespace moth::bridge {

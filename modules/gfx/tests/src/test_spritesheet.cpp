@@ -1,16 +1,16 @@
-#include "moth_graphics/graphics/spritesheet.h"
-#include "moth_graphics/graphics/image.h"
-#include "moth_graphics/graphics/itexture.h"
-#include "moth_graphics/utils/rect.h"
-#include "moth_graphics/utils/vector.h"
+#include "moth/graphics/graphics/spritesheet.h"
+#include "moth/graphics/graphics/image.h"
+#include "moth/graphics/graphics/itexture.h"
+#include "moth/graphics/utils/rect.h"
+#include "moth/graphics/utils/vector.h"
 
-#include "moth_graphics/graphics/asset_context.h"
-#include "moth_graphics/graphics/font_factory.h"
-#include "moth_graphics/graphics/ifont.h"
-#include "moth_graphics/graphics/shader.h"
-#include "moth_graphics/graphics/shader_factory.h"
-#include "moth_graphics/graphics/spritesheet_factory.h"
-#include "moth_graphics/graphics/texture_factory.h"
+#include "moth/graphics/graphics/asset_context.h"
+#include "moth/graphics/graphics/font_factory.h"
+#include "moth/graphics/graphics/ifont.h"
+#include "moth/graphics/graphics/shader.h"
+#include "moth/graphics/graphics/shader_factory.h"
+#include "moth/graphics/graphics/spritesheet_factory.h"
+#include "moth/graphics/graphics/texture_factory.h"
 
 #include <catch2/catch_all.hpp>
 #include <cstdint>

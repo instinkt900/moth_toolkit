@@ -1,5 +1,5 @@
 #include "common.h"
-#include "moth_graphics/graphics/shader_factory.h"
+#include "moth/graphics/graphics/shader_factory.h"
 
 namespace moth::gfx {
     ShaderFactory::ShaderFactory(AssetContext& context)

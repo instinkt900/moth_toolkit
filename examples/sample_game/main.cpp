@@ -3,8 +3,8 @@
 // sprite rendering, and Phase 6's entity-component system (moth::ecs) — all from
 // a single main.cpp.
 
-#include <moth_graphics/moth_graphics.h>
-#include <moth_graphics/platform/glfw/glfw_platform.h>
+#include <moth/graphics/moth_graphics.h>
+#include <moth/graphics/platform/glfw/glfw_platform.h>
 
 #include <moth/core/event_window.h>
 #include <moth/core/input.h>

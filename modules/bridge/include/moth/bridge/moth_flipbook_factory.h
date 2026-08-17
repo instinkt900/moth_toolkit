@@ -1,8 +1,8 @@
 #pragma once
 
-#include "moth_graphics/graphics/spritesheet_factory.h"
+#include "moth/graphics/graphics/spritesheet_factory.h"
 
-#include <moth_ui/iflipbook_factory.h>
+#include <moth/ui/iflipbook_factory.h>
 
 #include <filesystem>
 #include <memory>

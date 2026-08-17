@@ -1,11 +1,11 @@
 #include "common.h"
-#include "moth_ui/nodes/node_flipbook.h"
-#include "moth_ui/animation/animation_controller.h"
-#include "moth_ui/animation/animation_track.h"
-#include "moth_ui/events/event_flipbook.h"
-#include "moth_ui/graphics/image_scale_type.h"
-#include "moth_ui/layout/layout_entity_flipbook.h"
-#include "moth_ui/context.h"
+#include "moth/ui/nodes/node_flipbook.h"
+#include "moth/ui/animation/animation_controller.h"
+#include "moth/ui/animation/animation_track.h"
+#include "moth/ui/events/event_flipbook.h"
+#include "moth/ui/graphics/image_scale_type.h"
+#include "moth/ui/layout/layout_entity_flipbook.h"
+#include "moth/ui/context.h"
 
 namespace moth::ui {
     NodeFlipbook::NodeFlipbook(Context& context)

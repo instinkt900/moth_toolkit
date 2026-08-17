@@ -1,5 +1,5 @@
 #include "common.h"
-#include "moth_ui/animation/animation_track_controller.h"
+#include "moth/ui/animation/animation_track_controller.h"
 
 namespace moth::ui {
     AnimationTrackController::AnimationTrackController(float& target, AnimationTrack& track)

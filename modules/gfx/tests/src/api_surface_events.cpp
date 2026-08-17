@@ -1,7 +1,7 @@
 // Pins the signatures of moth_graphics event classes and the EventEmitter
 // interface.
 
-#include "moth_graphics/moth_graphics.h"
+#include "moth/graphics/moth_graphics.h"
 
 #include <catch2/catch_all.hpp>
 #include <functional>

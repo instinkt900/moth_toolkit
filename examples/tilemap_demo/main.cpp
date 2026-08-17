@@ -2,8 +2,8 @@
 // moth::tilemap importer, and renders it with view culling under a pannable
 // camera. Procedural atlas texture, no external assets.
 
-#include <moth_graphics/moth_graphics.h>
-#include <moth_graphics/platform/glfw/glfw_platform.h>
+#include <moth/graphics/moth_graphics.h>
+#include <moth/graphics/platform/glfw/glfw_platform.h>
 
 #include <moth/core/event_window.h>
 #include <moth/core/input.h>

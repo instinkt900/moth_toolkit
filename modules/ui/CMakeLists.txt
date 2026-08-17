@@ -8,8 +8,8 @@ string(REGEX REPLACE "[-+].*$" "" PROJECT_VERSION "${PROJECT_VERSION_FULL}")
 project(moth_ui VERSION ${PROJECT_VERSION} DESCRIPTION "A C++ game UI library")
 
 configure_file(
-    include/moth_ui/version.h.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/moth_ui/version.h
+    include/moth/ui/version.h.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/moth/ui/version.h
 )
 
 message("Building with CMake version: ${CMAKE_VERSION}")
@@ -20,84 +20,84 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(PUBLIC_HEADERS
-	include/moth_ui/animation/animation_clip_controller.h
-	include/moth_ui/animation/animation_clip.h
-	include/moth_ui/animation/animation_controller.h
-	include/moth_ui/animation/animation_marker.h
-	include/moth_ui/animation/animation_track_controller.h
-	include/moth_ui/animation/animation_target.h
-	include/moth_ui/animation/animation_track.h
-	include/moth_ui/animation/discrete_animation_track.h
-	include/moth_ui/animation/discrete_animation_track_controller.h
-	include/moth_ui/animation/keyframe.h
-	include/moth_ui/context.h
-	include/moth_ui/events/event_animation.h
-	include/moth_ui/events/event_dispatch.h
-	include/moth_ui/events/event_flipbook.h
-	include/moth_ui/events/event.h
-	include/moth_ui/events/event_key.h
-	include/moth_ui/events/event_listener.h
-	include/moth_ui/events/event_mouse.h
-	include/moth_ui/flow/code_driven_layer.h
-	include/moth_ui/flow/flow.h
-	include/moth_ui/flow/flow_graph.h
-	include/moth_ui/flow/iclickable.h
-	include/moth_ui/flow/transition_participant.h
-	include/moth_ui/flow/transitioning_layer.h
-	include/moth_ui/font_factory.h
-	include/moth_ui/graphics/blend_mode.h
-	include/moth_ui/graphics/iflipbook.h
-	include/moth_ui/graphics/ifont.h
-	include/moth_ui/graphics/iimage.h
-	include/moth_ui/graphics/image_scale_type.h
-	include/moth_ui/graphics/irenderer.h
-	include/moth_ui/graphics/itarget.h
-	include/moth_ui/graphics/linear_gradient.h
-	include/moth_ui/graphics/text_alignment.h
-	include/moth_ui/iflipbook_factory.h
-	include/moth_ui/ifont_factory.h
-	include/moth_ui/iimage_factory.h
-	include/moth_ui/ilogger.h
-	include/moth_ui/layers/layer.h
-	include/moth_ui/layers/layer_stack.h
-	include/moth_ui/layout/layout_cache.h
-	include/moth_ui/layout/layout_entity_clip.h
-	include/moth_ui/layout/layout_entity_flipbook.h
-	include/moth_ui/layout/layout_entity_gradient.h
-	include/moth_ui/layout/layout_entity_group.h
-	include/moth_ui/layout/layout_entity.h
-	include/moth_ui/layout/layout_entity_image.h
-	include/moth_ui/layout/layout_entity_rect.h
-	include/moth_ui/layout/layout_entity_ref.h
-	include/moth_ui/layout/layout_entity_text.h
-	include/moth_ui/layout/layout_entity_type.h
-	include/moth_ui/layout/layout.h
-	include/moth_ui/layout/layout_rect.h
-	include/moth_ui/node_factory.h
-	include/moth_ui/nodes/group.h
-	include/moth_ui/nodes/node_clip.h
-	include/moth_ui/nodes/node_flipbook.h
-	include/moth_ui/nodes/node_gradient.h
-	include/moth_ui/nodes/node.h
-	include/moth_ui/nodes/node_image.h
-	include/moth_ui/nodes/node_rect.h
-	include/moth_ui/nodes/node_text.h
-	include/moth_ui/utils/color.h
-	include/moth_ui/utils/interp.h
-	include/moth_ui/utils/rect.h
-	include/moth_ui/utils/rect_serialization.h
-	include/moth_ui/utils/serialize_utils.h
-	include/moth_ui/utils/vector.h
-	include/moth_ui/utils/vector_serialization.h
-	include/moth_ui/graphics/texture_filter.h
-	include/moth_ui/moth_ui.h
-	include/moth_ui/moth_ui_fwd.h
-	include/moth_ui/utils/transform.h
-	include/moth_ui/utils/vector_utils.h
-	include/moth_ui/version.h
-	include/moth_ui/widgets/ui_button.h
-	include/moth_ui/widgets/ui_scroll_view.h
-	include/moth_ui/widgets/widget.h
+	include/moth/ui/animation/animation_clip_controller.h
+	include/moth/ui/animation/animation_clip.h
+	include/moth/ui/animation/animation_controller.h
+	include/moth/ui/animation/animation_marker.h
+	include/moth/ui/animation/animation_track_controller.h
+	include/moth/ui/animation/animation_target.h
+	include/moth/ui/animation/animation_track.h
+	include/moth/ui/animation/discrete_animation_track.h
+	include/moth/ui/animation/discrete_animation_track_controller.h
+	include/moth/ui/animation/keyframe.h
+	include/moth/ui/context.h
+	include/moth/ui/events/event_animation.h
+	include/moth/ui/events/event_dispatch.h
+	include/moth/ui/events/event_flipbook.h
+	include/moth/ui/events/event.h
+	include/moth/ui/events/event_key.h
+	include/moth/ui/events/event_listener.h
+	include/moth/ui/events/event_mouse.h
+	include/moth/ui/flow/code_driven_layer.h
+	include/moth/ui/flow/flow.h
+	include/moth/ui/flow/flow_graph.h
+	include/moth/ui/flow/iclickable.h
+	include/moth/ui/flow/transition_participant.h
+	include/moth/ui/flow/transitioning_layer.h
+	include/moth/ui/font_factory.h
+	include/moth/ui/graphics/blend_mode.h
+	include/moth/ui/graphics/iflipbook.h
+	include/moth/ui/graphics/ifont.h
+	include/moth/ui/graphics/iimage.h
+	include/moth/ui/graphics/image_scale_type.h
+	include/moth/ui/graphics/irenderer.h
+	include/moth/ui/graphics/itarget.h
+	include/moth/ui/graphics/linear_gradient.h
+	include/moth/ui/graphics/text_alignment.h
+	include/moth/ui/iflipbook_factory.h
+	include/moth/ui/ifont_factory.h
+	include/moth/ui/iimage_factory.h
+	include/moth/ui/ilogger.h
+	include/moth/ui/layers/layer.h
+	include/moth/ui/layers/layer_stack.h
+	include/moth/ui/layout/layout_cache.h
+	include/moth/ui/layout/layout_entity_clip.h
+	include/moth/ui/layout/layout_entity_flipbook.h
+	include/moth/ui/layout/layout_entity_gradient.h
+	include/moth/ui/layout/layout_entity_group.h
+	include/moth/ui/layout/layout_entity.h
+	include/moth/ui/layout/layout_entity_image.h
+	include/moth/ui/layout/layout_entity_rect.h
+	include/moth/ui/layout/layout_entity_ref.h
+	include/moth/ui/layout/layout_entity_text.h
+	include/moth/ui/layout/layout_entity_type.h
+	include/moth/ui/layout/layout.h
+	include/moth/ui/layout/layout_rect.h
+	include/moth/ui/node_factory.h
+	include/moth/ui/nodes/group.h
+	include/moth/ui/nodes/node_clip.h
+	include/moth/ui/nodes/node_flipbook.h
+	include/moth/ui/nodes/node_gradient.h
+	include/moth/ui/nodes/node.h
+	include/moth/ui/nodes/node_image.h
+	include/moth/ui/nodes/node_rect.h
+	include/moth/ui/nodes/node_text.h
+	include/moth/ui/utils/color.h
+	include/moth/ui/utils/interp.h
+	include/moth/ui/utils/rect.h
+	include/moth/ui/utils/rect_serialization.h
+	include/moth/ui/utils/serialize_utils.h
+	include/moth/ui/utils/vector.h
+	include/moth/ui/utils/vector_serialization.h
+	include/moth/ui/graphics/texture_filter.h
+	include/moth/ui/moth_ui.h
+	include/moth/ui/moth_ui_fwd.h
+	include/moth/ui/utils/transform.h
+	include/moth/ui/utils/vector_utils.h
+	include/moth/ui/version.h
+	include/moth/ui/widgets/ui_button.h
+	include/moth/ui/widgets/ui_scroll_view.h
+	include/moth/ui/widgets/widget.h
 )
 set(SOURCES ${SOURCES}
 	src/animation/animation_clip_controller.cpp
@@ -152,7 +152,9 @@ endif()
 
 add_library(${PROJECT_NAME} ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
-target_include_directories(${PROJECT_NAME} PUBLIC include)
+target_include_directories(${PROJECT_NAME} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>)
 target_include_directories(${PROJECT_NAME} PRIVATE src)
 target_link_libraries(${PROJECT_NAME} PUBLIC nlohmann_json::nlohmann_json)
 target_link_libraries(${PROJECT_NAME} PUBLIC fmt::fmt)

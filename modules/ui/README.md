@@ -249,15 +249,15 @@ Two convenience headers are provided so you can choose the right level of detail
 
 **All public types and implementations — use in `.cpp` files or when you need the full API:**
 ```cpp
-#include "moth_ui/moth_ui.h"
+#include "moth/ui/moth_ui.h"
 ```
 
 **Forward declarations only — use in headers to minimise compile-time dependencies:**
 ```cpp
-#include "moth_ui/moth_ui_fwd.h"
+#include "moth/ui/moth_ui_fwd.h"
 ```
 
-You can also include individual headers directly from `moth_ui/animation/`, `moth_ui/nodes/`, `moth_ui/layout/`, etc.
+You can also include individual headers directly from `moth/ui/animation/`, `moth/ui/nodes/`, `moth/ui/layout/`, etc.
 
 ---
 

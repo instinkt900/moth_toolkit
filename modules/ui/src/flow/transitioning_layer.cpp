@@ -1,12 +1,12 @@
 #include "common.h"
-#include "moth_ui/flow/transitioning_layer.h"
+#include "moth/ui/flow/transitioning_layer.h"
 
-#include "moth_ui/context.h"
-#include "moth_ui/events/event_dispatch.h"
-#include "moth_ui/layers/layer_stack.h"
-#include "moth_ui/node_factory.h"
-#include "moth_ui/nodes/group.h"
-#include "moth_ui/utils/rect.h"
+#include "moth/ui/context.h"
+#include "moth/ui/events/event_dispatch.h"
+#include "moth/ui/layers/layer_stack.h"
+#include "moth/ui/node_factory.h"
+#include "moth/ui/nodes/group.h"
+#include "moth/ui/utils/rect.h"
 
 namespace moth::ui::flow {
 

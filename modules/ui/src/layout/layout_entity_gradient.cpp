@@ -1,7 +1,7 @@
 #include "common.h"
-#include "moth_ui/layout/layout_entity_gradient.h"
-#include "moth_ui/nodes/node_gradient.h"
-#include "moth_ui/animation/animation_track.h"
+#include "moth/ui/layout/layout_entity_gradient.h"
+#include "moth/ui/nodes/node_gradient.h"
+#include "moth/ui/animation/animation_track.h"
 
 namespace moth::ui {
     namespace {

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "moth_graphics/graphics/ifont.h"
+#include "moth/graphics/graphics/ifont.h"
 #include "vulkan_shader.h"
-#include "moth_graphics/graphics/vulkan/vulkan_surface_context.h"
+#include "moth/graphics/graphics/vulkan/vulkan_surface_context.h"
 #include "vulkan_buffer.h"
 #include "vulkan_texture.h"
-#include "moth_graphics/utils/vector.h"
+#include "moth/graphics/utils/vector.h"
 
 #include <harfbuzz/hb.h>
 #include <vulkan/vulkan_core.h>

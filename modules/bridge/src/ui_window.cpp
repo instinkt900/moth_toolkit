@@ -1,8 +1,8 @@
 #include "moth/bridge/ui_window.h"
-#include "moth_graphics/graphics/surface_context.h"
+#include "moth/graphics/graphics/surface_context.h"
 
 #include <moth/core/event_window.h>
-#include <moth_ui/layers/layer.h>
+#include <moth/ui/layers/layer.h>
 
 #include <cassert>
 

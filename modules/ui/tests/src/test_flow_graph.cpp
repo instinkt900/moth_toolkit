@@ -1,4 +1,4 @@
-#include "moth_ui/flow/flow_graph.h"
+#include "moth/ui/flow/flow_graph.h"
 
 #include <catch2/catch_all.hpp>
 #include <nlohmann/json.hpp>

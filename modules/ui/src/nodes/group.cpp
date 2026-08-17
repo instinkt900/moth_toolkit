@@ -1,14 +1,14 @@
 #include "common.h"
-#include "moth_ui/nodes/group.h"
-#include "moth_ui/animation/animation_clip.h"
-#include "moth_ui/animation/animation_controller.h"
-#include "moth_ui/layout/layout_entity_group.h"
+#include "moth/ui/nodes/group.h"
+#include "moth/ui/animation/animation_clip.h"
+#include "moth/ui/animation/animation_controller.h"
+#include "moth/ui/layout/layout_entity_group.h"
 
 #include <algorithm>
-#include "moth_ui/layout/layout_entity_ref.h"
-#include "moth_ui/nodes/node_clip.h"
-#include "moth_ui/context.h"
-#include "moth_ui/node_factory.h"
+#include "moth/ui/layout/layout_entity_ref.h"
+#include "moth/ui/nodes/node_clip.h"
+#include "moth/ui/context.h"
+#include "moth/ui/node_factory.h"
 
 namespace moth::ui {
     Group::Group(Context& context)

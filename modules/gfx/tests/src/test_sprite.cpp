@@ -1,8 +1,8 @@
-#include "moth_graphics/graphics/sprite.h"
-#include "moth_graphics/graphics/spritesheet.h"
-#include "moth_graphics/graphics/image.h"
-#include "moth_graphics/utils/rect.h"
-#include "moth_graphics/utils/vector.h"
+#include "moth/graphics/graphics/sprite.h"
+#include "moth/graphics/graphics/spritesheet.h"
+#include "moth/graphics/graphics/image.h"
+#include "moth/graphics/utils/rect.h"
+#include "moth/graphics/utils/vector.h"
 
 #include <catch2/catch_all.hpp>
 #include <memory>

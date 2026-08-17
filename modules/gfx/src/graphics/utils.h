@@ -1,9 +1,9 @@
 #pragma once
 
-#include "moth_graphics/graphics/color.h"
-#include "moth_graphics/utils/rect.h"
+#include "moth/graphics/graphics/color.h"
+#include "moth/graphics/utils/rect.h"
 
-#include <moth_ui/utils/color.h>
+#include <moth/ui/utils/color.h>
 
 namespace moth::gfx {
     // returns a rect with the coordinates of b within a

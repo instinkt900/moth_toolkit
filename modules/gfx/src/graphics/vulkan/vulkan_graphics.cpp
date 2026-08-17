@@ -7,7 +7,7 @@
 #include "stb_image_write.h"
 
 #include "graphics/circle_tessellation.h"
-#include "moth_graphics/utils/polygon_triangulation.h"
+#include "moth/graphics/utils/polygon_triangulation.h"
 
 #include <algorithm>
 #include <cmath>

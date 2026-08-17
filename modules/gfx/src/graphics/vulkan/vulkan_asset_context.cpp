@@ -1,6 +1,6 @@
 #include "common.h"
-#include "moth_graphics/graphics/vulkan/vulkan_asset_context.h"
-#include "moth_graphics/graphics/vulkan/vulkan_surface_context.h"
+#include "moth/graphics/graphics/vulkan/vulkan_asset_context.h"
+#include "moth/graphics/graphics/vulkan/vulkan_surface_context.h"
 #include "vulkan_font.h"
 #include "vulkan_texture.h"
 #include "vulkan_shader_object.h"

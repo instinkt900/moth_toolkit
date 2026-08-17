@@ -62,8 +62,8 @@ AI agents (primarily Claude) are used as tools in this project for tasks such as
 `Application` ties a platform, a window, and a fixed-timestep loop together. Subclass it and override the lifecycle hooks:
 
 ```cpp
-#include <moth_graphics/platform/application.h>
-#include <moth_graphics/platform/glfw/glfw_platform.h>
+#include <moth/graphics/platform/application.h>
+#include <moth/graphics/platform/glfw/glfw_platform.h>
 
 class MyApp : public moth_graphics::platform::Application {
 public:
@@ -250,7 +250,7 @@ Use these in your own code to guard backend-specific includes:
 
 ```cpp
 #if !MOTH_GRAPHICS_DISABLE_VULKAN
-#include <moth_graphics/platform/glfw/glfw_platform.h>
+#include <moth/graphics/platform/glfw/glfw_platform.h>
 #endif
 ```
 

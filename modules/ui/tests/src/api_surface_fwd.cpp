@@ -2,7 +2,7 @@
 // other moth_ui header. Forward-declared types are used in function signatures
 // to confirm every declaration in the file is parseable.
 
-#include "moth_ui/moth_ui_fwd.h"
+#include "moth/ui/moth_ui_fwd.h"
 
 #include <catch2/catch_all.hpp>
 

@@ -1,5 +1,5 @@
 #include "common.h"
-#include "moth_ui/animation/discrete_animation_track_controller.h"
+#include "moth/ui/animation/discrete_animation_track_controller.h"
 
 namespace moth::ui {
     DiscreteAnimationTrackController::DiscreteAnimationTrackController(DiscreteAnimationTrack const& track, std::function<void(std::string_view)> callback)

@@ -1,4 +1,4 @@
-#include "moth_ui/animation/animation_clip.h"
+#include "moth/ui/animation/animation_clip.h"
 #include <catch2/catch_all.hpp>
 #include <nlohmann/json.hpp>
 

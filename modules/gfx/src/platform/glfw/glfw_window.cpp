@@ -1,8 +1,8 @@
 #include "graphics/vulkan/vulkan_utils.h"
 #include "common.h"
-#include "moth_graphics/platform/glfw/glfw_window.h"
+#include "moth/graphics/platform/glfw/glfw_window.h"
 #include "graphics/vulkan/vulkan_graphics.h"
-#include "moth_graphics/graphics/vulkan/vulkan_surface_context.h"
+#include "moth/graphics/graphics/vulkan/vulkan_surface_context.h"
 
 #include <cassert>
 

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "moth_ui/context.h"
-#include "moth_ui/graphics/ifont.h"
-#include "moth_ui/graphics/iimage.h"
-#include "moth_ui/graphics/irenderer.h"
-#include "moth_ui/ifont_factory.h"
-#include "moth_ui/iimage_factory.h"
+#include "moth/ui/context.h"
+#include "moth/ui/graphics/ifont.h"
+#include "moth/ui/graphics/iimage.h"
+#include "moth/ui/graphics/irenderer.h"
+#include "moth/ui/ifont_factory.h"
+#include "moth/ui/iimage_factory.h"
 
 #include <filesystem>
 #include <memory>

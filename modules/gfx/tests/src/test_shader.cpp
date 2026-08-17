@@ -1,8 +1,8 @@
-#include "moth_graphics/graphics/shader.h"
-#include "moth_graphics/graphics/image.h"
-#include "moth_graphics/graphics/itexture.h"
-#include "moth_graphics/utils/rect.h"
-#include "moth_graphics/utils/vector.h"
+#include "moth/graphics/graphics/shader.h"
+#include "moth/graphics/graphics/image.h"
+#include "moth/graphics/graphics/itexture.h"
+#include "moth/graphics/utils/rect.h"
+#include "moth/graphics/utils/vector.h"
 
 #include <catch2/catch_all.hpp>
 #include <memory>

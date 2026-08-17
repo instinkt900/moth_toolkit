@@ -1,8 +1,8 @@
-#include "moth_ui/graphics/texture_filter.h"
-#include "moth_ui/layout/layout_entity_flipbook.h"
-#include "moth_ui/animation/discrete_animation_track.h"
-#include "moth_ui/animation/animation_track.h"
-#include "moth_ui/nodes/node_flipbook.h"
+#include "moth/ui/graphics/texture_filter.h"
+#include "moth/ui/layout/layout_entity_flipbook.h"
+#include "moth/ui/animation/discrete_animation_track.h"
+#include "moth/ui/animation/animation_track.h"
+#include "moth/ui/nodes/node_flipbook.h"
 
 namespace moth::ui {
     namespace {

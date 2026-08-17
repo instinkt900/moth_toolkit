@@ -1,7 +1,7 @@
 // Pins the layout system: LayoutEntityType enum, LayoutRect, Layout static API,
 // LayoutCache, and LayoutEntityFlipbook.
 
-#include "moth_ui/moth_ui.h"
+#include "moth/ui/moth_ui.h"
 
 #include <catch2/catch_all.hpp>
 #include <type_traits>

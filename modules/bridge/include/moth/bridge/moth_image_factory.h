@@ -1,9 +1,9 @@
 #pragma once
 
-#include "moth_graphics/graphics/texture_factory.h"
+#include "moth/graphics/graphics/texture_factory.h"
 
-#include <moth_ui/iimage_factory.h>
-#include <moth_ui/graphics/iimage.h>
+#include <moth/ui/iimage_factory.h>
+#include <moth/ui/graphics/iimage.h>
 
 #include <memory>
 #include <filesystem>

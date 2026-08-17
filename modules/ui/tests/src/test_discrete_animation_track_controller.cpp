@@ -1,6 +1,6 @@
-#include "moth_ui/animation/animation_track.h"
-#include "moth_ui/animation/discrete_animation_track.h"
-#include "moth_ui/animation/discrete_animation_track_controller.h"
+#include "moth/ui/animation/animation_track.h"
+#include "moth/ui/animation/discrete_animation_track.h"
+#include "moth/ui/animation/discrete_animation_track_controller.h"
 #include <catch2/catch_all.hpp>
 #include <string>
 #include <vector>

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "moth_graphics/graphics/spritesheet.h"
+#include "moth/graphics/graphics/spritesheet.h"
 #include "moth/bridge/moth_image.h"
 
-#include <moth_ui/graphics/iflipbook.h>
+#include <moth/ui/graphics/iflipbook.h>
 
 #include <memory>
 

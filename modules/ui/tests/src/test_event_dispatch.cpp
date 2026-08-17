@@ -1,6 +1,6 @@
-#include "moth_ui/events/event_dispatch.h"
-#include "moth_ui/events/event_mouse.h"
-#include "moth_ui/events/event_listener.h"
+#include "moth/ui/events/event_dispatch.h"
+#include "moth/ui/events/event_mouse.h"
+#include "moth/ui/events/event_listener.h"
 #include <catch2/catch_all.hpp>
 
 using namespace moth::ui;

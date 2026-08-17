@@ -1,7 +1,7 @@
 # Flow System — Design
 
 Status: implemented (PR #147). The runtime, layer bases, JSON loader, and bundled
-`UIButton` widget have all landed under `moth_ui/flow/` and `moth_ui/widgets/`. This
+`UIButton` widget have all landed under `moth/ui/flow/` and `moth/ui/widgets/`. This
 document is the **design-of-record** — it captures the rationale (why transitions
 nest under layers, why the stack mutates before the midpoint, the string-`tag`
 contract, deferred editor scope). It is written partly in pre-implementation tense
@@ -16,7 +16,7 @@ on concrete API, the guide and the headers win.
 
 Location: moth_ui, as an opt-in utility. Existing moth_ui users with their own
 layer/transition setup ignore the new headers and lose nothing; new users include
-`<moth_ui/flow/...>` and pick it up. The system has no moth_graphics dependency — the
+`<moth/ui/flow/...>` and pick it up. The system has no moth_graphics dependency — the
 entire flow runtime, layer bases, and supporting widgets are pure moth_ui.
 
 ## Goal
@@ -575,19 +575,19 @@ the graph, pump `Tick`. Everything else is data.
 This design introduces several new public headers in moth_ui. They're all opt-in —
 including none of them leaves existing moth_ui users unaffected.
 
-- `moth_ui/flow/flow.h` — the `Flow` runtime.
-- `moth_ui/flow/flow_graph.h` — `FlowGraph`, `LayerSpec`, `TransitionSpec`,
+- `moth/ui/flow/flow.h` — the `Flow` runtime.
+- `moth/ui/flow/flow_graph.h` — `FlowGraph`, `LayerSpec`, `TransitionSpec`,
   `TriggerSpec` and JSON loaders.
-- `moth_ui/flow/transition_participant.h` — the `ITransitionParticipant` interface.
-- `moth_ui/flow/transitioning_layer.h` — the `.mothui`-backed layer base.
-- `moth_ui/flow/code_driven_layer.h` — the code-driven layer base.
-- `moth_ui/flow/iclickable.h` — the `IClickable` interface. Lives under `flow/`
+- `moth/ui/flow/transition_participant.h` — the `ITransitionParticipant` interface.
+- `moth/ui/flow/transitioning_layer.h` — the `.mothui`-backed layer base.
+- `moth/ui/flow/code_driven_layer.h` — the code-driven layer base.
+- `moth/ui/flow/iclickable.h` — the `IClickable` interface. Lives under `flow/`
   because the flow runtime is its only current consumer; non-flow consumers can
   include it directly if they grow a need for it.
-- `moth_ui/widgets/ui_button.h` — the bundled `UIButton` widget that implements
+- `moth/ui/widgets/ui_button.h` — the bundled `UIButton` widget that implements
   `IClickable`. (Lives under `widgets/` alongside `widget.h`, the CRTP base.)
 
-The `moth_ui/flow/` subdirectory is a coherent unit; users can ignore it wholesale or
+The `moth/ui/flow/` subdirectory is a coherent unit; users can ignore it wholesale or
 pull in the pieces they want.
 
 ## Editor implications (forward-looking)

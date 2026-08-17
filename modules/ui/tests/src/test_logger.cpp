@@ -1,4 +1,4 @@
-#include "moth_ui/ilogger.h"
+#include "moth/ui/ilogger.h"
 #include <catch2/catch_all.hpp>
 
 using namespace moth::ui;

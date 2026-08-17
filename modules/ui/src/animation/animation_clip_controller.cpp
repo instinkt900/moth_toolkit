@@ -1,11 +1,11 @@
 #include "common.h"
-#include "moth_ui/animation/animation_clip_controller.h"
-#include "moth_ui/animation/animation_controller.h"
-#include "moth_ui/animation/animation_clip.h"
-#include "moth_ui/animation/animation_marker.h"
-#include "moth_ui/events/event_animation.h"
-#include "moth_ui/nodes/group.h"
-#include "moth_ui/layout/layout_entity_group.h"
+#include "moth/ui/animation/animation_clip_controller.h"
+#include "moth/ui/animation/animation_controller.h"
+#include "moth/ui/animation/animation_clip.h"
+#include "moth/ui/animation/animation_marker.h"
+#include "moth/ui/events/event_animation.h"
+#include "moth/ui/nodes/group.h"
+#include "moth/ui/layout/layout_entity_group.h"
 
 namespace moth::ui {
     AnimationClipController::AnimationClipController(Group* group)

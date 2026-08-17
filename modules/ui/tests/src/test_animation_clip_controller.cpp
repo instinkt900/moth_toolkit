@@ -1,9 +1,9 @@
 #include "mock_context.h"
-#include "moth_ui/animation/animation_clip.h"
-#include "moth_ui/animation/animation_marker.h"
-#include "moth_ui/events/event_animation.h"
-#include "moth_ui/layout/layout.h"
-#include "moth_ui/nodes/group.h"
+#include "moth/ui/animation/animation_clip.h"
+#include "moth/ui/animation/animation_marker.h"
+#include "moth/ui/events/event_animation.h"
+#include "moth/ui/layout/layout.h"
+#include "moth/ui/nodes/group.h"
 #include <catch2/catch_all.hpp>
 #include <memory>
 #include <string>

@@ -1,10 +1,10 @@
 #include "common.h"
-#include "moth_ui/node_factory.h"
+#include "moth/ui/node_factory.h"
 #include <mutex>
 #include <shared_mutex>
-#include "moth_ui/layout/layout.h"
-#include "moth_ui/nodes/node.h"
-#include "moth_ui/nodes/group.h"
+#include "moth/ui/layout/layout.h"
+#include "moth/ui/nodes/node.h"
+#include "moth/ui/nodes/group.h"
 
 namespace moth::ui {
     std::string NodeFactory::RegisterWidget(std::string const& className, CreationFunction const& func) {

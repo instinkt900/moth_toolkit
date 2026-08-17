@@ -1,6 +1,6 @@
 #pragma once
 
-#include "moth_graphics/utils/vector.h"
+#include "moth/graphics/utils/vector.h"
 
 #include <cstddef>
 #include <cstdint>

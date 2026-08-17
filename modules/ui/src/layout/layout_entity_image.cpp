@@ -1,7 +1,7 @@
 #include "common.h"
-#include "moth_ui/graphics/texture_filter.h"
-#include "moth_ui/layout/layout_entity_image.h"
-#include "moth_ui/nodes/node_image.h"
+#include "moth/ui/graphics/texture_filter.h"
+#include "moth/ui/layout/layout_entity_image.h"
+#include "moth/ui/nodes/node_image.h"
 
 namespace moth::ui {
     LayoutEntityImage::LayoutEntityImage(LayoutRect const& initialBounds)

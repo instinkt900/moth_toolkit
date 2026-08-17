@@ -1,6 +1,6 @@
 #include "common.h"
-#include "moth_graphics/graphics/texture_factory.h"
-#include "moth_graphics/graphics/itexture.h"
+#include "moth/graphics/graphics/texture_factory.h"
+#include "moth/graphics/graphics/itexture.h"
 
 //NOLINTBEGIN(readability-function-cognitive-complexity)
 

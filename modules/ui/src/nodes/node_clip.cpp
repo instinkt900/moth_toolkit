@@ -1,6 +1,6 @@
 #include "common.h"
-#include "moth_ui/nodes/node_clip.h"
-#include "moth_ui/layout/layout_entity_clip.h"
+#include "moth/ui/nodes/node_clip.h"
+#include "moth/ui/layout/layout_entity_clip.h"
 
 namespace moth::ui {
     NodeClip::NodeClip(Context& context)

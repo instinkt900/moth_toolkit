@@ -1,0 +1,106 @@
+#pragma once
+
+#include "moth/ui/moth_ui_fwd.h"
+#include "moth/ui/events/event_listener.h"
+
+#include <cstdint>
+
+namespace moth::ui {
+    /**
+     * @brief A single compositing layer owned by a LayerStack.
+     *
+     * Layers are updated and drawn in stack order.  Override Update(), Draw(),
+     * and/or OnEvent() to implement layer behaviour.  OnAddedToStack() and
+     * OnRemovedFromStack() are called when the stack membership changes.
+     */
+    class Layer : public IEventListener {
+    public:
+        /**
+         * @brief Default event handler. Returns @c false — override to handle events.
+         * @param event Event to process.
+         * @return @c true if the event was consumed.
+         */
+        bool OnEvent(Event const& event) override;
+
+        /**
+         * @brief Advances the layer's logic by @p ticks milliseconds.
+         * @param ticks Elapsed time in milliseconds since the last update.
+         */
+        virtual void Update(uint32_t ticks);
+
+        /// @brief Draws this layer using the current renderer state.
+        virtual void Draw();
+
+        /// @brief Draws debug overlays for this layer.
+        virtual void DebugDraw();
+
+        /**
+         * @brief Called immediately after this layer is pushed onto a LayerStack.
+         * @param layerStack The stack this layer was added to.
+         */
+        virtual void OnAddedToStack(LayerStack* layerStack);
+
+        /// @brief Called immediately after this layer is removed from its LayerStack.
+        virtual void OnRemovedFromStack();
+
+        /// @brief Returns the render width of the owning LayerStack in pixels.
+        int GetWidth() const;
+
+        /// @brief Returns the render height of the owning LayerStack in pixels.
+        int GetHeight() const;
+
+        /**
+         * @brief Fires an event upward through the owning LayerStack.
+         *
+         * Shortcut for @c m_layerStack->FireEvent(event). The event reaches
+         * the LayerStack's listener (the owning Window).
+         *
+         * @param event Event to fire.
+         */
+        void FireEvent(Event const& event) const;
+
+        /**
+         * @brief Returns @c true if this layer wants to use the render (logical) size
+         *        rather than the window size for layout.
+         */
+        virtual bool UseRenderSize() const { return false; }
+
+        /**
+         * @brief Returns @c true if this layer blocks input and updates of layers beneath it.
+         *
+         * When a modal layer is on the stack, the LayerStack stops dispatching
+         * events to layers below it (regardless of whether the modal layer
+         * itself consumed the event) and skips updating them. Use this for
+         * pause menus, blocking dialogs, and full-screen transitions.
+         *
+         * Layers above a modal layer continue to receive events and updates
+         * normally; only the topmost modal in the stack acts as the cutoff.
+         *
+         * Defaults to the value set by @ref SetModal (initially @c false).
+         * Subclasses may override to implement dynamic modality.
+         */
+        virtual bool IsModal() const { return m_modal; }
+
+        /**
+         * @brief Sets the static modal flag returned by the default @ref IsModal.
+         *
+         * The @ref flow::Flow runtime calls this on overlay creation when the
+         * @c LayerSpec.modality field is @c Modal. Subclasses that override
+         * @ref IsModal directly can ignore this method.
+         */
+        void SetModal(bool modal) { m_modal = modal; }
+
+        Layer() = default;
+        Layer(Layer const&) = delete;
+        Layer(Layer&&) = delete;
+        Layer& operator=(Layer const&) = delete;
+        Layer& operator=(Layer&&) = delete;
+        ~Layer() override = default;
+
+    protected:
+        LayerStack* m_layerStack = nullptr; ///< The stack this layer belongs to, or @c nullptr.
+
+    private:
+        bool m_modal = false;
+    };
+}

@@ -1,6 +1,6 @@
 #include "common.h"
-#include "moth_graphics/graphics/sprite.h"
-#include "moth_graphics/graphics/igraphics.h"
+#include "moth/graphics/graphics/sprite.h"
+#include "moth/graphics/graphics/igraphics.h"
 
 namespace moth::gfx {
     Sprite::Sprite(std::shared_ptr<SpriteSheet> spriteSheet)

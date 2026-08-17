@@ -1,5 +1,5 @@
 #include "moth/bridge/application.h"
-#include "moth_graphics/platform/imgui_context.h"
+#include "moth/graphics/platform/imgui_context.h"
 
 #include <moth/core/event_window.h>
 

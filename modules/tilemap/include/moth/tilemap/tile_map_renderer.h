@@ -2,8 +2,8 @@
 
 #include "moth/tilemap/tile_map.h"
 
-#include "moth_graphics/graphics/igraphics.h"
-#include "moth_graphics/graphics/image.h"
+#include "moth/graphics/graphics/igraphics.h"
+#include "moth/graphics/graphics/image.h"
 
 #include <vector>
 

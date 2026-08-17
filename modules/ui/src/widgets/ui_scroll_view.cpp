@@ -1,9 +1,9 @@
 #include "common.h"
-#include "moth_ui/widgets/ui_scroll_view.h"
+#include "moth/ui/widgets/ui_scroll_view.h"
 
-#include "moth_ui/context.h"
-#include "moth_ui/events/event_mouse.h"
-#include "moth_ui/graphics/irenderer.h"
+#include "moth/ui/context.h"
+#include "moth/ui/events/event_mouse.h"
+#include "moth/ui/graphics/irenderer.h"
 
 #include <algorithm>
 #include <optional>

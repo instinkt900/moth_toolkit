@@ -1,4 +1,4 @@
-#include "moth_ui/events/event_key.h"
+#include "moth/ui/events/event_key.h"
 #include <catch2/catch_all.hpp>
 
 using namespace moth::ui;

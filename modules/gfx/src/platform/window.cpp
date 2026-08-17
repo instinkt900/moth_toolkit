@@ -1,6 +1,6 @@
 #include "common.h"
-#include "moth_graphics/platform/window.h"
-#include "moth_graphics/graphics/surface_context.h"
+#include "moth/graphics/platform/window.h"
+#include "moth/graphics/graphics/surface_context.h"
 
 #include <cassert>
 

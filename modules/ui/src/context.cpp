@@ -1,5 +1,5 @@
 #include "common.h"
-#include "moth_ui/context.h"
+#include "moth/ui/context.h"
 #include <stdexcept>
 
 namespace moth::ui {

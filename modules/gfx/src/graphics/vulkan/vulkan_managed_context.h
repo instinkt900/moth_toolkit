@@ -1,6 +1,6 @@
 #pragma once
 
-#include "moth_graphics/graphics/vulkan/vulkan_context.h"
+#include "moth/graphics/graphics/vulkan/vulkan_context.h"
 
 namespace moth::gfx::vulkan {
     /// @brief Moth-managed Vulkan context.

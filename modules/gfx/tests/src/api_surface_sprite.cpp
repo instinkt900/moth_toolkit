@@ -1,7 +1,7 @@
 // Pins the method signatures of SpriteSheet and Sprite.
 
-#include "moth_graphics/moth_graphics.h"
-#include "moth_graphics/graphics/sprite.h"
+#include "moth/graphics/moth_graphics.h"
+#include "moth/graphics/graphics/sprite.h"
 
 #include <catch2/catch_all.hpp>
 #include <memory>

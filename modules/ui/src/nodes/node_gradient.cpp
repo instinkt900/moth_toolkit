@@ -1,8 +1,8 @@
 #include "common.h"
-#include "moth_ui/nodes/node_gradient.h"
-#include "moth_ui/layout/layout_entity_gradient.h"
-#include "moth_ui/context.h"
-#include "moth_ui/graphics/irenderer.h"
+#include "moth/ui/nodes/node_gradient.h"
+#include "moth/ui/layout/layout_entity_gradient.h"
+#include "moth/ui/context.h"
+#include "moth/ui/graphics/irenderer.h"
 
 namespace moth::ui {
     NodeGradient::NodeGradient(Context& context)

@@ -1,4 +1,4 @@
-#include "moth_ui/utils/rect.h"
+#include "moth/ui/utils/rect.h"
 #include "string_helpers.h"
 #include <catch2/catch_all.hpp>
 

@@ -76,7 +76,7 @@ IntRect  viewport = MakeRect(0, 0, 1280, 720);
 Color    tint     = Color{ 1.0f, 0.4f, 0.2f, 1.0f };
 
 Ticker ticker(60);                       // 60 Hz fixed loop (TickFixed/Tick)
-Input  input;
+auto& input = Input::Get();              // Input is a process-wide singleton
 input.BindAction("jump", Key::Space);    // or a mouse/gamepad button
 if (input.IsActionPressed("jump")) { /* ... */ }
 ```

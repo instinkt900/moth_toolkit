@@ -59,8 +59,8 @@ namespace moth::core {
         }
 
     private:
-        int m_width = 0;
-        int m_height = 0;
+        int m_width;
+        int m_height;
     };
 
     /// @brief Fired when the user or system requests the application to close

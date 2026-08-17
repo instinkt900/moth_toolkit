@@ -57,9 +57,9 @@ TEST_CASE("EventMouseMove stores position and delta", "[event][mouse]") {
 }
 
 TEST_CASE("EventMouseWheel stores delta and position", "[event][mouse]") {
-    EventMouseWheel ev(IntVec2{ 0, 3 }, IntVec2{ 12, 34 });
+    EventMouseWheel ev(FloatVec2{ 0.0f, 3.0f }, IntVec2{ 12, 34 });
     REQUIRE(ev.GetType() == EVENTTYPE_MOUSE_WHEEL);
-    REQUIRE(ev.GetDelta().y == 3);
+    REQUIRE(ev.GetDelta().y == Catch::Approx(3.0f));
     REQUIRE(ev.GetPosition().x == 12);
     REQUIRE(ev.GetPosition().y == 34);
 }

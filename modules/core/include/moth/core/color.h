@@ -140,8 +140,8 @@ namespace moth::core {
     inline Color Blend(Color const& srcColor, Color const& dstColor, BlendMode blend) {
         moth::core::Color srcColorFactor;
         moth::core::Color dstColorFactor;
-        float srcAlphaFactor = NAN;
-        float dstAlphaFactor = NAN;
+        float srcAlphaFactor = 0.0f;
+        float dstAlphaFactor = 0.0f;
         switch (blend) {
         default:
         case moth::core::BlendMode::Replace:

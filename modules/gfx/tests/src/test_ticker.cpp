@@ -38,24 +38,24 @@ namespace {
 // Construction
 // ---------------------------------------------------------------------------
 
-TEST_CASE("Ticker default rate is 60 Hz (16 ms period)", "[ticker][construction]") {
+TEST_CASE("Ticker default rate is 60 Hz (17 ms period)", "[ticker][construction]") {
     Ticker* t = new TestTicker(60);
-    // 1000 / 60 = 16 ms
-    REQUIRE(t->GetFixedTicks() == 16);
+    // 1000000 / 60 = 16666 us, rounded to 17 ms
+    REQUIRE(t->GetFixedTicks() == 17);
     delete t;
 }
 
 TEST_CASE("Ticker clamped to 60 Hz for zero or negative rate", "[ticker][construction]") {
     TestTicker t0(0);
-    REQUIRE(t0.GetFixedTicks() == 16);
+    REQUIRE(t0.GetFixedTicks() == 17);
 
     TestTicker tneg(-10);
-    REQUIRE(tneg.GetFixedTicks() == 16);
+    REQUIRE(tneg.GetFixedTicks() == 17);
 }
 
 TEST_CASE("Ticker period is correct for 30 Hz", "[ticker][construction]") {
     TestTicker t(30);
-    // 1000 / 30 = 33 ms
+    // 1000000 / 30 = 33333 us, rounded to 33 ms
     REQUIRE(t.GetFixedTicks() == 33);
 }
 

@@ -97,6 +97,24 @@ TEST_CASE("RaycastAABB misses", "[geometry][raycast]") {
     CHECK_FALSE(RaycastAABB(Ray{ { 20.0f, 2.0f }, { 1.0f, 0.0f } }, box));  // pointing away
 }
 
+TEST_CASE("RaycastAABB reports exit hit when origin is inside", "[geometry][raycast]") {
+    AABB const box{ { 0.0f, 0.0f }, { 5.0f, 5.0f } };
+
+    // Origin at the centre, pointing +x: exits the +x face at t = 5.
+    float t = 0.0f;
+    FloatVec2 normal;
+    REQUIRE(RaycastAABB(Ray{ { 0.0f, 0.0f }, { 1.0f, 0.0f } }, box, &t, &normal));
+    CHECK(Near(t, 5.0f));
+    CHECK(Near(normal.x, 1.0f));
+    CHECK(Near(normal.y, 0.0f));
+
+    // Pointing -x: exits the -x face at t = 5 with an inward-facing normal.
+    REQUIRE(RaycastAABB(Ray{ { 0.0f, 0.0f }, { -1.0f, 0.0f } }, box, &t, &normal));
+    CHECK(Near(t, 5.0f));
+    CHECK(Near(normal.x, -1.0f));
+    CHECK(Near(normal.y, 0.0f));
+}
+
 TEST_CASE("RaycastRect delegates to AABB", "[geometry][raycast]") {
     FloatRect const rect{ { -5.0f, -5.0f }, { 5.0f, 5.0f } };
     Ray const ray{ { -20.0f, 0.0f }, { 1.0f, 0.0f } };

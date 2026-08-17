@@ -36,6 +36,12 @@ add_library(moth_core ${SOURCES})
 add_library(moth::core ALIAS moth_core)
 set_target_properties(moth_core PROPERTIES EXPORT_NAME core)
 
+if(MSVC)
+    target_compile_options(moth_core PRIVATE /W4)
+else()
+    target_compile_options(moth_core PRIVATE -Wall -Wextra)
+endif()
+
 target_include_directories(moth_core PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)

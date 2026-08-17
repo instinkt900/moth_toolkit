@@ -15,9 +15,9 @@
 
 namespace moth::core {
     /// @brief Number of entries in the @c Key enum.
-    static constexpr size_t KeyCount = static_cast<size_t>(Key::Count);
+    inline constexpr size_t KeyCount = static_cast<size_t>(Key::Count);
     /// @brief Number of entries in the @c MouseButton enum.
-    static constexpr size_t MouseButtonCount = static_cast<size_t>(MouseButton::Count);
+    inline constexpr size_t MouseButtonCount = static_cast<size_t>(MouseButton::Count);
 
     /// @brief Gamepad buttons, in GLFW gamepad mapping order.
     enum class GamepadButton {
@@ -53,11 +53,11 @@ namespace moth::core {
     };
 
     /// @brief Number of entries in the @c GamepadButton enum.
-    static constexpr size_t GamepadButtonCount = static_cast<size_t>(GamepadButton::Count);
+    inline constexpr size_t GamepadButtonCount = static_cast<size_t>(GamepadButton::Count);
     /// @brief Number of entries in the @c GamepadAxis enum.
-    static constexpr size_t GamepadAxisCount = static_cast<size_t>(GamepadAxis::Count);
+    inline constexpr size_t GamepadAxisCount = static_cast<size_t>(GamepadAxis::Count);
     /// @brief Maximum number of gamepads tracked simultaneously.
-    static constexpr int MaxGamepads = 4;
+    inline constexpr int MaxGamepads = 4;
 
     /// @brief A single digital trigger: a key, mouse button, or gamepad button.
     struct InputBinding {

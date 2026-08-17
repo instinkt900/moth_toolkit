@@ -12,3 +12,6 @@ CMakeUserPresets.json
 .idea/
 .cache/
 .clangd/
+
+# Python
+.venv/

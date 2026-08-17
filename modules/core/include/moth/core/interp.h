@@ -4,14 +4,7 @@
 
 #include <array>
 #include <cassert>
-
-#undef M_PI
-#define _USE_MATH_DEFINES
 #include <cmath>
-#include <math.h>
-#ifndef M_PI
-#define M_PI (3.14159265358979323846)
-#endif
 
 namespace moth::core {
     // Smoothing functions from http://easings.net/ (With visual examples)
@@ -23,7 +16,7 @@ namespace moth::core {
      * https://easings.net/ for visual examples.
      */
     enum class InterpType {
-        Unknown,     ///< Unknown; treated as Linear at runtime.
+        Unknown,     ///< Unknown; invalid value — @c Interp() asserts if used.
 
         Step,        ///< Jumps immediately to the target value.
         Linear,      ///< Linear interpolation (no easing).
@@ -80,7 +73,7 @@ namespace moth::core {
         BounceInOut, ///< Bounce ease-in-out.
     };
 
-    static float constexpr F_PI = static_cast<float>(M_PI);
+    inline constexpr float F_PI = 3.14159265358979f;
 
     /// @brief Step easing: always returns 0 (value jumps at t==1).
     inline float interpStep(float x) {
@@ -279,13 +272,13 @@ namespace moth::core {
         if (x < 1.0f / d1) {
             return n1 * x * x;
         } else if (x < 2.0f / d1) {
-	    x -= 1.5f / d1;
+            x -= 1.5f / d1;
             return n1 * x * x + 0.75f;
         } else if (x < 2.5f / d1) {
-	    x -= 2.25f / d1;
+            x -= 2.25f / d1;
             return n1 * x * x + 0.9375f;
         } else {
-	    x -= 2.625f / d1;
+            x -= 2.625f / d1;
             return n1 * x * x + 0.984375f;
         }
     }
@@ -302,7 +295,7 @@ namespace moth::core {
 
     /// @brief Array from InterpType to the corresponding easing function, indexed by enum value.
     inline constexpr std::array<InterpFunction, 34> InterpFuncs{{
-        interpLinear,       // Unknown
+        interpLinear,       // Unknown (invalid; placeholder so the array stays indexed)
         interpStep,         // Step
         interpLinear,       // Linear
         interpSmooth,       // Smooth

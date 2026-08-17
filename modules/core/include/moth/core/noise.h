@@ -58,6 +58,21 @@ namespace moth::core {
             int const i = static_cast<int>(x);
             return x < i ? i - 1 : i;
         }
+
+        /// @brief Fills @p out with the 512-entry doubled permutation for @p seed.
+        inline void FillPermutation(std::array<int, 512>& out, std::uint32_t seed) {
+            std::array<int, 256> perm{};
+            for (int i = 0; i < 256; ++i) {
+                perm[i] = i;
+            }
+            SplitMix64 rng(seed);
+            for (int i = 255; i > 0; --i) {
+                std::swap(perm[i], perm[static_cast<int>(rng.Next() % static_cast<std::uint64_t>(i + 1))]);
+            }
+            for (int i = 0; i < 512; ++i) {
+                out[i] = perm[i & 255];
+            }
+        }
     }
 
     /**
@@ -76,17 +91,7 @@ namespace moth::core {
 
         /// @brief Regenerates the permutation from @p seed.
         void Reseed(std::uint32_t seed) {
-            std::array<int, 256> perm{};
-            for (int i = 0; i < 256; ++i) {
-                perm[i] = i;
-            }
-            detail::SplitMix64 rng(seed);
-            for (int i = 255; i > 0; --i) {
-                std::swap(perm[i], perm[static_cast<int>(rng.Next() % static_cast<std::uint64_t>(i + 1))]);
-            }
-            for (int i = 0; i < 512; ++i) {
-                m_perm[i] = perm[i & 255];
-            }
+            detail::FillPermutation(m_perm, seed);
         }
 
         /// @brief Samples the noise at (@p x, @p y), roughly in [-1, 1].
@@ -142,17 +147,7 @@ namespace moth::core {
 
         /// @brief Regenerates the permutation from @p seed.
         void Reseed(std::uint32_t seed) {
-            std::array<int, 256> perm{};
-            for (int i = 0; i < 256; ++i) {
-                perm[i] = i;
-            }
-            detail::SplitMix64 rng(seed);
-            for (int i = 255; i > 0; --i) {
-                std::swap(perm[i], perm[static_cast<int>(rng.Next() % static_cast<std::uint64_t>(i + 1))]);
-            }
-            for (int i = 0; i < 512; ++i) {
-                m_perm[i] = perm[i & 255];
-            }
+            detail::FillPermutation(m_perm, seed);
         }
 
         /// @brief Samples 2D simplex noise at (@p x, @p y), in [-1, 1].

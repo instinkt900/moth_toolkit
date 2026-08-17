@@ -1,8 +1,8 @@
 #pragma once
 
-#include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <cstdint>
 #include <thread>
 
 namespace moth::core {
@@ -19,14 +19,15 @@ namespace moth::core {
     class Ticker {
     public:
         /// @param ticksPerSecond Fixed update rate in Hz. Clamped to 60 if <= 0.
-        /// The resulting period is clamped to a minimum of 1ms to avoid a zero interval.
+        /// The period is tracked in microseconds so common rates (60/144/240 Hz)
+        /// are represented accurately rather than truncated to whole milliseconds.
         explicit Ticker(int ticksPerSecond = 60)
-            : m_updateTicks(std::chrono::milliseconds(std::max(1, 1000 / (ticksPerSecond > 0 ? ticksPerSecond : 60)))) {
+            : m_updateTicks(std::chrono::microseconds(1000000 / (ticksPerSecond > 0 ? ticksPerSecond : 60))) {
         }
         virtual ~Ticker() {}
 
-        /// @brief Returns the fixed tick interval in milliseconds.
-        uint32_t GetFixedTicks() const { return static_cast<uint32_t>(m_updateTicks.count()); }
+        /// @brief Returns the fixed tick interval in milliseconds (rounded).
+        uint32_t GetFixedTicks() const { return static_cast<uint32_t>((m_updateTicks.count() + 500) / 1000); }
 
         /// @brief Start or stop the loop. Call @c SetRunning(false) to exit @c TickSync().
         void SetRunning(bool running) { m_running = running; }
@@ -37,15 +38,24 @@ namespace moth::core {
             m_lastUpdateTicks = std::chrono::steady_clock::now();
             while (m_running) {
                 auto const nowTicks = std::chrono::steady_clock::now();
-                auto deltaTicks = std::chrono::duration_cast<std::chrono::milliseconds>(nowTicks - m_lastUpdateTicks);
-                while (deltaTicks >= m_updateTicks) {
-                    TickFixed(static_cast<uint32_t>(m_updateTicks.count()));
+                auto deltaTicks = std::chrono::duration_cast<std::chrono::microseconds>(nowTicks - m_lastUpdateTicks);
+                int catchUpCount = 0;
+                while (deltaTicks >= m_updateTicks && catchUpCount < kMaxCatchUpTicks) {
+                    TickFixed(GetFixedTicks());
                     m_lastUpdateTicks += m_updateTicks;
                     deltaTicks -= m_updateTicks;
+                    ++catchUpCount;
                 }
-                Tick(static_cast<uint32_t>(deltaTicks.count()));
+                if (deltaTicks >= m_updateTicks) {
+                    // Stalled for a long time (e.g. a debugger pause): drop the
+                    // backlog rather than bursting hundreds of fixed ticks, then
+                    // resynchronise to now.
+                    m_lastUpdateTicks = nowTicks;
+                    deltaTicks = std::chrono::microseconds::zero();
+                }
+                Tick(static_cast<uint32_t>(std::chrono::duration_cast<std::chrono::milliseconds>(deltaTicks).count()));
                 auto const sleepFor = m_updateTicks - deltaTicks;
-                if (sleepFor > std::chrono::milliseconds::zero()) {
+                if (sleepFor > std::chrono::microseconds::zero()) {
                     std::this_thread::sleep_for(sleepFor);
                 }
             }
@@ -61,8 +71,10 @@ namespace moth::core {
         virtual void Tick(uint32_t ticks) = 0;
 
     private:
+        static constexpr int kMaxCatchUpTicks = 100;
+
         std::atomic<bool> m_running = false;
-        std::chrono::milliseconds m_updateTicks;
+        std::chrono::microseconds m_updateTicks;
         std::chrono::time_point<std::chrono::steady_clock> m_lastUpdateTicks;
     };
 }

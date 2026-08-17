@@ -56,6 +56,10 @@ namespace moth::core {
         }
 
         /// @brief Returns a clockwise rotation around Z in degrees, pivoting around @p pivot (in the same space as the points being transformed).
+        ///
+        /// "Clockwise" is in screen space (y-down). The same matrix is
+        /// counter-clockwise in standard math convention (y-up). It matches
+        /// @c Rotate2D exactly; the two only differ in units (degrees vs radians).
         static FloatMat4x4 Rotation(float degrees, FloatVec2 pivot) {
             float const rad = degrees * kDegToRad;
             float const cosA = std::cos(rad);
@@ -95,17 +99,33 @@ namespace moth::core {
 
         /**
          * @brief Returns the inverse of this transform.
-         * @note Valid only for rigid-body transforms (rotation + translation, no scale or shear).
-         *       For such transforms the inverse is R^T with translation -(R^T * t).
+         *
+         * Inverts the 2x2 linear part and the translation, so it is exact for any
+         * affine transform (rotation + scale + shear + translation), not just
+         * rigid-body transforms. If the linear part is singular (det ~ 0) the
+         * inverse does not exist and @c Identity() is returned.
          */
         FloatMat4x4 Invert() const {
             FloatMat4x4 result;
-            // Transpose the rotation sub-matrix
-            result.m[0][0] = m[0][0];  result.m[0][1] = m[1][0];
-            result.m[1][0] = m[0][1];  result.m[1][1] = m[1][1];
-            // Inverse translation: -(R^T * t)
-            result.m[0][3] = -((m[0][0] * m[0][3]) + (m[1][0] * m[1][3]));
-            result.m[1][3] = -((m[0][1] * m[0][3]) + (m[1][1] * m[1][3]));
+            float const a = m[0][0];
+            float const b = m[0][1];
+            float const c = m[1][0];
+            float const d = m[1][1];
+            float const tx = m[0][3];
+            float const ty = m[1][3];
+
+            float const det = (a * d) - (b * c);
+            if (std::abs(det) < 1e-8f) {
+                return Identity();
+            }
+            float const invDet = 1.0f / det;
+
+            result.m[0][0] = d * invDet;
+            result.m[0][1] = -b * invDet;
+            result.m[1][0] = -c * invDet;
+            result.m[1][1] = a * invDet;
+            result.m[0][3] = -((result.m[0][0] * tx) + (result.m[0][1] * ty));
+            result.m[1][3] = -((result.m[1][0] * tx) + (result.m[1][1] * ty));
             return result;
         }
     };

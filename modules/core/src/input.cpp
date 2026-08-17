@@ -89,7 +89,7 @@ namespace moth::core {
 
         if (auto const* wheel = event_cast<EventMouseWheel>(event)) {
             m_mousePos = static_cast<FloatVec2>(wheel->GetPosition());
-            m_scrollDelta += static_cast<FloatVec2>(wheel->GetDelta());
+            m_scrollDelta += wheel->GetDelta();
             return;
         }
     }

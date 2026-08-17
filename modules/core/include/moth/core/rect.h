@@ -105,6 +105,22 @@ namespace moth::core {
         return a;
     }
 
+    /// @brief Returns the corner-wise sum of @p a and @p b.
+    template <typename T>
+    inline Rect<T> operator+(Rect<T> const& a, Rect<T> const& b) {
+        auto ret = a;
+        ret += b;
+        return ret;
+    }
+
+    /// @brief Returns the corner-wise difference of @p a and @p b.
+    template <typename T>
+    inline Rect<T> operator-(Rect<T> const& a, Rect<T> const& b) {
+        auto ret = a;
+        ret -= b;
+        return ret;
+    }
+
     /// @brief Translates @p a by @p b in place.
     template <typename T>
     inline Rect<T>& operator+=(Rect<T>& a, Vector<T, 2> const& b) {

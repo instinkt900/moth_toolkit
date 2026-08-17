@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <type_traits>
 
 static_assert(true); // fixing clang-tidy bug for pragma pack. https://stackoverflow.com/questions/72456118/why-does-clang-give-a-warning-unterminated-pragma-pack-push-at-end-of-f
 #pragma pack(push, 1)

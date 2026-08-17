@@ -12,6 +12,10 @@ namespace moth::core::glfw {
     /// Rendering and UI are layered on top by an owner (e.g. the gfx window)
     /// via the @c Listener interface. This class knows nothing about graphics
     /// or moth_ui.
+    ///
+    /// @note @c glfwInit() must have been called (by the owner) before
+    ///       constructing a @c Window; otherwise creation fails and is reported
+    ///       via @c log::error and an assert.
     class Window : public moth::core::Window {
     public:
         /// @brief Owner-side hooks for render-size queries and event delivery.

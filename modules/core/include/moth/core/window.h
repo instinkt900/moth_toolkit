@@ -26,7 +26,11 @@ namespace moth::core {
 
         virtual ~Window() = default;
 
-        /// @brief Poll events and advance by @p ticks milliseconds.
+        /// @brief Poll platform events for one step.
+        ///
+        /// @p ticks is the requested step duration in milliseconds. Implementations
+        /// may ignore it when pacing is driven by an external loop (the GLFW window
+        /// does — it polls and leaves pacing to the caller).
         virtual void Update(uint32_t ticks) = 0;
 
         /// @brief Begin rendering one frame.

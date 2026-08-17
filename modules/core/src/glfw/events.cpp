@@ -46,6 +46,10 @@ namespace {
             return moth::core::Key::N9;
         case GLFW_KEY_SEMICOLON:
             return moth::core::Key::Semicolon;
+        case GLFW_KEY_EQUAL:
+            return moth::core::Key::Equals;
+        case GLFW_KEY_APOSTROPHE:
+            return moth::core::Key::Quote;
 
         case GLFW_KEY_LEFT_BRACKET:
             return moth::core::Key::Leftbracket;
@@ -110,6 +114,8 @@ namespace {
 
         case GLFW_KEY_CAPS_LOCK:
             return moth::core::Key::Capslock;
+        case GLFW_KEY_NUM_LOCK:
+            return moth::core::Key::Numlockclear;
 
         case GLFW_KEY_F1:
             return moth::core::Key::F1;
@@ -229,7 +235,7 @@ namespace {
 }
 
 namespace moth::core::glfw {
-    std::unique_ptr<moth::core::Event> FromGLFW(int key, int scancode, int action, int mods) {
+    std::unique_ptr<moth::core::Event> FromGLFW(int key, int /*scancode*/, int action, int mods) {
         moth::core::KeyAction keyAction = action == GLFW_RELEASE ? moth::core::KeyAction::Up : moth::core::KeyAction::Down;
         int keyMods = 0;
         if ((mods & GLFW_MOD_SHIFT) != 0) {
@@ -244,7 +250,7 @@ namespace moth::core::glfw {
         return std::make_unique<moth::core::EventKey>(keyAction, FromGLFWKey(key), keyMods);
     }
 
-    std::unique_ptr<moth::core::Event> FromGLFW(int button, int action, int mods, moth::core::IntVec2 const& pos) {
+    std::unique_ptr<moth::core::Event> FromGLFW(int button, int action, int /*mods*/, moth::core::IntVec2 const& pos) {
         if (action == GLFW_PRESS) {
             return std::make_unique<moth::core::EventMouseDown>(FromGLFWButton(button), pos);
         }

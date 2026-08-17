@@ -74,7 +74,9 @@ namespace moth::core {
     /**
      * @brief Rotates a 2D vector by an angle in radians.
      * @param vec   Vector to rotate.
-     * @param angle Counter-clockwise rotation angle in radians.
+     * @param angle Rotation angle in radians (counter-clockwise in standard math
+     *              convention, y-up; clockwise in screen space, y-down). Uses the
+     *              same matrix as @c FloatMat4x4::Rotation.
      * @return Rotated vector.
      */
     template <typename T>
@@ -105,7 +107,7 @@ namespace moth::core {
      * @brief Computes the signed angle (in radians) from vector @p a to vector @p b.
      * @param a First 2D vector.
      * @param b Second 2D vector.
-     * @return Signed angle in radians in the range (−π, π].
+     * @return Signed angle in radians in the range [−π, π].
      */
     template <typename T>
     inline T Angle(Vector<T, 2> const& a, Vector<T, 2> const& b) {

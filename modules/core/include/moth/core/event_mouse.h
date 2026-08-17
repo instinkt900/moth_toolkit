@@ -147,7 +147,7 @@ namespace moth::core {
          *                 widgets need it to decide whether the scroll is over
          *                 them without relying on a cached move position.
          */
-        EventMouseWheel(IntVec2 const& delta, IntVec2 const& position)
+        EventMouseWheel(FloatVec2 const& delta, IntVec2 const& position)
             : Event(GetStaticType())
             , m_delta(delta)
             , m_position(position) {}
@@ -156,7 +156,7 @@ namespace moth::core {
         static constexpr int GetStaticType() { return EVENTTYPE_MOUSE_WHEEL; }
 
         /// @brief Returns the scroll delta.
-        IntVec2 const& GetDelta() const { return m_delta; }
+        FloatVec2 const& GetDelta() const { return m_delta; }
 
         /// @brief Returns the cursor position in screen space.
         IntVec2 const& GetPosition() const { return m_position; }
@@ -172,7 +172,7 @@ namespace moth::core {
         ~EventMouseWheel() override {}
 
     private:
-        IntVec2 m_delta;
+        FloatVec2 m_delta;
         IntVec2 m_position;
     };
 }

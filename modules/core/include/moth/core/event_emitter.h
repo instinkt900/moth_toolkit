@@ -7,6 +7,7 @@
 #include <functional>
 #include <vector>
 #include <algorithm>
+#include <cstdint>
 #include <memory>
 
 namespace moth::core {

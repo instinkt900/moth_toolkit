@@ -167,13 +167,16 @@ namespace moth::core {
     ///
     /// @param[out] t      Distance along the ray to the first hit (if any).
     /// @param[out] normal Surface normal at the hit point (if any).
+    /// @returns @c true on a hit. If the origin is inside the box, reports the
+    ///          exit hit (consistent with @c RaycastCircle).
     inline bool RaycastAABB(Ray ray, AABB box, float* t = nullptr, FloatVec2* normal = nullptr) {
         FloatVec2 const min = box.GetMin();
         FloatVec2 const max = box.GetMax();
 
         float tNear = -std::numeric_limits<float>::infinity();
         float tFar = std::numeric_limits<float>::infinity();
-        FloatVec2 hitNormal{ 0.0f, 0.0f };
+        FloatVec2 nearNormal{ 0.0f, 0.0f };
+        FloatVec2 farNormal{ 0.0f, 0.0f };
 
         for (int axis = 0; axis < 2; ++axis) {
             float const origin = axis == 0 ? ray.origin.x : ray.origin.y;
@@ -191,32 +194,46 @@ namespace moth::core {
             float const inv = 1.0f / direction;
             float t1 = (lo - origin) * inv;
             float t2 = (hi - origin) * inv;
-            float normalSign = -1.0f; // entered through the `lo` face
+            float nearSign = -1.0f; // entered through the `lo` face
             if (t1 > t2) {
                 std::swap(t1, t2);
-                normalSign = 1.0f; // entered through the `hi` face
+                nearSign = 1.0f; // entered through the `hi` face
+            }
+            float const farSign = -nearSign;
+
+            FloatVec2 axisNormal{ 0.0f, 0.0f };
+            if (axis == 0) {
+                axisNormal.x = 1.0f;
+            } else {
+                axisNormal.y = 1.0f;
             }
 
             if (t1 > tNear) {
                 tNear = t1;
-                hitNormal = { 0.0f, 0.0f };
-                if (axis == 0) {
-                    hitNormal.x = normalSign;
-                } else {
-                    hitNormal.y = normalSign;
-                }
+                nearNormal = axisNormal * nearSign;
             }
-            tFar = std::min(tFar, t2);
+            if (t2 < tFar) {
+                tFar = t2;
+                farNormal = axisNormal * farSign;
+            }
             if (tNear > tFar) {
                 return false;
             }
         }
 
-        if (tNear < 0.0f || tFar < 0.0f) {
-            return false;
+        // If the origin is inside the box (tNear is behind the ray), report the
+        // exit hit, mirroring RaycastCircle's behaviour.
+        float hit = tNear;
+        FloatVec2 hitNormal = nearNormal;
+        if (tNear < 0.0f) {
+            hit = tFar;
+            hitNormal = farNormal;
+        }
+        if (hit < 0.0f) {
+            return false; // box entirely behind the ray
         }
         if (t != nullptr) {
-            *t = tNear;
+            *t = hit;
         }
         if (normal != nullptr) {
             *normal = hitNormal;

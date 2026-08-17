@@ -4,6 +4,7 @@
 #include "moth/core/event_window.h"
 #include "moth/core/event_mouse.h"
 #include "moth/core/input.h"
+#include "moth/core/log.h"
 
 #include <cassert>
 
@@ -57,7 +58,13 @@ namespace moth::core::glfw {
 
     Window::Window(std::string_view title, int width, int height)
         : moth::core::Window(title, width, height) {
-        CreateWindow();
+        if (!CreateWindow()) {
+            // glfwCreateWindow returns null if glfwInit() has not been called
+            // (the owner must initialise GLFW before constructing a Window), or
+            // if the driver refuses to create a context/surface.
+            moth::core::log::error("Window: glfwCreateWindow failed for '{}' ({}x{}); is glfwInit() called?", title, width, height);
+            assert(false && "glfwCreateWindow failed; call glfwInit() before constructing a Window");
+        }
     }
 
     Window::~Window() {
@@ -102,16 +109,6 @@ namespace moth::core::glfw {
             glfwSetWindowPos(m_glfwWindow, m_windowPos.x, m_windowPos.y);
         }
 
-        auto const windowSize = [this]() { return IntVec2{ m_windowWidth, m_windowHeight }; };
-        auto const renderSize = [this]() { return m_listener ? m_listener->GetRenderSize() : GetRenderSize(); };
-        auto const deliver = [this](Event const& event) {
-            if (m_listener) {
-                m_listener->OnEvent(event);
-            } else {
-                OnEvent(event);
-            }
-        };
-
         glfwSetWindowPosCallback(m_glfwWindow, [](GLFWwindow* window, int xpos, int ypos) {
             Window* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
             if (self == nullptr) {
@@ -129,11 +126,12 @@ namespace moth::core::glfw {
             if (self == nullptr) {
                 return;
             }
+            // Always track the actual size, even while maximized: the letterbox
+            // mapping and GetWidth/GetHeight/GetRenderSize all rely on it. Only
+            // the *position* is frozen while maximized (see the pos callback).
             self->m_windowMaximized = glfwGetWindowAttrib(window, GLFW_MAXIMIZED) == GLFW_TRUE;
-            if (!self->m_windowMaximized) {
-                self->m_windowWidth = width;
-                self->m_windowHeight = height;
-            }
+            self->m_windowWidth = width;
+            self->m_windowHeight = height;
 
             int fbWidth = 0;
             int fbHeight = 0;
@@ -227,7 +225,7 @@ namespace moth::core::glfw {
             auto const renderSize = self->m_listener ? self->m_listener->GetRenderSize() : self->GetRenderSize();
             auto const logicalPos = ToLogicalPos(windowSize, renderSize, self->m_lastMousePos);
             EventMouseWheel const translatedEvent{
-                IntVec2{ static_cast<int>(xoffset), static_cast<int>(yoffset) },
+                FloatVec2{ static_cast<float>(xoffset), static_cast<float>(yoffset) },
                 logicalPos };
             Input::Get().ProcessEvent(translatedEvent);
             if (self->m_listener) {

@@ -143,11 +143,15 @@ int main() {
         auto lastTime = std::chrono::steady_clock::now();
         while (running) {
             auto const now = std::chrono::steady_clock::now();
-            float dt = std::chrono::duration<float>(now - lastTime).count();
+            auto const elapsedMs = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastTime);
             lastTime = now;
+
+            float dt = std::chrono::duration<float>(elapsedMs).count();
             dt = std::clamp(dt, 0.0f, 0.1f);
 
-            window->Update(16);
+            // Window::Update takes elapsed milliseconds (drives the UI layer
+            // stack and animation nodes when present).
+            window->Update(static_cast<uint32_t>(elapsedMs.count()));
 
             // Pan the camera with WASD / arrows.
             auto& input = Input::Get();

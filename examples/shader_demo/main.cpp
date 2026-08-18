@@ -7,6 +7,9 @@
 #include <moth/core/event_window.h>
 #include <moth/core/log.h>
 
+#include <chrono>
+#include <cstdint>
+
 using namespace moth::gfx;
 using namespace moth::gfx::platform;
 using namespace moth::core;
@@ -59,8 +62,15 @@ int main() {
             return false;
         });
 
+        auto lastTime = std::chrono::steady_clock::now();
         while (running) {
-            window->Update(16);
+            auto const now = std::chrono::steady_clock::now();
+            auto const elapsedMs = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastTime);
+            lastTime = now;
+
+            // Update takes elapsed milliseconds (drives the UI layer stack and
+            // animation nodes when present).
+            window->Update(static_cast<uint32_t>(elapsedMs.count()));
 
             window->BeginFrame();
             if (shader && shader->IsValid()) {

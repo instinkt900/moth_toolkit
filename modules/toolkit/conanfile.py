@@ -26,6 +26,7 @@ class MothToolkit(ConanFile):
         "enable_tilemap": [True, False],
         "enable_audio": [True, False],
         "enable_assets": [True, False],
+        "enable_anim": [True, False],
     }
     default_options = {
         "enable_core": True,
@@ -37,6 +38,7 @@ class MothToolkit(ConanFile):
         "enable_tilemap": True,
         "enable_audio": True,
         "enable_assets": True,
+        "enable_anim": True,
     }
 
     def set_version(self):
@@ -77,6 +79,10 @@ class MothToolkit(ConanFile):
             raise ConanInvalidConfiguration(
                 "moth::assets requires moth::core — enable_core or disable assets"
             )
+        if self.options.enable_anim and not (self.options.enable_core and self.options.enable_gfx):
+            raise ConanInvalidConfiguration(
+                "moth::anim requires moth::core and moth::gfx — enable those or disable anim"
+            )
 
     def requirements(self):
         # The modules are aggregated, so propagate their headers and libs through
@@ -100,6 +106,8 @@ class MothToolkit(ConanFile):
             self.requires("moth_audio/0.1.0", transitive_headers=True, transitive_libs=True)
         if self.options.enable_assets:
             self.requires("moth_assets/0.1.0", transitive_headers=True, transitive_libs=True)
+        if self.options.enable_anim:
+            self.requires("moth_anim/0.1.0", transitive_headers=True, transitive_libs=True)
 
     def package(self):
         copy(self, "*.h", src=os.path.join(self.source_folder, "include"),
@@ -121,6 +129,7 @@ class MothToolkit(ConanFile):
             "MOTH_ENABLE_TILEMAP={}".format(1 if self.options.enable_tilemap else 0),
             "MOTH_ENABLE_AUDIO={}".format(1 if self.options.enable_audio else 0),
             "MOTH_ENABLE_ASSETS={}".format(1 if self.options.enable_assets else 0),
+            "MOTH_ENABLE_ANIM={}".format(1 if self.options.enable_anim else 0),
         ]
 
         # Expose each enabled module as a transitive dependency so a consumer that
@@ -144,3 +153,5 @@ class MothToolkit(ConanFile):
             self.cpp_info.requires.append("moth_audio::moth_audio")
         if self.options.enable_assets:
             self.cpp_info.requires.append("moth_assets::moth_assets")
+        if self.options.enable_anim:
+            self.cpp_info.requires.append("moth_anim::moth_anim")

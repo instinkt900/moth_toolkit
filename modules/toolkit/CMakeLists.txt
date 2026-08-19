@@ -50,4 +50,8 @@ if(MOTH_ENABLE_ASSETS)
     target_link_libraries(moth_toolkit INTERFACE moth::assets)
 endif()
 
+if(MOTH_ENABLE_ANIM)
+    target_link_libraries(moth_toolkit INTERFACE moth::anim)
+endif()
+
 install(DIRECTORY include/ DESTINATION include)

@@ -17,13 +17,13 @@ jobs:
           - name: full
             flags: "-DMOTH_ENABLE_TOOLS=ON"
           - name: core-only
-            flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ECS=OFF -DMOTH_ENABLE_PHYSICS=OFF -DMOTH_ENABLE_TILEMAP=OFF -DMOTH_ENABLE_AUDIO=OFF -DMOTH_ENABLE_ASSETS=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
+            flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ECS=OFF -DMOTH_ENABLE_PHYSICS=OFF -DMOTH_ENABLE_TILEMAP=OFF -DMOTH_ENABLE_AUDIO=OFF -DMOTH_ENABLE_ASSETS=OFF -DMOTH_ENABLE_ANIM=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
           - name: core-gfx
             flags: "-DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
           - name: game-example
             flags: "-DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF -DMOTH_ENABLE_EXAMPLES=ON"
           - name: core-ui
-            flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF -DMOTH_ENABLE_TILEMAP=OFF"
+            flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ANIM=OFF -DMOTH_ENABLE_TOOLKIT=OFF -DMOTH_ENABLE_TILEMAP=OFF"
     steps:
       - uses: actions/checkout@v4
         with:
@@ -143,6 +143,14 @@ jobs:
           cmake --build --preset conan-release
           ctest --preset conan-release --output-on-failure
 
+      - name: Build and run anim tests
+        working-directory: modules/anim/tests
+        run: |
+          conan install . --build=missing -s build_type=Release
+          cmake --preset conan-release
+          cmake --build --preset conan-release
+          ctest --preset conan-release --output-on-failure
+
   packaged-consumption:
     name: packaged consumption (conan create + find_package)
     runs-on: ubuntu-latest
@@ -169,7 +177,7 @@ jobs:
       - name: Create modules as packages (dependency order)
         run: |
           set -e
-          for m in core gfx ui ecs physics tilemap audio assets bridge toolkit; do
+          for m in core gfx anim ui ecs physics tilemap audio assets bridge toolkit; do
             (cd "modules/$m" && conan create . --build=missing -s build_type=Release)
           done
 

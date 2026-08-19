@@ -3,6 +3,7 @@
 #include "moth/graphics/graphics/spritesheet.h"
 #include "moth/graphics/utils/rect.h"
 
+#include <functional>
 #include <memory>
 #include <optional>
 #include <string>
@@ -40,6 +41,26 @@ namespace moth::gfx {
         /// @param playing @c true to resume, @c false to pause.
         void SetPlaying(bool playing);
 
+        /// @brief Sets a horizontal mirror applied at render time.
+        ///
+        /// Pure presentation state: toggling it never resets the clip or its
+        /// position. DrawSprite() honours it; callers that render manually read
+        /// it via GetFlipX() and pass it to IGraphics::DrawImage.
+        void SetFlipX(bool flipX) { m_flipX = flipX; }
+
+        /// @brief Returns whether the sprite is mirrored horizontally.
+        bool GetFlipX() const { return m_flipX; }
+
+        /// @brief Sets the playback speed multiplier applied to Update() ticks.
+        ///
+        /// 1.0f is normal speed. Only speeds > 0 are accepted; any speed <= 0
+        /// logs a warning and resets to 1.0f (pausing is expressed with
+        /// SetPlaying(false), never with speed).
+        void SetSpeed(float speed);
+
+        /// @brief Returns the current playback speed multiplier.
+        float GetSpeed() const { return m_speed; }
+
         /// @brief Advance the animation by @p ticks milliseconds.
         void Update(uint32_t ticks);
 
@@ -74,21 +95,45 @@ namespace moth::gfx {
         /// @brief Returns the underlying sprite sheet image.
         Image const& GetImage() const;
 
+        /// @brief Invoked when a clip begins advancing.
+        ///
+        /// Fired synchronously from SetClip() (when the sprite is already
+        /// playing) or SetPlaying(true) (when a clip is active), carrying the
+        /// clip's name. Not fired when playback is paused.
+        std::function<void(std::string_view clipName)> OnClipStarted;
+
+        /// @brief Invoked when a non-looping clip (Stop/Reset) reaches its end.
+        ///
+        /// Fired once, from Update(), after the clip has frozen on its final
+        /// frame. Never fired for LoopType::Loop clips.
+        std::function<void(std::string_view clipName)> OnClipStopped;
+
+        /// @brief Invoked each time a LoopType::Loop clip wraps to its first step.
+        std::function<void(std::string_view clipName)> OnClipLooped;
+
     private:
         std::shared_ptr<SpriteSheet> m_spriteSheet;
         std::optional<SpriteSheet::ClipDesc> m_currentClip;
         std::string m_currentClipName;
         int m_currentFrame = 0;    ///< Clip-sequence position when clip is active; raw atlas index otherwise.
         float m_accumulatedMs = 0.0f;
+        float m_speed = 1.0f;
         bool m_playing = false;
+        bool m_flipX = false;
     };
 
     /// @brief Draw the current frame of a sprite into a destination rectangle.
+    ///
+    /// Honours the sprite's SetFlipX() mirror.
     void DrawSprite(IGraphics& graphics, Sprite const& sprite, IntRect const& destRect);
 
     /// @brief Draw the current frame of a sprite at a position, offset by a normalized pivot.
+    ///
+    /// Honours the sprite's SetFlipX() mirror.
     void DrawSprite(IGraphics& graphics, Sprite const& sprite, IntVec2 const& pos, FloatVec2 const& pivot);
 
     /// @brief Draw the current frame of a sprite at a position using the frame's own pivot.
+    ///
+    /// Honours the sprite's SetFlipX() mirror.
     void DrawSprite(IGraphics& graphics, Sprite const& sprite, IntVec2 const& pos);
 }

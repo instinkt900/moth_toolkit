@@ -48,10 +48,14 @@ TEST_CASE("Sprite method signatures are stable", "[api][sprite][sprite]") {
     int  (Sprite::*getWidth)() const                      = &Sprite::GetWidth;
     int  (Sprite::*getHeight)() const                     = &Sprite::GetHeight;
     Image const& (Sprite::*getImage)() const              = &Sprite::GetImage;
+    void (Sprite::*setFlipX)(bool)                        = &Sprite::SetFlipX;
+    bool (Sprite::*getFlipX)() const                      = &Sprite::GetFlipX;
+    void (Sprite::*setSpeed)(float)                       = &Sprite::SetSpeed;
+    float (Sprite::*getSpeed)() const                     = &Sprite::GetSpeed;
 
     (void)getSheet; (void)setClip; (void)setPlaying; (void)update;
     (void)isPlaying; (void)getClipName; (void)getCurrentFrame; (void)setFrame;
     (void)getFrameRect; (void)getFramePivot; (void)getWidth; (void)getHeight;
-    (void)getImage;
+    (void)getImage; (void)setFlipX; (void)getFlipX; (void)setSpeed; (void)getSpeed;
     SUCCEED();
 }

@@ -256,3 +256,144 @@ TEST_CASE("GetCurrentFramePivot returns the per-frame pivot", "[sprite][frame_pi
     REQUIRE(pivot.x == 2);
     REQUIRE(pivot.y == 2);
 }
+
+// ---------------------------------------------------------------------------
+// Flip
+// ---------------------------------------------------------------------------
+
+TEST_CASE("Sprite flip defaults to false and round-trips through SetFlipX", "[sprite][flip]") {
+    Sprite sprite{MakeSheet(2)};
+    REQUIRE_FALSE(sprite.GetFlipX());
+    sprite.SetFlipX(true);
+    REQUIRE(sprite.GetFlipX());
+    sprite.SetFlipX(false);
+    REQUIRE_FALSE(sprite.GetFlipX());
+}
+
+// ---------------------------------------------------------------------------
+// Playback speed
+// ---------------------------------------------------------------------------
+
+TEST_CASE("Sprite speed defaults to 1.0", "[sprite][speed]") {
+    Sprite sprite{MakeSheet(2)};
+    REQUIRE(sprite.GetSpeed() == 1.0f);
+}
+
+TEST_CASE("SetSpeed applies a positive multiplier", "[sprite][speed]") {
+    Sprite sprite{MakeSheet(2)};
+    sprite.SetSpeed(2.0f);
+    REQUIRE(sprite.GetSpeed() == 2.0f);
+}
+
+TEST_CASE("SetSpeed rejects non-positive values and resets to 1.0", "[sprite][speed]") {
+    Sprite sprite{MakeSheet(2)};
+    sprite.SetSpeed(2.0f);
+    sprite.SetSpeed(0.0f);
+    REQUIRE(sprite.GetSpeed() == 1.0f);
+    sprite.SetSpeed(-3.0f);
+    REQUIRE(sprite.GetSpeed() == 1.0f);
+}
+
+TEST_CASE("Playback speed multiplies the elapsed time in Update", "[sprite][speed]") {
+    auto sheet = MakeSheet(2, {
+        MakeClipEntry("run", { { 0, 100 }, { 1, 100 } })
+    });
+    Sprite sprite{sheet};
+    sprite.SetClip("run");
+    sprite.SetPlaying(true);
+    sprite.SetSpeed(2.0f);
+
+    sprite.Update(50);  // 50ms * 2.0 = 100ms -> advances one step
+    REQUIRE(sprite.GetCurrentFrame() == 1);
+    REQUIRE(sprite.IsPlaying());
+}
+
+// ---------------------------------------------------------------------------
+// Clip lifecycle callbacks
+// ---------------------------------------------------------------------------
+
+TEST_CASE("OnClipStarted fires when playback begins via SetPlaying", "[sprite][callback][started]") {
+    auto sheet = MakeSheet(2, {
+        MakeClipEntry("run", { { 0, 100 } })
+    });
+    Sprite sprite{sheet};
+    sprite.SetClip("run");
+
+    std::string started;
+    sprite.OnClipStarted = [&](std::string_view name) { started = std::string(name); };
+
+    // Selecting a clip while paused must not fire the callback.
+    REQUIRE(started.empty());
+
+    sprite.SetPlaying(true);
+    REQUIRE(started == "run");
+}
+
+TEST_CASE("OnClipStarted fires when a clip is swapped while already playing", "[sprite][callback][started]") {
+    auto sheet = MakeSheet(2, {
+        MakeClipEntry("idle", { { 0, 100 } }),
+        MakeClipEntry("run",  { { 1, 100 } }),
+    });
+    Sprite sprite{sheet};
+    sprite.SetClip("idle");
+    sprite.SetPlaying(true);
+
+    std::string started;
+    sprite.OnClipStarted = [&](std::string_view name) { started = std::string(name); };
+
+    sprite.SetClip("run");
+    REQUIRE(started == "run");
+}
+
+TEST_CASE("OnClipStopped fires once when a Stop clip completes", "[sprite][callback][stopped]") {
+    auto sheet = MakeSheet(2, {
+        MakeClipEntry("anim", { { 0, 100 }, { 1, 100 } }, SpriteSheet::LoopType::Stop)
+    });
+    Sprite sprite{sheet};
+    sprite.SetClip("anim");
+    sprite.SetPlaying(true);
+
+    int stopped = 0;
+    sprite.OnClipStopped = [&](std::string_view name) { ++stopped; REQUIRE(name == "anim"); };
+
+    sprite.Update(250);
+    REQUIRE(stopped == 1);
+
+    // Already stopped — further updates must not refire.
+    sprite.Update(250);
+    REQUIRE(stopped == 1);
+}
+
+TEST_CASE("OnClipStopped is not fired for Loop clips", "[sprite][callback][stopped]") {
+    auto sheet = MakeSheet(2, {
+        MakeClipEntry("anim", { { 0, 100 }, { 1, 100 } }, SpriteSheet::LoopType::Loop)
+    });
+    Sprite sprite{sheet};
+    sprite.SetClip("anim");
+    sprite.SetPlaying(true);
+
+    int stopped = 0;
+    sprite.OnClipStopped = [&](std::string_view) { ++stopped; };
+
+    sprite.Update(250);
+    REQUIRE(stopped == 0);
+}
+
+TEST_CASE("OnClipLooped fires on each wrap of a Loop clip", "[sprite][callback][looped]") {
+    auto sheet = MakeSheet(2, {
+        MakeClipEntry("anim", { { 0, 100 }, { 1, 100 } }, SpriteSheet::LoopType::Loop)
+    });
+    Sprite sprite{sheet};
+    sprite.SetClip("anim");
+    sprite.SetPlaying(true);
+
+    int looped = 0;
+    sprite.OnClipLooped = [&](std::string_view name) { ++looped; REQUIRE(name == "anim"); };
+
+    sprite.Update(250);  // wraps once (200ms of a 200ms clip, then 50ms into the next pass)
+    REQUIRE(looped == 1);
+
+    sprite.Update(200);  // another full pass -> second wrap
+    REQUIRE(looped == 2);
+}
+

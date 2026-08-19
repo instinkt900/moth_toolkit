@@ -39,6 +39,9 @@
 #ifndef MOTH_ENABLE_ASSETS
 #define MOTH_ENABLE_ASSETS 1
 #endif
+#ifndef MOTH_ENABLE_ANIM
+#define MOTH_ENABLE_ANIM 1
+#endif
 
 #if MOTH_ENABLE_CORE
 #include <moth/core/vector.h>
@@ -94,6 +97,10 @@
 #if MOTH_ENABLE_ASSETS
 #include <moth/assets/assets.h>
 #include <moth/assets/pak.h>
+#endif
+
+#if MOTH_ENABLE_ANIM
+#include <moth/anim/moth_anim.h>
 #endif
 
 #if MOTH_ENABLE_BRIDGE

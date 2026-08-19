@@ -287,6 +287,26 @@ auto bytes = source.Read(idOrPath);       // by AssetId or path string
 engine.LoadSoundFromMemory(bytes);        // any FromMemory loader
 ```
 
+### moth::anim
+
+**Package** `moth_anim` · **Namespace** `moth::anim` · **Umbrella** `<moth/anim/moth_anim.h>`
+
+Data-driven character animation. `AnimSet`/`StateSpec`/`TransitionSpec` describe
+states and transitions in JSON (each state maps to a `.flipbook.json` clip), and
+`Animator` drives a `gfx::Sprite` through them — including one-shot transition
+clips and automatic `onComplete` chaining (`jump` → `landing` → `idle`).
+`gfx::Sprite` itself gains horizontal flip, playback speed, and clip
+start/stop/loop callbacks. Depends on `moth_core` + `moth_graphics`.
+
+```cpp
+#include <moth/anim/moth_anim.h>
+
+moth::anim::Animator animator(sheet, set);   // set loaded from .anim.json
+animator.TransitionTo("run");
+animator.Update(elapsedMs);
+animator.GetSprite().SetFlipX(facingLeft);
+```
+
 ### moth::toolkit
 
 **Package** `moth_toolkit` · **Umbrella** `<moth/toolkit.h>`
@@ -353,6 +373,7 @@ Enable or disable modules with `-DMOTH_ENABLE_*=ON/OFF`:
 | `MOTH_ENABLE_TILEMAP` | ON | `moth::tilemap` Tiled maps |
 | `MOTH_ENABLE_AUDIO` | ON | `moth::audio` miniaudio |
 | `MOTH_ENABLE_ASSETS` | ON | `moth::assets` addressing + `.pak` |
+| `MOTH_ENABLE_ANIM` | ON | `moth::anim` character animation |
 | `MOTH_ENABLE_TOOLKIT` | ON | `moth::toolkit` aggregate target |
 | `MOTH_ENABLE_TOOLS` | OFF | the `moth_pak` CLI |
 | `MOTH_ENABLE_EXAMPLES` | OFF | the example projects |

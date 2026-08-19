@@ -107,12 +107,12 @@ jobs:
         run: |
           set -euo pipefail
           declare -A PKG=(
-            [core]=moth_core [gfx]=moth_graphics [ui]=moth_ui
+            [core]=moth_core [gfx]=moth_graphics [anim]=moth_anim [ui]=moth_ui
             [ecs]=moth_ecs [physics]=moth_physics [tilemap]=moth_tilemap
             [audio]=moth_audio [assets]=moth_assets [bridge]=moth_bridge
             [toolkit]=moth_toolkit
           )
-          ORDER=(core gfx ui ecs physics tilemap audio assets bridge toolkit)
+          ORDER=(core gfx anim ui ecs physics tilemap audio assets bridge toolkit)
 
           for m in "${ORDER[@]}"; do
             pkg="${PKG[$m]}"

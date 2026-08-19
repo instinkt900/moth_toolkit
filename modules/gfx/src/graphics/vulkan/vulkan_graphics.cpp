@@ -279,6 +279,15 @@ namespace moth::gfx::vulkan {
             std::swap(v0, v1);
         }
 
+        // Inset by half a texel so linear filtering samples texel centres rather
+        // than the sub-rect boundary, which would otherwise bleed into adjacent
+        // atlas texels (visible as seams/gaps between tiles).
+        FloatVec2 const halfTexel{ 0.5f / textureDimensions.x, 0.5f / textureDimensions.y };
+        u0 += halfTexel.x;
+        u1 -= halfTexel.x;
+        v0 += halfTexel.y;
+        v1 -= halfTexel.y;
+
         Vertex vertices[6];
         vertices[0].xy = combined.TransformPoint({ 0.0f, 0.0f });
         vertices[0].uv = { u0, v0 };
@@ -342,6 +351,12 @@ namespace moth::gfx::vulkan {
         FloatVec2 textureDimensions = FloatVec2{ static_cast<float>(texture->GetVkExtent().width), static_cast<float>(texture->GetVkExtent().height) };
         imageRect += static_cast<FloatVec2>(image.GetSourceRect().topLeft);
         imageRect /= textureDimensions;
+
+        // Inset by half a texel to avoid atlas bleeding (linear filtering at
+        // sub-rect boundaries).
+        FloatVec2 const halfTexel{ 0.5f / textureDimensions.x, 0.5f / textureDimensions.y };
+        imageRect.topLeft += halfTexel;
+        imageRect.bottomRight -= halfTexel;
 
         auto const t = CurrentTransform();
         Vertex vertices[6];

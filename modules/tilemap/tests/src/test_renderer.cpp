@@ -257,6 +257,25 @@ TEST_CASE("Renderer: applies layer opacity via the draw colour", "[tilemap][rend
     REQUIRE(graphics.setColors[1].a == Catch::Approx(1.0f));
 }
 
+TEST_CASE("Renderer: applies layer tint via the draw colour", "[tilemap][renderer]") {
+    TileMap map = MakeMap(1, 1);
+    AddLayer(map, { 1 });
+    map.GetLayer(0).tint = { 1.0f, 0.0f, 0.0f, 1.0f }; // red tint
+    map.GetLayer(0).opacity = 0.5f;
+
+    MockGraphics graphics;
+    std::vector<Image> tilesetImages{ Image(std::make_shared<MockTexture>()) };
+
+    DrawTileMap(graphics, map, tilesetImages, MakeRect(0.0f, 0.0f, 16.0f, 16.0f));
+
+    REQUIRE(graphics.setColors.size() == 2); // layer tint+opacity + reset
+    REQUIRE(graphics.setColors[0].r == Catch::Approx(1.0f));
+    REQUIRE(graphics.setColors[0].g == Catch::Approx(0.0f));
+    REQUIRE(graphics.setColors[0].b == Catch::Approx(0.0f));
+    REQUIRE(graphics.setColors[0].a == Catch::Approx(0.5f)); // opacity * tint.a
+    REQUIRE(graphics.setColors[1].a == Catch::Approx(1.0f));
+}
+
 TEST_CASE("Renderer: skips tiles whose tileset image is missing", "[tilemap][renderer]") {
     TileMap map = MakeMap(1, 1);
     AddLayer(map, { 1 });
@@ -267,6 +286,94 @@ TEST_CASE("Renderer: skips tiles whose tileset image is missing", "[tilemap][ren
     DrawTileMap(graphics, map, tilesetImages, MakeRect(0.0f, 0.0f, 16.0f, 16.0f));
 
     REQUIRE(graphics.drawCalls.empty());
+}
+
+TEST_CASE("Renderer: resolver overload draws image-collection tiles", "[tilemap][renderer]") {
+    TileMap map = MakeMap(2, 1);
+    map.tilesets[0].tileCount = 3;
+    map.tilesets[0].tileImages[0] = TileImage{ "a.png", MakeRect(0, 0, 16, 16) };
+    map.tilesets[0].tileImages[1] = TileImage{ "b.png", MakeRect(4, 4, 16, 16) };
+    AddLayer(map, { 1, 2 });
+
+    MockGraphics graphics;
+    auto const texture = std::make_shared<MockTexture>();
+    std::vector<std::string> resolvedPaths;
+    TileImageResolver resolve = [&](std::string const& path) -> Image {
+        resolvedPaths.push_back(path);
+        return Image(texture);
+    };
+
+    DrawTileMap(graphics, map, resolve, MakeRect(0.0f, 0.0f, 32.0f, 16.0f));
+
+    REQUIRE(graphics.drawCalls.size() == 2);
+    REQUIRE(resolvedPaths.size() == 2);
+    REQUIRE(resolvedPaths[0] == "a.png");
+    REQUIRE(resolvedPaths[1] == "b.png");
+    REQUIRE(graphics.drawCalls[0].sourceRect == MakeRect(0, 0, 16, 16));
+    REQUIRE(graphics.drawCalls[1].sourceRect == MakeRect(4, 4, 16, 16));
+}
+
+TEST_CASE("Renderer: draws tile objects from object layers, skipping shapes", "[tilemap][renderer]") {
+    TileMap map = MakeMap(4, 4);
+    AddLayer(map, { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 });
+
+    ObjectLayer objectLayer;
+    objectLayer.order = 1;
+    MapObject tileObject;
+    tileObject.tile = TileId::FromGid(1);
+    tileObject.position = { 8.0f, 8.0f };
+    objectLayer.objects.push_back(tileObject);
+
+    MapObject shapeObject; // no gid -> not rendered
+    shapeObject.position = { 4.0f, 4.0f };
+    objectLayer.objects.push_back(shapeObject);
+    map.objectLayers.push_back(objectLayer);
+
+    MockGraphics graphics;
+    std::vector<Image> tilesetImages{ Image(std::make_shared<MockTexture>()) };
+
+    // View covers tile (0, 0) only; the object layer is drawn after the tile
+    // layer (order 1), so one tile + one tile object.
+    DrawTileMap(graphics, map, tilesetImages, MakeRect(0.0f, 0.0f, 16.0f, 16.0f));
+
+    REQUIRE(graphics.drawCalls.size() == 2);
+    auto const& objectCall = graphics.drawCalls.back();
+    REQUIRE(objectCall.position.x == Catch::Approx(8.0f));
+    REQUIRE(objectCall.position.y == Catch::Approx(8.0f));
+    REQUIRE(objectCall.sourceRect == MakeRect(0, 0, 16, 16));
+}
+
+TEST_CASE("Renderer: applies layer parallax offset", "[tilemap][renderer]") {
+    TileMap map = MakeMap(1, 1);
+    AddLayer(map, { 1 });
+    map.GetLayer(0).parallax = { 0.5f, 0.5f };
+
+    MockGraphics graphics;
+    std::vector<Image> tilesetImages{ Image(std::make_shared<MockTexture>()) };
+
+    // Camera at (100, 100), factor 0.5 -> offset = (100, 100) * (1 - 0.5) = (50, 50).
+    DrawTileMap(graphics, map, tilesetImages, MakeRect(0.0f, 0.0f, 200.0f, 200.0f), 0, FloatVec2{ 100.0f, 100.0f });
+
+    REQUIRE(graphics.drawCalls.size() == 1);
+    REQUIRE(graphics.drawCalls[0].position.x == Catch::Approx(50.0f));
+    REQUIRE(graphics.drawCalls[0].position.y == Catch::Approx(50.0f));
+}
+
+TEST_CASE("Renderer: parallax shifts the culled region", "[tilemap][renderer]") {
+    TileMap map = MakeMap(4, 1);
+    AddLayer(map, { 0, 0, 0, 1 }); // only tile (3, 0) is occupied, at world x = 48
+    map.GetLayer(0).parallax = { 2.0f, 1.0f }; // foreground: scrolls faster than the camera
+
+    MockGraphics graphics;
+    std::vector<Image> tilesetImages{ Image(std::make_shared<MockTexture>()) };
+
+    // View covers world x in [0, 32). At factor 2 the layer offset is
+    // (32 - 0) * (1 - 2) = -32, so tile (3, 0) is drawn at x = 48 - 32 = 16 and
+    // becomes visible (without parallax it would be culled).
+    DrawTileMap(graphics, map, tilesetImages, MakeRect(0.0f, 0.0f, 32.0f, 16.0f), 0, FloatVec2{ 32.0f, 0.0f });
+
+    REQUIRE(graphics.drawCalls.size() == 1);
+    REQUIRE(graphics.drawCalls[0].position.x == Catch::Approx(16.0f));
 }
 
 TEST_CASE("Renderer: animated tiles resolve frames over time", "[tilemap][renderer]") {

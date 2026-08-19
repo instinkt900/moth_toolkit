@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(Catch2 3 REQUIRED)
+find_package(box2d CONFIG REQUIRED)
 
 # Build core, gfx, and tilemap from source so the tests exercise the current
 # in-tree API (the packaged moth_graphics may lag the source).
@@ -20,11 +21,12 @@ set(SOURCES
     src/test_tile_map.cpp
     src/test_loader.cpp
     src/test_renderer.cpp
+    src/test_collision.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(${PROJECT_NAME} PRIVATE moth_tilemap Catch2::Catch2)
+target_link_libraries(${PROJECT_NAME} PRIVATE moth_tilemap Catch2::Catch2 box2d::box2d)
 
 if(MSVC)
     target_compile_definitions(${PROJECT_NAME} PRIVATE _CRT_SECURE_NO_WARNINGS)

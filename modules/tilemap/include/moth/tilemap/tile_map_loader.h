@@ -11,10 +11,11 @@ namespace moth::tilemap {
     /**
      * @brief Loads a Tiled JSON (.tmj) map into a @c TileMap.
      *
-     * Supports orthogonal maps with embedded tilesets and tile layers whose
-     * tile data is CSV (a JSON array) or uncompressed base64. GID flip flags are
-     * unpacked per tile. Object layers are parsed into @c objectLayers; object
-     * image/group layers are skipped; compressed tile data is not yet supported.
+     * Supports orthogonal maps with embedded or external (`.tsj`) tilesets —
+     * both single-atlas and image-collection tilesets — and tile layers whose
+     * tile data is CSV (a JSON array), or base64 with optional zlib/gzip
+     * compression. GID flip flags are unpacked per tile. Object layers are
+     * parsed into @c objectLayers; object image/group layers are skipped.
      *
      * @p basePath is the directory used to resolve a tileset's @c "source"
      * reference to an external `.tsj` file; pass the map file's parent directory

@@ -158,6 +158,86 @@ TEST_CASE("Loader: malformed input throws", "[tilemap][loader]") {
     REQUIRE_THROWS(LoadTileMap("not json"));
 }
 
+TEST_CASE("Loader: tile objects parse gid, flip flags, visibility, and layer order", "[tilemap][loader]") {
+    std::string const json = R"({
+        "width": 4, "height": 4, "tilewidth": 16, "tileheight": 16,
+        "layers": [
+            { "type": "tilelayer", "name": "ground",
+              "data": [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+            { "type": "objectgroup", "name": "deco", "objects": [
+                { "id": 1, "gid": 3, "x": 10, "y": 20, "width": 16, "height": 16, "visible": false },
+                { "id": 2, "gid": 2147483651, "x": 32, "y": 64, "width": 16, "height": 16 }
+            ] }
+        ]
+    })";
+
+    TileMap const map = LoadTileMap(json);
+
+    REQUIRE(map.GetLayer(0).order == 0);
+    REQUIRE(map.GetObjectLayer(0).order == 1);
+
+    auto const& layer = map.GetObjectLayer(0);
+    REQUIRE(layer.objects.size() == 2);
+
+    auto const& hidden = layer.objects[0];
+    REQUIRE_FALSE(hidden.visible);
+    REQUIRE(hidden.tile.id == 3);
+    REQUIRE_FALSE(hidden.tile.flipHorizontal);
+
+    // 2147483651 = 0x80000003 -> id 3, horizontal flip.
+    auto const& flipped = layer.objects[1];
+    REQUIRE(flipped.visible);
+    REQUIRE(flipped.tile.id == 3);
+    REQUIRE(flipped.tile.flipHorizontal);
+}
+
+TEST_CASE("Loader: parallax factors and origin parse", "[tilemap][loader]") {
+    std::string const json = R"({
+        "width": 2, "height": 1, "tilewidth": 16, "tileheight": 16,
+        "parallaxoriginx": 320, "parallaxoriginy": 128,
+        "layers": [
+            { "type": "tilelayer", "name": "bg", "data": [0, 0], "parallaxx": 0.5, "parallaxy": 0.25 },
+            { "type": "objectgroup", "name": "fg", "objects": [], "parallaxx": 1.5, "parallaxy": 1.0 }
+        ]
+    })";
+
+    TileMap const map = LoadTileMap(json);
+    REQUIRE(map.parallaxOrigin.x == Catch::Approx(320.0f));
+    REQUIRE(map.parallaxOrigin.y == Catch::Approx(128.0f));
+
+    REQUIRE(map.GetLayer(0).parallax.x == Catch::Approx(0.5f));
+    REQUIRE(map.GetLayer(0).parallax.y == Catch::Approx(0.25f));
+
+    REQUIRE(map.GetObjectLayer(0).parallax.x == Catch::Approx(1.5f));
+    REQUIRE(map.GetObjectLayer(0).parallax.y == Catch::Approx(1.0f));
+}
+
+TEST_CASE("Loader: layer tintcolor parses", "[tilemap][loader]") {
+    std::string const json = R"({
+        "width": 1, "height": 1, "tilewidth": 16, "tileheight": 16,
+        "layers": [
+            { "type": "tilelayer", "name": "tinted", "data": [0], "tintcolor": "#ff8000ff" },
+            { "type": "objectgroup", "name": "plain", "objects": [] }
+        ]
+    })";
+
+    TileMap const map = LoadTileMap(json);
+
+    // #ff8000ff -> A=ff, R=80, G=00, B=ff.
+    auto const& tint = map.GetLayer(0).tint;
+    REQUIRE(tint.r == Catch::Approx(128.0f / 255.0f));
+    REQUIRE(tint.g == Catch::Approx(0.0f));
+    REQUIRE(tint.b == Catch::Approx(1.0f));
+    REQUIRE(tint.a == Catch::Approx(1.0f));
+
+    // Absent tintcolor -> white (no tint).
+    auto const& plain = map.GetObjectLayer(0).tint;
+    REQUIRE(plain.r == Catch::Approx(1.0f));
+    REQUIRE(plain.g == Catch::Approx(1.0f));
+    REQUIRE(plain.b == Catch::Approx(1.0f));
+    REQUIRE(plain.a == Catch::Approx(1.0f));
+}
+
 TEST_CASE("Loader: zlib-compressed tile data loads", "[tilemap][loader]") {
     std::string const json = R"({
         "width": 2, "height": 2, "tilewidth": 16, "tileheight": 16,
@@ -339,4 +419,42 @@ TEST_CASE("Loader: infinite maps parse chunks", "[tilemap][loader]") {
     REQUIRE(map.GetTile(0, 0, 0).id == 1);
     REQUIRE(map.GetTile(0, 1, 0).id == 2);
     REQUIRE(map.GetTile(0, 2, 0).IsEmpty());
+}
+
+TEST_CASE("Loader: image-collection tilesets parse per-tile images", "[tilemap][loader]") {
+    std::string const json = R"({
+        "width": 1, "height": 1, "tilewidth": 16, "tileheight": 16,
+        "tilesets": [
+            { "firstgid": 1, "name": "squirrel", "tilecount": 7,
+              "tiles": [
+                  { "id": 0, "image": "squirrel.png", "imagewidth": 1024, "imageheight": 1024,
+                    "width": 16, "height": 16, "x": 1, "y": 1 },
+                  { "id": 6, "image": "squirrel.png", "imagewidth": 1024, "imageheight": 1024,
+                    "width": 160, "height": 208, "x": 521, "y": 114 }
+              ] }
+        ],
+        "layers": [ { "type": "tilelayer", "name": "ground", "data": [1] } ]
+    })";
+
+    TileMap const map = LoadTileMap(json);
+    auto const& tileset = map.GetTileset(0);
+
+    REQUIRE(tileset.IsImageCollection());
+    REQUIRE(tileset.imagePath.empty());
+    REQUIRE(tileset.tileImages.size() == 2);
+
+    REQUIRE(tileset.tileImages.count(0) == 1);
+    REQUIRE(tileset.tileImages.at(0).imagePath == "squirrel.png");
+    REQUIRE(tileset.tileImages.at(0).sourceRect == moth::core::MakeRect(1, 1, 16, 16));
+
+    REQUIRE(tileset.tileImages.count(6) == 1);
+    REQUIRE(tileset.tileImages.at(6).sourceRect == moth::core::MakeRect(521, 114, 160, 208));
+
+    // Sparse local ids: gid 7 -> local id 6 is owned, gaps are not.
+    REQUIRE(tileset.ContainsGid(1));
+    REQUIRE(tileset.ContainsGid(7));
+    REQUIRE_FALSE(tileset.ContainsGid(2));
+    REQUIRE_FALSE(tileset.ContainsGid(8));
+
+    REQUIRE(tileset.GetTileRect(6) == moth::core::MakeRect(521, 114, 160, 208));
 }

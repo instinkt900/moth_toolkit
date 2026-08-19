@@ -17,6 +17,7 @@ class MothTilemapTests(ConanFile):
         # manager on Linux).
         self.requires("nlohmann_json/[>=3.11 <4]", transitive_headers=True)
         self.requires("zlib/1.3.2")
+        self.requires("box2d/2.4.1", transitive_headers=True)
         self.requires("spdlog/[~1.14]", transitive_headers=True)
         if self.settings.os == "Windows":
             self.requires("glfw/3.3.8", transitive_headers=True)

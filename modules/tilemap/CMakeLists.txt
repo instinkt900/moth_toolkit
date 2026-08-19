@@ -32,7 +32,8 @@ endif()
 
 add_library(moth_tilemap
     src/tile_map_loader.cpp
-    src/tile_map_renderer.cpp)
+    src/tile_map_renderer.cpp
+    src/tile_map_collision.cpp)
 set_target_properties(moth_tilemap PROPERTIES EXPORT_NAME tilemap)
 
 target_include_directories(moth_tilemap PUBLIC

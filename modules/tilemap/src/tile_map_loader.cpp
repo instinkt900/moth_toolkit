@@ -163,6 +163,41 @@ namespace moth::tilemap {
             return nlohmann::json::parse(contents.str());
         }
 
+        MapObject ParseObject(nlohmann::json const& object) {
+            MapObject mapObject;
+            mapObject.id = object.value("id", 0);
+            mapObject.name = object.value("name", std::string{});
+            mapObject.type = object.value("type", std::string{});
+            mapObject.tile = TileId::FromGid(object.value("gid", 0u));
+            mapObject.visible = object.value("visible", true);
+            mapObject.position = { object.value("x", 0.0f), object.value("y", 0.0f) };
+            mapObject.size = { object.value("width", 0.0f), object.value("height", 0.0f) };
+            mapObject.rotation = object.value("rotation", 0.0f);
+
+            if (object.value("point", false)) {
+                mapObject.kind = ObjectKind::Point;
+            } else if (object.value("ellipse", false)) {
+                mapObject.kind = ObjectKind::Ellipse;
+            } else if (object.contains("polygon") && object["polygon"].is_array()) {
+                mapObject.kind = ObjectKind::Polygon;
+                for (auto const& point : object["polygon"]) {
+                    mapObject.points.push_back({ point.value("x", 0.0f), point.value("y", 0.0f) });
+                }
+            } else if (object.contains("polyline") && object["polyline"].is_array()) {
+                mapObject.kind = ObjectKind::Polyline;
+                for (auto const& point : object["polyline"]) {
+                    mapObject.points.push_back({ point.value("x", 0.0f), point.value("y", 0.0f) });
+                }
+            } else {
+                mapObject.kind = ObjectKind::Rectangle;
+            }
+
+            if (object.contains("properties")) {
+                mapObject.properties = ParseProperties(object["properties"]);
+            }
+            return mapObject;
+        }
+
         Tileset ParseTileset(nlohmann::json const& entry, int defaultTileWidth, int defaultTileHeight) {
             Tileset tileset;
             tileset.firstGid = entry.value("firstgid", 0);
@@ -185,6 +220,20 @@ namespace moth::tilemap {
             if (entry.contains("tiles") && entry["tiles"].is_array()) {
                 for (auto const& tileEntry : entry["tiles"]) {
                     int const tileId = tileEntry.value("id", 0);
+                    if (tileEntry.contains("image")) {
+                        TileImage tileImage;
+                        tileImage.imagePath = tileEntry.value("image", std::string{});
+                        int const x = tileEntry.value("x", 0);
+                        int const y = tileEntry.value("y", 0);
+                        int width = tileEntry.value("width", 0);
+                        int height = tileEntry.value("height", 0);
+                        if (width <= 0 || height <= 0) {
+                            width = tileEntry.value("imagewidth", 0);
+                            height = tileEntry.value("imageheight", 0);
+                        }
+                        tileImage.sourceRect = moth::core::MakeRect(x, y, width, height);
+                        tileset.tileImages[tileId] = std::move(tileImage);
+                    }
                     if (tileEntry.contains("properties")) {
                         tileset.tileProperties[tileId] = ParseProperties(tileEntry["properties"]);
                     }
@@ -197,6 +246,14 @@ namespace moth::tilemap {
                             frames.push_back(frame);
                         }
                         tileset.animations[tileId] = std::move(frames);
+                    }
+                    if (tileEntry.contains("objectgroup") && tileEntry["objectgroup"].contains("objects")
+                        && tileEntry["objectgroup"]["objects"].is_array()) {
+                        // Tile collision editor shapes: positions are relative to
+                        // the tile's top-left corner.
+                        for (auto const& object : tileEntry["objectgroup"]["objects"]) {
+                            tileset.tileCollisions[tileId].push_back(ParseObject(object));
+                        }
                     }
                 }
             }
@@ -211,6 +268,7 @@ namespace moth::tilemap {
         map.tileWidth = json.value("tilewidth", 0);
         map.tileHeight = json.value("tileheight", 0);
         map.infinite = json.value("infinite", false);
+        map.parallaxOrigin = { json.value("parallaxoriginx", 0.0f), json.value("parallaxoriginy", 0.0f) };
 
         if (map.width <= 0 || map.height <= 0 || map.tileWidth <= 0 || map.tileHeight <= 0) {
             throw std::runtime_error("TMJ map must have positive width, height, tilewidth, and tileheight");
@@ -236,16 +294,21 @@ namespace moth::tilemap {
         }
 
         if (json.contains("layers") && json["layers"].is_array()) {
-            for (auto const& entry : json["layers"]) {
+            auto const& layerEntries = json["layers"];
+            for (std::size_t layerIndex = 0; layerIndex < layerEntries.size(); ++layerIndex) {
+                auto const& entry = layerEntries[layerIndex];
                 std::string const layerType = entry.value("type", std::string{});
 
                 if (layerType == "tilelayer") {
                     std::string const compression = entry.value("compression", std::string{});
 
                     Layer layer;
+                    layer.order = static_cast<int>(layerIndex);
                     layer.name = entry.value("name", std::string{});
                     layer.visible = entry.value("visible", true);
                     layer.opacity = entry.value("opacity", 1.0f);
+                    layer.parallax = { entry.value("parallaxx", 1.0f), entry.value("parallaxy", 1.0f) };
+                    layer.tint = ParseColor(entry.value("tintcolor", std::string{}));
                     layer.width = entry.value("width", map.width);
                     layer.height = entry.value("height", map.height);
                     layer.infinite = map.infinite;
@@ -278,46 +341,19 @@ namespace moth::tilemap {
                     map.layers.push_back(std::move(layer));
                 } else if (layerType == "objectgroup") {
                     ObjectLayer objectLayer;
+                    objectLayer.order = static_cast<int>(layerIndex);
                     objectLayer.name = entry.value("name", std::string{});
                     objectLayer.visible = entry.value("visible", true);
                     objectLayer.opacity = entry.value("opacity", 1.0f);
+                    objectLayer.parallax = { entry.value("parallaxx", 1.0f), entry.value("parallaxy", 1.0f) };
+                    objectLayer.tint = ParseColor(entry.value("tintcolor", std::string{}));
                     if (entry.contains("properties")) {
                         objectLayer.properties = ParseProperties(entry["properties"]);
                     }
 
                     if (entry.contains("objects") && entry["objects"].is_array()) {
                         for (auto const& object : entry["objects"]) {
-                            MapObject mapObject;
-                            mapObject.id = object.value("id", 0);
-                            mapObject.name = object.value("name", std::string{});
-                            mapObject.type = object.value("type", std::string{});
-                            mapObject.position = { object.value("x", 0.0f), object.value("y", 0.0f) };
-                            mapObject.size = { object.value("width", 0.0f), object.value("height", 0.0f) };
-                            mapObject.rotation = object.value("rotation", 0.0f);
-
-                            if (object.value("point", false)) {
-                                mapObject.kind = ObjectKind::Point;
-                            } else if (object.value("ellipse", false)) {
-                                mapObject.kind = ObjectKind::Ellipse;
-                            } else if (object.contains("polygon") && object["polygon"].is_array()) {
-                                mapObject.kind = ObjectKind::Polygon;
-                                for (auto const& point : object["polygon"]) {
-                                    mapObject.points.push_back({ point.value("x", 0.0f), point.value("y", 0.0f) });
-                                }
-                            } else if (object.contains("polyline") && object["polyline"].is_array()) {
-                                mapObject.kind = ObjectKind::Polyline;
-                                for (auto const& point : object["polyline"]) {
-                                    mapObject.points.push_back({ point.value("x", 0.0f), point.value("y", 0.0f) });
-                                }
-                            } else {
-                                mapObject.kind = ObjectKind::Rectangle;
-                            }
-
-                            if (object.contains("properties")) {
-                                mapObject.properties = ParseProperties(object["properties"]);
-                            }
-
-                            objectLayer.objects.push_back(std::move(mapObject));
+                            objectLayer.objects.push_back(ParseObject(object));
                         }
                     }
                     map.objectLayers.push_back(std::move(objectLayer));

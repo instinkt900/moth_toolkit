@@ -14,6 +14,7 @@
 #include <vector>
 
 namespace moth::tilemap {
+    using moth::core::Color;
     using moth::core::FloatRect;
     using moth::core::FloatVec2;
     using moth::core::IntRect;
@@ -27,6 +28,52 @@ namespace moth::tilemap {
     struct AnimationFrame {
         int tileId = 0;     ///< Local tile id to display for this frame.
         int durationMs = 100; ///< How long this frame is displayed, in milliseconds.
+    };
+
+    /**
+     * @brief The image a single tile of an image-collection tileset draws from.
+     *
+     * Collection tilesets have no shared atlas; each tile carries its own image
+     * file and a source rectangle within that image (Tiled's `image`/`x`/`y`/
+     * `width`/`height` tile fields).
+     */
+    struct TileImage {
+        std::string imagePath; ///< Image file path (relative to the map/TSJ).
+        IntRect sourceRect;    ///< Sub-rect of the image to draw, in pixels.
+    };
+
+    /**
+     * @brief The shape of a Tiled object (a map object or a tile collision shape).
+     */
+    enum class ObjectKind {
+        Rectangle, ///< An axis-aligned rectangle (x/y/width/height).
+        Ellipse,   ///< An ellipse inscribed in the rectangle (width/height).
+        Polygon,   ///< A filled polygon (points relative to the object origin).
+        Polyline,  ///< An open polyline (points relative to the object origin).
+        Point,     ///< A single point (no size).
+    };
+
+    /**
+     * @brief A Tiled object: a named, positioned shape.
+     *
+     * Used both for map object layers and for tile collision shapes (the Tiled
+     * collision editor). Position/size are in pixels relative to the object's
+     * container (the map, or the tile's top-left corner for collision shapes);
+     * @c rotation is in degrees (clockwise). Polygon/polyline points are relative
+     * to the object's position.
+     */
+    struct MapObject {
+        int id = 0;
+        std::string name;
+        std::string type;
+        ObjectKind kind = ObjectKind::Rectangle;
+        TileId tile{};                 ///< Referenced tile for tile objects (id 0 = shape object, not rendered).
+        bool visible = true;           ///< Object-level visibility flag.
+        FloatVec2 position = { 0.0f, 0.0f };
+        FloatVec2 size = { 0.0f, 0.0f };
+        float rotation = 0.0f;
+        std::vector<FloatVec2> points; ///< Polygon/polyline vertices (relative to position).
+        Properties properties;         ///< Object-level custom properties.
     };
 
     /**
@@ -48,11 +95,23 @@ namespace moth::tilemap {
         Properties properties;                    ///< Tileset-level custom properties.
         std::map<int, Properties> tileProperties; ///< Per-tile properties, keyed by local tile id.
         std::map<int, std::vector<AnimationFrame>> animations; ///< Animated tiles, keyed by local tile id.
+        std::map<int, TileImage> tileImages;      ///< Per-tile images for image-collection tilesets, keyed by local id.
+        std::map<int, std::vector<MapObject>> tileCollisions; ///< Per-tile collision shapes (Tiled collision editor), keyed by local id.
 
         /// @brief Returns @c true if this tileset owns @p gid.
+        ///
+        /// Image-collection tilesets own only the local ids that have a tile
+        /// entry (their ids can be sparse); atlas tilesets own the contiguous
+        /// range @c [firstGid, firstGid + tileCount).
         bool ContainsGid(std::uint32_t gid) const {
-            return gid >= static_cast<std::uint32_t>(firstGid)
-                && gid < static_cast<std::uint32_t>(firstGid) + static_cast<std::uint32_t>(tileCount);
+            if (gid < static_cast<std::uint32_t>(firstGid)) {
+                return false;
+            }
+            int const localId = static_cast<int>(gid) - firstGid;
+            if (!tileImages.empty()) {
+                return tileImages.count(localId) != 0;
+            }
+            return localId < tileCount;
         }
 
         /// @brief Converts a global tile id to a local (0-based) id within this tileset.
@@ -60,8 +119,23 @@ namespace moth::tilemap {
             return static_cast<int>(gid) - firstGid;
         }
 
-        /// @brief Returns the source rect of @p localId in the atlas image.
+        /// @brief Returns @c true for image-collection tilesets (no shared atlas image).
+        bool IsImageCollection() const {
+            return imagePath.empty();
+        }
+
+        /// @brief Returns the source rect of @p localId.
+        ///
+        /// For image-collection tilesets this is the tile's own sub-rect; for
+        /// atlas tilesets it is computed from the tile grid, margin and spacing.
         IntRect GetTileRect(int localId) const {
+            auto const it = tileImages.find(localId);
+            if (it != tileImages.end()) {
+                return it->second.sourceRect;
+            }
+            if (columns <= 0) {
+                return MakeRect(0, 0, tileWidth, tileHeight);
+            }
             int const col = localId % columns;
             int const row = localId / columns;
             int const x = margin + col * (tileWidth + spacing);
@@ -131,6 +205,9 @@ namespace moth::tilemap {
         std::string name;
         bool visible = true;
         float opacity = 1.0f;
+        int order = 0;         ///< Position in the map's layer list (z-ordering across tile and object layers).
+        FloatVec2 parallax = { 1.0f, 1.0f }; ///< Tiled layer parallax factor (1 = normal scroll, 0 = fixed).
+        Color tint = { 1.0f, 1.0f, 1.0f, 1.0f }; ///< Tiled layer tint colour (white = no tint).
         int width = 0;
         int height = 0;
         bool infinite = false;
@@ -182,44 +259,20 @@ namespace moth::tilemap {
     };
 
     /**
-     * @brief The shape of a Tiled map object.
-     */
-    enum class ObjectKind {
-        Rectangle, ///< An axis-aligned rectangle (x/y/width/height).
-        Ellipse,   ///< An ellipse inscribed in the rectangle (width/height).
-        Polygon,   ///< A filled polygon (points relative to the object origin).
-        Polyline,  ///< An open polyline (points relative to the object origin).
-        Point,     ///< A single point (no size).
-    };
-
-    /**
-     * @brief A single Tiled object: a named, positioned shape.
-     *
-     * Position/size are in map pixels with the origin at the map's top-left
-     * corner; @c rotation is in degrees (clockwise). Polygon/polyline points
-     * are relative to the object's position.
-     */
-    struct MapObject {
-        int id = 0;
-        std::string name;
-        std::string type;
-        ObjectKind kind = ObjectKind::Rectangle;
-        FloatVec2 position = { 0.0f, 0.0f };
-        FloatVec2 size = { 0.0f, 0.0f };
-        float rotation = 0.0f;
-        std::vector<FloatVec2> points; ///< Polygon/polyline vertices (relative to position).
-        Properties properties;         ///< Object-level custom properties.
-    };
-
-    /**
      * @brief An object layer: a named collection of map objects (colliders,
-     * spawn points, triggers). Not rendered by @c DrawTileMap — game code
-     * iterates the objects (e.g. to build physics bodies).
+     * spawn points, triggers, tile objects).
+     *
+     * Tile objects (objects with a non-empty @c MapObject::tile) are rendered by
+     * @c DrawTileMap; shape objects (rectangles, ellipses, polygons, points) are
+     * game data and are not drawn.
      */
     struct ObjectLayer {
         std::string name;
         bool visible = true;
         float opacity = 1.0f;
+        int order = 0;                 ///< Position in the map's layer list (z-ordering across tile and object layers).
+        FloatVec2 parallax = { 1.0f, 1.0f }; ///< Tiled layer parallax factor.
+        Color tint = { 1.0f, 1.0f, 1.0f, 1.0f }; ///< Tiled layer tint colour (white = no tint).
         std::vector<MapObject> objects;
         Properties properties; ///< Object-layer-level custom properties.
     };
@@ -238,6 +291,7 @@ namespace moth::tilemap {
         int tileWidth = 0;  ///< Tile width in pixels.
         int tileHeight = 0; ///< Tile height in pixels.
         bool infinite = false; ///< @c true for Tiled infinite maps (chunked tile layers).
+        FloatVec2 parallaxOrigin = { 0.0f, 0.0f }; ///< Tiled parallax origin (world pixels).
         std::vector<Layer> layers;
         std::vector<Tileset> tilesets;
         std::vector<ObjectLayer> objectLayers;

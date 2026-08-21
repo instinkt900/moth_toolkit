@@ -21,8 +21,8 @@ turn on/off feature by feature.
   - [moth::tilemap](#mothtilemap)
   - [moth::audio](#mothaudio)
   - [moth::assets](#mothassets)
-  - [moth::toolkit](#mothtoolkit)
-- [Using the toolkit as a whole](#using-the-toolkit-as-a-whole)
+  - [moth::net](#mothnet)
+  - [moth::toolkit](#mothtoolkit)- [Using the toolkit as a whole](#using-the-toolkit-as-a-whole)
 - [Building](#building)
 - [Starting a new game](#starting-a-new-game)
 - [Packing assets](#packing-assets)
@@ -307,6 +307,37 @@ animator.Update(elapsedMs);
 animator.GetSprite().SetFlipX(facingLeft);
 ```
 
+### moth::net
+
+**Package** `moth_net` · **Namespace** `moth::net` · **Umbrella** `<moth/net/net.h>`
+
+A poll-driven, host-authoritative TCP module. `TcpServer`/`TcpClient` speak a
+length-prefixed JSON wire format (4-byte big-endian length + UTF-8 JSON with a
+`type` tag and a per-sender `seq`), dispatches incoming messages to handlers
+registered by `type` string, and drains the asio `io_context` on the app thread
+via `Poll()` — no background threads. Depends on `moth_core` + `asio`.
+
+```cpp
+#include <moth/net/net.h>
+
+using namespace moth::net;
+
+TcpServer server;
+server.SetHandler("Ping", [&](TcpServer::ConnectionId from, nlohmann::json const& p) {
+    server.Send(from, "Pong", nlohmann::json{{"answer", p["value"].get<int>() + 1}});
+});
+server.Listen(47624);                       // 0 = ephemeral port; GetPort() reads it
+
+TcpClient client;
+client.SetHandler("Pong", [&](nlohmann::json const& p) { /* ... */ });
+client.Connect("127.0.0.1", 47624);
+client.Send("Ping", nlohmann::json{{"value", 41}});
+
+// In the game loop, tick both once per frame:
+server.Poll();
+client.Poll();
+```
+
 ### moth::toolkit
 
 **Package** `moth_toolkit` · **Umbrella** `<moth/toolkit.h>`
@@ -374,6 +405,7 @@ Enable or disable modules with `-DMOTH_ENABLE_*=ON/OFF`:
 | `MOTH_ENABLE_AUDIO` | ON | `moth::audio` miniaudio |
 | `MOTH_ENABLE_ASSETS` | ON | `moth::assets` addressing + `.pak` |
 | `MOTH_ENABLE_ANIM` | ON | `moth::anim` character animation |
+| `MOTH_ENABLE_NET` | ON | `moth::net` TCP messaging |
 | `MOTH_ENABLE_TOOLKIT` | ON | `moth::toolkit` aggregate target |
 | `MOTH_ENABLE_TOOLS` | OFF | the `moth_pak` CLI |
 | `MOTH_ENABLE_EXAMPLES` | OFF | the example projects |
@@ -490,6 +522,7 @@ modules/              the moth:: libraries (each Conan-packaged)
   audio/                moth::audio   — miniaudio sound + music
   assets/               moth::assets  — id/path addressing + .pak format
   bridge/               moth::bridge  — ui <-> gfx adapter
+  net/                  moth::net     — TCP framed-JSON client/server
   toolkit/              moth::toolkit — aggregate target + feature header
 cmake/features.h.in   generated MOTH_HAS_* compile-time flags
 examples/             sample games / consumption tests

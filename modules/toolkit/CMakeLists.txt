@@ -54,4 +54,8 @@ if(MOTH_ENABLE_ANIM)
     target_link_libraries(moth_toolkit INTERFACE moth::anim)
 endif()
 
+if(MOTH_ENABLE_NET)
+    target_link_libraries(moth_toolkit INTERFACE moth::net)
+endif()
+
 install(DIRECTORY include/ DESTINATION include)

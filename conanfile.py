@@ -33,6 +33,7 @@ class MothToolkitSuperbuild(ConanFile):
         self.requires("box2d/2.4.1", transitive_headers=True)
         self.requires("zlib/1.3.2")
         self.requires("miniaudio/0.11.18", transitive_headers=True)
+        self.requires("asio/1.30.2", transitive_headers=True)
         # Runtime GLSL compilation for custom shaders (opt-in; pairs with the
         # MOTH_GRAPHICS_ENABLE_GLSLANG CMake option).
         if self.options.enable_glslang:

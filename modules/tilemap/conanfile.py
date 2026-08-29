@@ -1,6 +1,7 @@
 from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 from conan.tools.files import load
+import os
 
 
 class MothTilemap(ConanFile):
@@ -17,7 +18,7 @@ class MothTilemap(ConanFile):
 
     def set_version(self):
         if not self.version:
-            self.version = load(self, "version.txt").strip()
+            self.version = load(self, os.path.join(self.recipe_folder, "version.txt")).strip()
 
     def requirements(self):
         # TMJ parsing uses nlohmann_json; the renderer uses moth::gfx types. Both

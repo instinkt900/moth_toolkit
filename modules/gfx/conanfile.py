@@ -4,6 +4,8 @@ from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 from conan.tools.files import load
 from conan.tools.system.package_manager import Apt
 
+import os
+
 class MothGraphics(ConanFile):
     name = "moth_graphics"
 
@@ -27,7 +29,7 @@ class MothGraphics(ConanFile):
 
     def set_version(self):
         if not self.version:
-            self.version = load(self, "version.txt").strip()
+            self.version = load(self, os.path.join(self.recipe_folder, "version.txt")).strip()
 
     def validate(self):
         if self.options.disable_vulkan:

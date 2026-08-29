@@ -386,12 +386,19 @@ Then link `moth::toolkit` (or the individual `moth::*` targets) and
 
 ### Superbuild (source, in-tree)
 
+The root `conanfile.py` is a dependency provisioner: `conan install` fetches the
+third-party libraries and writes the CMake toolchain + deps into
+`build/<build_type>/generators`, along with a `conan-release` preset. Install the
+dependencies first, then build through the preset:
+
 ```bash
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build
+conan install . --build=missing -s build_type=Release
+cmake --preset conan-release
+cmake --build --preset conan-release
 ```
 
-Enable or disable modules with `-DMOTH_ENABLE_*=ON/OFF`:
+Enable or disable modules with `-DMOTH_ENABLE_*=ON/OFF` (pass them to the
+configure preset):
 
 | Option | Default | Controls |
 |---|---|---|
@@ -413,11 +420,11 @@ Enable or disable modules with `-DMOTH_ENABLE_*=ON/OFF`:
 For example, a renderer-only build:
 
 ```bash
-cmake -S . -B build -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF \
+cmake --preset conan-release -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF \
      -DMOTH_ENABLE_ECS=OFF -DMOTH_ENABLE_PHYSICS=OFF \
      -DMOTH_ENABLE_TILEMAP=OFF -DMOTH_ENABLE_AUDIO=OFF \
      -DMOTH_ENABLE_ASSETS=OFF -DMOTH_ENABLE_TOOLKIT=OFF
-cmake --build build
+cmake --build --preset conan-release
 ```
 
 ### Conan packages (per module)
@@ -445,7 +452,17 @@ superbuild).
 
 ## Starting a new game
 
-Scaffold a project from the bundled template:
+The scaffolded project consumes the packaged `moth_graphics` module (and, through
+it, `moth_core`), so those packages must already be in your local Conan cache.
+Create them once from the toolkit root, in dependency order (see
+[Conan packages](#conan-packages-per-module)):
+
+```bash
+conan create modules/core --build=missing -s build_type=Release
+conan create modules/gfx  --build=missing -s build_type=Release
+```
+
+Then scaffold a project from the bundled template:
 
 ```bash
 python3 tools/moth_new.py my_game
@@ -468,10 +485,11 @@ See `examples/` for fuller samples (ECS sprites, physics, tilemaps, audio).
 ## Packing assets
 
 Assets load by path by default. To cook a folder into a single `.pak` archive
-plus a `manifest.json`, use `moth_pak` (built with `-DMOTH_ENABLE_TOOLS=ON`):
+plus a `manifest.json`, use `moth_pak` (build the superbuild with
+`-DMOTH_ENABLE_TOOLS=ON`):
 
 ```bash
-./build/tools/moth_pak/moth_pak assets/ --pak out/assets.pak --manifest out/manifest.json
+./build/Release/tools/moth_pak/moth_pak assets/ --pak out/assets.pak --manifest out/manifest.json
 ```
 
 Each asset's id is the FNV-1a hash of its path relative to the input folder, so

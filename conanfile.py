@@ -1,4 +1,5 @@
 from conan import ConanFile
+from conan.tools.cmake import cmake_layout
 
 
 class MothToolkitSuperbuild(ConanFile):
@@ -20,6 +21,12 @@ class MothToolkitSuperbuild(ConanFile):
 
     # No name/version: this recipe is a local dev convenience, not a package.
     generators = "CMakeToolchain", "CMakeDeps"
+
+    def layout(self):
+        # Redirect generated toolchain/deps into build/<build_type>/generators
+        # (and emit the conan-release preset) so `conan install .` behaves like
+        # the standalone module recipes instead of dumping files in the root.
+        cmake_layout(self)
 
     def requirements(self):
         # Union of the third-party deps across core/gfx/ui/bridge.

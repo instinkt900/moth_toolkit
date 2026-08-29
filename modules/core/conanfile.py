@@ -3,6 +3,7 @@ from conan.errors import ConanInvalidConfiguration
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 from conan.tools.files import load
 
+import os
 import shutil
 
 
@@ -20,7 +21,7 @@ class MothCore(ConanFile):
 
     def set_version(self):
         if not self.version:
-            self.version = load(self, "version.txt").strip()
+            self.version = load(self, os.path.join(self.recipe_folder, "version.txt")).strip()
 
     def requirements(self):
         # JSON serialisation of the core math types (Vector/Rect).

@@ -46,7 +46,7 @@ class MothToolkit(ConanFile):
     def set_version(self):
         if not self.version:
             from conan.tools.files import load
-            self.version = load(self, "version.txt").strip()
+            self.version = load(self, os.path.join(self.recipe_folder, "version.txt")).strip()
 
     def validate(self):
         if self.options.enable_bridge and not (self.options.enable_core and self.options.enable_gfx and self.options.enable_ui):

@@ -1,6 +1,7 @@
 from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 from conan.tools.files import load
+import os
 
 
 class MothEcs(ConanFile):
@@ -17,7 +18,7 @@ class MothEcs(ConanFile):
 
     def set_version(self):
         if not self.version:
-            self.version = load(self, "version.txt").strip()
+            self.version = load(self, os.path.join(self.recipe_folder, "version.txt")).strip()
 
     def requirements(self):
         # EnTT is header-only and appears in our public headers, so it must reach

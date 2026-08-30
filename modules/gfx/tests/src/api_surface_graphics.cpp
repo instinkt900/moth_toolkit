@@ -13,6 +13,7 @@ using namespace moth::gfx;
 TEST_CASE("IGraphics method signatures are stable", "[api][graphics][igraphics]") {
     void (IGraphics::*begin)()                                  = &IGraphics::Begin;
     void (IGraphics::*end)()                                  = &IGraphics::End;
+    void (IGraphics::*waitIdle)()                             = &IGraphics::WaitIdle;
     void (IGraphics::*setBlend)(BlendMode)                    = &IGraphics::SetBlendMode;
     void (IGraphics::*pushBlend)(BlendMode)                   = &IGraphics::PushBlendMode;
     void (IGraphics::*popBlend)()                             = &IGraphics::PopBlendMode;
@@ -67,6 +68,7 @@ TEST_CASE("IGraphics method signatures are stable", "[api][graphics][igraphics]"
     void (IGraphics::*setLogical)(IntVec2 const&)             = &IGraphics::SetLogicalSize;
 
     (void)begin; (void)end;
+    (void)waitIdle;
     (void)setBlend; (void)pushBlend; (void)popBlend;
     (void)setColor; (void)pushColor; (void)popColor;
     (void)clear; (void)clearColor;

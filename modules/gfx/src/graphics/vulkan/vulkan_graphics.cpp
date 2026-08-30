@@ -137,6 +137,10 @@ namespace moth::gfx::vulkan {
         }
     }
 
+    void Graphics::WaitIdle() {
+        vkDeviceWaitIdle(m_surfaceContext.GetVkDevice());
+    }
+
     void Graphics::SetBlendMode(BlendMode mode) {
         auto* context = CurrentContext();
         if (context == nullptr) {

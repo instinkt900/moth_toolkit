@@ -28,7 +28,6 @@ turn on/off feature by feature.
 - [Packing assets](#packing-assets)
 - [Custom shaders](#custom-shaders)
 - [Layout](#layout)
-- [Roadmap](#roadmap)
 
 ## Status
 

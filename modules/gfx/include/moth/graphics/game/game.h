@@ -32,6 +32,10 @@ namespace moth::gfx::game {
         /// @brief Called once, just after the game loop exits.
         ///
         /// Release non-RAII resources here (the graphics context is still valid).
+        ///
+        /// The @c Game drains the device (waits for in-flight frames to finish)
+        /// after this returns, so the scene's own GPU resources are destroyed
+        /// safely when the scene goes out of scope.
         virtual void OnStop() {}
 
         /// @brief Per-frame logic. @p dt is the elapsed time in seconds.

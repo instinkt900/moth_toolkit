@@ -64,6 +64,7 @@ namespace moth::gfx::vulkan {
 
         void Begin() override;
         void End() override;
+        void WaitIdle() override;
 
         void SetBlendMode(BlendMode mode) override;
         void PushBlendMode(BlendMode mode) override;

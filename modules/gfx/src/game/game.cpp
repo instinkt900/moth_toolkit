@@ -59,6 +59,12 @@ namespace moth::gfx::game {
 
         scene->OnStop();
 
+        // The scene (and anything it owns) is destroyed when Run() returns.
+        // Its GPU resources may still be referenced by the final frame's
+        // in-flight command buffers, so drain the device first to make their
+        // destruction safe.
+        m_window->GetGraphics().WaitIdle();
+
         return 0;
     }
 

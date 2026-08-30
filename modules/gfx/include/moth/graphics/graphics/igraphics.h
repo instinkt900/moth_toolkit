@@ -39,6 +39,14 @@ namespace moth::gfx {
         /// @brief End the current frame and present it.
         virtual void End() = 0;
 
+        /// @brief Block until all previously submitted work has finished.
+        ///
+        /// After this returns, any GPU resource (texture, image, target, …) is
+        /// safe to destroy — no command buffer still references it. Call this
+        /// before tearing down GPU-backed objects outside of the normal
+        /// per-frame Begin()/End() cycle, e.g. before a scene is destroyed.
+        virtual void WaitIdle() = 0;
+
         /// @brief Set the active blend mode for subsequent draw calls.
         /// @param mode The blend mode to apply.
         virtual void SetBlendMode(BlendMode mode) = 0;

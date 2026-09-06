@@ -118,7 +118,6 @@ int main() {
         }
 
         auto& graphics = window->GetGraphics();
-        graphics.SetLogicalSize({ kLogicalWidth, kLogicalHeight });
         auto& assets = window->GetSurfaceContext().GetAssetContext();
 
         auto const tilesetTexture = MakeTilesetTexture(assets);
@@ -173,6 +172,7 @@ int main() {
             }
 
             window->BeginFrame();
+            graphics.SetLogicalSize({ kLogicalWidth, kLogicalHeight });
             graphics.SetTransform(camera.GetViewTransform({ kLogicalWidth, kLogicalHeight }));
 
             FloatVec2 topLeft;

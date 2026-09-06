@@ -3,12 +3,11 @@
 #include "moth/graphics/utils/vector.h"
 
 namespace moth::gfx {
+    class IGraphics;
+    class ITexture;
+
     namespace platform {
         class Window;
-    }
-    namespace graphics {
-        class IGraphics;
-        class ITexture;
     }
 }
 

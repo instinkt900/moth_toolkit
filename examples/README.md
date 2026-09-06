@@ -22,7 +22,7 @@ A single-`main.cpp` game that exercises the Phase 5 P0 features plus the Phase 6
 entity-component system:
 
 - **Pollable input** — `moth::core::Input::Get()` (WASD / arrows move the player).
-- **Camera** — `moth::gfx::graphics::Camera` follows the player with smoothing.
+- **Camera** — `moth::gfx::Camera` follows the player with smoothing.
 - **Entity-component system** — `moth::ecs::World` (entities are IDs + components)
   with systems registered in a `moth::ecs::Scheduler`.
 - **Float/transform sprite rendering** — a procedurally-generated sprite drawn with

@@ -514,3 +514,23 @@ TEST_CASE("ReleaseNodes hands the graph over in document order", "[noise][copy]"
     auto reclaimed = NodeTree::CopyFrom(owned[rootIndex].get());
     CHECK(reclaimed.ToJson() == json);
 }
+
+TEST_CASE("CopyFrom reports the source nodes it copied", "[noise][copy]") {
+    auto source = NodeTree::FromEncodedString(kMountainTerrain);
+    REQUIRE(source.has_value());
+
+    std::vector<FastNoise::NodeData*> order;
+    auto copy = NodeTree::CopyFrom(source->GetRoot(), &order);
+
+    // The mapping a caller keeping per-node state needs: order[i] is the node
+    // it owns that became node i of the copy.
+    auto const copied = copy.GetNodes();
+    REQUIRE(order.size() == copied.size());
+    CHECK(order.front() == source->GetRoot());
+    for (size_t i = 0; i < order.size(); ++i) {
+        CHECK(order[i]->metadata == copied[i]->metadata);
+    }
+
+    // And that is the same order the document numbers them in.
+    CHECK(order == source->GetNodes());
+}

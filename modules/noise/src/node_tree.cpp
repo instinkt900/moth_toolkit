@@ -108,8 +108,11 @@ namespace moth::noise {
         return std::move(mNodes);
     }
 
-    NodeTree NodeTree::CopyFrom(FastNoise::NodeData* root) {
+    NodeTree NodeTree::CopyFrom(FastNoise::NodeData* root, std::vector<FastNoise::NodeData*>* sourceOrder) {
         NodeTree tree;
+        if (sourceOrder != nullptr) {
+            sourceOrder->clear();
+        }
         if (root == nullptr) {
             return tree;
         }
@@ -117,6 +120,10 @@ namespace moth::noise {
         std::vector<FastNoise::NodeData*> ordered;
         std::unordered_map<FastNoise::NodeData const*, int> indices;
         CollectReachable(root, ordered, indices);
+
+        if (sourceOrder != nullptr) {
+            *sourceOrder = ordered;
+        }
 
         // Copy first, then repoint: a node's sources may not have been copied
         // yet at the time it is, and a graph can carry a cycle the caller has

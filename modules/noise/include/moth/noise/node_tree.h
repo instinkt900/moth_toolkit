@@ -86,8 +86,15 @@ namespace moth::noise {
          * two inputs is copied once and referenced twice. @p root and the graph
          * under it are left untouched and stay owned by the caller, which is
          * what lets an application serialise a graph it is still editing.
+         *
+         * @param sourceOrder  Optional; receives the caller's own nodes in the
+         *                     order they were copied, so @c (*sourceOrder)[i] is
+         *                     the node that became node @c i of the new tree.
+         *                     Without it a caller that keeps state per node has
+         *                     no way back from the copy to what it owns.
          */
-        static NodeTree CopyFrom(FastNoise::NodeData* root);
+        static NodeTree CopyFrom(FastNoise::NodeData* root,
+                                 std::vector<FastNoise::NodeData*>* sourceOrder = nullptr);
 
         /**
          * @brief Build a tree from FastNoise's own base64 encoding.

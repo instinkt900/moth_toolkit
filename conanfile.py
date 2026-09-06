@@ -41,6 +41,9 @@ class MothToolkitSuperbuild(ConanFile):
         self.requires("zlib/1.3.2")
         self.requires("miniaudio/0.11.18", transitive_headers=True)
         self.requires("asio/1.30.2", transitive_headers=True)
+        # Node-graph noise generation plus the metadata system moth::noise
+        # serialises against.
+        self.requires("fastnoise2/1.1.1", transitive_headers=True)
         # Runtime GLSL compilation for custom shaders (opt-in; pairs with the
         # MOTH_GRAPHICS_ENABLE_GLSLANG CMake option).
         if self.options.enable_glslang:

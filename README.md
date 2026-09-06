@@ -22,6 +22,7 @@ turn on/off feature by feature.
   - [moth::audio](#mothaudio)
   - [moth::assets](#mothassets)
   - [moth::net](#mothnet)
+  - [moth::noise](#mothnoise)
   - [moth::toolkit](#mothtoolkit)- [Using the toolkit as a whole](#using-the-toolkit-as-a-whole)
 - [Building](#building)
 - [Starting a new game](#starting-a-new-game)
@@ -337,6 +338,79 @@ server.Poll();
 client.Poll();
 ```
 
+### moth::noise
+
+**Package** `moth_noise` · **Namespace** `moth::noise` · **Umbrella** `<moth/noise/noise.h>`
+
+Node-graph noise built on [FastNoise2](https://github.com/Auburn/FastNoise2).
+Where `moth/core/noise.h` gives you a dependency-free Perlin or Simplex sample
+for when you just want *something*, this module is for applications that depend
+on robust, authored noise: full generator graphs — fractals, domain warp,
+cellular, blends — loaded from a file and evaluated at runtime.
+
+`NodeTree` owns a FastNoise node graph and converts it to and from JSON.
+FastNoise's own interchange format is an opaque base64 blob; the JSON form here
+is keyed by the node and parameter names FastNoise's metadata reports, so a
+saved graph stays readable, diffable and hand-editable. `FromEncodedString` /
+`ToEncodedString` bridge to the base64 encoding for interoperating with the
+upstream node editor.
+
+The module deliberately depends on `moth_core` only for its types, never its
+windowing layer, so an external editor can build against `moth_noise` with
+`MOTH_CORE_ENABLE_PLATFORM=OFF` and own its own window. The JSON form is the
+contract between the toolkit and that tooling.
+
+```cpp
+#include <moth/noise/noise.h>
+
+using namespace moth::noise;
+
+// Load an authored graph and evaluate it.
+std::ifstream file("terrain.noise.json");
+std::string error;
+auto tree = NodeTree::FromJson(nlohmann::json::parse(file), &error);
+if (!tree) {
+    moth::core::log::error("bad noise tree: {}", error);
+    return;
+}
+
+auto generator = tree->CreateGenerator();
+std::vector<float> heights(256 * 256);
+generator->GenUniformGrid2D(heights.data(), 0.0f, 0.0f, 256, 256, 0.01f, 0.01f, 1337);
+
+// Or import a tree pasted out of the FastNoise2 node editor.
+auto imported = NodeTree::FromEncodedString("EQACAAAA...");
+```
+
+A graph is a DAG — one node may feed several inputs — so the JSON is a flat node
+list with integer references rather than nested objects. Enums are written by
+name, and per-dimension parameters carry an axis suffix:
+
+```json
+{
+  "format": "moth.noise.tree",
+  "version": 1,
+  "root": 0,
+  "nodes": [
+    {
+      "type": "DomainWarpSimplex",
+      "variables": {
+        "Feature Scale": 600.0,
+        "Amplitude Scaling.X": 1.0,
+        "Amplitude Scaling.Y": 0.5,
+        "Vectorization Scheme": "Orthogonal Gradient Matrix"
+      },
+      "sources": { "Source": 1 },
+      "hybrids": { "Warp Amplitude": { "value": 60.0 } }
+    }
+  ]
+}
+```
+
+A member missing from the file keeps the node's default, and an unknown node
+type, a dangling reference or an unrecognised `version` is rejected with a
+reason rather than loaded partially.
+
 ### moth::toolkit
 
 **Package** `moth_toolkit` · **Umbrella** `<moth/toolkit.h>`
@@ -412,6 +486,7 @@ configure preset):
 | `MOTH_ENABLE_ASSETS` | ON | `moth::assets` addressing + `.pak` |
 | `MOTH_ENABLE_ANIM` | ON | `moth::anim` character animation |
 | `MOTH_ENABLE_NET` | ON | `moth::net` TCP messaging |
+| `MOTH_ENABLE_NOISE` | ON | `moth::noise` FastNoise2 node graphs |
 | `MOTH_ENABLE_TOOLKIT` | ON | `moth::toolkit` aggregate target |
 | `MOTH_ENABLE_TOOLS` | OFF | the `moth_pak` CLI |
 | `MOTH_ENABLE_EXAMPLES` | OFF | the example projects |
@@ -540,6 +615,7 @@ modules/              the moth:: libraries (each Conan-packaged)
   assets/               moth::assets  — id/path addressing + .pak format
   bridge/               moth::bridge  — ui <-> gfx adapter
   net/                  moth::net     — TCP framed-JSON client/server
+  noise/                moth::noise   — FastNoise2 node graphs + JSON format
   toolkit/              moth::toolkit — aggregate target + feature header
 cmake/features.h.in   generated MOTH_HAS_* compile-time flags
 examples/             sample games / consumption tests

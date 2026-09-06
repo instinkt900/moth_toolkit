@@ -45,6 +45,9 @@
 #ifndef MOTH_ENABLE_NET
 #define MOTH_ENABLE_NET 1
 #endif
+#ifndef MOTH_ENABLE_NOISE
+#define MOTH_ENABLE_NOISE 1
+#endif
 
 #if MOTH_ENABLE_CORE
 #include <moth/core/vector.h>
@@ -108,6 +111,10 @@
 
 #if MOTH_ENABLE_NET
 #include <moth/net/net.h>
+#endif
+
+#if MOTH_ENABLE_NOISE
+#include <moth/noise/noise.h>
 #endif
 
 #if MOTH_ENABLE_BRIDGE

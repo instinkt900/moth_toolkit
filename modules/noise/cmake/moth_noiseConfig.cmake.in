@@ -1,0 +1,13 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+# Everything moth_noise links PUBLIC appears in the exported target's
+# INTERFACE_LINK_LIBRARIES and must be re-created here.
+find_dependency(nlohmann_json)
+find_dependency(FastNoise2)
+find_dependency(moth_core)
+
+include("${CMAKE_CURRENT_LIST_DIR}/moth_noiseTargets.cmake")
+
+check_required_components(moth_noise)

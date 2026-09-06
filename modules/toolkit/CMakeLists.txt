@@ -58,4 +58,8 @@ if(MOTH_ENABLE_NET)
     target_link_libraries(moth_toolkit INTERFACE moth::net)
 endif()
 
+if(MOTH_ENABLE_NOISE)
+    target_link_libraries(moth_toolkit INTERFACE moth::noise)
+endif()
+
 install(DIRECTORY include/ DESTINATION include)

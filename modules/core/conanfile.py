@@ -17,6 +17,12 @@ class MothCore(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     package_type = "static-library"
 
+    # enable_platform=False drops the GLFW windowing backend, leaving the math,
+    # event and logging types. Lets a headless consumer (or a tool that owns its
+    # own window) depend on moth_core without pulling in a windowing stack.
+    options = {"enable_platform": [True, False]}
+    default_options = {"enable_platform": True}
+
     exports_sources = "CMakeLists.txt", "version.txt", "include/*", "src/*", "cmake/*"
 
     def set_version(self):
@@ -32,11 +38,11 @@ class MothCore(ConanFile):
         self.requires("fmt/[~10.2]", transitive_headers=True)
         self.requires("spdlog/[~1.14]", transitive_headers=True)
         # GLFW windowing backend: system on Linux, Conan on Windows.
-        if self.settings.os == "Windows":
+        if self.options.enable_platform and self.settings.os == "Windows":
             self.requires("glfw/3.3.8", transitive_headers=True)
 
     def system_requirements(self):
-        if self.settings.os == "Linux":
+        if self.options.enable_platform and self.settings.os == "Linux":
             if not shutil.which("pkg-config"):
                 raise ConanInvalidConfiguration(
                     "pkg-config is required to locate GLFW on Linux. "
@@ -52,6 +58,7 @@ class MothCore(ConanFile):
         deps = CMakeDeps(self)
         deps.generate()
         tc = CMakeToolchain(self)
+        tc.variables["MOTH_CORE_ENABLE_PLATFORM"] = bool(self.options.enable_platform)
         tc.generate()
 
     def build(self):
@@ -70,5 +77,5 @@ class MothCore(ConanFile):
         self.cpp_info.libs = ["moth_core"]
         self.cpp_info.libdirs = ["lib"]
         self.cpp_info.includedirs = ["include"]
-        if self.settings.os == "Linux":
+        if self.options.enable_platform and self.settings.os == "Linux":
             self.cpp_info.system_libs = ["glfw"]

@@ -8,6 +8,13 @@ project(moth_core
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# The platform layer is the only part of this module that needs GLFW. Consumers
+# that want the math/event types without a windowing stack (headless tools, an
+# external editor that already owns its own window) can turn it off. The
+# backend-agnostic halves — window.h, input.h/input.cpp — are always built; only
+# the GLFW implementation under */glfw/ is gated.
+option(MOTH_CORE_ENABLE_PLATFORM "Build the GLFW windowing/event backend" ON)
+
 find_package(nlohmann_json REQUIRED)
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
@@ -15,22 +22,29 @@ find_package(spdlog REQUIRED)
 # GLFW provides the native windowing backend. It comes from the system on Linux
 # (to match the GLFW/GTK3 stack already loaded by other tooling) and Conan on
 # Windows — see conanfile.py.
-if(WIN32)
-    find_package(glfw3 REQUIRED)
-    set(MOTH_CORE_GLFW_LINK glfw)
-else()
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(GLFW3 REQUIRED IMPORTED_TARGET glfw3)
-    set(MOTH_CORE_GLFW_LINK PkgConfig::GLFW3)
+if(MOTH_CORE_ENABLE_PLATFORM)
+    if(WIN32)
+        find_package(glfw3 REQUIRED)
+        set(MOTH_CORE_GLFW_LINK glfw)
+    else()
+        find_package(PkgConfig REQUIRED)
+        pkg_check_modules(GLFW3 REQUIRED IMPORTED_TARGET glfw3)
+        set(MOTH_CORE_GLFW_LINK PkgConfig::GLFW3)
+    endif()
 endif()
 
 set(SOURCES
     src/input.cpp
     src/log.cpp
-    src/glfw/events.cpp
-    src/glfw/gamepad.cpp
-    src/glfw/window.cpp
 )
+
+if(MOTH_CORE_ENABLE_PLATFORM)
+    list(APPEND SOURCES
+        src/glfw/events.cpp
+        src/glfw/gamepad.cpp
+        src/glfw/window.cpp
+    )
+endif()
 
 add_library(moth_core ${SOURCES})
 add_library(moth::core ALIAS moth_core)
@@ -50,7 +64,9 @@ target_include_directories(moth_core PRIVATE src)
 target_link_libraries(moth_core PUBLIC nlohmann_json::nlohmann_json)
 target_link_libraries(moth_core PUBLIC fmt::fmt)
 target_link_libraries(moth_core PUBLIC spdlog::spdlog)
-target_link_libraries(moth_core PUBLIC ${MOTH_CORE_GLFW_LINK})
+if(MOTH_CORE_ENABLE_PLATFORM)
+    target_link_libraries(moth_core PUBLIC ${MOTH_CORE_GLFW_LINK})
+endif()
 
 # Install + export so other modules (and external consumers) can find_package(moth_core).
 # Only when built standalone; in the superbuild the modules are consumed in-tree and packaged
@@ -63,7 +79,12 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-    install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    if(MOTH_CORE_ENABLE_PLATFORM)
+        install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    else()
+        install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+            PATTERN "glfw" EXCLUDE)
+    endif()
     install(EXPORT moth_coreTargets
         FILE moth_coreTargets.cmake
         NAMESPACE moth::

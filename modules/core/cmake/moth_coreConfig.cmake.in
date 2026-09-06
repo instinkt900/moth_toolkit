@@ -1,7 +1,27 @@
 @PACKAGE_INIT@
 
 include(CMakeFindDependencyMacro)
+
+# Every dependency listed here is linked PUBLIC by moth_core, so it appears in
+# the exported target's INTERFACE_LINK_LIBRARIES. Each one must be re-created
+# here or including moth_coreTargets.cmake below fails on a missing target.
 find_dependency(nlohmann_json)
+find_dependency(fmt)
+find_dependency(spdlog)
+
+# GLFW is only linked when the platform backend was built. Mirror the discovery
+# the build used: a config package on Windows, pkg-config elsewhere (which
+# yields the PkgConfig::GLFW3 imported target the export refers to).
+set(_moth_core_enable_platform @MOTH_CORE_ENABLE_PLATFORM@)
+if(_moth_core_enable_platform)
+    if(WIN32)
+        find_dependency(glfw3)
+    else()
+        find_dependency(PkgConfig)
+        pkg_check_modules(GLFW3 REQUIRED IMPORTED_TARGET glfw3)
+    endif()
+endif()
+unset(_moth_core_enable_platform)
 
 include("${CMAKE_CURRENT_LIST_DIR}/moth_coreTargets.cmake")
 

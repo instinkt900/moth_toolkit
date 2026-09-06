@@ -69,12 +69,88 @@ namespace moth::noise {
         return key;
     }
 
+    void NodeTree::Normalise() {
+        if (mRoot == nullptr) {
+            mNodes.clear();
+            return;
+        }
+
+        std::vector<FastNoise::NodeData*> ordered;
+        std::unordered_map<FastNoise::NodeData const*, int> indices;
+        CollectReachable(mRoot, ordered, indices);
+
+        // Re-seat the owning pointers into traversal order. Anything the walk
+        // did not reach is left out of the new vector and destroyed with the
+        // old one, so an orphan cannot survive a load/save round trip.
+        std::vector<std::unique_ptr<FastNoise::NodeData>> reordered;
+        reordered.reserve(ordered.size());
+        for (auto* node : ordered) {
+            auto found = std::find_if(mNodes.begin(), mNodes.end(),
+                                      [node](auto const& owned) { return owned.get() == node; });
+            if (found != mNodes.end()) {
+                reordered.push_back(std::move(*found));
+            }
+        }
+        mNodes = std::move(reordered);
+    }
+
+    std::vector<FastNoise::NodeData*> NodeTree::GetNodes() const {
+        std::vector<FastNoise::NodeData*> nodes;
+        nodes.reserve(mNodes.size());
+        for (auto const& node : mNodes) {
+            nodes.push_back(node.get());
+        }
+        return nodes;
+    }
+
+    std::vector<std::unique_ptr<FastNoise::NodeData>> NodeTree::ReleaseNodes() {
+        mRoot = nullptr;
+        return std::move(mNodes);
+    }
+
+    NodeTree NodeTree::CopyFrom(FastNoise::NodeData* root) {
+        NodeTree tree;
+        if (root == nullptr) {
+            return tree;
+        }
+
+        std::vector<FastNoise::NodeData*> ordered;
+        std::unordered_map<FastNoise::NodeData const*, int> indices;
+        CollectReachable(root, ordered, indices);
+
+        // Copy first, then repoint: a node's sources may not have been copied
+        // yet at the time it is, and a graph can carry a cycle the caller has
+        // not resolved.
+        tree.mNodes.reserve(ordered.size());
+        for (auto const* node : ordered) {
+            tree.mNodes.push_back(std::make_unique<FastNoise::NodeData>(*node));
+        }
+
+        auto const remap = [&](FastNoise::NodeData* original) -> FastNoise::NodeData* {
+            auto const found = indices.find(original);
+            return found != indices.end() ? tree.mNodes[static_cast<size_t>(found->second)].get() : nullptr;
+        };
+
+        for (auto& copied : tree.mNodes) {
+            for (auto& source : copied->nodeLookups) {
+                source = remap(source);
+            }
+            for (auto& hybrid : copied->hybrids) {
+                hybrid.first = remap(hybrid.first);
+            }
+        }
+
+        tree.mRoot = tree.mNodes.front().get();
+        return tree;
+    }
+
     std::optional<NodeTree> NodeTree::FromEncodedString(std::string const& encoded) {
         NodeTree tree;
         tree.mRoot = FastNoise::Metadata::DeserialiseNodeData(encoded.c_str(), tree.mNodes);
         if (tree.mRoot == nullptr) {
             return std::nullopt;
         }
+        tree.Normalise();
         return tree;
     }
 
@@ -96,12 +172,16 @@ namespace moth::noise {
             return out;
         }
 
-        std::vector<FastNoise::NodeData*> ordered;
+        // mNodes is already the reachable set in traversal order, so the
+        // document numbering is just its indices.
         std::unordered_map<FastNoise::NodeData const*, int> indices;
-        CollectReachable(mRoot, ordered, indices);
+        for (size_t i = 0; i < mNodes.size(); ++i) {
+            indices.emplace(mNodes[i].get(), static_cast<int>(i));
+        }
 
         auto nodes = nlohmann::json::array();
-        for (auto const* node : ordered) {
+        for (auto const& owned : mNodes) {
+            auto const* node = owned.get();
             auto const* metadata = node->metadata;
 
             nlohmann::json entry;
@@ -360,6 +440,11 @@ namespace moth::noise {
         }
 
         tree.mRoot = tree.mNodes[static_cast<size_t>(root)].get();
+
+        // A hand-written document may list nodes in any order, and may carry
+        // nodes nothing references. Canonicalise so that what GetNodes reports
+        // is what a save would write.
+        tree.Normalise();
         return tree;
     }
 

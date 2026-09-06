@@ -389,3 +389,128 @@ TEST_CASE("an empty tree serialises to an empty document", "[noise][json]") {
     REQUIRE(reloaded.has_value());
     CHECK(reloaded->IsEmpty());
 }
+
+TEST_CASE("node order matches the document numbering", "[noise][order]") {
+    auto parsed = NodeTree::FromEncodedString(kMountainTerrain);
+    REQUIRE(parsed.has_value());
+
+    auto const json = parsed->ToJson();
+    auto const nodes = parsed->GetNodes();
+
+    // The contract external tooling relies on: index i in GetNodes is node i in
+    // the document, so per-node state kept outside the tree lines up by index.
+    REQUIRE(nodes.size() == json.at("nodes").size());
+    for (size_t i = 0; i < nodes.size(); ++i) {
+        CHECK(nodes[i]->metadata->name == json.at("nodes")[i].at("type").get<std::string>());
+    }
+    CHECK(nodes[json.at("root").get<size_t>()] == parsed->GetRoot());
+}
+
+TEST_CASE("a document in a different order is canonicalised on load", "[noise][order]") {
+    auto const* fractal = FindMetadataWhere([](FastNoise::Metadata const& metadata) {
+        return metadata.memberNodeLookups.size() == 1;
+    });
+    REQUIRE(fractal != nullptr);
+    auto const* simplex = FindMetadataByName("Simplex");
+    REQUIRE(simplex != nullptr);
+
+    // Root listed last, and a node nothing references listed first.
+    auto json = nlohmann::json::object();
+    json["format"] = "moth.noise.tree";
+    json["version"] = 1;
+    json["root"] = 2;
+    json["nodes"] = nlohmann::json::array({
+        { { "type", simplex->name } },
+        { { "type", simplex->name } },
+        { { "type", fractal->name },
+          { "sources", { { MemberKey(fractal->memberNodeLookups[0]), 1 } } } },
+    });
+
+    std::string error;
+    auto parsed = NodeTree::FromJson(json, &error);
+    INFO("error: " << error);
+    REQUIRE(parsed.has_value());
+
+    // The orphan is gone and the root leads.
+    CHECK(parsed->GetNodeCount() == 2);
+    auto const rewritten = parsed->ToJson();
+    CHECK(rewritten.at("root") == 0);
+    CHECK(rewritten.at("nodes").size() == 2);
+    CHECK(rewritten.at("nodes")[0].at("type") == fractal->name);
+
+    // Re-reading what we just wrote must be a fixed point.
+    auto reparsed = NodeTree::FromJson(rewritten, &error);
+    INFO("error: " << error);
+    REQUIRE(reparsed.has_value());
+    CHECK(reparsed->ToJson() == rewritten);
+}
+
+TEST_CASE("CopyFrom deep copies a borrowed graph", "[noise][copy]") {
+    auto source = NodeTree::FromEncodedString(kCellularCaves);
+    REQUIRE(source.has_value());
+    REQUIRE(source->GetNodeCount() > 1);
+
+    auto copy = NodeTree::CopyFrom(source->GetRoot());
+
+    // Same graph...
+    CHECK(copy.GetNodeCount() == source->GetNodeCount());
+    CHECK(copy.ToJson() == source->ToJson());
+
+    // ...but no node in common with the original, and the original untouched.
+    auto const originals = source->GetNodes();
+    for (auto* copied : copy.GetNodes()) {
+        CHECK(std::find(originals.begin(), originals.end(), copied) == originals.end());
+    }
+    CHECK(source->ToEncodedString() == copy.ToEncodedString());
+}
+
+TEST_CASE("CopyFrom keeps a shared sub-graph shared", "[noise][copy]") {
+    auto const* blend = FindMetadataWhere([](FastNoise::Metadata const& metadata) {
+        return metadata.memberNodeLookups.size() >= 2;
+    });
+    REQUIRE(blend != nullptr);
+    auto const* simplex = FindMetadataByName("Simplex");
+    REQUIRE(simplex != nullptr);
+
+    // Built by hand and owned here, which is the case CopyFrom exists for: the
+    // caller keeps its own graph and wants a serialisable tree from it.
+    auto shared = std::make_unique<FastNoise::NodeData>(simplex);
+    auto root = std::make_unique<FastNoise::NodeData>(blend);
+    root->nodeLookups[0] = shared.get();
+    root->nodeLookups[1] = shared.get();
+
+    auto copy = NodeTree::CopyFrom(root.get());
+
+    REQUIRE(copy.GetNodeCount() == 2);
+    auto* copiedRoot = copy.GetRoot();
+    REQUIRE(copiedRoot != nullptr);
+    CHECK(copiedRoot->nodeLookups[0] == copiedRoot->nodeLookups[1]);
+    CHECK(copiedRoot->nodeLookups[0] != shared.get());
+
+    // The caller's graph is untouched, so it can keep editing it.
+    CHECK(root->nodeLookups[0] == shared.get());
+}
+
+TEST_CASE("ReleaseNodes hands the graph over in document order", "[noise][copy]") {
+    auto parsed = NodeTree::FromEncodedString(kMountainTerrain);
+    REQUIRE(parsed.has_value());
+
+    auto const json = parsed->ToJson();
+    auto const before = parsed->GetNodes();
+    auto const rootIndex = json.at("root").get<size_t>();
+
+    auto owned = parsed->ReleaseNodes();
+
+    REQUIRE(owned.size() == before.size());
+    for (size_t i = 0; i < owned.size(); ++i) {
+        CHECK(owned[i].get() == before[i]);
+    }
+
+    // The tree gave the nodes away rather than sharing them.
+    CHECK(parsed->IsEmpty());
+    CHECK(parsed->GetNodeCount() == 0);
+
+    // The released graph is still wired and still usable on its own.
+    auto reclaimed = NodeTree::CopyFrom(owned[rootIndex].get());
+    CHECK(reclaimed.ToJson() == json);
+}

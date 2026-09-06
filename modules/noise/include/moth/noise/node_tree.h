@@ -54,8 +54,40 @@ namespace moth::noise {
         /// @brief The root node, or nullptr when empty.
         FastNoise::NodeData* GetRoot() const { return mRoot; }
 
-        /// @brief Number of nodes owned by this tree, reachable or not.
+        /// @brief Number of nodes in the tree.
         size_t GetNodeCount() const { return mNodes.size(); }
+
+        /**
+         * @brief The nodes of the tree, in the order the JSON form numbers them.
+         *
+         * A tree always holds exactly the nodes reachable from its root, in
+         * traversal order, so index @c i here is node @c i in the document and
+         * the target of a reference to @c i. External tooling that keeps its
+         * own state per node — an editor keeps a canvas position — matches it
+         * up by that index rather than re-deriving the traversal.
+         *
+         * The pointers stay owned by the tree.
+         */
+        std::vector<FastNoise::NodeData*> GetNodes() const;
+
+        /**
+         * @brief Hand ownership of the nodes out, leaving the tree empty.
+         *
+         * In the same order as @c GetNodes. For a caller that has its own node
+         * storage and wants to keep the loaded graph rather than the tree that
+         * carried it.
+         */
+        std::vector<std::unique_ptr<FastNoise::NodeData>> ReleaseNodes();
+
+        /**
+         * @brief Copy the graph reachable from @p root into a new tree.
+         *
+         * The copy is deep and shared sub-graphs stay shared: a node feeding
+         * two inputs is copied once and referenced twice. @p root and the graph
+         * under it are left untouched and stay owned by the caller, which is
+         * what lets an application serialise a graph it is still editing.
+         */
+        static NodeTree CopyFrom(FastNoise::NodeData* root);
 
         /**
          * @brief Build a tree from FastNoise's own base64 encoding.
@@ -105,6 +137,12 @@ namespace moth::noise {
             FastSIMD::FeatureSet maxFeatureSet = FastSIMD::FeatureSet::Max) const;
 
     private:
+        /// Reduces mNodes to exactly the nodes reachable from mRoot, ordered by
+        /// traversal. Every way of building a tree ends with this, which is what
+        /// makes an index into mNodes and an index in the JSON document the
+        /// same number.
+        void Normalise();
+
         std::vector<std::unique_ptr<FastNoise::NodeData>> mNodes;
         FastNoise::NodeData* mRoot = nullptr;
     };

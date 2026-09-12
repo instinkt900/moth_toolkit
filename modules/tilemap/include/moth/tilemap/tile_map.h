@@ -59,7 +59,7 @@ namespace moth::tilemap {
      * Used both for map object layers and for tile collision shapes (the Tiled
      * collision editor). Position/size are in pixels relative to the object's
      * container (the map, or the tile's top-left corner for collision shapes);
-     * @c rotation is in degrees (clockwise). Polygon/polyline points are relative
+     * @c rotation is in radians (clockwise; converted from Tiled's degrees on load). Polygon/polyline points are relative
      * to the object's position.
      */
     struct MapObject {

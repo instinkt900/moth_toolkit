@@ -1,5 +1,6 @@
 #include "moth/tilemap/tile_map_renderer.h"
 
+#include "moth/core/angle.h"
 #include "moth/core/color.h"
 #include "moth/core/transform2d.h"
 
@@ -72,7 +73,7 @@ namespace moth::tilemap {
                     pivot = FloatVec2{ 0.5f, 0.5f };
                 }
                 if (diagonal) {
-                    rotation += 90.0f;
+                    rotation += moth::core::DegToRad(90.0f);
                     flipX = !tile.flipHorizontal;
                 }
 

@@ -6,6 +6,7 @@
 #include "moth/ui/utils/rect.h"
 #include "moth/ui/graphics/blend_mode.h"
 #include "moth/ui/layout/layout_rect.h"
+#include <moth/core/angle.h>
 #include <catch2/catch_all.hpp>
 #include <memory>
 #include <stdexcept>
@@ -153,8 +154,8 @@ TEST_CASE("Node rotation get and set", "[node][rotation]") {
     MockContext mc;
     auto node = Node::Create(mc.context);
     node->SetScreenRect(MakeRect(0, 0, 100, 100));
-    node->SetRotation(45.0f);
-    REQUIRE(node->GetRotation() == Catch::Approx(45.0f));
+    node->SetRotation(moth::core::DegToRad(45.0f));
+    REQUIRE(node->GetRotation() == Catch::Approx(moth::core::DegToRad(45.0f)));
 }
 
 TEST_CASE("Node IsInBounds unrotated accepts interior point", "[node][rotation][bounds]") {
@@ -177,7 +178,7 @@ TEST_CASE("Node IsInBounds with 90-degree rotation", "[node][rotation][bounds]")
     MockContext mc;
     auto node = Node::Create(mc.context);
     node->SetScreenRect(MakeRect(0, 0, 100, 100));
-    node->SetRotation(90.0f);
+    node->SetRotation(moth::core::DegToRad(90.0f));
     REQUIRE(node->IsInBounds(IntVec2{ 50, 50 }));
 }
 
@@ -188,7 +189,7 @@ TEST_CASE("Node IsInBounds with 45-degree rotation rejects corner that moved out
     MockContext mc;
     auto node = Node::Create(mc.context);
     node->SetScreenRect(MakeRect(0, 0, 100, 100));
-    node->SetRotation(45.0f);
+    node->SetRotation(moth::core::DegToRad(45.0f));
     REQUIRE_FALSE(node->IsInBounds(IntVec2{ 95, 5 }));
 }
 

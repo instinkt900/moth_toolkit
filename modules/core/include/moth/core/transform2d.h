@@ -7,13 +7,13 @@ namespace moth::core {
     /**
      * @brief A lightweight 2D transform: translation, rotation, and scale.
      *
-     * Rotation is in degrees, clockwise (matching @c FloatMat4x4::Rotation).
+     * Rotation is in radians, clockwise (matching @c FloatMat4x4::Rotation).
      * This is the ergonomic sibling of @c FloatMat4x4 for sprite-style drawing
      * (position + rotation + scale), without carrying a 4x4 matrix around.
      */
     struct Transform2D {
         FloatVec2 position = { 0.0f, 0.0f }; ///< Translation in world units.
-        float rotation = 0.0f;               ///< Rotation in degrees, clockwise.
+        float rotation = 0.0f;               ///< Rotation in radians, clockwise.
         FloatVec2 scale = { 1.0f, 1.0f };    ///< Scale factor (1 = no scaling).
 
         /// @brief Returns the identity transform.

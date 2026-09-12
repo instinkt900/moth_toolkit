@@ -1,5 +1,7 @@
 #include "moth/tilemap/tilemap.h"
 
+#include <moth/core/angle.h>
+
 #include <catch2/catch_all.hpp>
 
 #include <memory>
@@ -204,7 +206,7 @@ TEST_CASE("Renderer: diagonal flip rotates 90 degrees and toggles the horizontal
 
     REQUIRE(graphics.drawCalls.size() == 1);
     auto const& call = graphics.drawCalls[0];
-    REQUIRE(call.rotation == Catch::Approx(90.0f));
+    REQUIRE(call.rotation == Catch::Approx(moth::core::DegToRad(90.0f)));
     REQUIRE(call.flipX);
     REQUIRE_FALSE(call.flipY);
     REQUIRE(call.pivot.x == Catch::Approx(0.5f));
@@ -225,7 +227,7 @@ TEST_CASE("Renderer: diagonal + horizontal flip cancels the horizontal flip", "[
 
     REQUIRE(graphics.drawCalls.size() == 1);
     auto const& call = graphics.drawCalls[0];
-    REQUIRE(call.rotation == Catch::Approx(90.0f));
+    REQUIRE(call.rotation == Catch::Approx(moth::core::DegToRad(90.0f)));
     REQUIRE_FALSE(call.flipX);
     REQUIRE_FALSE(call.flipY);
 }

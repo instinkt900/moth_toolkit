@@ -1,5 +1,7 @@
 #include "moth/tilemap/tile_map_loader.h"
 
+#include <moth/core/angle.h>
+
 #include <catch2/catch_all.hpp>
 
 #include <filesystem>
@@ -138,7 +140,7 @@ TEST_CASE("Loader: object shapes and fields load", "[tilemap][loader]") {
     REQUIRE(rect.position.y == Catch::Approx(20.0f));
     REQUIRE(rect.size.x == Catch::Approx(32.0f));
     REQUIRE(rect.size.y == Catch::Approx(32.0f));
-    REQUIRE(rect.rotation == Catch::Approx(45.0f));
+    REQUIRE(rect.rotation == Catch::Approx(moth::core::DegToRad(45.0f)));
 
     REQUIRE(layer.objects[1].kind == ObjectKind::Ellipse);
 

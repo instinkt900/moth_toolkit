@@ -11,6 +11,8 @@
 #include "moth/ui/layout/layout_entity_clip.h"
 #include "moth/ui/animation/keyframe.h"
 
+#include <moth/core/angle.h>
+
 namespace moth::ui {
     std::unique_ptr<LayoutEntity> CreateLayoutEntity(LayoutEntityType type) {
         switch (type) {
@@ -149,7 +151,16 @@ namespace moth::ui {
         j["pivot"] = m_pivot;
         nlohmann::json trackJson;
         for (auto&& [target, track] : m_tracks) {
-            trackJson.push_back(*track);
+            if (target == AnimationTrack::Target::Rotation) {
+                // Layout files store rotation in degrees; the API works in radians.
+                AnimationTrack degreesTrack(*track);
+                for (auto& keyframe : degreesTrack.Keyframes()) {
+                    keyframe->value = moth::core::RadToDeg(keyframe->value);
+                }
+                trackJson.push_back(degreesTrack);
+            } else {
+                trackJson.push_back(*track);
+            }
         }
         j["tracks"] = trackJson;
         if (!m_discreteTracks.empty()) {
@@ -177,6 +188,12 @@ namespace moth::ui {
             auto const& tracksJson = json["tracks"];
             for (auto&& trackJson : tracksJson) {
                 auto track = std::make_unique<AnimationTrack>(trackJson);
+                if (track->GetTarget() == AnimationTrack::Target::Rotation) {
+                    // Layout files store rotation in degrees; the API works in radians.
+                    for (auto& keyframe : track->Keyframes()) {
+                        keyframe->value = moth::core::DegToRad(keyframe->value);
+                    }
+                }
                 m_tracks.erase(track->GetTarget());
                 m_tracks.insert(std::make_pair(track->GetTarget(), std::move(track)));
             }

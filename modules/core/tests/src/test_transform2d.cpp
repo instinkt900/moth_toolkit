@@ -1,5 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include <moth/core/angle.h>
 #include <moth/core/transform2d.h>
 
 #include <cmath>
@@ -37,7 +38,7 @@ TEST_CASE("Transform2D: scale about origin") {
 
 TEST_CASE("Transform2D: rotation") {
     Transform2D t;
-    t.rotation = 90.0f;
+    t.rotation = DegToRad(90.0f);
     auto const p = t.TransformPoint({ 1.0f, 0.0f });
     CHECK(Near(p.x, 0.0f));
     CHECK(Near(p.y, 1.0f));

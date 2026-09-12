@@ -7,6 +7,4 @@ namespace moth::ui {
     using moth::core::FloatVec2;
     using moth::core::FloatMat4x4;
     using moth::core::kDefaultPivot;
-    using moth::core::kDegToRad;
-    using moth::core::kRadToDeg;
 }

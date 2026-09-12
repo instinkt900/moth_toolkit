@@ -904,7 +904,7 @@ namespace moth::gfx::vulkan {
         FontGlyphInstance* glyphInstances = static_cast<FontGlyphInstance*>(context->m_fontInstanceStagingBuffer->Map());
 
         auto const t = CurrentTransform();
-        float const rotationRad = t.GetRotationDegrees() * kDegToRad;
+        float const rotationRad = t.GetRotation();
         // use this to actually submit characters at a position
         auto SubmitCharacter = [&](uint32_t glyphIndex, FloatVec2 const& pos) {
             if (context->m_glyphCount >= 1024) {

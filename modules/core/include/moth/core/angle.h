@@ -10,13 +10,17 @@ namespace moth::core {
         constexpr float kTwoPi = 2.0f * kPi;
     }
 
-    /// @brief Wraps an angle in degrees to the range [-180, 180].
-    inline float WrapAngleDegrees(float degrees) {
-        degrees = std::fmod(degrees + 180.0f, 360.0f);
-        if (degrees < 0.0f) {
-            degrees += 360.0f;
-        }
-        return degrees - 180.0f;
+    /// @brief Converts an angle in degrees to radians.
+    ///
+    /// Every toolkit API takes and returns radians; convert at the boundary with
+    /// degree-based sources such as authored data files.
+    constexpr float DegToRad(float degrees) {
+        return degrees * (kPi / 180.0f);
+    }
+
+    /// @brief Converts an angle in radians to degrees, e.g. for display or serialisation.
+    constexpr float RadToDeg(float radians) {
+        return radians * (180.0f / kPi);
     }
 
     /// @brief Wraps an angle in radians to the range [-π, π].
@@ -28,19 +32,9 @@ namespace moth::core {
         return radians - kPi;
     }
 
-    /// @brief Returns the shortest signed difference (degrees) from @p from to @p to, in [-180, 180].
-    inline float AngleDeltaDegrees(float from, float to) {
-        return WrapAngleDegrees(to - from);
-    }
-
     /// @brief Returns the shortest signed difference (radians) from @p from to @p to, in [-π, π].
     inline float AngleDeltaRadians(float from, float to) {
         return WrapAngleRadians(to - from);
-    }
-
-    /// @brief Linearly interpolates two angles (degrees) along the shortest arc.
-    inline float LerpAngleDegrees(float from, float to, float t) {
-        return from + (AngleDeltaDegrees(from, to) * t);
     }
 
     /// @brief Linearly interpolates two angles (radians) along the shortest arc.

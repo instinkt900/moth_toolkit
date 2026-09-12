@@ -9,12 +9,6 @@ namespace moth::core {
     // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers)
     /// @brief The default rotation pivot: the centre of a node's bounds.
     inline FloatVec2 const kDefaultPivot = { 0.5f, 0.5f };
-
-    /// @brief Multiply by this to convert degrees to radians.
-    inline constexpr float kDegToRad = 3.14159265358979f / 180.0f;
-
-    /// @brief Multiply by this to convert radians to degrees.
-    inline constexpr float kRadToDeg = 180.0f / 3.14159265358979f;
     // NOLINTEND(cppcoreguidelines-avoid-magic-numbers)
 
     /**
@@ -55,15 +49,14 @@ namespace moth::core {
             return s;
         }
 
-        /// @brief Returns a clockwise rotation around Z in degrees, pivoting around @p pivot (in the same space as the points being transformed).
+        /// @brief Returns a clockwise rotation around Z in radians, pivoting around @p pivot (in the same space as the points being transformed).
         ///
         /// "Clockwise" is in screen space (y-down). The same matrix is
         /// counter-clockwise in standard math convention (y-up). It matches
-        /// @c Rotate2D exactly; the two only differ in units (degrees vs radians).
-        static FloatMat4x4 Rotation(float degrees, FloatVec2 pivot) {
-            float const rad = degrees * kDegToRad;
-            float const cosA = std::cos(rad);
-            float const sinA = std::sin(rad);
+        /// @c Rotate2D exactly.
+        static FloatMat4x4 Rotation(float radians, FloatVec2 pivot) {
+            float const cosA = std::cos(radians);
+            float const sinA = std::sin(radians);
             FloatMat4x4 r;
             r.m[0][0] =  cosA;  r.m[0][1] = -sinA;  r.m[0][3] = (pivot.x * (1.0f - cosA)) + (pivot.y * sinA);
             r.m[1][0] =  sinA;  r.m[1][1] =  cosA;  r.m[1][3] = (pivot.y * (1.0f - cosA)) - (pivot.x * sinA);
@@ -92,9 +85,9 @@ namespace moth::core {
             };
         }
 
-        /// @brief Extracts the clockwise Z-rotation angle in degrees encoded in the matrix.
-        float GetRotationDegrees() const {
-            return std::atan2(m[1][0], m[0][0]) * kRadToDeg;
+        /// @brief Extracts the clockwise Z-rotation angle in radians encoded in the matrix.
+        float GetRotation() const {
+            return std::atan2(m[1][0], m[0][0]);
         }
 
         /**

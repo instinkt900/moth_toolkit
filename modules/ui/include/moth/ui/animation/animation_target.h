@@ -19,7 +19,7 @@ enum class AnimationTarget {
     ColorGreen,          ///< Green colour component [0,1].
     ColorBlue,           ///< Blue colour component [0,1].
     ColorAlpha,          ///< Alpha colour component [0,1].
-    Rotation,            ///< Clockwise rotation in degrees.
+    Rotation,            ///< Clockwise rotation in radians (stored as degrees in layout files).
     FlipbookClip,        ///< Flipbook clip name (discrete string, step-interpolated).
     FlipbookPlaying,     ///< Flipbook play/pause state as "1"/"0" (discrete, step-interpolated).
     GradientStartRed,    ///< Gradient start-colour red [0,1] (NodeGradient only).

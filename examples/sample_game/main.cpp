@@ -6,6 +6,7 @@
 #include <moth/graphics/moth_graphics.h>
 #include <moth/graphics/platform/glfw/glfw_platform.h>
 
+#include <moth/core/angle.h>
 #include <moth/core/event_window.h>
 #include <moth/core/input.h>
 #include <moth/ecs/ecs.h>
@@ -120,13 +121,13 @@ int main() {
                     float const length = std::sqrt((move.x * move.x) + (move.y * move.y));
                     transform.transform.position += (move / length) * speed * dt;
                     // Face the movement direction (0 = up, clockwise positive).
-                    transform.transform.rotation = std::atan2(move.x, -move.y) * kRadToDeg;
+                    transform.transform.rotation = std::atan2(move.x, -move.y);
                 }
             });
         });
         update.Add([](World& w, float dt) {
             w.Each<Transform, Spinner>([&](Transform& transform) {
-                transform.transform.rotation += 60.0f * dt;
+                transform.transform.rotation += DegToRad(60.0f) * dt;
             });
         });
 

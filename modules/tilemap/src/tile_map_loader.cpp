@@ -1,5 +1,6 @@
 #include "moth/tilemap/tile_map_loader.h"
 
+#include "moth/core/angle.h"
 #include "moth/core/color.h"
 
 #include <zlib.h>
@@ -172,7 +173,7 @@ namespace moth::tilemap {
             mapObject.visible = object.value("visible", true);
             mapObject.position = { object.value("x", 0.0f), object.value("y", 0.0f) };
             mapObject.size = { object.value("width", 0.0f), object.value("height", 0.0f) };
-            mapObject.rotation = object.value("rotation", 0.0f);
+            mapObject.rotation = moth::core::DegToRad(object.value("rotation", 0.0f));
 
             if (object.value("point", false)) {
                 mapObject.kind = ObjectKind::Point;

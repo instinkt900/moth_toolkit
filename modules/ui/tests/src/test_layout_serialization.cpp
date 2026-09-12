@@ -5,7 +5,10 @@
 #include "moth/ui/layout/layout_rect.h"
 #include "moth/ui/animation/animation_clip.h"
 #include "moth/ui/animation/animation_marker.h"
+#include "moth/ui/animation/animation_track.h"
+#include "moth/ui/animation/keyframe.h"
 #include "moth/ui/graphics/text_alignment.h"
+#include <moth/core/angle.h>
 #include <catch2/catch_all.hpp>
 #include <nlohmann/json.hpp>
 
@@ -282,6 +285,42 @@ TEST_CASE("Layout entity keyframe tracks round-trip", "[layout][serialization][a
     REQUIRE(b10.offset.topLeft.y == Catch::Approx(200.0f));
 
     REQUIRE(jsonEqual(*original, *loaded));
+}
+
+// ---- rotation units ---------------------------------------------------------
+
+TEST_CASE("Layout entity rotation is saved as degrees and loaded as radians", "[layout][serialization][animation]") {
+    LayoutEntity::SerializeContext ctx;
+    ctx.m_version = Layout::Version;
+
+    LayoutEntityRect original(nullptr);
+    original.m_tracks.at(AnimationTrack::Target::Rotation)->GetOrCreateKeyframe(10).value = moth::core::DegToRad(90.0f);
+
+    auto const json = original.Serialize(ctx);
+
+    bool foundKeyframe = false;
+    float savedValue = 0.0f;
+    for (auto const& track : json["tracks"]) {
+        if (track.value("target", "") != "Rotation") {
+            continue;
+        }
+        for (auto const& keyframe : track["keyframes"]) {
+            if (keyframe.value("frame", -1) == 10) {
+                foundKeyframe = true;
+                savedValue = keyframe["value"].get<float>();
+            }
+        }
+    }
+    REQUIRE(foundKeyframe);
+    REQUIRE(savedValue == Catch::Approx(90.0f));
+
+    // Saving converts a copy; the in-memory track stays in radians.
+    REQUIRE(original.GetRotationAtFrame(10.0f) == Catch::Approx(moth::core::DegToRad(90.0f)));
+
+    LayoutEntityRect loaded(nullptr);
+    REQUIRE(loaded.Deserialize(json, ctx));
+    REQUIRE(loaded.GetRotationAtFrame(10.0f) == Catch::Approx(moth::core::DegToRad(90.0f)));
+    REQUIRE(loaded.GetRotationAtFrame(0.0f) == Catch::Approx(0.0f));
 }
 
 // ---- extra data -------------------------------------------------------------

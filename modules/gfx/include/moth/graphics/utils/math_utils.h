@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cmath>
+#include <moth/core/angle.h>
 #include <moth/core/interp.h>
 
 namespace moth::gfx {
@@ -9,16 +9,8 @@ namespace moth::gfx {
         return min + (max - min) * factor;
     }
 
-    template<typename T>
-    inline T Radians(T const degrees) {
-        return degrees * (M_PI / 180.0f);
-    }
-
-    template<typename T>
-    inline T Degrees(T const radians) {
-        return radians * (180.0f / M_PI);
-    }
-
+    using moth::core::DegToRad;
+    using moth::core::RadToDeg;
     using moth::core::InterpType;
     using moth::core::Interp;
     using moth::core::F_PI;

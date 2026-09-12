@@ -12,13 +12,12 @@ namespace {
     }
 }
 
-TEST_CASE("WrapAngleDegrees wraps to [-180, 180]", "[angle]") {
-    CHECK(Near(WrapAngleDegrees(0.0f), 0.0f));
-    CHECK(Near(WrapAngleDegrees(180.0f), -180.0f));
-    CHECK(Near(WrapAngleDegrees(-180.0f), -180.0f));
-    CHECK(Near(WrapAngleDegrees(200.0f), -160.0f));
-    CHECK(Near(WrapAngleDegrees(-200.0f), 160.0f));
-    CHECK(Near(WrapAngleDegrees(720.0f), 0.0f));
+TEST_CASE("DegToRad and RadToDeg convert between units", "[angle]") {
+    CHECK(Near(DegToRad(0.0f), 0.0f));
+    CHECK(Near(DegToRad(180.0f), kPi));
+    CHECK(Near(DegToRad(-90.0f), -kPi / 2.0f));
+    CHECK(Near(RadToDeg(kPi), 180.0f));
+    CHECK(Near(RadToDeg(DegToRad(37.5f)), 37.5f));
 }
 
 TEST_CASE("WrapAngleRadians wraps to [-pi, pi]", "[angle]") {
@@ -26,21 +25,18 @@ TEST_CASE("WrapAngleRadians wraps to [-pi, pi]", "[angle]") {
     CHECK(Near(WrapAngleRadians(kPi), -kPi));
     CHECK(Near(WrapAngleRadians(-kPi), -kPi));
     CHECK(Near(WrapAngleRadians(kPi * 1.5f), -kPi * 0.5f));
+    CHECK(Near(WrapAngleRadians(kTwoPi * 2.0f), 0.0f));
 }
 
-TEST_CASE("AngleDeltaDegrees takes the shortest path", "[angle]") {
-    CHECK(Near(AngleDeltaDegrees(0.0f, 90.0f), 90.0f));
-    CHECK(Near(AngleDeltaDegrees(170.0f, -170.0f), 20.0f)); // across the +-180 seam
-    CHECK(Near(AngleDeltaDegrees(-170.0f, 170.0f), -20.0f));
-}
-
-TEST_CASE("LerpAngleDegrees interpolates along the shortest arc", "[angle]") {
-    // From 170 to -170 is +20 degrees (not -340): halfway is 180.
-    CHECK(Near(LerpAngleDegrees(170.0f, -170.0f, 0.5f), 180.0f));
-    // Simple in-range case.
-    CHECK(Near(LerpAngleDegrees(0.0f, 90.0f, 0.5f), 45.0f));
-}
-
-TEST_CASE("AngleDeltaRadians matches degrees", "[angle]") {
+TEST_CASE("AngleDeltaRadians takes the shortest path", "[angle]") {
     CHECK(Near(AngleDeltaRadians(0.0f, kPi / 2.0f), kPi / 2.0f));
+    CHECK(Near(AngleDeltaRadians(DegToRad(170.0f), DegToRad(-170.0f)), DegToRad(20.0f))); // across the +-pi seam
+    CHECK(Near(AngleDeltaRadians(DegToRad(-170.0f), DegToRad(170.0f)), DegToRad(-20.0f)));
+}
+
+TEST_CASE("LerpAngleRadians interpolates along the shortest arc", "[angle]") {
+    // From 170 to -170 degrees is +20 degrees (not -340): halfway is 180.
+    CHECK(Near(LerpAngleRadians(DegToRad(170.0f), DegToRad(-170.0f), 0.5f), kPi));
+    // Simple in-range case.
+    CHECK(Near(LerpAngleRadians(0.0f, kPi / 2.0f, 0.5f), kPi / 4.0f));
 }

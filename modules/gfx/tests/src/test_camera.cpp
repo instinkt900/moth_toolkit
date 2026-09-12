@@ -42,7 +42,7 @@ TEST_CASE("Camera: screen<->world round-trips through zoom and rotation", "[came
     Camera cam;
     cam.SetPosition({ 123.0f, -45.0f });
     cam.SetZoom(1.7f);
-    cam.SetRotation(37.0f);
+    cam.SetRotation(0.65f);
 
     FloatVec2 const world{ 42.0f, 88.0f };
     auto const screen = cam.WorldToScreen(world, kViewport);

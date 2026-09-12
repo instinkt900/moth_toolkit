@@ -20,9 +20,9 @@ namespace moth::tilemap {
      *
      * Coordinates are passed through unchanged (Box2D's own unit system); the
      * caller is responsible for pixel-to-metre scaling and the y-axis flip (Tiled
-     * is y-down, Box2D y-up). Rotation is converted from Tiled's clockwise
-     * degrees to Box2D radians for rectangles and ellipses; polygon/polyline
-     * rotation is not applied.
+     * is y-down, Box2D y-up). Rotation is negated from the map's clockwise
+     * radians to Box2D's counter-clockwise radians for rectangles and ellipses;
+     * polygon/polyline rotation is not applied.
      *
      * This header needs the Box2D headers (the `box2d` package, also pulled in by
      * `moth::physics`). It is not included by `<moth/tilemap/tilemap.h>`.
@@ -36,7 +36,7 @@ namespace moth::tilemap {
         for (auto const& shape : shapes) {
             b2FixtureDef fixture;
             fixture.density = 0.0f;
-            float const angle = -shape.rotation * static_cast<float>(b2_pi) / 180.0f;
+            float const angle = -shape.rotation;
 
             switch (shape.kind) {
             case ObjectKind::Rectangle: {

@@ -221,12 +221,12 @@ namespace moth::ui {
         BlendMode GetBlendMode() const { return m_blend; }
 
         /**
-         * @brief Sets the clockwise rotation in degrees applied when drawing this node.
-         * @param rotation Rotation in degrees.
+         * @brief Sets the clockwise rotation in radians applied when drawing this node.
+         * @param rotation Rotation in radians.
          */
         void SetRotation(float rotation);
 
-        /// @brief Returns the clockwise rotation in degrees applied when drawing this node.
+        /// @brief Returns the clockwise rotation in radians applied when drawing this node.
         float GetRotation() const { return m_rotation; }
 
         /**

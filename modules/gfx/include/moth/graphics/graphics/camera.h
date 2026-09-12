@@ -56,10 +56,10 @@ namespace moth::gfx {
         /// @brief Sets the zoom factor. Values must be positive.
         void SetZoom(float zoom) { m_zoom = zoom > 0.0f ? zoom : 0.0f; }
 
-        /// @brief Returns the rotation in degrees (clockwise).
+        /// @brief Returns the rotation in radians (clockwise).
         float GetRotation() const { return m_rotation; }
 
-        /// @brief Sets the rotation in degrees (clockwise).
+        /// @brief Sets the rotation in radians (clockwise).
         void SetRotation(float rotation) { m_rotation = rotation; }
 
         /// @brief Advances shake state and produces the frame's shake offset.

@@ -86,7 +86,7 @@ namespace moth::ui {
         Color GetColorAtFrame(float frame) const;
 
         /**
-         * @brief Returns the interpolated rotation (degrees, clockwise) at the given frame.
+         * @brief Returns the interpolated rotation (radians, clockwise) at the given frame.
          * @param frame Frame index (may be fractional).
          */
         float GetRotationAtFrame(float frame) const;

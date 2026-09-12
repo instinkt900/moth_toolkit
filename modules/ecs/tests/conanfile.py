@@ -14,7 +14,7 @@ class MothEcsTests(ConanFile):
         # dependencies are moth::core (a package, since our public headers expose
         # core types) and EnTT (header-only).
         self.requires("moth_core/0.1.0", transitive_headers=True)
-        self.requires("entt/[~3.13]", transitive_headers=True)
+        self.requires("entt/[~3.15]", transitive_headers=True)
 
     def system_requirements(self):
         if self.settings.os == "Linux":

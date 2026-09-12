@@ -2,6 +2,8 @@
 
 #include <catch2/catch_all.hpp>
 
+#include <vector>
+
 using namespace moth::ecs;
 
 namespace {
@@ -14,6 +16,8 @@ namespace {
         float x = 0.0f;
         float y = 0.0f;
     };
+
+    struct Dead {};
 }
 
 TEST_CASE("World: Create returns a valid entity", "[ecs][world]") {
@@ -96,4 +100,57 @@ TEST_CASE("World: Raw exposes the underlying registry", "[ecs][world]") {
     World world;
     auto const entity = world.Raw().create();
     REQUIRE(world.Valid(entity));
+}
+
+TEST_CASE("World: TryGet returns nullptr for a missing component", "[ecs][world]") {
+    World world;
+    auto const entity = world.Create();
+    REQUIRE(world.TryGet<Position>(entity) == nullptr);
+
+    world.Emplace<Position>(entity, 3.0f, 4.0f);
+    auto* position = world.TryGet<Position>(entity);
+    REQUIRE(position != nullptr);
+    REQUIRE(position->x == 3.0f);
+
+    World const& constWorld = world;
+    REQUIRE(constWorld.TryGet<Velocity>(entity) == nullptr);
+    REQUIRE(constWorld.TryGet<Position>(entity) == position);
+}
+
+TEST_CASE("World: GetOrEmplace adds a component only when absent", "[ecs][world]") {
+    World world;
+    auto const entity = world.Create();
+
+    auto& first = world.GetOrEmplace<Position>(entity, 1.0f, 2.0f);
+    REQUIRE(first.x == 1.0f);
+
+    auto& second = world.GetOrEmplace<Position>(entity, 5.0f, 6.0f);
+    REQUIRE(&second == &first);
+    REQUIRE(second.x == 1.0f);
+
+    // Tag components have no instance; GetOrEmplace still attaches them.
+    world.GetOrEmplace<Dead>(entity);
+    world.GetOrEmplace<Dead>(entity);
+    REQUIRE(world.Has<Dead>(entity));
+}
+
+TEST_CASE("World: View skips entities with excluded components", "[ecs][world]") {
+    World world;
+
+    auto const kept = world.Create();
+    world.Emplace<Position>(kept);
+
+    auto const skipped = world.Create();
+    world.Emplace<Position>(skipped);
+    world.Emplace<Dead>(skipped);
+
+    std::vector<Entity> visited;
+    for (auto [entity, position] : world.View<Position>(Exclude<Dead>).each()) {
+        visited.push_back(entity);
+    }
+    REQUIRE(visited.size() == 1);
+    REQUIRE(visited.front() == kept);
+
+    World const& constWorld = world;
+    REQUIRE(constWorld.View<Position>(Exclude<Dead>).size_hint() >= 1);
 }

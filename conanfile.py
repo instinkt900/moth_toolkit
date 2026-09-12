@@ -36,7 +36,7 @@ class MothToolkitSuperbuild(ConanFile):
         self.requires("magic_enum/[~0.8]", transitive_headers=True)
         self.requires("range-v3/[~0.12]", transitive_headers=True)
         self.requires("vulkan-memory-allocator/3.0.1", transitive_headers=True)
-        self.requires("entt/[~3.13]", transitive_headers=True)
+        self.requires("entt/[~3.15]", transitive_headers=True)
         self.requires("box2d/2.4.1", transitive_headers=True)
         self.requires("zlib/1.3.2")
         self.requires("miniaudio/0.11.18", transitive_headers=True)

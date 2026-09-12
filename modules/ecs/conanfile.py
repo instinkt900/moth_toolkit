@@ -24,7 +24,7 @@ class MothEcs(ConanFile):
         # EnTT is header-only and appears in our public headers, so it must reach
         # consumers transitively. Public headers also expose moth::core types
         # (Transform2D via the Transform component).
-        self.requires("entt/[~3.13]", transitive_headers=True)
+        self.requires("entt/[~3.15]", transitive_headers=True)
         self.requires("moth_core/0.1.0", transitive_headers=True)
 
     def build_requirements(self):

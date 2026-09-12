@@ -12,6 +12,10 @@ namespace moth::ecs {
     /// @brief Sentinel for "no entity".
     constexpr Entity kNullEntity = entt::null;
 
+    /// @brief Component types a view should skip, e.g. @c world.View<Position>(Exclude<Dead>).
+    template <typename... Types>
+    inline constexpr entt::exclude_t<Types...> Exclude{};
+
     /**
      * @brief The entity store: a container of components that systems operate on.
      *
@@ -48,6 +52,26 @@ namespace moth::ecs {
         template <typename T>
         T const& Get(Entity entity) const {
             return m_registry.get<T>(entity);
+        }
+
+        /// @brief Returns the @p T component of @p entity, or @c nullptr if it has none.
+        template <typename T>
+        T* TryGet(Entity entity) {
+            return m_registry.try_get<T>(entity);
+        }
+
+        /// @brief Returns the @p T component of @p entity, or @c nullptr if it has none.
+        template <typename T>
+        T const* TryGet(Entity entity) const {
+            return m_registry.try_get<T>(entity);
+        }
+
+        /// @brief Returns the @p T component of @p entity, first emplacing one from @p args if it has none.
+        ///
+        /// Returns @c T& (or @c void for empty/tag components, as with @c Emplace).
+        template <typename T, typename... Args>
+        decltype(auto) GetOrEmplace(Entity entity, Args&&... args) {
+            return m_registry.get_or_emplace<T>(entity, std::forward<Args>(args)...);
         }
 
         /// @brief Returns @c true if @p entity has a component of type @p T.
@@ -96,6 +120,18 @@ namespace moth::ecs {
         template <typename... Components>
         auto View() const {
             return m_registry.view<Components...>();
+        }
+
+        /// @brief Returns a view over entities with every component in @p Components and none in @p Excluded.
+        template <typename... Components, typename... Excluded>
+        auto View(entt::exclude_t<Excluded...> exclude) {
+            return m_registry.view<Components...>(exclude);
+        }
+
+        /// @brief Returns a view over entities with every component in @p Components and none in @p Excluded.
+        template <typename... Components, typename... Excluded>
+        auto View(entt::exclude_t<Excluded...> exclude) const {
+            return m_registry.view<Components...>(exclude);
         }
 
         /// @brief Calls @p func for every entity with every component in @p Components.

@@ -27,6 +27,7 @@ namespace {
 
         void Begin() override {}
         void End() override {}
+        void WaitIdle() override {}
         void SetBlendMode(BlendMode) override {}
         void PushBlendMode(BlendMode) override {}
         void PopBlendMode() override {}

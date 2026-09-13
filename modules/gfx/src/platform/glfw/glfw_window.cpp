@@ -7,9 +7,11 @@
 #include <cassert>
 
 namespace moth::gfx::platform::glfw {
-    Window::Window(moth::gfx::vulkan::Context& context, std::string_view title, int width, int height)
+    Window::Window(moth::gfx::vulkan::Context& context, std::string_view title, int width, int height,
+                   moth::gfx::vulkan::GraphicsSettings const& graphicsSettings)
         : moth::gfx::platform::Window(title, width, height)
-        , m_context(context) {
+        , m_context(context)
+        , m_graphicsSettings(graphicsSettings) {
         m_nativeWindow = std::make_unique<moth::core::glfw::Window>(title, width, height);
         m_nativeWindow->SetListener(this);
         CreateSurface();
@@ -88,7 +90,7 @@ namespace moth::gfx::platform::glfw {
         CHECK_VK_RESULT(glfwCreateWindowSurface(m_context.instance, m_nativeWindow->GetGLFWWindow(), nullptr, &m_customVkSurface));
         m_surfaceContext = std::make_unique<moth::gfx::vulkan::SurfaceContext>(m_context);
 
-        SetGraphics(std::make_unique<moth::gfx::vulkan::Graphics>(*m_surfaceContext, m_customVkSurface, m_nativeWindow->GetWidth(), m_nativeWindow->GetHeight()));
+        SetGraphics(std::make_unique<moth::gfx::vulkan::Graphics>(*m_surfaceContext, m_customVkSurface, m_nativeWindow->GetWidth(), m_nativeWindow->GetHeight(), m_graphicsSettings));
         moth::core::log::info("GLFW: window '{}' ready", m_title);
         return true;
     }

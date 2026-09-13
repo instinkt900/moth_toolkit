@@ -1,5 +1,6 @@
 #pragma once
 
+#include "moth/graphics/graphics/vulkan/vulkan_graphics_factory.h"
 #include "moth/graphics/platform/iplatform.h"
 #include "moth/graphics/platform/window.h"
 
@@ -23,6 +24,11 @@ namespace moth::gfx::platform::glfw {
 
         std::unique_ptr<ImGuiContext> CreateImGuiContext(platform::Window& window, moth::gfx::IGraphics& graphics, bool enableViewports) override;
 
+        /// @brief Set the Vulkan graphics settings used by windows created afterwards.
+        ///
+        /// Call before @c CreateWindow (for an @c Application, before @c Init()).
+        void SetGraphicsSettings(moth::gfx::vulkan::GraphicsSettings const& settings) { m_graphicsSettings = settings; }
+
     private:
         void ShutdownImpl();
 
@@ -34,6 +40,7 @@ namespace moth::gfx::platform::glfw {
         // type sizeof check on ManagedContext. The destructor body for
         // Platform is defined in glfw_platform.cpp where the type is complete.
         std::unique_ptr<moth::gfx::vulkan::ManagedContext> m_context;
+        moth::gfx::vulkan::GraphicsSettings m_graphicsSettings;
         bool m_initialized = false;
     };
 }

@@ -14,6 +14,10 @@
 
 namespace moth::gfx::vulkan {
     namespace {
+        // SubmitVertices splits oversized submissions on primitive boundaries,
+        // which needs room for at least one quad.
+        constexpr uint32_t kMinVertexBufferCapacity = 6;
+
         // Nested-clip intersection: clamp b inside a, collapsing to a zero-area
         // rect when the two don't overlap (so the resulting scissor clips away).
         IntRect IntersectRects(IntRect const& a, IntRect const& b) {
@@ -28,9 +32,10 @@ namespace moth::gfx::vulkan {
         }
     }
 
-    Graphics::Graphics(SurfaceContext& context, VkSurfaceKHR surface, uint32_t surfaceWidth, uint32_t surfaceHeight)
+    Graphics::Graphics(SurfaceContext& context, VkSurfaceKHR surface, uint32_t surfaceWidth, uint32_t surfaceHeight, GraphicsSettings const& settings)
         : m_surfaceContext(context)
-        , m_vkSurface(surface) {
+        , m_vkSurface(surface)
+        , m_vertexBufferCapacity(std::max(settings.vertexBufferCapacity, kMinVertexBufferCapacity)) {
         CreateRenderPass();
         CreateShaders();
         CreateDefaultImage();
@@ -196,6 +201,9 @@ namespace moth::gfx::vulkan {
     void Graphics::SetShader(moth::gfx::Shader const* shader) {
         if (shader == nullptr || !shader->IsValid()) {
             m_activeShader = moth::gfx::Shader{};
+            // The active shader selects the pipeline, so drop the cached one.
+            m_defaultContext.m_cachedPipeline = nullptr;
+            m_overrideContext.m_cachedPipeline = nullptr;
             return;
         }
         if (!std::dynamic_pointer_cast<VulkanShader>(shader->GetImpl())) {
@@ -203,6 +211,8 @@ namespace moth::gfx::vulkan {
             return;
         }
         m_activeShader = *shader;
+        m_defaultContext.m_cachedPipeline = nullptr;
+        m_overrideContext.m_cachedPipeline = nullptr;
     }
 
     void Graphics::Clear() {
@@ -1195,7 +1205,8 @@ namespace moth::gfx::vulkan {
 
     std::unique_ptr<IGraphics> CreateGraphics(
         SurfaceContext& surfaceContext, VkSurfaceKHR surface,
-        uint32_t surfaceWidth, uint32_t surfaceHeight) {
-        return std::make_unique<Graphics>(surfaceContext, surface, surfaceWidth, surfaceHeight);
+        uint32_t surfaceWidth, uint32_t surfaceHeight,
+        GraphicsSettings const& settings) {
+        return std::make_unique<Graphics>(surfaceContext, surface, surfaceWidth, surfaceHeight, settings);
     }
 }

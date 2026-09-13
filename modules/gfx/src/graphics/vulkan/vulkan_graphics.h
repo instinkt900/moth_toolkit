@@ -15,6 +15,7 @@
 #include "vulkan_renderpass.h"
 #include "vulkan_shader.h"
 #include "vulkan_shader_object.h"
+#include "moth/graphics/graphics/vulkan/vulkan_graphics_factory.h"
 #include "moth/graphics/graphics/vulkan/vulkan_surface_context.h"
 #include "vulkan_swapchain.h"
 #include "vulkan_texture.h"
@@ -37,7 +38,7 @@
 namespace moth::gfx::vulkan {
     class Graphics : public IGraphics, public IGraphicsDevice {
     public:
-        Graphics(SurfaceContext& context, VkSurfaceKHR surface, uint32_t surfaceWidth, uint32_t surfaceHeight);
+        Graphics(SurfaceContext& context, VkSurfaceKHR surface, uint32_t surfaceWidth, uint32_t surfaceHeight, GraphicsSettings const& settings = {});
         ~Graphics();
 
         SurfaceContext& GetSurfaceContext() const { return m_surfaceContext; }
@@ -146,6 +147,7 @@ namespace moth::gfx::vulkan {
 
         SurfaceContext& m_surfaceContext;
         VkSurfaceKHR m_vkSurface = VK_NULL_HANDLE;
+        uint32_t m_vertexBufferCapacity = 0;
         FloatMat4x4 m_currentTransform = FloatMat4x4::Identity();
         std::stack<FloatMat4x4> m_transformStack;
 
@@ -184,6 +186,14 @@ namespace moth::gfx::vulkan {
 
             uint32_t m_vertexCount = 0;
             uint32_t m_currentPipelineId = 0;
+
+            // Pipeline last selected by SubmitVertices and the state it was
+            // selected for. Reused while that state holds and it is still the
+            // bound pipeline (m_currentPipelineId matches its hash), so the
+            // pipeline isn't rebuilt and hashed for every quad.
+            Pipeline* m_cachedPipeline = nullptr;
+            BlendMode m_cachedBlendMode = BlendMode::Replace;
+            ETopologyType m_cachedTopology = ETopologyType::Invalid;
 
             // True until this context's first submit of the current frame. Only
             // that submit may wait on the target's acquire (imageAvailable)

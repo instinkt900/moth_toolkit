@@ -4,8 +4,6 @@
 #include "vulkan_utils.h"
 
 namespace moth::gfx::vulkan {
-    // Allocated size of the vertex buffer.
-    static constexpr uint32_t kVertexBufferCapacity = 1024;
     // Maximum number of font glyphs that can be submitted in a single frame.
     static constexpr uint32_t kMaxGlyphCount = 1024;
 
@@ -22,7 +20,7 @@ namespace moth::gfx::vulkan {
         context->m_acquireWaitPending = true;
 
         if (!context->m_vertexBuffer) {
-            context->m_vertexBuffer = std::make_unique<Buffer>(m_surfaceContext, kVertexBufferCapacity * sizeof(Vertex), VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+            context->m_vertexBuffer = std::make_unique<Buffer>(m_surfaceContext, m_vertexBufferCapacity * sizeof(Vertex), VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
             context->m_vertexBufferData = static_cast<Vertex*>(context->m_vertexBuffer->Map());
         }
 
@@ -176,7 +174,7 @@ namespace moth::gfx::vulkan {
         } else if (topology == ETopologyType::Lines) {
             primitiveVertexCount = 2u;
         }
-        uint32_t const chunkMax = kVertexBufferCapacity - (kVertexBufferCapacity % primitiveVertexCount);
+        uint32_t const chunkMax = m_vertexBufferCapacity - (m_vertexBufferCapacity % primitiveVertexCount);
 
         if (vertCount > chunkMax) {
             // Split into chunks and submit each one individually.
@@ -189,7 +187,7 @@ namespace moth::gfx::vulkan {
             return;
         }
 
-        const uint32_t availableVertices = kVertexBufferCapacity - context->m_vertexCount;
+        const uint32_t availableVertices = m_vertexBufferCapacity - context->m_vertexCount;
         if (availableVertices < vertCount) {
             RestartContext();
         }
@@ -205,11 +203,25 @@ namespace moth::gfx::vulkan {
             activeShader = std::dynamic_pointer_cast<VulkanShader>(m_activeShader.GetImpl());
         }
 
-        auto const& pipeline = activeShader ? GetShaderPipeline(*activeShader, topology) : GetCurrentPipeline(topology);
-        if (context->m_currentPipelineId != pipeline.m_hash) {
-            FlushPendingBatch();
-            commandBuffer.BindPipeline(pipeline);
-            context->m_currentPipelineId = pipeline.m_hash;
+        // Looking the pipeline up builds and hashes a PipelineBuilder, which is too
+        // slow to repeat for every quad. Reuse the last one while its blend mode and
+        // topology still apply and nothing else (fonts, a restart, a foreign Flush)
+        // has changed the bound pipeline since.
+        Pipeline* pipeline = context->m_cachedPipeline;
+        bool const cachedPipelineValid = pipeline != nullptr
+            && context->m_currentPipelineId == pipeline->m_hash
+            && context->m_cachedBlendMode == context->m_currentBlendMode
+            && context->m_cachedTopology == topology;
+        if (!cachedPipelineValid) {
+            pipeline = activeShader ? &GetShaderPipeline(*activeShader, topology) : &GetCurrentPipeline(topology);
+            if (context->m_currentPipelineId != pipeline->m_hash) {
+                FlushPendingBatch();
+                commandBuffer.BindPipeline(*pipeline);
+                context->m_currentPipelineId = pipeline->m_hash;
+            }
+            context->m_cachedPipeline = pipeline;
+            context->m_cachedBlendMode = context->m_currentBlendMode;
+            context->m_cachedTopology = topology;
         }
 
         VkDescriptorSet resolvedDescriptorSet = VK_NULL_HANDLE;
@@ -235,7 +247,7 @@ namespace moth::gfx::vulkan {
         } else {
             FlushPendingBatch();
             context->m_pendingBatch = DrawContext::PendingBatch{
-                existingVertexOffset, vertCount, resolvedDescriptorSet, pipeline.m_shader->m_pipelineLayout,
+                existingVertexOffset, vertCount, resolvedDescriptorSet, pipeline->m_shader->m_pipelineLayout,
             };
         }
 

@@ -138,7 +138,7 @@ namespace moth::gfx::platform::glfw {
             moth::core::log::error("GLFW: Platform::CreateWindow called without an active graphics context");
             return nullptr;
         }
-        return std::make_unique<platform::glfw::Window>(m_context->GetContext(), title, width, height);
+        return std::make_unique<platform::glfw::Window>(m_context->GetContext(), title, width, height, m_graphicsSettings);
     }
 
     std::unique_ptr<moth::gfx::platform::ImGuiContext> Platform::CreateImGuiContext(

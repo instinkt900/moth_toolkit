@@ -214,6 +214,43 @@ TEST_CASE("Loader: parallax factors and origin parse", "[tilemap][loader]") {
     REQUIRE(map.GetObjectLayer(0).parallax.y == Catch::Approx(1.0f));
 }
 
+TEST_CASE("Loader: image layers parse image, offset, repeat, and layer order", "[tilemap][loader]") {
+    std::string const json = R"({
+        "width": 2, "height": 1, "tilewidth": 16, "tileheight": 16,
+        "layers": [
+            { "type": "tilelayer", "name": "ground", "data": [0, 0] },
+            { "type": "imagelayer", "name": "clouds", "image": "clouds.png", "imagewidth": 64, "imageheight": 32,
+              "offsetx": 8, "offsety": -4, "repeatx": true, "opacity": 0.5, "parallaxx": 2, "parallaxy": 1.5,
+              "properties": [ { "name": "speed", "type": "float", "value": 3.5 } ] },
+            { "type": "imagelayer", "name": "empty" }
+        ]
+    })";
+
+    TileMap const map = LoadTileMap(json);
+
+    REQUIRE(map.GetLayerCount() == 1);
+    REQUIRE(map.GetImageLayerCount() == 2);
+
+    auto const& clouds = map.GetImageLayer(0);
+    REQUIRE(clouds.name == "clouds");
+    REQUIRE(clouds.order == 1);
+    REQUIRE(clouds.imagePath == "clouds.png");
+    REQUIRE(clouds.offset.x == Catch::Approx(8.0f));
+    REQUIRE(clouds.offset.y == Catch::Approx(-4.0f));
+    REQUIRE(clouds.repeatX);
+    REQUIRE_FALSE(clouds.repeatY);
+    REQUIRE(clouds.opacity == Catch::Approx(0.5f));
+    REQUIRE(clouds.parallax.x == Catch::Approx(2.0f));
+    REQUIRE(clouds.parallax.y == Catch::Approx(1.5f));
+    REQUIRE(GetProperty<float>(clouds.properties, "speed") == Catch::Approx(3.5f));
+
+    auto const& empty = map.GetImageLayer(1);
+    REQUIRE(empty.order == 2);
+    REQUIRE(empty.imagePath.empty());
+    REQUIRE_FALSE(empty.repeatX);
+    REQUIRE_FALSE(empty.repeatY);
+}
+
 TEST_CASE("Loader: layer tintcolor parses", "[tilemap][loader]") {
     std::string const json = R"({
         "width": 1, "height": 1, "tilewidth": 16, "tileheight": 16,

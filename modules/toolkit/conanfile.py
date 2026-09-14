@@ -29,6 +29,7 @@ class MothToolkit(ConanFile):
         "enable_anim": [True, False],
         "enable_net": [True, False],
         "enable_noise": [True, False],
+        "enable_profile": [True, False],
     }
     default_options = {
         "enable_core": True,
@@ -43,12 +44,19 @@ class MothToolkit(ConanFile):
         "enable_anim": True,
         "enable_net": True,
         "enable_noise": True,
+        "enable_profile": True,
     }
 
     def set_version(self):
         if not self.version:
             from conan.tools.files import load
             self.version = load(self, os.path.join(self.recipe_folder, "version.txt")).strip()
+
+    def configure(self):
+        # The profiler panel draws with the ImGui inside moth_graphics, so only
+        # build it when gfx is enabled.
+        if self.options.enable_profile:
+            self.options["moth_profile/*"].with_imgui = bool(self.options.enable_gfx)
 
     def validate(self):
         if self.options.enable_bridge and not (self.options.enable_core and self.options.enable_gfx and self.options.enable_ui):
@@ -124,6 +132,8 @@ class MothToolkit(ConanFile):
             self.requires("moth_net/0.1.0", transitive_headers=True, transitive_libs=True)
         if self.options.enable_noise:
             self.requires("moth_noise/0.1.0", transitive_headers=True, transitive_libs=True)
+        if self.options.enable_profile:
+            self.requires("moth_profile/0.1.0", transitive_headers=True, transitive_libs=True)
 
     def package(self):
         copy(self, "*.h", src=os.path.join(self.source_folder, "include"),
@@ -148,6 +158,7 @@ class MothToolkit(ConanFile):
             "MOTH_ENABLE_ANIM={}".format(1 if self.options.enable_anim else 0),
             "MOTH_ENABLE_NET={}".format(1 if self.options.enable_net else 0),
             "MOTH_ENABLE_NOISE={}".format(1 if self.options.enable_noise else 0),
+            "MOTH_ENABLE_PROFILE={}".format(1 if self.options.enable_profile else 0),
         ]
 
         # Expose each enabled module as a transitive dependency so a consumer that
@@ -177,3 +188,7 @@ class MothToolkit(ConanFile):
             self.cpp_info.requires.append("moth_net::moth_net")
         if self.options.enable_noise:
             self.cpp_info.requires.append("moth_noise::moth_noise")
+        if self.options.enable_profile:
+            self.cpp_info.requires.append("moth_profile::profile")
+            if self.options.enable_gfx:
+                self.cpp_info.requires.append("moth_profile::profile_imgui")

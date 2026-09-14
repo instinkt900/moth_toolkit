@@ -469,6 +469,23 @@ namespace moth::tilemap {
                         }
                     }
                     map.objectLayers.push_back(std::move(objectLayer));
+                } else if (layerType == "imagelayer") {
+                    ImageLayer imageLayer;
+                    imageLayer.order = static_cast<int>(layerIndex);
+                    imageLayer.name = entry.value("name", std::string{});
+                    imageLayer.visible = entry.value("visible", true);
+                    imageLayer.opacity = entry.value("opacity", 1.0f);
+                    imageLayer.parallax = { entry.value("parallaxx", 1.0f), entry.value("parallaxy", 1.0f) };
+                    imageLayer.tint = ParseColor(entry.value("tintcolor", std::string{}));
+                    imageLayer.offset = { entry.value("offsetx", 0.0f), entry.value("offsety", 0.0f) };
+                    imageLayer.imagePath = entry.value("image", std::string{});
+                    imageLayer.repeatX = entry.value("repeatx", false);
+                    imageLayer.repeatY = entry.value("repeaty", false);
+                    if (entry.contains("properties")) {
+                        imageLayer.properties = ParseProperties(entry["properties"]);
+                    }
+                    ApplyClassDefaults(imageLayer.properties, entry.value("class", std::string{}), propertyTypes);
+                    map.imageLayers.push_back(std::move(imageLayer));
                 }
             }
         }

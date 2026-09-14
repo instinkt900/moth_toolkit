@@ -23,6 +23,7 @@ turn on/off feature by feature.
   - [moth::assets](#mothassets)
   - [moth::net](#mothnet)
   - [moth::noise](#mothnoise)
+  - [moth::profile](#mothprofile)
   - [moth::toolkit](#mothtoolkit)- [Using the toolkit as a whole](#using-the-toolkit-as-a-whole)
 - [Building](#building)
 - [Starting a new game](#starting-a-new-game)
@@ -435,6 +436,33 @@ A member missing from the file keeps the node's default, and an unknown node
 type, a dangling reference or an unrecognised `version` is rejected with a
 reason rather than loaded partially.
 
+### moth::profile
+
+**Package** `moth_profile` · **Namespace** `moth::profile` · **Headers** `<moth/profile/profiler.h>` (+ `<moth/profile/imgui/profiler_panel.h>`)
+
+A frame profiler. `MOTH_PROFILE_FRAME()` marks each frame, `MOTH_PROFILE_SCOPE`
+times a block with an RAII `ProfileScope`, and `Profiler` keeps the nested scope
+timings of recent frames. `ProfilerPanel` (the separate `moth::profile_imgui`
+target) shows a frame-time graph in ImGui: click a spike to pause and inspect
+that frame's scope tree. The recorder has no dependencies; the panel depends on
+`moth_graphics` for ImGui (Conan option `with_imgui`, default on).
+
+```cpp
+#include <moth/profile/profiler.h>
+#include <moth/profile/imgui/profiler_panel.h>
+
+moth::profile::ProfilerPanel panel;
+
+void GameLayer::Draw() {
+    MOTH_PROFILE_FRAME();               // once per frame
+    {
+        MOTH_PROFILE_SCOPE("World");
+        m_world.Draw();
+    }
+    panel.Draw();                       // any time between ImGui::NewFrame and ImGui::Render
+}
+```
+
 ### moth::toolkit
 
 **Package** `moth_toolkit` · **Umbrella** `<moth/toolkit.h>`
@@ -514,6 +542,7 @@ configure preset):
 | `MOTH_ENABLE_ANIM` | ON | `moth::anim` character animation |
 | `MOTH_ENABLE_NET` | ON | `moth::net` TCP messaging |
 | `MOTH_ENABLE_NOISE` | ON | `moth::noise` FastNoise2 node graphs |
+| `MOTH_ENABLE_PROFILE` | ON | `moth::profile` frame profiler (the ImGui panel is built only with gfx) |
 | `MOTH_ENABLE_TOOLKIT` | ON | `moth::toolkit` aggregate target |
 | `MOTH_ENABLE_TOOLS` | OFF | the `moth_pak` CLI |
 | `MOTH_ENABLE_EXAMPLES` | OFF | the example projects |
@@ -643,6 +672,7 @@ modules/              the moth:: libraries (each Conan-packaged)
   bridge/               moth::bridge  — ui <-> gfx adapter
   net/                  moth::net     — TCP framed-JSON client/server
   noise/                moth::noise   — FastNoise2 node graphs + JSON format
+  profile/              moth::profile — frame profiler + ImGui panel
   toolkit/              moth::toolkit — aggregate target + feature header
 cmake/features.h.in   generated MOTH_ENABLE_*/MOTH_HAS_* flags (superbuild)
 examples/             sample games / consumption tests

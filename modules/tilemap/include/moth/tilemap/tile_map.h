@@ -278,6 +278,27 @@ namespace moth::tilemap {
     };
 
     /**
+     * @brief An image layer: a single image placed on the map, optionally
+     * repeated along either axis to fill the view.
+     *
+     * Combined with a parallax factor, a repeating image layer gives an endless
+     * scrolling backdrop or overlay without authoring a map-sized image.
+     */
+    struct ImageLayer {
+        std::string name;
+        bool visible = true;
+        float opacity = 1.0f;
+        int order = 0;                 ///< Position in the map's layer list (z-ordering across all layer kinds).
+        FloatVec2 parallax = { 1.0f, 1.0f }; ///< Tiled layer parallax factor.
+        Color tint = { 1.0f, 1.0f, 1.0f, 1.0f }; ///< Tiled layer tint colour (white = no tint).
+        FloatVec2 offset = { 0.0f, 0.0f }; ///< Top-left position of the image, in map pixels (Tiled's layer offset).
+        std::string imagePath;         ///< Image file path, relative to the map file (empty = no image).
+        bool repeatX = false;          ///< Repeat the image horizontally.
+        bool repeatY = false;          ///< Repeat the image vertically.
+        Properties properties; ///< Image-layer-level custom properties.
+    };
+
+    /**
      * @brief A grid-based tile map: layers + tilesets, world<->tile math, and queries.
      *
      * Coordinates are map pixels with the origin at the map's top-left corner,
@@ -295,6 +316,7 @@ namespace moth::tilemap {
         std::vector<Layer> layers;
         std::vector<Tileset> tilesets;
         std::vector<ObjectLayer> objectLayers;
+        std::vector<ImageLayer> imageLayers;
 
         Properties properties; ///< Map-level custom properties.
 
@@ -341,6 +363,15 @@ namespace moth::tilemap {
 
         /// @brief Returns object layer @p index.
         ObjectLayer& GetObjectLayer(std::size_t index) { return objectLayers[index]; }
+
+        /// @brief Returns the number of image layers.
+        std::size_t GetImageLayerCount() const { return imageLayers.size(); }
+
+        /// @brief Returns image layer @p index.
+        ImageLayer const& GetImageLayer(std::size_t index) const { return imageLayers[index]; }
+
+        /// @brief Returns image layer @p index.
+        ImageLayer& GetImageLayer(std::size_t index) { return imageLayers[index]; }
 
         /// @brief Returns the tileset owning @p gid, or @c nullptr.
         Tileset const* FindTileset(std::uint32_t gid) const {

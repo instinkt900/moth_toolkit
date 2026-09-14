@@ -316,6 +316,25 @@ TEST_CASE("Renderer: resolver overload draws image-collection tiles", "[tilemap]
     REQUIRE(graphics.drawCalls[1].sourceRect == MakeRect(4, 4, 16, 16));
 }
 
+TEST_CASE("Renderer: resolver overload resolves an atlas tileset once per draw", "[tilemap][renderer]") {
+    TileMap map = MakeMap(2, 2);
+    map.tilesets[0].imagePath = "atlas.png";
+    AddLayer(map, { 1, 2, 3, 4 });
+
+    MockGraphics graphics;
+    auto const texture = std::make_shared<MockTexture>();
+    std::vector<std::string> resolvedPaths;
+    TileImageResolver resolve = [&](std::string const& path) -> Image {
+        resolvedPaths.push_back(path);
+        return Image(texture);
+    };
+
+    DrawTileMap(graphics, map, resolve, MakeRect(0.0f, 0.0f, 32.0f, 32.0f));
+
+    REQUIRE(graphics.drawCalls.size() == 4);
+    REQUIRE(resolvedPaths == std::vector<std::string>{ "atlas.png" });
+}
+
 TEST_CASE("Renderer: draws tile objects from object layers, skipping shapes", "[tilemap][renderer]") {
     TileMap map = MakeMap(4, 4);
     AddLayer(map, { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 });
@@ -377,6 +396,108 @@ TEST_CASE("Renderer: parallax shifts the culled region", "[tilemap][renderer]") 
 
     REQUIRE(graphics.drawCalls.size() == 1);
     REQUIRE(graphics.drawCalls[0].position.x == Catch::Approx(16.0f));
+}
+
+TEST_CASE("Renderer: image layers draw at their offset with the resolved image", "[tilemap][renderer]") {
+    TileMap map = MakeMap(1, 1);
+    ImageLayer imageLayer;
+    imageLayer.imagePath = "bg.png";
+    imageLayer.offset = { 10.0f, 20.0f };
+    map.imageLayers.push_back(imageLayer);
+
+    MockGraphics graphics;
+    auto const texture = std::make_shared<MockTexture>(); // 256x256
+    std::vector<std::string> resolvedPaths;
+    TileImageResolver resolve = [&](std::string const& path) -> Image {
+        resolvedPaths.push_back(path);
+        return Image(texture);
+    };
+
+    DrawTileMap(graphics, map, resolve, MakeRect(0.0f, 0.0f, 64.0f, 64.0f));
+
+    REQUIRE(resolvedPaths == std::vector<std::string>{ "bg.png" });
+    REQUIRE(graphics.drawCalls.size() == 1);
+    REQUIRE(graphics.drawCalls[0].position.x == Catch::Approx(10.0f));
+    REQUIRE(graphics.drawCalls[0].position.y == Catch::Approx(20.0f));
+    REQUIRE(graphics.drawCalls[0].pivot.x == Catch::Approx(0.0f));
+    REQUIRE(graphics.drawCalls[0].pivot.y == Catch::Approx(0.0f));
+}
+
+TEST_CASE("Renderer: non-repeating image layers outside the view are culled", "[tilemap][renderer]") {
+    TileMap map = MakeMap(1, 1);
+    ImageLayer imageLayer;
+    imageLayer.imagePath = "bg.png";
+    imageLayer.offset = { 300.0f, 0.0f };
+    map.imageLayers.push_back(imageLayer);
+
+    MockGraphics graphics;
+    auto const texture = std::make_shared<MockTexture>();
+    TileImageResolver resolve = [&](std::string const&) { return Image(texture); };
+
+    DrawTileMap(graphics, map, resolve, MakeRect(0.0f, 0.0f, 256.0f, 256.0f));
+
+    REQUIRE(graphics.drawCalls.empty());
+}
+
+TEST_CASE("Renderer: repeating image layers tile across the view", "[tilemap][renderer]") {
+    TileMap map = MakeMap(1, 1);
+    ImageLayer imageLayer;
+    imageLayer.imagePath = "bg.png";
+    imageLayer.offset = { 100.0f, 0.0f };
+    imageLayer.repeatX = true;
+    map.imageLayers.push_back(imageLayer);
+
+    MockGraphics graphics;
+    auto const texture = std::make_shared<MockTexture>(); // 256x256
+    TileImageResolver resolve = [&](std::string const&) { return Image(texture); };
+
+    // Copies sit at x = 100 + 256k; the view [0, 600) needs k = -1, 0, 1.
+    DrawTileMap(graphics, map, resolve, MakeRect(0.0f, 0.0f, 600.0f, 256.0f));
+
+    REQUIRE(graphics.drawCalls.size() == 3);
+    REQUIRE(graphics.drawCalls[0].position.x == Catch::Approx(-156.0f));
+    REQUIRE(graphics.drawCalls[1].position.x == Catch::Approx(100.0f));
+    REQUIRE(graphics.drawCalls[2].position.x == Catch::Approx(356.0f));
+    for (auto const& call : graphics.drawCalls) {
+        REQUIRE(call.position.y == Catch::Approx(0.0f));
+    }
+}
+
+TEST_CASE("Renderer: repeating image layers follow the parallax offset", "[tilemap][renderer]") {
+    TileMap map = MakeMap(1, 1);
+    ImageLayer imageLayer;
+    imageLayer.imagePath = "bg.png";
+    imageLayer.repeatY = true;
+    imageLayer.parallax = { 1.0f, 2.0f };
+    map.imageLayers.push_back(imageLayer);
+
+    MockGraphics graphics;
+    auto const texture = std::make_shared<MockTexture>(); // 256x256
+    TileImageResolver resolve = [&](std::string const&) { return Image(texture); };
+
+    // Camera y = 400, factor 2 -> offset y = 400 * (1 - 2) = -400, so copies
+    // sit at y = -400 + 256k. The view y in [272, 528) needs k = 2, 3.
+    DrawTileMap(graphics, map, resolve, MakeRect(0.0f, 272.0f, 256.0f, 256.0f), 0, FloatVec2{ 0.0f, 400.0f });
+
+    REQUIRE(graphics.drawCalls.size() == 2);
+    REQUIRE(graphics.drawCalls[0].position.y == Catch::Approx(112.0f));
+    REQUIRE(graphics.drawCalls[1].position.y == Catch::Approx(368.0f));
+}
+
+TEST_CASE("Renderer: atlas overload skips image layers", "[tilemap][renderer]") {
+    TileMap map = MakeMap(1, 1);
+    AddLayer(map, { 1 });
+    ImageLayer imageLayer;
+    imageLayer.order = 1;
+    imageLayer.imagePath = "bg.png";
+    map.imageLayers.push_back(imageLayer);
+
+    MockGraphics graphics;
+    std::vector<Image> tilesetImages{ Image(std::make_shared<MockTexture>()) };
+
+    DrawTileMap(graphics, map, tilesetImages, MakeRect(0.0f, 0.0f, 16.0f, 16.0f));
+
+    REQUIRE(graphics.drawCalls.size() == 1);
 }
 
 TEST_CASE("Renderer: animated tiles resolve frames over time", "[tilemap][renderer]") {

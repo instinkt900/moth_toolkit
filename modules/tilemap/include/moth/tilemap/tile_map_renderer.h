@@ -14,7 +14,8 @@ namespace moth::tilemap {
     ///
     /// Return an empty image for a path that cannot be loaded (the tile is then
     /// skipped). Implementations should cache by path — the resolver is invoked
-    /// once per drawn tile.
+    /// once per draw for each atlas tileset and image layer, and once per drawn
+    /// tile for image-collection tilesets.
     using TileImageResolver = std::function<moth::gfx::Image(std::string const& imagePath)>;
 
     /**
@@ -29,8 +30,9 @@ namespace moth::tilemap {
      * is applied via @c SetColor (the draw colour is reset to opaque white
      * afterwards). Horizontal/vertical/diagonal flips are honoured.
      *
-     * This overload only handles atlas tilesets; use the @c TileImageResolver
-     * overload to draw image-collection tilesets too.
+     * This overload only handles atlas tilesets and skips image layers; use the
+     * @c TileImageResolver overload to draw image-collection tilesets and image
+     * layers too.
      *
      * @p timeMs advances tile animations (Tiled semantics: all instances of an
      * animated tile share one phase); pass the accumulated game time in
@@ -62,6 +64,11 @@ namespace moth::tilemap {
      * rectangle for such tiles is their own sub-rect rather than a computed grid
      * cell. @p resolve should return the image for @p imagePath, or an empty
      * image to skip the tile.
+     *
+     * Image layers are drawn too: @p resolve is called with the layer's image
+     * path, and the image is drawn at its natural size at the layer offset plus
+     * its parallax offset. A layer with @c repeatX / @c repeatY tiles the image
+     * along that axis to cover @p viewRect.
      */
     void DrawTileMap(moth::gfx::IGraphics& graphics,
                      TileMap const& map,

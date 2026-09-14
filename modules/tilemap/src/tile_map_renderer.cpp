@@ -27,7 +27,8 @@ namespace moth::tilemap {
                              FloatRect const& viewRect,
                              std::uint32_t timeMs,
                              FloatVec2 const& cameraPosition,
-                             std::function<Image(Tileset const&, int)> const& resolveTileImage) {
+                             std::function<Image(Tileset const&, int)> const& resolveTileImage,
+                             TileImageResolver const& resolveLayerImage) {
             if (map.tileWidth <= 0 || map.tileHeight <= 0) {
                 return;
             }
@@ -171,20 +172,67 @@ namespace moth::tilemap {
                 }
             };
 
-            // Merge tile and object layers into a single draw order (stable sort
-            // keeps layers sharing an @c order in their vector order).
+            // Draws an image layer at its natural size. A repeating axis tiles
+            // the image across the view, aligned to the layer's position; a
+            // non-repeating axis draws the single copy only if it is visible.
+            auto const drawImageLayer = [&](ImageLayer const& imageLayer, FloatVec2 const& offset) {
+                if (imageLayer.imagePath.empty()) {
+                    return;
+                }
+                Image const image = resolveLayerImage(imageLayer.imagePath);
+                if (!image || image.GetWidth() <= 0 || image.GetHeight() <= 0) {
+                    return;
+                }
+
+                float const imageW = static_cast<float>(image.GetWidth());
+                float const imageH = static_cast<float>(image.GetHeight());
+                FloatVec2 const origin = imageLayer.offset + offset;
+
+                int minX = 0;
+                int maxX = 0;
+                if (imageLayer.repeatX) {
+                    minX = static_cast<int>(std::floor((viewRect.left() - origin.x) / imageW));
+                    maxX = static_cast<int>(std::ceil((viewRect.right() - origin.x) / imageW)) - 1;
+                } else if (origin.x + imageW <= viewRect.left() || origin.x >= viewRect.right()) {
+                    return;
+                }
+
+                int minY = 0;
+                int maxY = 0;
+                if (imageLayer.repeatY) {
+                    minY = static_cast<int>(std::floor((viewRect.top() - origin.y) / imageH));
+                    maxY = static_cast<int>(std::ceil((viewRect.bottom() - origin.y) / imageH)) - 1;
+                } else if (origin.y + imageH <= viewRect.top() || origin.y >= viewRect.bottom()) {
+                    return;
+                }
+
+                for (int iy = minY; iy <= maxY; ++iy) {
+                    for (int ix = minX; ix <= maxX; ++ix) {
+                        FloatVec2 const position{ origin.x + static_cast<float>(ix) * imageW,
+                                                  origin.y + static_cast<float>(iy) * imageH };
+                        graphics.DrawImage(image, Transform2D{ position, 0.0f, FloatVec2{ 1.0f, 1.0f } }, FloatVec2{ 0.0f, 0.0f });
+                    }
+                }
+            };
+
+            // Merge tile, object and image layers into a single draw order
+            // (stable sort keeps layers sharing an @c order in their vector order).
+            enum class LayerKind { Tile, Object, Image };
             struct DrawEntry {
                 int order;
-                bool isObjectLayer;
+                LayerKind kind;
                 std::size_t index;
             };
             std::vector<DrawEntry> drawOrder;
-            drawOrder.reserve(map.layers.size() + map.objectLayers.size());
+            drawOrder.reserve(map.layers.size() + map.objectLayers.size() + map.imageLayers.size());
             for (std::size_t i = 0; i < map.layers.size(); ++i) {
-                drawOrder.push_back({ map.layers[i].order, false, i });
+                drawOrder.push_back({ map.layers[i].order, LayerKind::Tile, i });
             }
             for (std::size_t i = 0; i < map.objectLayers.size(); ++i) {
-                drawOrder.push_back({ map.objectLayers[i].order, true, i });
+                drawOrder.push_back({ map.objectLayers[i].order, LayerKind::Object, i });
+            }
+            for (std::size_t i = 0; i < map.imageLayers.size(); ++i) {
+                drawOrder.push_back({ map.imageLayers[i].order, LayerKind::Image, i });
             }
             std::stable_sort(drawOrder.begin(), drawOrder.end(),
                              [](DrawEntry const& a, DrawEntry const& b) { return a.order < b.order; });
@@ -196,13 +244,20 @@ namespace moth::tilemap {
             };
 
             for (auto const& entry : drawOrder) {
-                if (entry.isObjectLayer) {
+                if (entry.kind == LayerKind::Object) {
                     auto const& objectLayer = map.objectLayers[entry.index];
                     if (!objectLayer.visible || objectLayer.opacity <= 0.0f) {
                         continue;
                     }
                     applyLayerColor(objectLayer.tint, objectLayer.opacity);
                     drawObjectLayer(objectLayer, parallaxOffset(objectLayer.parallax));
+                } else if (entry.kind == LayerKind::Image) {
+                    auto const& imageLayer = map.imageLayers[entry.index];
+                    if (!imageLayer.visible || imageLayer.opacity <= 0.0f) {
+                        continue;
+                    }
+                    applyLayerColor(imageLayer.tint, imageLayer.opacity);
+                    drawImageLayer(imageLayer, parallaxOffset(imageLayer.parallax));
                 } else {
                     auto const& layer = map.layers[entry.index];
                     if (!layer.visible || layer.opacity <= 0.0f) {
@@ -229,7 +284,7 @@ namespace moth::tilemap {
                 return Image{};
             }
             return tilesetImages[index];
-        });
+        }, [](std::string const&) { return Image{}; });
     }
 
     void DrawTileMap(IGraphics& graphics,
@@ -238,16 +293,22 @@ namespace moth::tilemap {
                      FloatRect const& viewRect,
                      std::uint32_t timeMs,
                      FloatVec2 const& cameraPosition) {
+        // Resolve each atlas tileset's image once per draw rather than once per tile.
+        std::vector<Image> atlasImages;
+        atlasImages.reserve(map.tilesets.size());
+        for (auto const& tileset : map.tilesets) {
+            atlasImages.push_back(tileset.IsImageCollection() ? Image{} : resolve(tileset.imagePath));
+        }
+
         DrawTileMapImpl(graphics, map, viewRect, timeMs, cameraPosition, [&](Tileset const& tileset, int resolvedId) {
-            std::string imagePath = tileset.imagePath;
-            if (imagePath.empty()) {
-                auto const it = tileset.tileImages.find(resolvedId);
-                if (it == tileset.tileImages.end()) {
-                    return Image{};
-                }
-                imagePath = it->second.imagePath;
+            if (!tileset.IsImageCollection()) {
+                return atlasImages[static_cast<std::size_t>(&tileset - map.tilesets.data())];
             }
-            return resolve(imagePath);
-        });
+            auto const it = tileset.tileImages.find(resolvedId);
+            if (it == tileset.tileImages.end()) {
+                return Image{};
+            }
+            return resolve(it->second.imagePath);
+        }, resolve);
     }
 }

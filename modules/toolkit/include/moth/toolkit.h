@@ -48,6 +48,9 @@
 #ifndef MOTH_ENABLE_NOISE
 #define MOTH_ENABLE_NOISE 1
 #endif
+#ifndef MOTH_ENABLE_PROFILE
+#define MOTH_ENABLE_PROFILE 1
+#endif
 
 #if MOTH_ENABLE_CORE
 #include <moth/core/vector.h>
@@ -115,6 +118,13 @@
 
 #if MOTH_ENABLE_NOISE
 #include <moth/noise/noise.h>
+#endif
+
+#if MOTH_ENABLE_PROFILE
+#include <moth/profile/profiler.h>
+#if MOTH_ENABLE_GFX
+#include <moth/profile/imgui/profiler_panel.h>
+#endif
 #endif
 
 #if MOTH_ENABLE_BRIDGE

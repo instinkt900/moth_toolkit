@@ -272,7 +272,19 @@ namespace moth::gfx::vulkan {
         FloatVec2 const pivotOffset{ imageWidth * pivot.x, imageHeight * pivot.y };
 
         // Sprite local -> world, composed on top of the current (e.g. camera) transform.
-        auto const combined = CurrentTransform() * transform.ToMatrix(pivotOffset);
+        // Equivalent to CurrentTransform() * transform.ToMatrix(pivotOffset), but applied
+        // to each corner directly: composing 4x4 matrices for every quad is costly in
+        // tile-heavy scenes, especially in unoptimised builds.
+        FloatMat4x4 const current = CurrentTransform();
+        float const cosA = std::cos(transform.rotation);
+        float const sinA = std::sin(transform.rotation);
+        auto const toTarget = [&](float x, float y) {
+            float const scaledX = (x - pivotOffset.x) * transform.scale.x;
+            float const scaledY = (y - pivotOffset.y) * transform.scale.y;
+            FloatVec2 const world{ (cosA * scaledX) - (sinA * scaledY) + transform.position.x,
+                                   (sinA * scaledX) + (cosA * scaledY) + transform.position.y };
+            return current.TransformPoint(world);
+        };
 
         FloatRect imageRect = MakeRect(0.0f, 0.0f, imageWidth, imageHeight);
         FloatVec2 const textureDimensions{
@@ -302,24 +314,29 @@ namespace moth::gfx::vulkan {
         v0 += halfTexel.y;
         v1 -= halfTexel.y;
 
+        FloatVec2 const topLeft = toTarget(0.0f, 0.0f);
+        FloatVec2 const topRight = toTarget(imageWidth, 0.0f);
+        FloatVec2 const bottomLeft = toTarget(0.0f, imageHeight);
+        FloatVec2 const bottomRight = toTarget(imageWidth, imageHeight);
+
         Vertex vertices[6];
-        vertices[0].xy = combined.TransformPoint({ 0.0f, 0.0f });
+        vertices[0].xy = topLeft;
         vertices[0].uv = { u0, v0 };
         vertices[0].color = context->m_currentColor;
-        vertices[1].xy = combined.TransformPoint({ imageWidth, 0.0f });
+        vertices[1].xy = topRight;
         vertices[1].uv = { u1, v0 };
         vertices[1].color = context->m_currentColor;
-        vertices[2].xy = combined.TransformPoint({ 0.0f, imageHeight });
+        vertices[2].xy = bottomLeft;
         vertices[2].uv = { u0, v1 };
         vertices[2].color = context->m_currentColor;
 
-        vertices[3].xy = combined.TransformPoint({ 0.0f, imageHeight });
+        vertices[3].xy = bottomLeft;
         vertices[3].uv = { u0, v1 };
         vertices[3].color = context->m_currentColor;
-        vertices[4].xy = combined.TransformPoint({ imageWidth, imageHeight });
+        vertices[4].xy = bottomRight;
         vertices[4].uv = { u1, v1 };
         vertices[4].color = context->m_currentColor;
-        vertices[5].xy = combined.TransformPoint({ imageWidth, 0.0f });
+        vertices[5].xy = topRight;
         vertices[5].uv = { u1, v0 };
         vertices[5].color = context->m_currentColor;
 

@@ -15,7 +15,8 @@ namespace moth::tilemap {
      * both single-atlas and image-collection tilesets — and tile layers whose
      * tile data is CSV (a JSON array), or base64 with optional zlib/gzip
      * compression. GID flip flags are unpacked per tile. Object layers are
-     * parsed into @c objectLayers; image/group layers are skipped.
+     * parsed into @c objectLayers and image layers into @c imageLayers; group
+     * layers are skipped.
      *
      * Objects placed from a JSON object template (`.tj`) are resolved: the
      * instance's fields and properties override the template's, and a tile

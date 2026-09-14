@@ -29,6 +29,7 @@ option(MOTH_ENABLE_ASSETS  "Build the moth::assets module (id/path asset loading
 option(MOTH_ENABLE_ANIM    "Build the moth::anim module (character animation state machine)" ON)
 option(MOTH_ENABLE_NET     "Build the moth::net module (TCP framed-JSON messaging)"   ON)
 option(MOTH_ENABLE_NOISE   "Build the moth::noise module (FastNoise2 node graphs)"    ON)
+option(MOTH_ENABLE_PROFILE "Build the moth::profile module (frame profiler + ImGui panel)" ON)
 option(MOTH_ENABLE_TOOLKIT "Build the moth::toolkit aggregate target"                 ON)
 option(MOTH_ENABLE_TOOLS "Build the moth_pak CLI tool (requires moth::assets)"       OFF)
 option(MOTH_ENABLE_EXAMPLES "Build the example projects"                              OFF)
@@ -154,6 +155,18 @@ if(MOTH_ENABLE_NOISE)
     add_subdirectory(modules/noise)
     add_library(moth::noise ALIAS moth_noise)
     add_library(moth_noise::moth_noise ALIAS moth_noise)
+endif()
+
+if(MOTH_ENABLE_PROFILE)
+    # The profiler panel draws with the ImGui inside moth::gfx, so it is only
+    # built alongside gfx; the recorder has no dependencies.
+    set(MOTH_PROFILE_ENABLE_IMGUI ${MOTH_ENABLE_GFX})
+    add_subdirectory(modules/profile)
+    add_library(moth::profile ALIAS moth_profile)
+    add_library(moth_profile::moth_profile ALIAS moth_profile)
+    if(MOTH_PROFILE_ENABLE_IMGUI)
+        add_library(moth::profile_imgui ALIAS moth_profile_imgui)
+    endif()
 endif()
 
 if(MOTH_ENABLE_TOOLKIT)

@@ -62,4 +62,11 @@ if(MOTH_ENABLE_NOISE)
     target_link_libraries(moth_toolkit INTERFACE moth::noise)
 endif()
 
+if(MOTH_ENABLE_PROFILE)
+    target_link_libraries(moth_toolkit INTERFACE moth::profile)
+    if(TARGET moth::profile_imgui)
+        target_link_libraries(moth_toolkit INTERFACE moth::profile_imgui)
+    endif()
+endif()
+
 install(DIRECTORY include/ DESTINATION include)

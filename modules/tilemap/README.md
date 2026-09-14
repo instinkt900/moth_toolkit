@@ -28,7 +28,7 @@ for (MapObject const& object : map.objectLayers[0].objects) {
 | Header | Contents |
 |---|---|
 | `tile.h` | `TileId`: a global tile id plus flip flags |
-| `tile_map.h` | The data model: `TileMap`, `Tileset`, `Layer`, `Chunk`, `ObjectLayer`, `MapObject` |
+| `tile_map.h` | The data model: `TileMap`, `Tileset`, `Layer`, `Chunk`, `ObjectLayer`, `ImageLayer`, `MapObject` |
 | `properties.h` | `Properties`, `PropertyTypes`, `GetProperty`, `HasProperty` |
 | `tile_map_loader.h` | `LoadTileMapFromFile`, `LoadTileMap`, `LoadTileMapFromJson`, `LoadPropertyTypes` |
 | `tile_map_renderer.h` | `DrawTileMap` |
@@ -49,9 +49,10 @@ The importer supports orthogonal maps with:
 - flip flags, unpacked per tile;
 - tile animations, per-tile properties, and per-tile collision shapes;
 - layer opacity, tint colour, and parallax factors;
-- object layers, including objects placed from templates (`.tj`).
+- object layers, including objects placed from templates (`.tj`);
+- image layers, with their offset and repeat X/Y flags.
 
-Image and group layers are skipped. Loading throws `std::runtime_error` (or an
+Group layers are skipped. Loading throws `std::runtime_error` (or an
 `nlohmann_json` exception) on malformed input.
 
 ### Paths
@@ -60,7 +61,7 @@ Image and group layers are skipped. Loading throws `std::runtime_error` (or an
 file. `LoadTileMap(jsonText, basePath)` and `LoadTileMapFromJson(json, basePath)`
 use `basePath` for the same purpose.
 
-Image paths (`Tileset::imagePath`, `TileImage::imagePath`) are returned relative to
+Image paths (`Tileset::imagePath`, `TileImage::imagePath`, `ImageLayer::imagePath`) are returned relative to
 the **map file**, including images referenced from a `.tsj` in another directory.
 The loader doesn't load images; that's the caller's job.
 
@@ -99,7 +100,7 @@ and pass the result to the loader. Defaults then fill in any property that isn't
 set on:
 
 - objects (by their class/`type`);
-- maps, layers, object layers, and tilesets (by `class`);
+- maps, layers, object layers, image layers, and tilesets (by `class`);
 - tiles (by `type`).
 
 Precedence is class default < template < instance. Enums need no definition to
@@ -112,8 +113,8 @@ TileMap const map = LoadTileMapFromFile("tiled/level.tmj", types);
 
 ## Rendering
 
-`DrawTileMap` draws the tiles visible in `viewRect` (map pixel space). Tile and
-object layers are interleaved in their Tiled order. Each layer's opacity and tint
+`DrawTileMap` draws the tiles visible in `viewRect` (map pixel space). Tile,
+object, and image layers are interleaved in their Tiled order. Each layer's opacity and tint
 are applied through `SetColor`, and the colour is reset to white afterwards.
 Horizontal, vertical, and diagonal flips are honoured. Object layers draw their
 tile objects and skip shape objects.
@@ -125,8 +126,10 @@ Set the camera transform on `IGraphics` before drawing. There are two overloads:
 // An empty Image skips that tileset.
 DrawTileMap(graphics, map, tilesetImages, viewRect, timeMs, cameraPosition);
 
-// Also handles image-collection tilesets: the resolver is called with each image
-// path (relative to the map). Cache by path; it runs once per drawn tile.
+// Also handles image-collection tilesets and image layers: the resolver is called
+// with each image path (relative to the map). Cache by path; it runs once per draw
+// for each atlas tileset and image layer, and once per drawn tile for
+// image-collection tilesets. The atlas overload skips image layers.
 DrawTileMap(graphics, map, [&](std::string const& path) { return LoadCached(path); },
             viewRect, timeMs, cameraPosition);
 ```
@@ -137,6 +140,11 @@ DrawTileMap(graphics, map, [&](std::string const& path) { return LoadCached(path
   `Camera::GetPosition()`, or leave it `{}` for maps without parallax.
 
 Finite maps are culled per tile; infinite maps per chunk.
+
+An image layer draws its image at natural size, at the layer offset plus its
+parallax offset. With `repeatX` / `repeatY`, the image is tiled along that axis to
+cover `viewRect`. Combine repeat with a parallax factor to get an endless scrolling
+backdrop or overlay from a small image.
 
 ```cpp
 graphics.SetTransform(camera.GetViewTransform(viewportSize));
@@ -154,7 +162,7 @@ DrawTileMap(graphics, map, tilesetImages, FloatRect{ topLeft, bottomRight }, tim
 | `WorldToTile(worldPos)` / `TileToWorld(x, y)` | Convert between map pixels and tile coordinates |
 | `GetTile(layer, x, y)` / `GetTileAtWorld(layer, worldPos)` | The `TileId` there, or an empty tile if out of bounds |
 | `FindTileset(gid)` | The tileset owning a gid, or `nullptr` |
-| `GetLayer(i)` / `GetTileset(i)` / `GetObjectLayer(i)` | Layers, tilesets, and object layers by index (with `...Count()`) |
+| `GetLayer(i)` / `GetTileset(i)` / `GetObjectLayer(i)` / `GetImageLayer(i)` | Layers, tilesets, object layers, and image layers by index (with `...Count()`) |
 
 `TileId` holds the global id with flags stripped (`id`, 0 = empty) and the
 `flipHorizontal` / `flipVertical` / `flipDiagonal` flags. `TileId::FromGid` and

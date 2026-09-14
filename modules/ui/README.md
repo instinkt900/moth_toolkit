@@ -29,7 +29,7 @@ drawn through a small set of interfaces. Features:
 - animation markers that fire events during playback, so UI and game can stay in
   sync;
 - mouse, keyboard, and custom events that bubble through the tree;
-- custom widgets registered by class name (`UiButton` and `UiScrollView` are
+- custom widgets registered by class name (`UIButton` and `UIScrollView` are
   bundled);
 - a navigation runtime (flow) for screens, overlays, and their transitions.
 
@@ -114,7 +114,7 @@ Events use the `moth::core` event system: route them to typed handlers with
 A widget is a C++ class bound to a layout class name. Derive from the `Widget`
 CRTP base and the class registers itself with `NodeFactory` at startup, or call
 `NodeFactory::RegisterWidget(className, func)` directly. Layouts that use that
-class name then instantiate your type. `UiButton` and `UiScrollView` are bundled.
+class name then instantiate your type. `UIButton` and `UIScrollView` are bundled.
 
 ## Flow
 
@@ -126,9 +126,6 @@ manage their own layers can ignore the `moth/ui/flow/` headers.
 
 - [`docs/flow_system_guide.md`](docs/flow_system_guide.md): how to use it.
 - [`docs/flow_system_design.md`](docs/flow_system_design.md): why it works this way.
-
-Code in those guides still uses the pre-toolkit `moth_ui::` namespace spelling;
-read it as `moth::ui::`.
 
 ## Thread safety
 

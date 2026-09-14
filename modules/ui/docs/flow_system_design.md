@@ -6,7 +6,7 @@ document is the **design-of-record** — it captures the rationale (why transiti
 nest under layers, why the stack mutates before the midpoint, the string-`tag`
 contract, deferred editor scope). It is written partly in pre-implementation tense
 and describes scorched_moth's *old* hand-rolled flow code as the thing being
-generalised; that code is gone now and scorched_moth consumes `moth_ui::flow`
+generalised; that code is gone now and scorched_moth consumes `moth::ui::flow`
 directly.
 
 **For a consumer-facing how-to** — standing up a `Flow`, the real API surface,
@@ -207,12 +207,12 @@ Two concrete bases will ship in moth_ui:
 // .mothui-backed: tag is a clip name; HasAnimation → SetAnimation → wait for
 // EventAnimationStopped → done(). Handles button-binding and key-binding
 // installation from the graph automatically in OnEnter via IClickable lookups.
-class TransitioningLayer : public moth_ui::Layer,
+class TransitioningLayer : public moth::ui::Layer,
                             public ITransitionParticipant { ... };
 
 // Code-driven: subclass overrides TransitionIn/Out, drives its own animation,
 // calls done() when finished. No layout required.
-class CodeDrivenLayer : public moth_ui::Layer,
+class CodeDrivenLayer : public moth::ui::Layer,
                         public ITransitionParticipant { ... };
 ```
 
@@ -235,7 +235,7 @@ debug overlays, instant-cut transitions, and toast notifications.
 // installs ClickActions on the matching UIButtons automatically. No custom
 // logic in this subclass; in fact, no subclass is needed at all if the layer
 // is purely graph-driven — see "When to subclass".
-class PauseLayer : public moth_ui::flow::TransitioningLayer {
+class PauseLayer : public moth::ui::flow::TransitioningLayer {
 public:
     using TransitioningLayer::TransitioningLayer;
 };
@@ -244,7 +244,7 @@ public:
 ### Code-driven layer example
 
 ```cpp
-class TitleSplashLayer : public moth_ui::flow::CodeDrivenLayer {
+class TitleSplashLayer : public moth::ui::flow::CodeDrivenLayer {
 public:
     void TransitionIn(std::string_view tag, std::function<void()> done) override {
         if (tag == "fast_fade") {
@@ -306,7 +306,7 @@ id: "..."}`. Two coupled additions to moth_ui solve this:
 A minimal abstract interface in moth_ui's public surface:
 
 ```cpp
-namespace moth_ui {
+namespace moth::ui {
     class IClickable {
     public:
         virtual ~IClickable() = default;
@@ -350,7 +350,7 @@ buttons to transitions, and the framework does the rest.
 ## The Flow runtime
 
 ```cpp
-namespace moth_ui::flow {
+namespace moth::ui::flow {
 
 class Flow {
 public:
@@ -528,7 +528,7 @@ different transition.
 Overlays carry a `modality` field that controls how the layers below them behave
 while the overlay is up:
 
-- `Modal`: `moth_ui::LayerStack` short-circuits event delivery and `Update` calls to
+- `Modal`: `moth::ui::LayerStack` short-circuits event delivery and `Update` calls to
   layers beneath this one. The pause menu doesn't need a manual `m_paused` flag in
   `GameLayer` — being covered by a modal overlay is what pauses the game.
 - `Passthrough`: layers beneath continue to update and receive non-handled input.
@@ -539,7 +539,7 @@ subclasses is subsumed by the framework's "transition already in progress" guard
 once a button click triggers a transition, the runtime is non-Idle, and further
 clicks are rejected (or queued, per policy).
 
-Implementation note: modal-skip is a `moth_ui::LayerStack` semantic extension, not
+Implementation note: modal-skip is a `moth::ui::LayerStack` semantic extension, not
 purely a flow-system addition. The flag the flow system reads (`LayerSpec.modality`)
 maps to a property the LayerStack honours during its update/event-dispatch loop. The
 LayerStack change is the foundational dependency that lands before the flow system
@@ -549,7 +549,7 @@ itself.
 
 The scorched_moth example, projected against the new system:
 
-- `Flow` class in `src/flow/` disappears in favour of `moth_ui::flow::Flow`
+- `Flow` class in `src/flow/` disappears in favour of `moth::ui::flow::Flow`
   constructed from a JSON-loaded `FlowGraph`.
 - `enum class Screen` disappears; layers are identified by string id in the graph.
 - `IFlowLayer` disappears (subsumed by `ITransitionParticipant`).

@@ -44,7 +44,7 @@ Four steps at startup, then two calls per frame. From scorched_moth:
 //    NOT validated for you — call the validator yourself or structural
 //    errors only surface lazily at Trigger time.
 auto graph = BuildFlowGraph();
-auto errors = moth_ui::flow::ValidateFlowGraph(graph);
+auto errors = moth::ui::flow::ValidateFlowGraph(graph);
 for (auto const& e : errors) {
     spdlog::error("flow graph error [{}.{}]: {}",
                   e.layerId, e.transitionId, e.message);
@@ -52,13 +52,13 @@ for (auto const& e : errors) {
 // (bail if !errors.empty())
 
 // 2. Construct the runtime. Takes only moth_ui types — no Window.
-m_flow = std::make_unique<moth_ui::flow::Flow>(
+m_flow = std::make_unique<moth::ui::flow::Flow>(
     m_window->GetLayerStack(), m_window->GetMothContext(), std::move(graph));
 
 // 3. Register custom layer factories (by name) for layers that need a
 //    C++ subclass. Closures capture whatever app state the layer needs.
 m_flow->RegisterFactory("game",
-    [this](moth_ui::Context& ctx, moth_ui::flow::LayerSpec const&) {
+    [this](moth::ui::Context& ctx, moth::ui::flow::LayerSpec const&) {
         return std::make_unique<RoundLayer>(
             ctx, *m_flow, *m_session, m_window->GetGraphics());
     });
@@ -74,7 +74,7 @@ m_flow->Start();
 Per frame:
 
 ```cpp
-bool OnEvent(moth_ui::Event const& event) override {
+bool OnEvent(moth::ui::Event const& event) override {
     // Feed the Flow BEFORE the LayerStack so key triggers get first look.
     if (m_flow && m_flow->OnEvent(event)) {
         return true;   // consumed by a key trigger
@@ -94,7 +94,7 @@ That's the entire required surface: **construct, register, `Start`, then
 
 > **Self-registered widgets.** If your buttons (or other widgets) register
 > themselves with the `NodeFactory` and are referenced only by layout-class
-> string, the linker may strip them. Call `moth_ui::EnsureWidgetsRegistered()`
+> string, the linker may strip them. Call `moth::ui::EnsureWidgetsRegistered()`
 > once at startup (scorched_moth does this in `PostCreateWindow`) so the
 > bundled widgets survive.
 
@@ -107,21 +107,21 @@ loading JSON — equivalent to what a designer-authored `flow.json` would
 describe, but driven without the loader:
 
 ```cpp
-moth_ui::flow::FlowGraph graph;
+moth::ui::flow::FlowGraph graph;
 graph.initial = "title";
-graph.policy.onReentry = moth_ui::flow::ReentryPolicy::Queue;
+graph.policy.onReentry = moth::ui::flow::ReentryPolicy::Queue;
 
-moth_ui::flow::LayerSpec title;
+moth::ui::flow::LayerSpec title;
 title.id = "title";
 title.layout = "assets/layouts/screen_title.mothui";
-title.kind = moth_ui::flow::LayerKind::Screen;
+title.kind = moth::ui::flow::LayerKind::Screen;
 
-moth_ui::flow::TransitionSpec play;
+moth::ui::flow::TransitionSpec play;
 play.id = "play";
 play.to = "match_setup";
-play.kind = moth_ui::flow::TransitionKind::Replace;
+play.kind = moth::ui::flow::TransitionKind::Replace;
 play.inClip = "transition_in";
-play.trigger.kind = moth_ui::flow::TriggerKind::Button;
+play.trigger.kind = moth::ui::flow::TriggerKind::Button;
 play.trigger.id = "btn_start";
 title.transitions.push_back(std::move(play));
 
@@ -200,7 +200,7 @@ equivalent to the hand-built form above:
 ```
 
 Field notes: `kind` defaults to `"replace"` (transitions) / `"screen"`
-(layers); a `Key` trigger names the key by its `moth_ui::Key` enum name
+(layers); a `Key` trigger names the key by its `moth::ui::Key` enum name
 (e.g. `"Escape"`); an `Event` trigger takes `"id"` (or `"name"`); an
 `Auto` trigger takes `"afterMs"`. JSON moves only the graph *structure*
 into data — the `factory` (`"game"`) and the action names
@@ -239,7 +239,7 @@ A `TriggerSpec` has a `kind` and (for Button/Event) an `id`:
 
 - **`Button`** — `id` is the layout node id of an `IClickable` widget on the
   source layer. The runtime auto-binds the click for you (see below).
-- **`Key`** — `trigger.key` is a `moth_ui::Key`; fires on key-down while the
+- **`Key`** — `trigger.key` is a `moth::ui::Key`; fires on key-down while the
   source layer is the topmost active layer. This is why `Flow::OnEvent`
   must see events before the LayerStack.
 - **`Event`** — `id` is a name your layer code passes to
@@ -268,7 +268,7 @@ pause menu) needs **no C++ subclass at all**.
 Button auto-binding: when a layer mounts, the Flow walks its transitions
 and, for each `Button` trigger, does
 `dynamic_cast<IClickable*>(root->FindChild(id).get())->SetClickAction(...)`.
-The widget can be the bundled `moth_ui::UIButton` or any app widget that
+The widget can be the bundled `moth::ui::UIButton` or any app widget that
 implements `IClickable` — the runtime only knows the interface.
 
 ### When to subclass

@@ -162,7 +162,10 @@ public:
         : Application(platform, "My Game", 1280, 720) {}
     void Startup() override          { /* before the window is created */ }
     void PostCreateWindow() override { /* window + ImGui ready */ }
-    void TickFixed(uint32_t ticks) override { /* fixed-step logic */ }
+    void TickFixed(uint32_t ticks) override {
+        Application::TickFixed(ticks);   // updates the UI
+        /* fixed-step logic */
+    }
 };
 
 int main() {
@@ -279,7 +282,7 @@ looping/pitch/seek/length). Depends on `moth_core` + `miniaudio`.
 #include <moth/audio/audio.h>
 
 using namespace moth::audio;
-AudioEngine engine;                       // AudioEngineConfig{ .nullDevice } for headless
+AudioEngine engine;                       // set AudioEngineConfig::noDevice for headless
 engine.Start();
 
 Sound blip  = engine.LoadSound("blip.wav");
@@ -437,17 +440,17 @@ reason rather than loaded partially.
 **Package** `moth_toolkit` · **Umbrella** `<moth/toolkit.h>`
 
 The aggregate meta-package. Links every module you enable and pulls in one header
-that includes them all, guarded by `MOTH_ENABLE_*` / `MOTH_HAS_*` flags. Its
+that includes them all, guarded by `MOTH_ENABLE_*` flags. Its
 Conan `enable_*` options turn modules on/off (defaults: all on), validated so
 enabling a module enables its dependencies. Depends on whatever you enable.
 
 ```cpp
 #include <moth/toolkit.h>
 
-#if MOTH_HAS_GFX
+#if MOTH_ENABLE_GFX
     // use moth::gfx
 #endif
-#if MOTH_HAS_PHYSICS
+#if MOTH_ENABLE_PHYSICS
     // use moth::physics
 #endif
 ```
@@ -471,10 +474,13 @@ moth_toolkit/*:enable_audio=False
 moth_toolkit/*:enable_physics=False
 ```
 
-Then link `moth::toolkit` (or the individual `moth::*` targets) and
-`#include <moth/toolkit.h>`. Feature flags are available to consumer code as
-`MOTH_ENABLE_*` and the friendlier `MOTH_HAS_*` aliases (from the generated
-`<moth/features.h>` in the superbuild, or a compile definition from Conan).
+Then link the aggregate target (`moth::toolkit` in the superbuild,
+`moth_toolkit::moth_toolkit` from Conan) or the individual module targets, and
+`#include <moth/toolkit.h>`. Feature flags reach consumer code as `MOTH_ENABLE_*`:
+a compile definition from Conan, or the generated `<moth/features.h>` in the
+superbuild. That generated header also defines friendlier `MOTH_HAS_*` aliases,
+but the Conan package doesn't, and an undefined macro in `#if` quietly evaluates
+to 0. Use `MOTH_ENABLE_*` in code that has to build both ways.
 
 ## Building
 
@@ -638,7 +644,7 @@ modules/              the moth:: libraries (each Conan-packaged)
   net/                  moth::net     — TCP framed-JSON client/server
   noise/                moth::noise   — FastNoise2 node graphs + JSON format
   toolkit/              moth::toolkit — aggregate target + feature header
-cmake/features.h.in   generated MOTH_HAS_* compile-time flags
+cmake/features.h.in   generated MOTH_ENABLE_*/MOTH_HAS_* flags (superbuild)
 examples/             sample games / consumption tests
 tools/                moth new scaffold CLI + moth_pak asset cooker
 ```

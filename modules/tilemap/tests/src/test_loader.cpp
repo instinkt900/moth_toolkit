@@ -330,6 +330,18 @@ TEST_CASE("Loader: color properties parse as Color", "[tilemap][loader]") {
     REQUIRE(tint.a == Catch::Approx(1.0f));
 }
 
+TEST_CASE("Loader: object properties parse as the referenced object id", "[tilemap][loader]") {
+    std::string const json = R"({
+        "width": 1, "height": 1, "tilewidth": 16, "tileheight": 16,
+        "properties": [ { "name": "target", "type": "object", "value": 12 },
+                        { "name": "unset", "type": "object", "value": 0 } ]
+    })";
+
+    TileMap const map = LoadTileMap(json);
+    REQUIRE(GetProperty<int>(map.properties, "target") == 12);
+    REQUIRE(GetProperty<int>(map.properties, "unset", -1) == 0);
+}
+
 TEST_CASE("Properties: GetProperty falls back when absent or wrong type", "[tilemap][loader]") {
     Properties props;
     props["n"] = 5;
@@ -459,4 +471,162 @@ TEST_CASE("Loader: image-collection tilesets parse per-tile images", "[tilemap][
     REQUIRE_FALSE(tileset.ContainsGid(8));
 
     REQUIRE(tileset.GetTileRect(6) == moth::core::MakeRect(521, 114, 160, 208));
+}
+
+TEST_CASE("Loader: image paths in external .tsj tilesets are rebased onto the map", "[tilemap][loader]") {
+    auto const dir = std::filesystem::temp_directory_path() / "moth_tilemap_tsj_rebase_test";
+    std::filesystem::create_directories(dir / "tilesets");
+    {
+        std::ofstream tsj(dir / "tilesets" / "atlas.tsj");
+        tsj << R"({ "name": "atlas", "image": "../images/atlas.png", "imagewidth": 64, "imageheight": 16,
+                   "tilewidth": 16, "tileheight": 16, "columns": 4, "tilecount": 4 })";
+    }
+    {
+        std::ofstream tsj(dir / "tilesets" / "hero.tsj");
+        tsj << R"({ "name": "hero", "tilecount": 1,
+                   "tiles": [ { "id": 0, "image": "hero.png", "imagewidth": 16, "imageheight": 16 } ] })";
+    }
+
+    std::string const mapJson = R"({
+        "width": 1, "height": 1, "tilewidth": 16, "tileheight": 16,
+        "tilesets": [ { "firstgid": 1, "source": "tilesets/atlas.tsj" },
+                      { "firstgid": 5, "source": "tilesets/hero.tsj" } ],
+        "layers": [ { "type": "tilelayer", "name": "ground", "data": [1] } ]
+    })";
+
+    TileMap const map = LoadTileMapFromJson(nlohmann::json::parse(mapJson), dir);
+    REQUIRE(map.GetTileset(0).imagePath == "images/atlas.png");
+    REQUIRE(map.GetTileset(1).tileImages.at(0).imagePath == "tilesets/hero.png");
+
+    std::filesystem::remove_all(dir);
+}
+
+TEST_CASE("Loader: object templates merge with instance overrides", "[tilemap][loader]") {
+    auto const dir = std::filesystem::temp_directory_path() / "moth_tilemap_template_test";
+    std::filesystem::create_directories(dir / "templates");
+    {
+        std::ofstream tj(dir / "templates" / "spawn.tj");
+        tj << R"({ "type": "template",
+                   "object": { "id": 1, "name": "spawn", "type": "EnemySpawn", "point": true, "x": 0, "y": 0,
+                               "properties": [ { "name": "enemy", "type": "string", "value": "basic" },
+                                               { "name": "speed", "type": "float", "value": 10 } ] } })";
+    }
+
+    std::string const mapJson = R"({
+        "width": 1, "height": 1, "tilewidth": 16, "tileheight": 16,
+        "layers": [ { "type": "objectgroup", "name": "spawns", "objects": [
+            { "id": 7, "template": "templates/spawn.tj", "x": 32, "y": 48,
+              "properties": [ { "name": "speed", "type": "float", "value": 90 },
+                              { "name": "wave", "type": "int", "value": 2 } ] }
+        ] } ]
+    })";
+
+    TileMap const map = LoadTileMapFromJson(nlohmann::json::parse(mapJson), dir);
+    REQUIRE(map.objectLayers.size() == 1);
+    REQUIRE(map.objectLayers[0].objects.size() == 1);
+
+    auto const& object = map.objectLayers[0].objects[0];
+    REQUIRE(object.id == 7);
+    REQUIRE(object.name == "spawn");
+    REQUIRE(object.type == "EnemySpawn");
+    REQUIRE(object.kind == ObjectKind::Point);
+    REQUIRE(object.position.x == Catch::Approx(32.0f));
+    REQUIRE(object.position.y == Catch::Approx(48.0f));
+    REQUIRE(GetProperty<std::string>(object.properties, "enemy") == "basic");
+    REQUIRE(GetProperty<float>(object.properties, "speed") == Catch::Approx(90.0f));
+    REQUIRE(GetProperty<int>(object.properties, "wave") == 2);
+
+    std::filesystem::remove_all(dir);
+}
+
+TEST_CASE("Loader: tile object templates rebase their gid onto the map's tileset", "[tilemap][loader]") {
+    auto const dir = std::filesystem::temp_directory_path() / "moth_tilemap_tile_template_test";
+    std::filesystem::create_directories(dir / "templates");
+    {
+        std::ofstream tsj(dir / "tiles.tsj");
+        tsj << R"({ "name": "tiles", "image": "tiles.png", "imagewidth": 64, "imageheight": 16,
+                   "tilewidth": 16, "tileheight": 16, "columns": 4, "tilecount": 4 })";
+    }
+    {
+        // gid 3 of the template's own tileset reference, flipped horizontally
+        std::ofstream tj(dir / "templates" / "crate.tj");
+        tj << R"({ "type": "template",
+                   "tileset": { "firstgid": 1, "source": "../tiles.tsj" },
+                   "object": { "id": 1, "gid": 2147483651, "width": 16, "height": 16, "x": 0, "y": 0 } })";
+    }
+
+    // tiles.tsj sits at firstgid 5 in the map, behind an embedded tileset
+    std::string const mapJson = R"({
+        "width": 1, "height": 1, "tilewidth": 16, "tileheight": 16,
+        "tilesets": [
+            { "firstgid": 1, "name": "other", "image": "other.png", "imagewidth": 64, "imageheight": 16,
+              "tilewidth": 16, "tileheight": 16, "columns": 4, "tilecount": 4 },
+            { "firstgid": 5, "source": "tiles.tsj" }
+        ],
+        "layers": [ { "type": "objectgroup", "name": "props", "objects": [
+            { "id": 2, "template": "templates/crate.tj", "x": 16, "y": 32 }
+        ] } ]
+    })";
+
+    TileMap const map = LoadTileMapFromJson(nlohmann::json::parse(mapJson), dir);
+    auto const& object = map.objectLayers.at(0).objects.at(0);
+    REQUIRE(object.tile.id == 7);
+    REQUIRE(object.tile.flipHorizontal);
+    REQUIRE(object.position.x == Catch::Approx(16.0f));
+
+    std::filesystem::remove_all(dir);
+}
+
+TEST_CASE("Loader: class defaults from a Tiled project fill in omitted properties", "[tilemap][loader]") {
+    auto const dir = std::filesystem::temp_directory_path() / "moth_tilemap_project_test";
+    std::filesystem::create_directories(dir);
+    {
+        std::ofstream project(dir / "game.tiled-project");
+        project << R"({ "propertyTypes": [
+            { "id": 1, "name": "enemy_type", "type": "enum", "storageType": "string",
+              "values": [ "enemy_basic", "enemy_blue" ], "valuesAsFlags": false },
+            { "id": 2, "name": "Offset", "type": "class",
+              "members": [ { "name": "x", "type": "float", "value": 0 } ] },
+            { "id": 3, "name": "EnemySpawn", "type": "class", "members": [
+                { "name": "enemy_type", "type": "string", "propertyType": "enemy_type", "value": "enemy_blue" },
+                { "name": "speed", "type": "float", "value": 10 },
+                { "name": "offset", "type": "class", "propertyType": "Offset", "value": {} } ] },
+            { "id": 4, "name": "Level", "type": "class", "members": [
+                { "name": "scroll_speed", "type": "float", "value": 60 } ] },
+            { "id": 5, "name": "Solid", "type": "class", "members": [
+                { "name": "friction", "type": "float", "value": 0.5 } ] }
+        ] })";
+    }
+
+    std::string const mapJson = R"({
+        "width": 1, "height": 1, "tilewidth": 16, "tileheight": 16, "class": "Level",
+        "tilesets": [
+            { "firstgid": 1, "name": "ts", "image": "ts.png", "imagewidth": 16, "imageheight": 16,
+              "tilewidth": 16, "tileheight": 16, "columns": 1, "tilecount": 1,
+              "tiles": [ { "id": 0, "type": "Solid" } ] }
+        ],
+        "layers": [
+            { "type": "tilelayer", "name": "ground", "data": [1] },
+            { "type": "objectgroup", "name": "spawns", "objects": [
+                { "id": 1, "type": "EnemySpawn", "point": true, "x": 0, "y": 0,
+                  "properties": [
+                      { "name": "enemy_type", "type": "string", "propertytype": "enemy_type", "value": "enemy_basic" },
+                      { "name": "offset", "type": "class", "propertytype": "Offset", "value": { "x": 4 } } ] }
+            ] }
+        ]
+    })";
+
+    PropertyTypes const propertyTypes = LoadPropertyTypes(dir / "game.tiled-project");
+    REQUIRE(propertyTypes.count("enemy_type") == 0); // enums are not classes
+
+    TileMap const map = LoadTileMapFromJson(nlohmann::json::parse(mapJson), dir, propertyTypes);
+    REQUIRE(GetProperty<float>(map.properties, "scroll_speed") == Catch::Approx(60.0f));
+    REQUIRE(GetProperty<float>(map.GetTileset(0).tileProperties.at(0), "friction") == Catch::Approx(0.5f));
+
+    auto const& spawn = map.objectLayers.at(0).objects.at(0);
+    REQUIRE(GetProperty<std::string>(spawn.properties, "enemy_type") == "enemy_basic"); // set on the object wins
+    REQUIRE(GetProperty<float>(spawn.properties, "speed") == Catch::Approx(10.0f));      // class default
+    REQUIRE_FALSE(HasProperty(spawn.properties, "offset"));                               // nested classes are skipped
+
+    std::filesystem::remove_all(dir);
 }

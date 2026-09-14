@@ -38,7 +38,7 @@ namespace moth::tilemap {
      * `width`/`height` tile fields).
      */
     struct TileImage {
-        std::string imagePath; ///< Image file path (relative to the map/TSJ).
+        std::string imagePath; ///< Image file path, relative to the map file.
         IntRect sourceRect;    ///< Sub-rect of the image to draw, in pixels.
     };
 
@@ -81,7 +81,7 @@ namespace moth::tilemap {
      */
     struct Tileset {
         std::string name;
-        std::string imagePath; ///< Atlas image path from the TMJ (image loading is the caller's job).
+        std::string imagePath; ///< Atlas image path, relative to the map file (image loading is the caller's job).
         int firstGid = 1;      ///< First global tile id owned by this tileset.
         int tileWidth = 0;
         int tileHeight = 0;

@@ -24,8 +24,10 @@ namespace moth::tilemap {
      * radians to Box2D's counter-clockwise radians for rectangles and ellipses;
      * polygon/polyline rotation is not applied.
      *
-     * This header needs the Box2D headers (the `box2d` package, also pulled in by
-     * `moth::physics`). It is not included by `<moth/tilemap/tilemap.h>`.
+     * This header needs the Box2D headers, but @c moth_tilemap does not depend on
+     * Box2D: a project including it must require the `box2d` package itself
+     * (@c moth::physics already does). It is not included by
+     * `<moth/tilemap/tilemap.h>`.
      *
      * @returns @p body.
      */

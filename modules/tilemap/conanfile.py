@@ -24,13 +24,12 @@ class MothTilemap(ConanFile):
         # TMJ parsing uses nlohmann_json; the renderer uses moth::gfx types. Both
         # appear in our public headers, so they must reach consumers. zlib is a
         # compiled link dependency (compressed tile data) and stays private.
-        # box2d is only needed by the optional tile_map_physics.h header, but it
-        # must reach consumers that include it.
+        # box2d is deliberately not required: the optional tile_map_physics.h
+        # header is for consumers that already depend on it (e.g. moth_physics).
         self.requires("nlohmann_json/[>=3.11 <4]", transitive_headers=True)
         self.requires("zlib/1.3.2")
         self.requires("moth_core/0.1.0", transitive_headers=True)
         self.requires("moth_graphics/2.0.0", transitive_headers=True)
-        self.requires("box2d/2.4.1", transitive_headers=True)
 
     def build_requirements(self):
         self.tool_requires("cmake/[>=3.27.0]")

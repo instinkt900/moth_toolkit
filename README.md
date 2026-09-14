@@ -232,19 +232,40 @@ world.Step(1.0f / 60.0f);               // advance the simulation
 **Package** `moth_tilemap` · **Namespace** `moth::tilemap` · **Umbrella** `<moth/tilemap/tilemap.h>`
 
 Grid-based maps from Tiled `.tmj`: `TileMap`/`Tileset`/`Layer`/`TileId`, a TMJ
-importer (embedded tilesets, CSV + base64, flip flags), culled layered rendering
-via `IGraphics`, and a world ↔ tile + query API. Depends on `moth_core` +
-`moth_graphics` + `nlohmann_json` + `zlib`.
+importer, culled layered rendering via `IGraphics`, and a world ↔ tile + query
+API. Depends on `moth_core` + `moth_graphics` + `nlohmann_json` + `zlib`.
+
+The importer handles embedded and external (`.tsj`) tilesets, atlas and
+image-collection tilesets, CSV and base64 (zlib/gzip) tile data, finite and
+infinite maps, flip flags, tile animations, parallax, layer tint/opacity, and
+object layers. Objects placed from templates (`.tj`) are resolved, with instance
+overrides applied. Custom properties are typed (`bool`/`int`/`float`/`string`/
+`Color`; object references load as the object's `int` id). Tiled leaves out
+properties that keep their class default, so pass the project's class
+definitions (`LoadPropertyTypes`) to fill those in. Nested class-typed
+properties are skipped. Image paths are returned relative to the map file;
+loading the images is the caller's job.
 
 ```cpp
 #include <moth/tilemap/tilemap.h>
 
 using namespace moth::tilemap;
-TileMap map = LoadTileMapFromFile("level.tmj");   // or LoadTileMap(jsonText)
+PropertyTypes types = LoadPropertyTypes("game.tiled-project");  // optional class defaults
+TileMap map = LoadTileMapFromFile("maps/level.tmj", types);     // or LoadTileMap(jsonText)
 
-std::vector<moth::gfx::Image> tilesets;           // one Image per tileset
+std::vector<moth::gfx::Image> tilesets;           // one Image per tileset, in map order
 DrawTileMap(graphics, map, tilesets, viewRect);   // culled, layered draw
+
+for (MapObject const& object : map.objectLayers[0].objects) {
+    float speed = GetProperty<float>(object.properties, "speed", 1.0f);
+}
 ```
+
+Tile collision shapes are collected with `CollectLayerCollisions`. The optional
+`<moth/tilemap/tile_map_physics.h>` turns them into Box2D fixtures. The umbrella
+header doesn't include it, and `moth_tilemap` doesn't depend on Box2D, so only
+include it in a project that already requires `box2d` (for example through
+`moth_physics`).
 
 ### moth::audio
 

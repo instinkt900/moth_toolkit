@@ -14,6 +14,9 @@ namespace moth::tilemap {
     /// @brief A named set of Tiled custom properties (name -> typed value).
     using Properties = std::map<std::string, PropertyValue>;
 
+    /// @brief Custom class definitions from a Tiled project (class name -> member default values).
+    using PropertyTypes = std::map<std::string, Properties>;
+
     /// @brief Returns the property @p name cast to @p T, or @p fallback if absent or a different type.
     template <typename T>
     T GetProperty(Properties const& props, std::string_view name, T const& fallback = T{}) {

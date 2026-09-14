@@ -5,9 +5,11 @@
 
 #include <zlib.h>
 
+#include <algorithm>
 #include <cctype>
 #include <cstdint>
 #include <fstream>
+#include <map>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -138,20 +140,34 @@ namespace moth::tilemap {
                 if (name.empty()) {
                     continue;
                 }
+                if (type == "class") {
+                    // A class-typed value is a nested object, which a flat Properties map can't hold.
+                    continue;
+                }
                 if (type == "bool") {
                     props[name] = entry.value("value", false);
-                } else if (type == "int") {
+                } else if (type == "int" || type == "object") {
+                    // An object property's value is the referenced object's id (0 = none).
                     props[name] = entry.value("value", 0);
                 } else if (type == "float") {
                     props[name] = entry.value("value", 0.0f);
                 } else if (type == "color") {
                     props[name] = ParseColor(entry.value("value", std::string{}));
                 } else {
-                    // "string", "file", "object", "class", and unknown types -> string.
+                    // "string", "file", and unknown types -> string.
                     props[name] = entry.value("value", std::string{});
                 }
             }
             return props;
+        }
+
+        // Tiled omits properties left at their class default; fill those in from
+        // the project's class definitions without touching the ones that are set.
+        void ApplyClassDefaults(Properties& properties, std::string const& className, PropertyTypes const& propertyTypes) {
+            auto const it = propertyTypes.find(className);
+            if (it != propertyTypes.end()) {
+                properties.insert(it->second.begin(), it->second.end());
+            }
         }
 
         nlohmann::json ReadJsonFile(std::filesystem::path const& path) {
@@ -164,7 +180,7 @@ namespace moth::tilemap {
             return nlohmann::json::parse(contents.str());
         }
 
-        MapObject ParseObject(nlohmann::json const& object) {
+        MapObject ParseObject(nlohmann::json const& object, PropertyTypes const& propertyTypes) {
             MapObject mapObject;
             mapObject.id = object.value("id", 0);
             mapObject.name = object.value("name", std::string{});
@@ -196,10 +212,11 @@ namespace moth::tilemap {
             if (object.contains("properties")) {
                 mapObject.properties = ParseProperties(object["properties"]);
             }
+            ApplyClassDefaults(mapObject.properties, mapObject.type, propertyTypes);
             return mapObject;
         }
 
-        Tileset ParseTileset(nlohmann::json const& entry, int defaultTileWidth, int defaultTileHeight) {
+        Tileset ParseTileset(nlohmann::json const& entry, int defaultTileWidth, int defaultTileHeight, PropertyTypes const& propertyTypes) {
             Tileset tileset;
             tileset.firstGid = entry.value("firstgid", 0);
             tileset.name = entry.value("name", std::string{});
@@ -218,6 +235,7 @@ namespace moth::tilemap {
             if (entry.contains("properties")) {
                 tileset.properties = ParseProperties(entry["properties"]);
             }
+            ApplyClassDefaults(tileset.properties, entry.value("class", std::string{}), propertyTypes);
             if (entry.contains("tiles") && entry["tiles"].is_array()) {
                 for (auto const& tileEntry : entry["tiles"]) {
                     int const tileId = tileEntry.value("id", 0);
@@ -238,6 +256,10 @@ namespace moth::tilemap {
                     if (tileEntry.contains("properties")) {
                         tileset.tileProperties[tileId] = ParseProperties(tileEntry["properties"]);
                     }
+                    std::string const tileClass = tileEntry.value("type", std::string{});
+                    if (propertyTypes.count(tileClass) != 0) {
+                        ApplyClassDefaults(tileset.tileProperties[tileId], tileClass, propertyTypes);
+                    }
                     if (tileEntry.contains("animation") && tileEntry["animation"].is_array()) {
                         std::vector<AnimationFrame> frames;
                         for (auto const& frameEntry : tileEntry["animation"]) {
@@ -253,17 +275,81 @@ namespace moth::tilemap {
                         // Tile collision editor shapes: positions are relative to
                         // the tile's top-left corner.
                         for (auto const& object : tileEntry["objectgroup"]["objects"]) {
-                            tileset.tileCollisions[tileId].push_back(ParseObject(object));
+                            tileset.tileCollisions[tileId].push_back(ParseObject(object, propertyTypes));
                         }
                     }
                 }
             }
             return tileset;
         }
+
+        // Lets the same file be recognised whether it is referenced from the map
+        // or from a template in another directory.
+        std::string NormalisedPathKey(std::filesystem::path const& path) {
+            return path.lexically_normal().generic_string();
+        }
+
+        // A templated object stores only the template path plus the fields and
+        // properties it overrides; layer those over the template's object.
+        nlohmann::json ResolveTemplate(nlohmann::json const& instance,
+                                       std::filesystem::path const& basePath,
+                                       std::map<std::string, int> const& externalTilesetFirstGids,
+                                       std::map<std::string, nlohmann::json>& templateCache) {
+            std::filesystem::path const templatePath = basePath / instance.value("template", std::string{});
+            std::string const templateKey = NormalisedPathKey(templatePath);
+            auto cached = templateCache.find(templateKey);
+            if (cached == templateCache.end()) {
+                cached = templateCache.emplace(templateKey, ReadJsonFile(templatePath)).first;
+            }
+            nlohmann::json const& templateJson = cached->second;
+            nlohmann::json resolved = templateJson.at("object");
+
+            // A tile template's gid is numbered within the template's own
+            // tileset reference, which may sit at a different firstgid in the map.
+            if (resolved.contains("gid") && templateJson.contains("tileset")) {
+                auto const& templateTileset = templateJson.at("tileset");
+                std::string const tsjKey = NormalisedPathKey(templatePath.parent_path() / templateTileset.value("source", std::string{}));
+                auto const mapTileset = externalTilesetFirstGids.find(tsjKey);
+                if (mapTileset == externalTilesetFirstGids.end()) {
+                    throw std::runtime_error("Object template '" + templatePath.string() + "' uses a tileset the map does not reference");
+                }
+                std::uint32_t const gid = resolved.at("gid").get<std::uint32_t>();
+                std::uint32_t const localId = (gid & TileId::kIdMask) - templateTileset.value("firstgid", 1u);
+                resolved["gid"] = (gid & ~TileId::kIdMask) | (localId + static_cast<std::uint32_t>(mapTileset->second));
+            }
+
+            for (auto const& field : instance.items()) {
+                if (field.key() != "properties" && field.key() != "template") {
+                    resolved[field.key()] = field.value();
+                }
+            }
+
+            if (instance.contains("properties") && instance.at("properties").is_array()) {
+                if (!resolved.contains("properties") || !resolved["properties"].is_array()) {
+                    resolved["properties"] = nlohmann::json::array();
+                }
+                auto& properties = resolved["properties"];
+                for (auto const& property : instance.at("properties")) {
+                    std::string const name = property.value("name", std::string{});
+                    auto const existing = std::find_if(properties.begin(), properties.end(), [&](nlohmann::json const& p) {
+                        return p.value("name", std::string{}) == name;
+                    });
+                    if (existing != properties.end()) {
+                        *existing = property;
+                    } else {
+                        properties.push_back(property);
+                    }
+                }
+            }
+
+            return resolved;
+        }
     }
 
-    TileMap LoadTileMapFromJson(nlohmann::json const& json, std::filesystem::path const& basePath) {
+    TileMap LoadTileMapFromJson(nlohmann::json const& json, std::filesystem::path const& basePath, PropertyTypes const& propertyTypes) {
         TileMap map;
+        std::map<std::string, int> externalTilesetFirstGids;     // normalised .tsj path -> firstgid
+        std::map<std::string, nlohmann::json> templateCache;     // normalised .tj path -> template json
         map.width = json.value("width", 0);
         map.height = json.value("height", 0);
         map.tileWidth = json.value("tilewidth", 0);
@@ -278,18 +364,37 @@ namespace moth::tilemap {
         if (json.contains("properties")) {
             map.properties = ParseProperties(json["properties"]);
         }
+        ApplyClassDefaults(map.properties, json.value("class", std::string{}), propertyTypes);
 
         if (json.contains("tilesets") && json["tilesets"].is_array()) {
             for (auto const& entry : json["tilesets"]) {
                 if (entry.contains("source")) {
                     // External tileset: the .tsj holds the tileset data, the map
                     // entry holds only firstgid + source path.
-                    std::filesystem::path const tsjPath = basePath / entry.value("source", std::string{});
-                    Tileset tileset = ParseTileset(ReadJsonFile(tsjPath), map.tileWidth, map.tileHeight);
+                    std::filesystem::path const source = entry.value("source", std::string{});
+                    std::filesystem::path const tsjPath = basePath / source;
+                    Tileset tileset = ParseTileset(ReadJsonFile(tsjPath), map.tileWidth, map.tileHeight, propertyTypes);
                     tileset.firstGid = entry.value("firstgid", 0);
+
+                    // Image paths inside a .tsj are relative to the .tsj; rebase
+                    // them so they are always relative to the map.
+                    std::filesystem::path const tsjDir = source.parent_path();
+                    if (!tsjDir.empty()) {
+                        auto const rebase = [&](std::string& imagePath) {
+                            if (!imagePath.empty()) {
+                                imagePath = (tsjDir / imagePath).lexically_normal().generic_string();
+                            }
+                        };
+                        rebase(tileset.imagePath);
+                        for (auto& tileImage : tileset.tileImages) {
+                            rebase(tileImage.second.imagePath);
+                        }
+                    }
+
+                    externalTilesetFirstGids[NormalisedPathKey(tsjPath)] = tileset.firstGid;
                     map.tilesets.push_back(std::move(tileset));
                 } else {
-                    map.tilesets.push_back(ParseTileset(entry, map.tileWidth, map.tileHeight));
+                    map.tilesets.push_back(ParseTileset(entry, map.tileWidth, map.tileHeight, propertyTypes));
                 }
             }
         }
@@ -316,6 +421,7 @@ namespace moth::tilemap {
                     if (entry.contains("properties")) {
                         layer.properties = ParseProperties(entry["properties"]);
                     }
+                    ApplyClassDefaults(layer.properties, entry.value("class", std::string{}), propertyTypes);
 
                     if (layer.infinite) {
                         if (entry.contains("chunks") && entry["chunks"].is_array()) {
@@ -351,10 +457,15 @@ namespace moth::tilemap {
                     if (entry.contains("properties")) {
                         objectLayer.properties = ParseProperties(entry["properties"]);
                     }
+                    ApplyClassDefaults(objectLayer.properties, entry.value("class", std::string{}), propertyTypes);
 
                     if (entry.contains("objects") && entry["objects"].is_array()) {
                         for (auto const& object : entry["objects"]) {
-                            objectLayer.objects.push_back(ParseObject(object));
+                            if (object.contains("template")) {
+                                objectLayer.objects.push_back(ParseObject(ResolveTemplate(object, basePath, externalTilesetFirstGids, templateCache), propertyTypes));
+                            } else {
+                                objectLayer.objects.push_back(ParseObject(object, propertyTypes));
+                            }
                         }
                     }
                     map.objectLayers.push_back(std::move(objectLayer));
@@ -365,12 +476,26 @@ namespace moth::tilemap {
         return map;
     }
 
-    TileMap LoadTileMap(std::string_view jsonText, std::filesystem::path const& basePath) {
-        return LoadTileMapFromJson(nlohmann::json::parse(jsonText), basePath);
+    TileMap LoadTileMap(std::string_view jsonText, std::filesystem::path const& basePath, PropertyTypes const& propertyTypes) {
+        return LoadTileMapFromJson(nlohmann::json::parse(jsonText), basePath, propertyTypes);
     }
 
-    TileMap LoadTileMapFromFile(std::filesystem::path const& path) {
+    TileMap LoadTileMapFromFile(std::filesystem::path const& path, PropertyTypes const& propertyTypes) {
         nlohmann::json const json = ReadJsonFile(path);
-        return LoadTileMapFromJson(json, path.parent_path());
+        return LoadTileMapFromJson(json, path.parent_path(), propertyTypes);
+    }
+
+    PropertyTypes LoadPropertyTypes(std::filesystem::path const& projectPath) {
+        nlohmann::json const project = ReadJsonFile(projectPath);
+        PropertyTypes propertyTypes;
+        if (project.contains("propertyTypes") && project["propertyTypes"].is_array()) {
+            for (auto const& entry : project["propertyTypes"]) {
+                // Enums need nothing here: their values arrive as plain string/int properties.
+                if (entry.value("type", std::string{}) == "class" && entry.contains("members")) {
+                    propertyTypes[entry.value("name", std::string{})] = ParseProperties(entry["members"]);
+                }
+            }
+        }
+        return propertyTypes;
     }
 }

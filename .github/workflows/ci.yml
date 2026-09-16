@@ -103,9 +103,15 @@ jobs:
           # because its detected profile is already gnu17 -- which is what
           # CMAKE_CXX_EXTENSIONS=ON produces there, so it is left detected
           # rather than forced, to keep the package_id consumers resolve.
-          EXTRA_SETTINGS: ${{ runner.os == 'Windows' && '-s compiler.cppstd=17' || '' }}
+          #
+          # fastnoise2's CMake installs its PDB directory unconditionally under
+          # MSVC, but a static build never creates it, so its package() step
+          # fails. Building it shared produces the linker PDB the install
+          # expects. Tracked here while it is confirmed; it belongs in the noise
+          # recipe once proven, so that any Windows consumer gets it too.
+          CONAN_EXTRA_ARGS: ${{ runner.os == 'Windows' && '-s compiler.cppstd=17 -o fastnoise2/*:shared=True' || '' }}
         run: |
-          conan install . -of build --build=missing -s build_type=Release $EXTRA_SETTINGS
+          conan install . -of build --build=missing -s build_type=Release $CONAN_EXTRA_ARGS
           # Listed so that a preset-name mismatch shows the available names in
           # the log instead of only "no such preset".
           cmake --list-presets || true

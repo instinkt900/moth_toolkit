@@ -90,7 +90,9 @@ jobs:
       # every module and five of the dependencies require. Linux is left as
       # detected (gnu17, matching CMAKE_CXX_EXTENSIONS) so that its package_id
       # stays the one a consumer's own detected profile resolves to.
-      EXTRA_SETTINGS: ${{ matrix.os == 'windows-latest' && '-s compiler.cppstd=17' || '' }}
+      # fastnoise2's CMake installs its PDB directory unconditionally under MSVC
+      # and a static build never creates it, so it is built shared on Windows.
+      CONAN_EXTRA_ARGS: ${{ matrix.os == 'windows-latest' && '-s compiler.cppstd=17 -o fastnoise2/*:shared=True' || '' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -154,7 +156,7 @@ jobs:
             # VARIANTS). Each produces a distinct package_id under the same
             # reference, so a consumer that needs e.g. moth_core with
             # enable_platform=False gets a binary instead of building from source.
-            conan create "modules/$m" --build=missing -s build_type=Release $EXTRA_SETTINGS
+            conan create "modules/$m" --build=missing -s build_type=Release $CONAN_EXTRA_ARGS
             while read -r variant; do
               [ -n "$variant" ] || continue
               opts=()
@@ -162,7 +164,7 @@ jobs:
                 opts+=(-o "$option")
               done
               echo "-- variant: $variant"
-              conan create "modules/$m" --build=missing -s build_type=Release $EXTRA_SETTINGS "${opts[@]}"
+              conan create "modules/$m" --build=missing -s build_type=Release $CONAN_EXTRA_ARGS "${opts[@]}"
             done < <($PY tools/moth_create.py --list-variants "$m")
 
             # ':*' uploads every binary of this reference, so the default build

@@ -56,6 +56,19 @@ else()
     target_compile_options(moth_core PRIVATE -Wall -Wextra)
 endif()
 
+# clang-tidy is opt-in via MOTH_ENABLE_CLANG_TIDY, matching moth_ui and
+# moth_graphics. core is linted here rather than relying on a consumer to do it:
+# its headers used to be checked only incidentally, by whichever module included
+# them, under that module's ruleset -- so a magic number in transform.h broke
+# moth_ui's build and gave core's author no signal at all.
+#
+# clang-tidy reads a clang command line, so it cannot lint an MSVC build.
+option(MOTH_ENABLE_CLANG_TIDY "Run clang-tidy over moth_core's sources" OFF)
+if(MOTH_ENABLE_CLANG_TIDY AND NOT MSVC)
+    find_program(CLANG_TIDY_EXE NAMES clang-tidy REQUIRED)
+    set_target_properties(moth_core PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_EXE}")
+endif()
+
 target_include_directories(moth_core PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)

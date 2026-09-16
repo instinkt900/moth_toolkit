@@ -18,4 +18,8 @@ Checks: >
   -cppcoreguidelines-macro-to-enum,
   -cppcoreguidelines-special-member-functions
 WarningsAsErrors: '*'
-HeaderFilterRegex: '.*/canyon/(include/canyon|src)/(?!stb).*'
+# Was '.*/canyon/(include/canyon|src)/(?!stb).*', a path from the canyon
+# project that matches nothing here -- so no header in this module was ever
+# linted. Scoped to moth_graphics' own headers; external/ is excluded because
+# it lives outside moth/graphics/.
+HeaderFilterRegex: '.*/moth/graphics/.*'

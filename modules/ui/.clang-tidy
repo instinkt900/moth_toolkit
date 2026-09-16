@@ -1,8 +1,13 @@
+# Scoped to moth_ui's own headers. It used to be '.*', which linted every
+# non-system header the sources pulled in -- including other modules' -- so
+# moth_ui's ruleset silently governed moth_core's code and a finding there
+# failed this module's build. Each module now lints what it owns.
+#
+# Deliberately not enabled: clang-analyzer-*, modernize-*, performance-* (not
+# triaged yet), readability-magic-numbers (duplicate of the cppcoreguidelines
+# one) and misc-include-cleaner (too noisy).
 Checks: >
   cppcoreguidelines-*,
-  # clang-analyzer-*, 
-  # modernize-*, 
-  # performance-*, 
   readability-*,
   -readability-uppercase-literal-suffix,
   -cppcoreguidelines-non-private-member-variables-in-classes,
@@ -12,9 +17,6 @@ Checks: >
   -cppcoreguidelines-pro-type-union-access,
   -cppcoreguidelines-pro-bounds-constant-array-index,
   -readability-use-anyofallof,
-  # duplicate of the cppcoreguidelines-avoid-magic-numbers,
-  -readability-magic-numbers,
-  # misc-include-cleaner
+  -readability-magic-numbers
 WarningsAsErrors: '*'
-HeaderFilterRegex: '.*'
-
+HeaderFilterRegex: '.*/moth/ui/.*'

@@ -153,30 +153,35 @@ else()
     set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-Wall -Werror")
 endif()
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR DEFINED ENV{CI})
-    find_program(CLANG_TIDY_EXE NAMES clang-tidy)
-    if(CLANG_TIDY_EXE)
-        # --extra-arg=-Wno-ignored-gch: clang-tidy uses Clang, which cannot read
-        # GCC-format PCH files. Suppressing the warning entirely (not just -Wno-error)
-        # prevents clang-tidy's WarningsAsErrors from re-promoting it to an error.
-        set_target_properties(${PROJECT_NAME} PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_EXE};--extra-arg=-Wno-ignored-gch")
-        # Third-party source files — skip all linting (requires CMake 3.27+)
-        set_source_files_properties(
-            external/imgui/imgui.cpp
-            external/imgui/imgui_draw.cpp
-            external/imgui/imgui_tables.cpp
-            external/imgui/imgui_widgets.cpp
-            external/imgui/backends/imgui_impl_glfw.cpp
-            external/imgui/backends/imgui_impl_vulkan.cpp
-            external/murmurhash.c/murmurhash.c
-            src/graphics/vulkan/shaders/vulkan_shaders.cpp
-            PROPERTIES SKIP_LINTING ON
-        )
-    elseif(DEFINED ENV{CI})
-        message(FATAL_ERROR "clang-tidy not found but required in CI")
-    else()
-        message(STATUS "clang-tidy not found, skipping")
-    endif()
+# clang-tidy is opt-in via MOTH_ENABLE_CLANG_TIDY. It used to switch itself on
+# from ENV{CI}, which made the build depend on ambient environment: the same
+# command produced a different build locally and in CI, so a lint failure could
+# only ever be discovered by pushing. ENV{CI} is also set in anybody's CI, so a
+# downstream build of this package inside GitHub Actions had the linter forced
+# on (see the Camina engine, issue instinkt900/camina#201).
+#
+# clang-tidy reads a clang command line, so it cannot lint an MSVC build: it
+# never sees /EHsc there and rejects every throw with "cannot use 'throw' with
+# exceptions disabled".
+option(MOTH_ENABLE_CLANG_TIDY "Run clang-tidy over moth_graphics's sources" OFF)
+if(MOTH_ENABLE_CLANG_TIDY AND NOT MSVC)
+	find_program(CLANG_TIDY_EXE NAMES clang-tidy REQUIRED)
+	# --extra-arg=-Wno-ignored-gch: clang-tidy uses Clang, which cannot read
+	# GCC-format PCH files. Suppressing the warning entirely (not just -Wno-error)
+	# prevents clang-tidy's WarningsAsErrors from re-promoting it to an error.
+	set_target_properties(${PROJECT_NAME} PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_EXE};--extra-arg=-Wno-ignored-gch")
+	# Third-party source files - skip all linting (requires CMake 3.27+)
+	set_source_files_properties(
+		external/imgui/imgui.cpp
+		external/imgui/imgui_draw.cpp
+		external/imgui/imgui_tables.cpp
+		external/imgui/imgui_widgets.cpp
+		external/imgui/backends/imgui_impl_glfw.cpp
+		external/imgui/backends/imgui_impl_vulkan.cpp
+		external/murmurhash.c/murmurhash.c
+		src/graphics/vulkan/shaders/vulkan_shaders.cpp
+		PROPERTIES SKIP_LINTING ON
+	)
 endif()
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/common.h)

@@ -169,22 +169,20 @@ else()
 	set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-Werror -Wall")
 endif()
 
-# clang-tidy reads a clang command line, so it cannot lint an MSVC build. It
-# never sees /EHsc there and rejects every throw in this library with "cannot
-# use 'throw' with exceptions disabled".
+# clang-tidy is opt-in via MOTH_ENABLE_CLANG_TIDY. It used to switch itself on
+# from ENV{CI}, which made the build depend on ambient environment: the same
+# command produced a different build locally and in CI, so a lint failure could
+# only ever be discovered by pushing. ENV{CI} is also set in anybody's CI, so a
+# downstream build of this package inside GitHub Actions had the linter forced
+# on (see the Camina engine, issue instinkt900/camina#201).
 #
-# That reached a consumer rather than this project. ENV{CI} is set in anybody's
-# CI, so a downstream build of this package inside GitHub Actions turned the
-# linter on and failed on Windows. See the Camina engine, issue instinkt900/camina#201.
-if((CMAKE_BUILD_TYPE STREQUAL "Debug" OR DEFINED ENV{CI}) AND NOT MSVC)
-	find_program(CLANG_TIDY_EXE NAMES clang-tidy)
-	if(CLANG_TIDY_EXE)
-		set_target_properties(${PROJECT_NAME} PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_EXE}")
-	elseif(DEFINED ENV{CI})
-		message(FATAL_ERROR "clang-tidy not found but required in CI")
-	else()
-		message(STATUS "clang-tidy not found, skipping")
-	endif()
+# clang-tidy reads a clang command line, so it cannot lint an MSVC build: it
+# never sees /EHsc there and rejects every throw with "cannot use 'throw' with
+# exceptions disabled".
+option(MOTH_ENABLE_CLANG_TIDY "Run clang-tidy over moth_ui's sources" OFF)
+if(MOTH_ENABLE_CLANG_TIDY AND NOT MSVC)
+	find_program(CLANG_TIDY_EXE NAMES clang-tidy REQUIRED)
+	set_target_properties(${PROJECT_NAME} PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_EXE}")
 endif()
 
 install(TARGETS ${PROJECT_NAME}

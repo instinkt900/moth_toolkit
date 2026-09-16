@@ -35,6 +35,11 @@ option(MOTH_ENABLE_TOOLKIT "Build the moth::toolkit aggregate target"           
 option(MOTH_ENABLE_TOOLS "Build the CLI tools (moth_pak, moth_packer)"               OFF)
 option(MOTH_ENABLE_EXAMPLES "Build the example projects"                              OFF)
 
+# Opt-in linting. The modules that have a .clang-tidy ruleset (core, gfx, ui)
+# honour this; CI turns it on explicitly so that a local build with the same
+# flags produces the same result.
+option(MOTH_ENABLE_CLANG_TIDY "Run clang-tidy over the modules that define a ruleset" OFF)
+
 # ---------------------------------------------------------------------------
 # Dependency constraints
 # ---------------------------------------------------------------------------

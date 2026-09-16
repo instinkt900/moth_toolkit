@@ -23,3 +23,7 @@ if(MSVC)
     target_compile_definitions(${PROJECT_NAME} PRIVATE _CRT_SECURE_NO_WARNINGS)
     target_compile_options(${PROJECT_NAME} PRIVATE /W3 /WX /utf-8)
 endif()
+
+include(CTest)
+include(Catch)
+catch_discover_tests(${PROJECT_NAME})

@@ -1,4 +1,5 @@
 from conan import ConanFile
+from conan.tools.build import check_min_cppstd
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 from conan.tools.files import load
 
@@ -20,6 +21,26 @@ class MothNoise(ConanFile):
     def set_version(self):
         if not self.version:
             self.version = load(self, os.path.join(self.recipe_folder, "version.txt")).strip()
+
+    def configure(self):
+        # FastNoise2's CMake installs its PDB directory inside an unconditional
+        # if(MSVC) block with no option to turn it off. A static MSVC build never
+        # creates that directory, so fastnoise2's package() fails:
+        #
+        #   file INSTALL cannot find ".../build/pdb-files/Release"
+        #
+        # Built shared, the linker writes the PDB the install expects. Nothing on
+        # ConanCenter avoids it: 1.1.1 has a single recipe revision. Set here
+        # rather than in CI so that anyone building moth_noise on Windows gets it.
+        if self.settings.os == "Windows":
+            self.options["fastnoise2/*"].shared = True
+
+    def validate(self):
+        # Every module is C++17 (CMAKE_CXX_STANDARD 17). Checked here so a profile
+        # below it -- MSVC's autodetected default is 14 -- fails with one clear
+        # message naming this package, instead of a validation error from each
+        # dependency that also needs 17.
+        check_min_cppstd(self, 17)
 
     def requirements(self):
         # The node graph and its JSON form.

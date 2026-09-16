@@ -103,12 +103,11 @@ jobs:
           # CMAKE_CXX_EXTENSIONS=ON produces there, so it is left detected
           # rather than forced, to keep the package_id consumers resolve.
           #
-          # fastnoise2's CMake installs its PDB directory unconditionally under
-          # MSVC, but a static build never creates it, so its package() step
-          # fails. Building it shared produces the linker PDB the install
-          # expects. Tracked here while it is confirmed; it belongs in the noise
-          # recipe once proven, so that any Windows consumer gets it too.
-          CONAN_EXTRA_ARGS: ${{ runner.os == 'Windows' && '-s compiler.cppstd=17 -o fastnoise2/*:shared=True' || '' }}
+          # The recipes check_min_cppstd(17), but that only rejects a lower
+          # standard with a clear message; it cannot raise the profile's, so the
+          # setting still has to be passed. The fastnoise2 shared workaround that
+          # used to sit here now lives in the recipes that consume it.
+          CONAN_EXTRA_ARGS: ${{ runner.os == 'Windows' && '-s compiler.cppstd=17' || '' }}
         run: |
           # The MOTH_ENABLE_* flags for this configuration also decide which
           # dependencies Conan has to provision, so they are translated into the

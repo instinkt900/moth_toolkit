@@ -1,4 +1,5 @@
 from conan import ConanFile
+from conan.tools.build import check_min_cppstd
 from conan.tools.cmake import cmake_layout
 
 
@@ -81,6 +82,20 @@ class MothToolkitSuperbuild(ConanFile):
         # (and emit the conan-release preset) so `conan install .` behaves like
         # the standalone module recipes instead of dumping files in the root.
         cmake_layout(self)
+
+    def configure(self):
+        # The superbuild consumes fastnoise2 directly, so it needs the same
+        # Windows workaround as the moth_noise recipe: FastNoise2's CMake installs
+        # a PDB directory that a static MSVC build never creates. See
+        # modules/noise/conanfile.py.
+        if self.settings.os == "Windows" and self.options.enable_noise:
+            self.options["fastnoise2/*"].shared = True
+
+    def validate(self):
+        # Every module is C++17. Checked here so a profile below it -- MSVC's
+        # autodetected default is 14 -- fails with one clear message instead of a
+        # validation error from each dependency that also needs 17.
+        check_min_cppstd(self, 17)
 
     def _enabled(self, *modules):
         """True when any of the named modules is enabled."""

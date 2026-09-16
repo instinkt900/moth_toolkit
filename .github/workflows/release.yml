@@ -95,9 +95,9 @@ jobs:
       # every module and five of the dependencies require. Linux is left as
       # detected (gnu17, matching CMAKE_CXX_EXTENSIONS) so that its package_id
       # stays the one a consumer's own detected profile resolves to.
-      # fastnoise2's CMake installs its PDB directory unconditionally under MSVC
-      # and a static build never creates it, so it is built shared on Windows.
-      CONAN_EXTRA_ARGS: ${{ matrix.os == 'windows-2025' && '-s compiler.cppstd=17 -o fastnoise2/*:shared=True' || '' }}
+      # The recipes check_min_cppstd(17), which rejects a lower standard with a
+      # clear message but cannot raise the profile's, so it is still passed here.
+      CONAN_EXTRA_ARGS: ${{ matrix.os == 'windows-2025' && '-s compiler.cppstd=17' || '' }}
     steps:
       - uses: actions/checkout@v4
         with:

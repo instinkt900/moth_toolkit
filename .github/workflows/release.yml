@@ -65,16 +65,36 @@ jobs:
           echo "Release: [$release_modules]"
 
   publish:
-    name: Build & upload
+    name: Build & upload (${{ matrix.platform }})
     if: needs.detect.outputs.release_modules != ''
     needs: detect
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Each platform publishes its own binaries under the same recipe, so a
+      # failure on one must not cancel an upload already under way on the other.
+      fail-fast: false
+      # One upload at a time, for the same reason the whole workflow is
+      # serialised: the platforms share a recipe revision on the remote and
+      # should not push it concurrently.
+      max-parallel: 1
+      matrix:
+        include:
+          - platform: linux
+            os: ubuntu-latest
+          - platform: windows
+            os: windows-latest
+    env:
+      # The Windows runners provide 'python'; ubuntu provides 'python3'.
+      PY: ${{ matrix.os == 'windows-latest' && 'python' || 'python3' }}
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
 
+      # Linux resolves GLFW/FreeType/HarfBuzz/Vulkan from the system; on Windows
+      # the recipes pull them from Conan instead, so there is nothing to install.
       - name: Install system dependencies
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y pkg-config libglfw3-dev libfreetype-dev libharfbuzz-dev libvulkan-dev
@@ -84,6 +104,7 @@ jobs:
           cache_packages: true
 
       - name: Add private artifactory remote
+        shell: bash
         run: |
           conan remote add artifactory "${{ vars.ARTIFACTORY_URL }}" --force
           conan remote login artifactory "${{ vars.ARTIFACTORY_USER }}" -p "${{ secrets.ARTIFACTS_TOKEN }}"
@@ -102,7 +123,7 @@ jobs:
           while read -r m pkg; do
             PKG[$m]="$pkg"
             ORDER+=("$m")
-          done < <(python3 tools/moth_create.py --list --with-packages)
+          done < <($PY tools/moth_create.py --list --with-packages)
 
           # Export every recipe first. Modules pin their siblings to exact
           # versions (moth_packer requires moth_core/0.1.0), so a lone packer
@@ -137,7 +158,7 @@ jobs:
               done
               echo "-- variant: $variant"
               conan create "modules/$m" --build=missing -s build_type=Release "${opts[@]}"
-            done < <(python3 tools/moth_create.py --list-variants "$m")
+            done < <($PY tools/moth_create.py --list-variants "$m")
 
             # ':*' uploads every binary of this reference, so the default build
             # and all its variants ship together. A dependency built from source

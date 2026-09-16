@@ -10,7 +10,6 @@ turn on/off feature by feature.
 
 ## Table of Contents
 
-- [Status](#status)
 - [Modules](#modules)
   - [moth::core](#mothcore)
   - [moth::gfx](#mothgfx)
@@ -21,501 +20,176 @@ turn on/off feature by feature.
   - [moth::tilemap](#mothtilemap)
   - [moth::audio](#mothaudio)
   - [moth::assets](#mothassets)
+  - [moth::anim](#mothanim)
   - [moth::net](#mothnet)
   - [moth::noise](#mothnoise)
   - [moth::profile](#mothprofile)
   - [moth::packer](#mothpacker)
-  - [moth::toolkit](#mothtoolkit)- [Using the toolkit as a whole](#using-the-toolkit-as-a-whole)
+  - [moth::toolkit](#mothtoolkit)
+- [Using the toolkit as a whole](#using-the-toolkit-as-a-whole)
 - [Building](#building)
-- [Refreshing the local Conan cache](#refreshing-the-local-conan-cache)
-- [Starting a new game](#starting-a-new-game)
-- [Packing assets](#packing-assets)
-- [Packing images](#packing-images)
-- [Custom shaders](#custom-shaders)
-- [Layout](#layout)
-
-## Status
-
-The `moth_ui` and `moth_graphics` repos are imported (with full history) under
-`modules/ui/` and `modules/gfx/`. The `core`, `gfx`, `ui`, `bridge`, `ecs`,
-`physics`, `tilemap`, `audio`, and `assets` modules are wired into the superbuild
-and Conan-packaged; `moth::ecs` (EnTT-backed entity-component system) replaced
-the interim `moth::gfx::scene::Scene`/`Entity` model, `moth::physics` wraps
-Box2D, `moth::tilemap` loads and renders Tiled `.tmj` maps, `moth::audio` wraps
-miniaudio, and `moth::assets` adds id/path asset addressing plus a `.pak` pack
-format (cooked by the `moth_pak` CLI). `moth::packer` builds texture atlases and
-flipbook sheets (cooked by the `moth_packer` CLI).
+- [Tools](#tools)
+  - [moth_create](#moth_create)
+  - [moth_new](#moth_new)
+  - [moth_pak](#moth_pak)
+  - [moth_packer](#moth_packer)
+- [License](#license)
 
 ## Modules
 
 Every module is a Conan package (`moth_*`) and a CMake target (`moth::*`).
-Package versions live in each module's `modules/*/version.txt` (read by its
-`conanfile.py` at create time); `moth_graphics` and `moth_ui` are `2.0.0`, the
-rest are `0.1.0`. Use a module on its own by depending on its package, or use the
-whole toolkit through `moth_toolkit` (see [below](#using-the-toolkit-as-a-whole)).
+Each module has its own version in `modules/*/version.txt`, which its
+`conanfile.py` reads at create time. Use a module on its own by depending on its
+package, or use the whole toolkit through `moth_toolkit` (see
+[below](#using-the-toolkit-as-a-whole)).
+
+The summaries below say what each module is for. Each module's README has the
+full API, examples, and build options.
 
 ### moth::core
 
-**Package** `moth_core` · **Namespace** `moth::core` · **Headers** `<moth/core/*.h>` (no umbrella; include individually)
+The foundation that every other module builds on. It has the basic math types
+(vectors, rectangles, colours, transforms), random numbers and simple noise,
+timers and tweens, events, a fixed-timestep game loop, keyboard/mouse/gamepad
+input, and the native window.
 
-Always-present foundation. Math/types (`Vector`/`Rect`/`Color`/`Transform2D`/
-`BlendMode`/`TextAlignment`/`AABB`/`geometry`/`angle`/`interp`), game math
-(`Random`, `PerlinNoise`/`SimplexNoise`), timing (`Timer`/`Stopwatch`/`Cooldown`/
-`Tween`), the event system (`Event`/`IEventListener`/`EventDispatch`/
-`EventEmitter`), `Ticker` (fixed-timestep loop), pollable `Input`
-(key/mouse/gamepad + action map + axes), the abstract `Window`, and the native
-GLFW window (`moth::core::glfw::Window` + `PollGamepads`). Depends on
-`nlohmann_json`, `fmt`, `spdlog`, and GLFW (system GLFW on Linux).
-
-```cpp
-#include <moth/core/vector.h>
-#include <moth/core/rect.h>
-#include <moth/core/color.h>
-#include <moth/core/ticker.h>
-#include <moth/core/input.h>
-
-using namespace moth::core;
-
-FloatVec2 velocity = { 3.0f, -1.5f };
-IntRect  viewport = MakeRect(0, 0, 1280, 720);
-Color    tint     = Color{ 1.0f, 0.4f, 0.2f, 1.0f };
-
-Ticker ticker(60);                       // 60 Hz fixed loop (TickFixed/Tick)
-auto& input = Input::Get();              // Input is a process-wide singleton
-input.BindAction("jump", Key::Space);    // or a mouse/gamepad button
-if (input.IsActionPressed("jump")) { /* ... */ }
-```
+→ [`modules/core/README.md`](modules/core/README.md)
 
 ### moth::gfx
 
-**Package** `moth_graphics` · **Namespace** `moth::gfx` · **Umbrella** `<moth/graphics/moth_graphics.h>`
+The 2D renderer, built on Vulkan. It draws shapes, images, text, and sprites,
+supports render targets, cameras, and custom shaders, and loads textures and
+fonts. It also has `moth::gfx::game::Game`, a minimal run loop and the quickest
+way to get a window on screen.
 
-The Vulkan-backed 2D renderer. `IGraphics` (immediate-mode draw calls between
-`Begin`/`End`, render targets, push/pop state, float coords, textured quads,
-nine-slice, custom shaders), `IGraphicsDevice` (render-target creation), value
-types (`Image`/`ITexture`/`IFont`), `AssetContext` + factories
-(texture/font/spritesheet/shader), `Sprite`/`SpriteSheet`/`SpriteBatch`,
-`Camera`, and the platform bootstrap (`IPlatform`/`Window`/`ImGuiContext`) that
-creates the surface and owns the graphics/device. Also `moth::gfx::game::{Game,
-Scene}` for a minimal run loop. Depends on `moth_core` + GLFW/FreeType/HarfBuzz
-(system on Linux) + Vulkan, optionally `glslang`.
+→ [`modules/gfx/README.md`](modules/gfx/README.md)
+
+#### Custom shaders
+
+`moth::gfx` can draw Shadertoy-style fragment shaders. Compile GLSL at runtime
+(opt-in, needs glslang) or load precompiled SPIR-V, then set it as the active
+shader and draw shapes as usual:
 
 ```cpp
-#include <moth/graphics/game/game.h>
-
-using namespace moth::gfx;
-using namespace moth::gfx::game;
-using namespace moth::core;
-
-class GameScene : public Scene {
-    void Update(float dt) override { m_time += dt; }
-    void Draw(IGraphics& graphics) override {
-        graphics.SetColor(Color{ 0.10f, 0.12f, 0.16f, 1.0f });
-        graphics.DrawFillRectF(FloatRect{ { 0, 0 }, { 1280, 720 } });
-        graphics.SetColor(Color{ 1.0f, 0.4f, 0.2f, 1.0f });
-        graphics.DrawFillRectF(FloatRect{ { 400, 328 }, { 432, 392 } });
+auto shader = assetContext.GetShaderFactory().CreateFromGLSL("plasma", R"GLSL(
+    void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+        vec2 uv = fragCoord / iResolution.xy;
+        fragColor = vec4(0.5 + 0.5 * cos(iTime + uv.xyx + vec3(0, 2, 4)), 1.0);
     }
-    float m_time = 0.0f;
-};
+)GLSL");
 
-int main() {
-    Game game{ "Hello Moth", 1280, 720 };
-    return game.Run(std::make_unique<GameScene>());
-}
+graphics.SetShader(shader.get());          // every draw now uses this shader
+graphics.DrawFillRectF(rect);              // rasterised by the shader
+graphics.DrawFillCircleF(center, radius);  // likewise
+graphics.SetShader(nullptr);               // back to the default shader
 ```
 
-For a raw (non-`game::Game`) window, `platform::IPlatform` gives you a
-`platform::Window` whose `GetGraphics()`/`GetDevice()` expose the renderer and
-resource creator; `SurfaceContext::GetAssetContext()` loads textures/fonts.
+The shader receives the interpolated vertex colour (`SetColor`), the shape-local
+`uv` (0..1), and the Shadertoy built-ins `iTime`/`iResolution`/`iMouse`. Bind up
+to four images with `Shader::SetChannel(0..3, image)` (`iChannel0..3`); `DrawImage`
+also honours the shader and binds its image as `iChannel0`. `DrawText` ignores the
+active shader. Runtime GLSL compilation is off by default — enable it with
+`-DMOTH_GRAPHICS_ENABLE_GLSLANG=ON` (and `-o enable_glslang=True` for Conan). See
+`examples/shader_demo/` for a full sample.
 
 ### moth::ui
 
-**Package** `moth_ui` · **Namespace** `moth::ui` · **Umbrella** `<moth/ui/moth_ui.h>`
+A UI system for menus, HUDs, and screens. You lay out a tree of nodes, stack
+them in layers, animate them with keyframes, and move between screens. It
+doesn't draw anything itself; `moth::bridge` connects it to `moth::gfx`.
 
-A node-graph UI system: `Context`, `LayerStack`, `Node` hierarchy, keyframe
-animation, and screen flow. It defines renderer-agnostic abstractions
-(`IRenderer`/`IImage`/`IFont`/`IFlipbook`) and is decoupled from any backend —
-rendering happens through `moth::bridge` (see below). Depends on `moth_core` +
-`nlohmann_json`, `magic_enum`, `range-v3`, `fmt`.
-
-```cpp
-#include <moth/ui/moth_ui.h>
-
-using namespace moth::ui;
-// Build a Context (node graph + layer stack), populate a Node hierarchy, and
-// drive its animation tracks. Rendering is done through moth::bridge's
-// MothRenderer, which adapts IRenderer onto moth::gfx's IGraphics.
-```
+→ [`modules/ui/README.md`](modules/ui/README.md)
 
 ### moth::bridge
 
-**Package** `moth_bridge` · **Namespace** `moth::bridge` · **Headers** `<moth/bridge/application.h>`, `<moth/bridge/ui_window.h>`
+The glue between `moth::ui` and `moth::gfx`. It renders UI through the gfx
+renderer and provides `Application`, a game loop with a UI and ImGui built in.
+Use it when your game uses `moth::ui`.
 
-The ui ↔ gfx glue. Adapts `moth::ui::IRenderer` onto `moth::gfx::IGraphics`
-(`MothRenderer`/`MothImage`/`MothFont`/`MothFlipbook` + factories), composes a
-gfx `Window` with a `moth::ui` context + ImGui (`UiWindow`), and provides
-`Application`, a UI-driven game loop. Depends on `moth_core` + `moth_graphics` +
-`moth_ui`.
-
-```cpp
-#include <moth/bridge/application.h>
-#include <moth/graphics/platform/glfw/glfw_platform.h>
-
-class MyGame : public moth::bridge::Application {
-public:
-    MyGame(moth::gfx::platform::IPlatform& platform)
-        : Application(platform, "My Game", 1280, 720) {}
-    void Startup() override          { /* before the window is created */ }
-    void PostCreateWindow() override { /* window + ImGui ready */ }
-    void TickFixed(uint32_t ticks) override {
-        Application::TickFixed(ticks);   // updates the UI
-        /* fixed-step logic */
-    }
-};
-
-int main() {
-    moth::gfx::platform::glfw::Platform platform;
-    platform.Startup();
-    MyGame game(platform);
-    game.Init();
-    game.Run();
-    platform.Shutdown();
-}
-```
+→ [`modules/bridge/README.md`](modules/bridge/README.md)
 
 ### moth::ecs
 
-**Package** `moth_ecs` · **Namespace** `moth::ecs` · **Umbrella** `<moth/ecs/ecs.h>`
+An entity-component system built on [EnTT](https://github.com/skypjack/entt).
+Create entities, attach components to them, and run systems over them in a set
+order.
 
-A header-only, EnTT-backed entity-component system: `World` (a thin
-`entt::registry` wrapper), core components (`Transform`/`Active`/`Tag`), and a
-`Scheduler` for ordered systems. Depends on `moth_core` + `entt`.
-
-```cpp
-#include <moth/ecs/ecs.h>
-
-using namespace moth::ecs;
-World world;
-Entity e = world.Create();
-world.Emplace<Active>(e);                 // core component (or your own types)
-if (world.Has<Active>(e)) { world.Get<Active>(e).value = false; }
-
-Scheduler update;
-update.Add([](World& w, float dt) { /* system */ });
-update.Run(world, 1.0f / 60.0f);
-```
+→ [`modules/ecs/README.md`](modules/ecs/README.md)
 
 ### moth::physics
 
-**Package** `moth_physics` · **Namespace** `moth::physics` · **Umbrella** `<moth/physics/physics.h>`
+2D rigid-body physics built on [Box2D](https://box2d.org/). It manages the
+physics world (gravity, stepping, collisions, ray and area queries) and uses
+Box2D's own types for bodies and shapes.
 
-A Box2D 2.4.1 wrapper: `World` (gravity, step, body create/destroy, contact
-listener, AABB/ray queries) plus `ToB2`/`FromB2` vector helpers. Bodies,
-fixtures, shapes, and forces are Box2D's own types. Depends on `moth_core` +
-`box2d`.
-
-```cpp
-#include <moth/physics/physics.h>
-
-using namespace moth::physics;
-World world({ 0.0f, -10.0f });          // gravity
-
-b2BodyDef bodyDef;
-bodyDef.type = b2_dynamicBody;
-bodyDef.position = b2Vec2{ 0.0f, 5.0f };
-b2Body* body = world.CreateBody(bodyDef);
-
-b2CircleShape shape;
-shape.m_radius = 0.5f;
-b2FixtureDef fixture;
-fixture.shape = &shape;
-fixture.density = 1.0f;
-body->CreateFixture(&fixture);
-
-world.Step(1.0f / 60.0f);               // advance the simulation
-```
+→ [`modules/physics/README.md`](modules/physics/README.md)
 
 ### moth::tilemap
 
-**Package** `moth_tilemap` · **Namespace** `moth::tilemap` · **Umbrella** `<moth/tilemap/tilemap.h>`
+Loads and draws tile maps made in the [Tiled](https://www.mapeditor.org/) map
+editor (`.tmj`), including tilesets, animated tiles, object layers, and custom
+properties. It can also turn tile collision shapes into physics bodies.
 
-Grid-based maps from Tiled `.tmj`: `TileMap`/`Tileset`/`Layer`/`TileId`, a TMJ
-importer, culled layered rendering via `IGraphics`, and a world ↔ tile + query
-API. Depends on `moth_core` + `moth_graphics` + `nlohmann_json` + `zlib`.
-
-The importer handles embedded and external (`.tsj`) tilesets, atlas and
-image-collection tilesets, CSV and base64 (zlib/gzip) tile data, finite and
-infinite maps, flip flags, tile animations, parallax, layer tint/opacity, and
-object layers. Objects placed from templates (`.tj`) are resolved, with instance
-overrides applied. Custom properties are typed (`bool`/`int`/`float`/`string`/
-`Color`; object references load as the object's `int` id). Tiled leaves out
-properties that keep their class default, so pass the project's class
-definitions (`LoadPropertyTypes`) to fill those in. Nested class-typed
-properties are skipped. Image paths are returned relative to the map file;
-loading the images is the caller's job.
-
-```cpp
-#include <moth/tilemap/tilemap.h>
-
-using namespace moth::tilemap;
-PropertyTypes types = LoadPropertyTypes("game.tiled-project");  // optional class defaults
-TileMap map = LoadTileMapFromFile("maps/level.tmj", types);     // or LoadTileMap(jsonText)
-
-std::vector<moth::gfx::Image> tilesets;           // one Image per tileset, in map order
-DrawTileMap(graphics, map, tilesets, viewRect);   // culled, layered draw
-
-for (MapObject const& object : map.objectLayers[0].objects) {
-    float speed = GetProperty<float>(object.properties, "speed", 1.0f);
-}
-```
-
-Tile collision shapes are collected with `CollectLayerCollisions`. The optional
-`<moth/tilemap/tile_map_physics.h>` turns them into Box2D fixtures. The umbrella
-header doesn't include it, and `moth_tilemap` doesn't depend on Box2D, so only
-include it in a project that already requires `box2d` (for example through
-`moth_physics`).
+→ [`modules/tilemap/README.md`](modules/tilemap/README.md)
 
 ### moth::audio
 
-**Package** `moth_audio` · **Namespace** `moth::audio` · **Umbrella** `<moth/audio/audio.h>`
+Sound effects and music built on [miniaudio](https://miniaud.io/). Load a sound
+and play, pause, loop, or change its volume and pitch.
 
-A miniaudio wrapper: `AudioEngine` (device/node graph, master volume, null-device
-mode) and `Sound` (decoded one-shot or streamed music; play/pause/stop/volume/
-looping/pitch/seek/length). Depends on `moth_core` + `miniaudio`.
-
-```cpp
-#include <moth/audio/audio.h>
-
-using namespace moth::audio;
-AudioEngine engine;                       // set AudioEngineConfig::noDevice for headless
-engine.Start();
-
-Sound blip  = engine.LoadSound("blip.wav");
-Sound music = engine.LoadMusic("theme.ogg");
-music.SetVolume(0.4f);
-music.Play();
-blip.Play();
-```
+→ [`modules/audio/README.md`](modules/audio/README.md)
 
 ### moth::assets
 
-**Package** `moth_assets` · **Namespace** `moth::assets` · **Umbrella** `<moth/assets/assets.h>` (+ `<moth/assets/pak.h>`)
+Finds game assets by path or by a numeric id, and reads them from loose files or
+from a single `.pak` archive (made with the [`moth_pak`](#moth_pak) tool).
 
-Id/path asset addressing and a `.pak` pack format. Each asset's id is the FNV-1a
-hash of its relative path, so it can be addressed by id or path. Cook a folder
-with `moth_pak`, then load the archive at runtime via `PackedAssetSource` and
-feed the bytes to any `...FromMemory` loader. Depends on `moth_core` +
-`nlohmann_json`.
-
-```cpp
-#include <moth/assets/assets.h>
-#include <moth/assets/pak.h>
-
-auto source = moth::assets::PackedAssetSource::Load("data.pak");
-auto bytes = source.Read(idOrPath);       // by AssetId or path string
-engine.LoadSoundFromMemory(bytes);        // any FromMemory loader
-```
+→ [`modules/assets/README.md`](modules/assets/README.md)
 
 ### moth::anim
 
-**Package** `moth_anim` · **Namespace** `moth::anim` · **Umbrella** `<moth/anim/moth_anim.h>`
+Character animation driven by data. Describe animation states (idle, run, jump)
+and the transitions between them in JSON, and an `Animator` plays the right
+sprite clips.
 
-Data-driven character animation. `AnimSet`/`StateSpec`/`TransitionSpec` describe
-states and transitions in JSON (each state maps to a `.flipbook.json` clip), and
-`Animator` drives a `gfx::Sprite` through them — including one-shot transition
-clips and automatic `onComplete` chaining (`jump` → `landing` → `idle`).
-`gfx::Sprite` itself gains horizontal flip, playback speed, and clip
-start/stop/loop callbacks. Depends on `moth_core` + `moth_graphics`.
-
-```cpp
-#include <moth/anim/moth_anim.h>
-
-moth::anim::Animator animator(sheet, set);   // set loaded from .anim.json
-animator.TransitionTo("run");
-animator.Update(elapsedMs);
-animator.GetSprite().SetFlipX(facingLeft);
-```
+→ [`modules/anim/README.md`](modules/anim/README.md)
 
 ### moth::net
 
-**Package** `moth_net` · **Namespace** `moth::net` · **Umbrella** `<moth/net/net.h>`
+Simple networking for multiplayer games: a TCP server and client that send JSON
+messages. It has no background threads; you call `Poll()` once per frame.
 
-A poll-driven, host-authoritative TCP module. `TcpServer`/`TcpClient` speak a
-length-prefixed JSON wire format (4-byte big-endian length + UTF-8 JSON with a
-`type` tag and a per-sender `seq`), dispatches incoming messages to handlers
-registered by `type` string, and drains the asio `io_context` on the app thread
-via `Poll()` — no background threads. Depends on `moth_core` + `asio`.
-
-```cpp
-#include <moth/net/net.h>
-
-using namespace moth::net;
-
-TcpServer server;
-server.SetHandler("Ping", [&](TcpServer::ConnectionId from, nlohmann::json const& p) {
-    server.Send(from, "Pong", nlohmann::json{{"answer", p["value"].get<int>() + 1}});
-});
-server.Listen(47624);                       // 0 = ephemeral port; GetPort() reads it
-
-TcpClient client;
-client.SetHandler("Pong", [&](nlohmann::json const& p) { /* ... */ });
-client.Connect("127.0.0.1", 47624);
-client.Send("Ping", nlohmann::json{{"value", 41}});
-
-// In the game loop, tick both once per frame:
-server.Poll();
-client.Poll();
-```
+→ [`modules/net/README.md`](modules/net/README.md)
 
 ### moth::noise
 
-**Package** `moth_noise` · **Namespace** `moth::noise` · **Umbrella** `<moth/noise/noise.h>`
+Advanced noise generation built on [FastNoise2](https://github.com/Auburn/FastNoise2),
+for terrain and other procedural content. Noise graphs are saved in a readable
+JSON format and loaded at runtime. For a quick Perlin or Simplex sample,
+`moth::core` is enough.
 
-Node-graph noise built on [FastNoise2](https://github.com/Auburn/FastNoise2).
-Where `moth/core/noise.h` gives you a dependency-free Perlin or Simplex sample
-for when you just want *something*, this module is for applications that depend
-on robust, authored noise: full generator graphs — fractals, domain warp,
-cellular, blends — loaded from a file and evaluated at runtime.
-
-`NodeTree` owns a FastNoise node graph and converts it to and from JSON.
-FastNoise's own interchange format is an opaque base64 blob; the JSON form here
-is keyed by the node and parameter names FastNoise's metadata reports, so a
-saved graph stays readable, diffable and hand-editable. `FromEncodedString` /
-`ToEncodedString` bridge to the base64 encoding for interoperating with the
-upstream node editor.
-
-The module deliberately depends on `moth_core` only for its types, never its
-windowing layer, so an external editor can build against `moth_noise` with
-`MOTH_CORE_ENABLE_PLATFORM=OFF` and own its own window. The JSON form is the
-contract between the toolkit and that tooling.
-
-```cpp
-#include <moth/noise/noise.h>
-
-using namespace moth::noise;
-
-// Load an authored graph and evaluate it.
-std::ifstream file("terrain.noise.json");
-std::string error;
-auto tree = NodeTree::FromJson(nlohmann::json::parse(file), &error);
-if (!tree) {
-    moth::core::log::error("bad noise tree: {}", error);
-    return;
-}
-
-auto generator = tree->CreateGenerator();
-std::vector<float> heights(256 * 256);
-generator->GenUniformGrid2D(heights.data(), 0.0f, 0.0f, 256, 256, 0.01f, 0.01f, 1337);
-
-// Or import a tree pasted out of the FastNoise2 node editor.
-auto imported = NodeTree::FromEncodedString("EQACAAAA...");
-```
-
-A graph is a DAG — one node may feed several inputs — so the JSON is a flat node
-list with integer references rather than nested objects. Enums are written by
-name, and per-dimension parameters carry an axis suffix:
-
-```json
-{
-  "format": "moth.noise.tree",
-  "version": 1,
-  "root": 0,
-  "nodes": [
-    {
-      "type": "DomainWarpSimplex",
-      "variables": {
-        "Feature Scale": 600.0,
-        "Amplitude Scaling.X": 1.0,
-        "Amplitude Scaling.Y": 0.5,
-        "Vectorization Scheme": "Orthogonal Gradient Matrix"
-      },
-      "sources": { "Source": 1 },
-      "hybrids": { "Warp Amplitude": { "value": 60.0 } }
-    }
-  ]
-}
-```
-
-A member missing from the file keeps the node's default, and an unknown node
-type, a dangling reference or an unrecognised `version` is rejected with a
-reason rather than loaded partially.
+→ [`modules/noise/README.md`](modules/noise/README.md)
 
 ### moth::profile
 
-**Package** `moth_profile` · **Namespace** `moth::profile` · **Headers** `<moth/profile/profiler.h>` (+ `<moth/profile/imgui/profiler_panel.h>`)
+A frame profiler. Mark the frames and code blocks you want to time, then look at
+the results in an ImGui panel with a frame-time graph.
 
-A frame profiler. `MOTH_PROFILE_FRAME()` marks each frame, `MOTH_PROFILE_SCOPE`
-times a block with an RAII `ProfileScope`, and `Profiler` keeps the nested scope
-timings of recent frames. `ProfilerPanel` (the separate `moth::profile_imgui`
-target) shows a frame-time graph in ImGui: click a spike to pause and inspect
-that frame's scope tree. The recorder has no dependencies; the panel depends on
-`moth_graphics` for ImGui (Conan option `with_imgui`, default on).
-
-```cpp
-#include <moth/profile/profiler.h>
-#include <moth/profile/imgui/profiler_panel.h>
-
-moth::profile::ProfilerPanel panel;
-
-void GameLayer::Draw() {
-    MOTH_PROFILE_FRAME();               // once per frame
-    {
-        MOTH_PROFILE_SCOPE("World");
-        m_world.Draw();
-    }
-    panel.Draw();                       // any time between ImGui::NewFrame and ImGui::Render
-}
-```
+→ [`modules/profile/README.md`](modules/profile/README.md)
 
 ### moth::packer
 
-**Package** `moth_packer` · **Namespace** `moth::packer` · **Header** `<moth/packer/packer.h>`
+Packs many small images into one texture atlas or flipbook sheet, and extracts
+sprites from a sheet. The [`moth_packer`](#moth_packer) tool uses it.
 
-Bin-packs images into texture atlases or flipbook sheets, and extracts sprites
-back out of a sheet. Works in memory (`PackToMemory`) or against the filesystem
-(`Pack`/`Unpack`, which also write a JSON descriptor). Only the math types reach
-the public header, so `moth::core` is its sole public dependency; `stb`,
-`p-ranav-glob`, `nlohmann_json`, `range-v3` and `spdlog` are implementation
-details. The `moth_packer` CLI is a front end over this module.
-
-```cpp
-#include <moth/packer/packer.h>
-
-std::vector<moth::packer::ImageDetails> images;
-moth::packer::CollectImagesFromDir("sprites/", /*recursive=*/true, images);
-
-moth::packer::PackOptions options;
-options.outputPath = "out/";
-options.filename   = "sprites";
-options.padding    = 2;
-moth::packer::Pack(images, options);      // writes sprites.png + sprites.json
-```
-
-The two `moth::ui` layout collectors (`CollectImagesFromLayout`,
-`CollectImagesFromLayoutsDir`) are the only part that needs `moth::ui`, so they
-are opt-in via `MOTH_PACKER_ENABLE_UI` (Conan `with_ui`) and gated behind
-`MOTH_PACKER_HAS_UI`. The superbuild turns them on whenever `MOTH_ENABLE_UI` is
-on. See [`modules/packer/README.md`](modules/packer/README.md).
+→ [`modules/packer/README.md`](modules/packer/README.md)
 
 ### moth::toolkit
 
-**Package** `moth_toolkit` · **Umbrella** `<moth/toolkit.h>`
+A single package that includes all the other modules. Turn each module on or off
+with an option, and include one header, `<moth/toolkit.h>`, to get all of them.
 
-The aggregate meta-package. Links every module you enable and pulls in one header
-that includes them all, guarded by `MOTH_ENABLE_*` flags. Its
-Conan `enable_*` options turn modules on/off (defaults: all on), validated so
-enabling a module enables its dependencies. Depends on whatever you enable.
-
-```cpp
-#include <moth/toolkit.h>
-
-#if MOTH_ENABLE_GFX
-    // use moth::gfx
-#endif
-#if MOTH_ENABLE_PHYSICS
-    // use moth::physics
-#endif
-```
+→ [`modules/toolkit/README.md`](modules/toolkit/README.md)
 
 ## Using the toolkit as a whole
 
@@ -615,11 +289,29 @@ The `moth_graphics` package optionally enables runtime GLSL compilation with
 `-o enable_glslang=True` (and `-DMOTH_GRAPHICS_ENABLE_GLSLANG=ON` in the
 superbuild).
 
-## Refreshing the local Conan cache
+## Tools
 
-Other projects build against the `moth_*` packages in your local Conan cache, so
-the cache needs recreating whenever the toolkit sources change.
-`tools/moth_create.py` does the whole set in dependency order:
+The toolkit comes with a few command-line tools. The Python scripts run from the
+toolkit root. The C++ tools are built by the superbuild when you pass
+`-DMOTH_ENABLE_TOOLS=ON`, and end up under `build/Release/tools/`.
+
+| Tool | What it does |
+|---|---|
+| [`moth_create`](#moth_create) | Builds every module into your local Conan cache |
+| [`moth_new`](#moth_new) | Creates a new game project that builds out of the box |
+| [`moth_pak`](#moth_pak) | Packs a folder of assets into one `.pak` archive |
+| [`moth_packer`](#moth_packer) | Packs images into texture atlases or flipbook sheets |
+
+### moth_create
+
+Other projects, including games made with [`moth_new`](#moth_new), don't build
+the toolkit from source. They get the `moth_*` packages from your local Conan
+cache, so those packages must be built there first. `tools/moth_create.py` does
+this for you: it runs `conan create` on every module in dependency order, so
+each module is built after the modules it needs.
+
+Run it once after you clone the toolkit, and again whenever you change the
+toolkit's sources, so your other projects get the new code.
 
 ```bash
 python3 tools/moth_create.py                      # all modules, Release
@@ -639,21 +331,21 @@ The module list in that script is the single source of truth for build order —
 the CI workflows read it rather than keeping their own copy, and it refuses to
 run if a module in `modules/` is missing from it.
 
-## Starting a new game
+### moth_new
 
-The scaffolded project consumes the packaged `moth_graphics` module (and, through
-it, `moth_core`), so those packages must already be in your local Conan cache.
-Create them once from the toolkit root, in dependency order (see
-[Conan packages](#conan-packages-per-module)):
+`tools/moth_new.py` creates a new game project from the bundled template. The
+project uses the packaged `moth_graphics` module (and, through it, `moth_core`),
+so put those packages in your local Conan cache first with
+[`moth_create`](#moth_create):
 
 ```bash
 python3 tools/moth_create.py core gfx
 ```
 
-Then scaffold a project from the bundled template:
+Then scaffold a project and build it:
 
 ```bash
-python3 tools/moth_new.py my_game
+python3 tools/moth_new.py my_game                 # or --dir PATH to put it elsewhere
 cd my_game
 conan install . --build=missing -s build_type=Release
 cmake --preset conan-release && cmake --build --preset conan-release
@@ -670,11 +362,10 @@ int main() {
 
 See `examples/` for fuller samples (ECS sprites, physics, tilemaps, audio).
 
-## Packing assets
+### moth_pak
 
-Assets load by path by default. To cook a folder into a single `.pak` archive
-plus a `manifest.json`, use `moth_pak` (build the superbuild with
-`-DMOTH_ENABLE_TOOLS=ON`):
+Assets load by path by default. `moth_pak` cooks a folder of assets into a
+single `.pak` archive plus a `manifest.json`:
 
 ```bash
 ./build/Release/tools/moth_pak/moth_pak assets/ --pak out/assets.pak --manifest out/manifest.json
@@ -686,10 +377,10 @@ it can later be addressed by id or by path. Load the archive at runtime with
 loader (e.g. `AudioEngine::LoadSoundFromMemory`). See
 `examples/packed_audio_demo/` for a complete cook → load-by-id → play loop.
 
-## Packing images
+### moth_packer
 
-To cook loose images into texture atlases or a flipbook sheet, use `moth_packer`
-(build the superbuild with `-DMOTH_ENABLE_TOOLS=ON`):
+`moth_packer` cooks loose images into texture atlases or a flipbook sheet, and
+can pull sprites back out of a sheet:
 
 ```bash
 # an atlas from a directory of sprites
@@ -704,61 +395,11 @@ To cook loose images into texture atlases or a flipbook sheet, use `moth_packer`
 
 Input can also come from a file list (`-i`), a glob (`-g`), or the images a
 `moth::ui` layout references (`-l` / `-x`). Each run writes the atlas image(s)
-plus a JSON descriptor. To do the same from code — which is what tools built on
-the toolkit should do — link `moth::packer` and call `Pack`/`PackToMemory`
-directly; see [`modules/packer/README.md`](modules/packer/README.md).
+plus a JSON descriptor; `--help` lists every option. To do the same from code —
+which is what tools built on the toolkit should do — link `moth::packer` and call
+`Pack`/`PackToMemory` directly; see
+[`modules/packer/README.md`](modules/packer/README.md).
 
-## Custom shaders
+## License
 
-`moth::gfx` can draw Shadertoy-style fragment shaders. Compile GLSL at runtime
-(opt-in, needs glslang) or load precompiled SPIR-V, then set it as the active
-shader and draw shapes as usual:
-
-```cpp
-auto shader = assetContext.GetShaderFactory().CreateFromGLSL("plasma", R"GLSL(
-    void mainImage(out vec4 fragColor, in vec2 fragCoord) {
-        vec2 uv = fragCoord / iResolution.xy;
-        fragColor = vec4(0.5 + 0.5 * cos(iTime + uv.xyx + vec3(0, 2, 4)), 1.0);
-    }
-)GLSL");
-
-graphics.SetShader(shader.get());          // every draw now uses this shader
-graphics.DrawFillRectF(rect);              // rasterised by the shader
-graphics.DrawFillCircleF(center, radius);  // likewise
-graphics.SetShader(nullptr);               // back to the default shader
-```
-
-The shader receives the interpolated vertex colour (`SetColor`), the shape-local
-`uv` (0..1), and the Shadertoy built-ins `iTime`/`iResolution`/`iMouse`. Bind up
-to four images with `Shader::SetChannel(0..3, image)` (`iChannel0..3`); `DrawImage`
-also honours the shader and binds its image as `iChannel0`. `DrawText` ignores the
-active shader. Runtime GLSL compilation is off by default — enable it with
-`-DMOTH_GRAPHICS_ENABLE_GLSLANG=ON` (and `-o enable_glslang=True` for Conan). See
-`examples/shader_demo/` for a full sample.
-
-## Layout
-
-```
-CMakeLists.txt        superbuild: MOTH_ENABLE_* toggles + add_subdirectory
-modules/              the moth:: libraries (each Conan-packaged)
-  core/                 moth::core    — loop/platform/math/events
-  gfx/                  moth::gfx     — 2D renderer + backends
-  ui/                   moth::ui      — node graph/layers/animation
-  ecs/                  moth::ecs     — EnTT entity-component system
-  physics/              moth::physics — Box2D rigid bodies
-  tilemap/              moth::tilemap — Tiled .tmj maps + tilesets
-  audio/                moth::audio   — miniaudio sound + music
-  assets/               moth::assets  — id/path addressing + .pak format
-  bridge/               moth::bridge  — ui <-> gfx adapter
-  net/                  moth::net     — TCP framed-JSON client/server
-  noise/                moth::noise   — FastNoise2 node graphs + JSON format
-  profile/              moth::profile — frame profiler + ImGui panel
-  packer/               moth::packer  — texture atlas/flipbook packing
-  toolkit/              moth::toolkit — aggregate target + feature header
-cmake/features.h.in   generated MOTH_ENABLE_*/MOTH_HAS_* flags (superbuild)
-examples/             sample games / consumption tests
-tools/                moth new scaffold CLI + moth_create cache refresher
-                      + moth_pak asset cooker
-                      + moth_packer atlas packer
-```
-
+The Moth Toolkit is released under the [MIT License](LICENSE).

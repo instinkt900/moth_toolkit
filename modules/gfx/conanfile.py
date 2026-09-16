@@ -84,7 +84,11 @@ class MothGraphics(ConanFile):
                 apt.install(packages)
 
     def build_requirements(self):
-        self.tool_requires("cmake/3.27.0")
+        # A range, not an exact pin: cmake/3.27.0 has no "Visual Studio 18 2026"
+        # generator, which is what Conan selects for MSVC 195, so an exact pin
+        # cannot configure on a current Windows runner. Every other module
+        # already uses the range.
+        self.tool_requires("cmake/[>=3.27.0]")
 
     def layout(self):
         cmake_layout(self)

@@ -134,7 +134,12 @@ jobs:
           # and unquoted word splitting broke it in two at the space.
           CMAKE_ARG=()
           if [ "$RUNNER_OS" = "Windows" ]; then
-            CMAKE_ARG=(-c "tools.cmake:cmake_program=$(cygpath -m "$(command -v cmake)")")
+            # cygpath -ms: the 8.3 short path (C:/PROGRA~1/...). Conan does not
+            # quote cmake_program when it runs it, so a path containing a space
+            # fails with "'C:/Program' is not recognized as an internal or
+            # external command".
+            CMAKE_PROG="$(cygpath -ms "$(command -v cmake)")"
+            CMAKE_ARG=(-c "tools.cmake:cmake_program=$CMAKE_PROG")
           fi
           # Build order and package names come from tools/moth_create.py, which is
           # the single source of truth and fails if a module in modules/ is not

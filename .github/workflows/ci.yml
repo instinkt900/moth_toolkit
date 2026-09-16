@@ -142,8 +142,13 @@ jobs:
           # and unquoted word splitting broke it in two at the space.
           CMAKE_ARG=()
           if [ "$RUNNER_OS" = "Windows" ]; then
-            CMAKE_ARG=(-c "tools.cmake:cmake_program=$(cygpath -m "$(command -v cmake)")")
-            echo "forcing recipe cmake: $(cmake --version | head -1)"
+            # cygpath -ms: the 8.3 short path (C:/PROGRA~1/...). Conan does not
+            # quote cmake_program when it runs it, so a path containing a space
+            # fails with "'C:/Program' is not recognized as an internal or
+            # external command".
+            CMAKE_PROG="$(cygpath -ms "$(command -v cmake)")"
+            CMAKE_ARG=(-c "tools.cmake:cmake_program=$CMAKE_PROG")
+            echo "forcing recipe cmake: $CMAKE_PROG ($(cmake --version | head -1))"
           fi
           conan install . -of build --build=missing -s build_type=Release "${CMAKE_ARG[@]}" $CONAN_OPTS $CONAN_EXTRA_ARGS
           # Listed so that a preset-name mismatch shows the available names in

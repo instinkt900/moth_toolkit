@@ -17,7 +17,11 @@ jobs:
           - name: full
             flags: "-DMOTH_ENABLE_TOOLS=ON"
           - name: core-only
-            flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ECS=OFF -DMOTH_ENABLE_PHYSICS=OFF -DMOTH_ENABLE_TILEMAP=OFF -DMOTH_ENABLE_AUDIO=OFF -DMOTH_ENABLE_ASSETS=OFF -DMOTH_ENABLE_ANIM=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
+            flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ECS=OFF -DMOTH_ENABLE_PHYSICS=OFF -DMOTH_ENABLE_TILEMAP=OFF -DMOTH_ENABLE_AUDIO=OFF -DMOTH_ENABLE_ASSETS=OFF -DMOTH_ENABLE_ANIM=OFF -DMOTH_ENABLE_NET=OFF -DMOTH_ENABLE_NOISE=OFF -DMOTH_ENABLE_PROFILE=OFF -DMOTH_ENABLE_PACKER=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
+          # moth::packer without moth::ui — the configuration a tool that only
+          # packs images (moth_sprite) consumes, so the UI-free half stays honest.
+          - name: packer-no-ui
+            flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ECS=OFF -DMOTH_ENABLE_PHYSICS=OFF -DMOTH_ENABLE_TILEMAP=OFF -DMOTH_ENABLE_AUDIO=OFF -DMOTH_ENABLE_ASSETS=OFF -DMOTH_ENABLE_ANIM=OFF -DMOTH_ENABLE_NET=OFF -DMOTH_ENABLE_NOISE=OFF -DMOTH_ENABLE_PROFILE=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
           - name: core-gfx
             flags: "-DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
           - name: game-example
@@ -75,81 +79,38 @@ jobs:
           echo 'tools.system.package_manager:mode=install' >> "$(conan config home)/global.conf"
           echo 'tools.system.package_manager:sudo=True' >> "$(conan config home)/global.conf"
 
-      - name: Create moth_core package (needed by the module tests)
-        working-directory: modules/core
-        run: conan create . --build=missing -s build_type=Release
-
-      - name: Build and run core tests
-        working-directory: modules/core/tests
+      - name: Create the module packages the tests depend on
         run: |
-          conan install . --build=missing -s build_type=Release
-          cmake --preset conan-release
-          cmake --build --preset conan-release
-          ctest --preset conan-release --output-on-failure
+          set -e
+          # Nearly every module's tests require moth_core; the packer tests also
+          # build layouts, so they need moth_ui (which itself needs moth_core).
+          for m in core ui; do
+            echo "::group::conan create moth $m"
+            (cd "modules/$m" && conan create . --build=missing -s build_type=Release)
+            echo "::endgroup::"
+          done
 
-      - name: Build and run gfx tests
-        working-directory: modules/gfx/tests
+      - name: Build and run every module's tests
         run: |
-          conan install . --build=missing -s build_type=Release -o enable_glslang=True
-          cmake --preset conan-release
-          cmake --build --preset conan-release
-          ctest --preset conan-release --output-on-failure
-
-      - name: Build and run ui tests
-        working-directory: modules/ui/tests
-        run: |
-          conan install . --build=missing -s build_type=Release
-          cmake --preset conan-release
-          cmake --build --preset conan-release
-          ctest --preset conan-release --output-on-failure
-
-      - name: Build and run ecs tests
-        working-directory: modules/ecs/tests
-        run: |
-          conan install . --build=missing -s build_type=Release
-          cmake --preset conan-release
-          cmake --build --preset conan-release
-          ctest --preset conan-release --output-on-failure
-
-      - name: Build and run physics tests
-        working-directory: modules/physics/tests
-        run: |
-          conan install . --build=missing -s build_type=Release
-          cmake --preset conan-release
-          cmake --build --preset conan-release
-          ctest --preset conan-release --output-on-failure
-
-      - name: Build and run tilemap tests
-        working-directory: modules/tilemap/tests
-        run: |
-          conan install . --build=missing -s build_type=Release
-          cmake --preset conan-release
-          cmake --build --preset conan-release
-          ctest --preset conan-release --output-on-failure
-
-      - name: Build and run audio tests
-        working-directory: modules/audio/tests
-        run: |
-          conan install . --build=missing -s build_type=Release
-          cmake --preset conan-release
-          cmake --build --preset conan-release
-          ctest --preset conan-release --output-on-failure
-
-      - name: Build and run assets tests
-        working-directory: modules/assets/tests
-        run: |
-          conan install . --build=missing -s build_type=Release
-          cmake --preset conan-release
-          cmake --build --preset conan-release
-          ctest --preset conan-release --output-on-failure
-
-      - name: Build and run anim tests
-        working-directory: modules/anim/tests
-        run: |
-          conan install . --build=missing -s build_type=Release
-          cmake --preset conan-release
-          cmake --build --preset conan-release
-          ctest --preset conan-release --output-on-failure
+          set -e
+          # Driven off the tests directories rather than a hand-written list, so a
+          # new module with tests is covered the moment it lands.
+          for testdir in modules/*/tests; do
+            module="$(basename "$(dirname "$testdir")")"
+            extra=""
+            case "$module" in
+              gfx) extra="-o enable_glslang=True" ;;
+            esac
+            echo "::group::$module tests"
+            (
+              cd "$testdir"
+              conan install . --build=missing -s build_type=Release $extra
+              cmake --preset conan-release
+              cmake --build --preset conan-release
+              ctest --preset conan-release --output-on-failure
+            )
+            echo "::endgroup::"
+          done
 
   packaged-consumption:
     name: packaged consumption (conan create + find_package)
@@ -177,8 +138,23 @@ jobs:
       - name: Create modules as packages (dependency order)
         run: |
           set -e
-          for m in core gfx anim ui ecs physics tilemap audio assets bridge toolkit; do
+          ORDER="core gfx anim ui packer ecs physics tilemap audio assets net noise profile bridge toolkit"
+
+          # Guard: a module added without a place in ORDER above would silently
+          # skip packaged consumption, which is how net/noise/profile/packer went
+          # uncovered. Fail loudly instead.
+          for dir in modules/*/; do
+            m="$(basename "$dir")"
+            case " $ORDER " in
+              *" $m "*) ;;
+              *) echo "::error::module '$m' is missing from ORDER in .github/workflows/ci.yml"; exit 1 ;;
+            esac
+          done
+
+          for m in $ORDER; do
+            echo "::group::conan create moth $m"
             (cd "modules/$m" && conan create . --build=missing -s build_type=Release)
+            echo "::endgroup::"
           done
 
       - name: Build a packaged consumer (hello_game via find_package)
@@ -209,6 +185,50 @@ jobs:
           ./build/Release/moth_pak /tmp/moth_pak_smoke/input --pak /tmp/moth_pak_smoke/out.pak --manifest /tmp/moth_pak_smoke/manifest.json
           test -s /tmp/moth_pak_smoke/out.pak
           test -s /tmp/moth_pak_smoke/manifest.json
+
+      - name: Build and smoke-test moth_packer (packaged)
+        working-directory: tools/moth_packer
+        run: |
+          set -e
+          conan install . --build=missing -s build_type=Release
+          cmake --preset conan-release
+          cmake --build --preset conan-release
+
+          # Three solid-colour PNGs, written with nothing but the stdlib so the
+          # smoke test needs no image tooling on the runner.
+          mkdir -p /tmp/moth_packer_smoke/input /tmp/moth_packer_smoke/out
+          python3 - <<'PY'
+          import struct, zlib
+
+          def chunk(tag, data):
+              return (struct.pack(">I", len(data)) + tag + data
+                      + struct.pack(">I", zlib.crc32(tag + data) & 0xffffffff))
+
+          def write_png(path, w, h, rgba):
+              raw = b"".join(b"\x00" + bytes(rgba) * w for _ in range(h))
+              open(path, "wb").write(
+                  b"\x89PNG\r\n\x1a\n"
+                  + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 6, 0, 0, 0))
+                  + chunk(b"IDAT", zlib.compress(raw))
+                  + chunk(b"IEND", b""))
+
+          write_png("/tmp/moth_packer_smoke/input/red.png", 16, 16, (255, 0, 0, 255))
+          write_png("/tmp/moth_packer_smoke/input/green.png", 24, 8, (0, 255, 0, 255))
+          write_png("/tmp/moth_packer_smoke/input/blue.png", 8, 32, (0, 0, 255, 255))
+          PY
+
+          ./build/Release/moth_packer -d /tmp/moth_packer_smoke/input -o /tmp/moth_packer_smoke/out atlas
+          test -s /tmp/moth_packer_smoke/out/atlas_0.png
+          test -s /tmp/moth_packer_smoke/out/atlas.json
+          python3 -c "
+          import json, sys
+          d = json.load(open('/tmp/moth_packer_smoke/out/atlas.json'))
+          n = sum(len(a['images']) for a in d['atlases'])
+          sys.exit(0 if n == 3 else 'expected 3 packed images, got %d' % n)"
+
+          # unpack the atlas back into individual sprites
+          ./build/Release/moth_packer --mode unpack /tmp/moth_packer_smoke/out/atlas_0.png -o /tmp/moth_packer_smoke/out
+          test -s /tmp/moth_packer_smoke/out/sprite_0.png
 
       - name: Build and run the packed-audio example (headless)
         working-directory: examples/packed_audio_demo

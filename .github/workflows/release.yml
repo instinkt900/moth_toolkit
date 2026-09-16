@@ -108,11 +108,22 @@ jobs:
           set -euo pipefail
           declare -A PKG=(
             [core]=moth_core [gfx]=moth_graphics [anim]=moth_anim [ui]=moth_ui
-            [ecs]=moth_ecs [physics]=moth_physics [tilemap]=moth_tilemap
-            [audio]=moth_audio [assets]=moth_assets [bridge]=moth_bridge
-            [toolkit]=moth_toolkit
+            [packer]=moth_packer [ecs]=moth_ecs [physics]=moth_physics
+            [tilemap]=moth_tilemap [audio]=moth_audio [assets]=moth_assets
+            [net]=moth_net [noise]=moth_noise [profile]=moth_profile
+            [bridge]=moth_bridge [toolkit]=moth_toolkit
           )
-          ORDER=(core gfx anim ui ecs physics tilemap audio assets bridge toolkit)
+          ORDER=(core gfx anim ui packer ecs physics tilemap audio assets net noise profile bridge toolkit)
+
+          # Guard: a module missing from PKG/ORDER would never be published, which
+          # is how net, noise, profile and packer were silently skipped.
+          for dir in modules/*/; do
+            m="$(basename "$dir")"
+            if [ -z "${PKG[$m]:-}" ]; then
+              echo "::error::module '$m' is missing from PKG/ORDER in .github/workflows/release.yml"
+              exit 1
+            fi
+          done
 
           for m in "${ORDER[@]}"; do
             pkg="${PKG[$m]}"
@@ -152,10 +163,11 @@ jobs:
         run: |
           set -euo pipefail
           declare -A PKG=(
-            [core]=moth_core [gfx]=moth_graphics [ui]=moth_ui
-            [ecs]=moth_ecs [physics]=moth_physics [tilemap]=moth_tilemap
-            [audio]=moth_audio [assets]=moth_assets [bridge]=moth_bridge
-            [toolkit]=moth_toolkit
+            [core]=moth_core [gfx]=moth_graphics [anim]=moth_anim [ui]=moth_ui
+            [packer]=moth_packer [ecs]=moth_ecs [physics]=moth_physics
+            [tilemap]=moth_tilemap [audio]=moth_audio [assets]=moth_assets
+            [net]=moth_net [noise]=moth_noise [profile]=moth_profile
+            [bridge]=moth_bridge [toolkit]=moth_toolkit
           )
 
           git config user.name "github-actions[bot]"

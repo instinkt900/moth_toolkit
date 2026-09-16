@@ -111,7 +111,22 @@ jobs:
           # recipe once proven, so that any Windows consumer gets it too.
           CONAN_EXTRA_ARGS: ${{ runner.os == 'Windows' && '-s compiler.cppstd=17 -o fastnoise2/*:shared=True' || '' }}
         run: |
-          conan install . -of build --build=missing -s build_type=Release $CONAN_EXTRA_ARGS
+          # The MOTH_ENABLE_* flags for this configuration also decide which
+          # dependencies Conan has to provision, so they are translated into the
+          # matching -o enable_* options rather than maintained twice.
+          CONAN_OPTS=""
+          for flag in ${{ matrix.flags }}; do
+            case "$flag" in
+              -DMOTH_ENABLE_*=ON|-DMOTH_ENABLE_*=OFF)
+                kv=${flag#-DMOTH_ENABLE_}
+                key=$(echo "${kv%%=*}" | tr '[:upper:]' '[:lower:]')
+                [ "${kv#*=}" = "ON" ] && val=True || val=False
+                CONAN_OPTS="$CONAN_OPTS -o enable_$key=$val"
+                ;;
+            esac
+          done
+          echo "conan options: $CONAN_OPTS"
+          conan install . -of build --build=missing -s build_type=Release $CONAN_OPTS $CONAN_EXTRA_ARGS
           # Listed so that a preset-name mismatch shows the available names in
           # the log instead of only "no such preset".
           cmake --list-presets || true

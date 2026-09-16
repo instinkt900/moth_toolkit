@@ -48,7 +48,10 @@ class MothGraphics(ConanFile):
                 # HarfBuzz. Both are kept transitive for safety on Windows where
                 # they come from Conan. On Linux these come from the system
                 # package manager.
-                self.requires("freetype/[~2.13]", transitive_headers=True)
+                # freetype is pinned rather than ranged: harfbuzz 8.3.0 requires
+                # exactly 2.13.2, and [~2.13] resolves to 2.13.3, which is a hard
+                # version conflict in the graph.
+                self.requires("freetype/2.13.2", transitive_headers=True)
                 self.requires("harfbuzz/[~8.3]", transitive_headers=True)
             self.requires("vulkan-headers/1.3.243.0", transitive_headers=True)
             self.requires("vulkan-loader/1.3.243.0")

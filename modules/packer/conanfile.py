@@ -29,7 +29,7 @@ class MothPacker(ConanFile):
     def requirements(self):
         # Only the math types reach the public header, so moth_core is the sole
         # dependency a consumer inherits.
-        self.requires("moth_core/0.1.0", transitive_headers=True)
+        self.requires("moth_core/[~0.1]", transitive_headers=True)
         # Implementation details: image load/write and bin packing (stb), glob
         # expansion, the JSON descriptor, and logging.
         self.requires("stb/cci.20240531")
@@ -38,7 +38,7 @@ class MothPacker(ConanFile):
         self.requires("range-v3/[~0.12]")
         self.requires("spdlog/[~1.14]")
         if self.options.with_ui:
-            self.requires("moth_ui/2.0.0")
+            self.requires("moth_ui/[~2.0]")
 
     def build_requirements(self):
         self.tool_requires("cmake/[>=3.27.0]")

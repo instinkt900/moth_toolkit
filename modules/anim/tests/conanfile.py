@@ -14,7 +14,7 @@ class MothAnimTests(ConanFile):
         # nlohmann_json/fmt/spdlog transitively; moth::gfx needs the Vulkan
         # stack (GLFW and FreeType/HarfBuzz come from the system package
         # manager on Linux).
-        self.requires("moth_core/0.1.0")
+        self.requires("moth_core/[~0.1]")
         if self.settings.os == "Windows":
             self.requires("glfw/3.3.8", transitive_headers=True)
             self.requires("freetype/[~2.13]", transitive_headers=True)

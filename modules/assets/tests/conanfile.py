@@ -13,7 +13,7 @@ class MothAssetsTests(ConanFile):
         # moth_assets is built from source via add_subdirectory; its deps are
         # moth::core and nlohmann_json (for the manifest).
         self.requires("nlohmann_json/[>=3.11 <4]", transitive_headers=True)
-        self.requires("moth_core/0.1.0", transitive_headers=True)
+        self.requires("moth_core/[~0.1]", transitive_headers=True)
 
     def system_requirements(self):
         if self.settings.os == "Linux":

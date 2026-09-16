@@ -14,7 +14,7 @@ class MothNoiseTests(ConanFile):
         # so the tests do not need a windowing stack.
         self.requires("nlohmann_json/[>=3.11 <4]", transitive_headers=True)
         self.requires("fastnoise2/1.1.1", transitive_headers=True)
-        self.requires("moth_core/0.1.0", transitive_headers=True)
+        self.requires("moth_core/[~0.1]", transitive_headers=True)
 
     def configure(self):
         self.options["moth_core"].enable_platform = False

@@ -23,9 +23,9 @@ class MothBridge(ConanFile):
     def requirements(self):
         # Public headers expose moth::core/moth::gfx/moth::ui types, so their
         # headers must reach our consumers.
-        self.requires("moth_core/0.1.0", transitive_headers=True)
-        self.requires("moth_graphics/2.0.0", transitive_headers=True)
-        self.requires("moth_ui/2.0.0", transitive_headers=True)
+        self.requires("moth_core/[~0.1]", transitive_headers=True)
+        self.requires("moth_graphics/[~2.0]", transitive_headers=True)
+        self.requires("moth_ui/[~2.0]", transitive_headers=True)
 
     def build_requirements(self):
         self.tool_requires("cmake/[>=3.27.0]")

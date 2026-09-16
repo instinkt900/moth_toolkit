@@ -13,7 +13,7 @@ class MothAudioTests(ConanFile):
         # moth_audio is built from source via add_subdirectory; its dependencies
         # are miniaudio and moth::core (both packages).
         self.requires("miniaudio/0.11.18", transitive_headers=True)
-        self.requires("moth_core/0.1.0", transitive_headers=True)
+        self.requires("moth_core/[~0.1]", transitive_headers=True)
 
     def system_requirements(self):
         if self.settings.os == "Linux":

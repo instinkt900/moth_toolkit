@@ -115,33 +115,33 @@ class MothToolkit(ConanFile):
         # to consumers (transitive_headers/libs=True) — otherwise an external
         # consumer of moth_toolkit loses the modules' header-only deps.
         if self.options.enable_core:
-            self.requires("moth_core/0.1.0", transitive_headers=True, transitive_libs=True)
+            self.requires("moth_core/[~0.1]", transitive_headers=True, transitive_libs=True)
         if self.options.enable_gfx:
-            self.requires("moth_graphics/2.0.0", transitive_headers=True, transitive_libs=True)
+            self.requires("moth_graphics/[~2.0]", transitive_headers=True, transitive_libs=True)
         if self.options.enable_ui:
-            self.requires("moth_ui/2.0.0", transitive_headers=True, transitive_libs=True)
+            self.requires("moth_ui/[~2.0]", transitive_headers=True, transitive_libs=True)
         if self.options.enable_bridge:
-            self.requires("moth_bridge/0.1.0", transitive_headers=True, transitive_libs=True)
+            self.requires("moth_bridge/[~0.1]", transitive_headers=True, transitive_libs=True)
         if self.options.enable_ecs:
-            self.requires("moth_ecs/0.1.0", transitive_headers=True, transitive_libs=True)
+            self.requires("moth_ecs/[~0.1]", transitive_headers=True, transitive_libs=True)
         if self.options.enable_physics:
-            self.requires("moth_physics/0.1.0", transitive_headers=True, transitive_libs=True)
+            self.requires("moth_physics/[~0.1]", transitive_headers=True, transitive_libs=True)
         if self.options.enable_tilemap:
-            self.requires("moth_tilemap/0.1.0", transitive_headers=True, transitive_libs=True)
+            self.requires("moth_tilemap/[~0.1]", transitive_headers=True, transitive_libs=True)
         if self.options.enable_audio:
-            self.requires("moth_audio/0.1.0", transitive_headers=True, transitive_libs=True)
+            self.requires("moth_audio/[~0.1]", transitive_headers=True, transitive_libs=True)
         if self.options.enable_assets:
-            self.requires("moth_assets/0.1.0", transitive_headers=True, transitive_libs=True)
+            self.requires("moth_assets/[~0.1]", transitive_headers=True, transitive_libs=True)
         if self.options.enable_anim:
-            self.requires("moth_anim/0.1.0", transitive_headers=True, transitive_libs=True)
+            self.requires("moth_anim/[~0.1]", transitive_headers=True, transitive_libs=True)
         if self.options.enable_net:
-            self.requires("moth_net/0.1.0", transitive_headers=True, transitive_libs=True)
+            self.requires("moth_net/[~0.1]", transitive_headers=True, transitive_libs=True)
         if self.options.enable_noise:
-            self.requires("moth_noise/0.1.0", transitive_headers=True, transitive_libs=True)
+            self.requires("moth_noise/[~0.1]", transitive_headers=True, transitive_libs=True)
         if self.options.enable_profile:
-            self.requires("moth_profile/0.1.0", transitive_headers=True, transitive_libs=True)
+            self.requires("moth_profile/[~0.1]", transitive_headers=True, transitive_libs=True)
         if self.options.enable_packer:
-            self.requires("moth_packer/1.0.0", transitive_headers=True, transitive_libs=True)
+            self.requires("moth_packer/[~1.0]", transitive_headers=True, transitive_libs=True)
 
     def package(self):
         copy(self, "*.h", src=os.path.join(self.source_folder, "include"),

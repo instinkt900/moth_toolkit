@@ -25,7 +25,7 @@ class MothEcs(ConanFile):
         # consumers transitively. Public headers also expose moth::core types
         # (Transform2D via the Transform component).
         self.requires("entt/[~3.15]", transitive_headers=True)
-        self.requires("moth_core/0.1.0", transitive_headers=True)
+        self.requires("moth_core/[~0.1]", transitive_headers=True)
 
     def build_requirements(self):
         self.tool_requires("cmake/[>=3.27.0]")

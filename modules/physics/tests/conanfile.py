@@ -12,7 +12,7 @@ class MothPhysicsTests(ConanFile):
         self.requires("catch2/3.13.0")
         # moth_physics is built from source via add_subdirectory; its
         # dependencies are moth::core and Box2D (both packages).
-        self.requires("moth_core/0.1.0", transitive_headers=True)
+        self.requires("moth_core/[~0.1]", transitive_headers=True)
         self.requires("box2d/2.4.1", transitive_headers=True)
 
     def system_requirements(self):

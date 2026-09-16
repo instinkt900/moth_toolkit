@@ -8,7 +8,7 @@ class MothPhysicsDemo(ConanFile):
     generators = "CMakeToolchain", "CMakeDeps"
 
     def requirements(self):
-        self.requires("moth_physics/0.1.0")
+        self.requires("moth_physics/[~0.1]")
 
     def build_requirements(self):
         self.tool_requires("cmake/[>=3.27.0]")

@@ -14,7 +14,7 @@ class MothNetTests(ConanFile):
         # moth::core, nlohmann_json, and asio.
         self.requires("nlohmann_json/[>=3.11 <4]", transitive_headers=True)
         self.requires("asio/1.30.2", transitive_headers=True)
-        self.requires("moth_core/0.1.0", transitive_headers=True)
+        self.requires("moth_core/[~0.1]", transitive_headers=True)
 
     def system_requirements(self):
         if self.settings.os == "Linux":

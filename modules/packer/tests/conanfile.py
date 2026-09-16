@@ -11,8 +11,8 @@ class MothPackerTests(ConanFile):
         self.requires("catch2/3.13.0")
         # moth_packer's own dependencies; the library itself is pulled in via
         # add_subdirectory rather than as a package.
-        self.requires("moth_core/0.1.0")
-        self.requires("moth_ui/2.0.0")
+        self.requires("moth_core/[~0.1]")
+        self.requires("moth_ui/[~2.0]")
         self.requires("stb/cci.20240531")
         self.requires("p-ranav-glob/0.0.1")
         self.requires("nlohmann_json/[>=3.11 <4]")

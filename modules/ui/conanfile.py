@@ -23,7 +23,7 @@ class MothUI(ConanFile):
     def requirements(self):
         # fmt must stay on the 10.2 line: moth::core (which this module links)
         # routes its logging through spdlog 1.14, which pins fmt to 10.2.
-        self.requires("moth_core/0.1.0", transitive_headers=True)
+        self.requires("moth_core/[~0.1]", transitive_headers=True)
         self.requires("nlohmann_json/[>=3.11 <4]", transitive_headers=True)
         self.requires("magic_enum/[~0.8]", transitive_headers=True)
         self.requires("range-v3/[~0.12]", transitive_headers=True)

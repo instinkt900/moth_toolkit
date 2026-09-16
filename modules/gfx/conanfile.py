@@ -55,7 +55,7 @@ class MothGraphics(ConanFile):
             self.requires("vulkan-memory-allocator/3.0.1", transitive_headers=True)
         # Public headers re-export moth::core types (Vector/Rect/events), so
         # moth_core's headers must reach our consumers.
-        self.requires("moth_core/0.1.0", transitive_headers=True)
+        self.requires("moth_core/[~0.1]", transitive_headers=True)
         # Runtime GLSL compilation for custom shaders (opt-in).
         if self.options.enable_glslang:
             self.requires("glslang/1.3.268.0")

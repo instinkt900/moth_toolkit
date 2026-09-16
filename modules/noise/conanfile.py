@@ -29,7 +29,7 @@ class MothNoise(ConanFile):
         self.requires("fastnoise2/1.1.1", transitive_headers=True)
         # Only the types are needed here, not a windowing stack — this module is
         # meant to be consumable by external tooling that owns its own window.
-        self.requires("moth_core/0.1.0", transitive_headers=True)
+        self.requires("moth_core/[~0.1]", transitive_headers=True)
 
     def build_requirements(self):
         self.tool_requires("cmake/[>=3.27.0]")

@@ -24,7 +24,7 @@ class MothPhysics(ConanFile):
         # Box2D headers appear in our public headers, so they must reach consumers.
         self.requires("box2d/2.4.1", transitive_headers=True)
         # Public headers expose moth::core types (FloatVec2).
-        self.requires("moth_core/0.1.0", transitive_headers=True)
+        self.requires("moth_core/[~0.1]", transitive_headers=True)
 
     def build_requirements(self):
         self.tool_requires("cmake/[>=3.27.0]")

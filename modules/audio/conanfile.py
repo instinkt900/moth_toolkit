@@ -24,7 +24,7 @@ class MothAudio(ConanFile):
         # miniaudio.h appears in our public headers (ma_engine& Raw()), so it must
         # reach consumers transitively.
         self.requires("miniaudio/0.11.18", transitive_headers=True)
-        self.requires("moth_core/0.1.0", transitive_headers=True)
+        self.requires("moth_core/[~0.1]", transitive_headers=True)
 
     def build_requirements(self):
         self.tool_requires("cmake/[>=3.27.0]")

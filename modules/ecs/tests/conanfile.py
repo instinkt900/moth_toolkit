@@ -13,7 +13,7 @@ class MothEcsTests(ConanFile):
         # moth_ecs is header-only and built from source via add_subdirectory; its
         # dependencies are moth::core (a package, since our public headers expose
         # core types) and EnTT (header-only).
-        self.requires("moth_core/0.1.0", transitive_headers=True)
+        self.requires("moth_core/[~0.1]", transitive_headers=True)
         self.requires("entt/[~3.15]", transitive_headers=True)
 
     def system_requirements(self):

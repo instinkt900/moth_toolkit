@@ -31,7 +31,7 @@ class MothProfile(ConanFile):
         # The recorder has no dependencies; the profiler panel draws with the
         # ImGui that moth_graphics compiles in.
         if self.options.with_imgui:
-            self.requires("moth_graphics/2.0.0", transitive_headers=True)
+            self.requires("moth_graphics/[~2.0]", transitive_headers=True)
 
     def build_requirements(self):
         self.tool_requires("cmake/[>=3.27.0]")

@@ -118,8 +118,18 @@ namespace moth::ui {
         }
 
         auto layout = std::make_shared<Layout>();
-        if (!layout->Deserialize(json, context)) {
-            log::error("Failed to load layout '{}': deserialization failed", path.string());
+        try {
+            if (!layout->Deserialize(json, context)) {
+                log::error("Failed to load layout '{}': deserialization failed", path.string());
+                return { nullptr, LoadResult::IncorrectFormat };
+            }
+        } catch (nlohmann::json::exception const& e) {
+            // A malformed field — a key holding the wrong JSON type, or an unknown
+            // enum name — throws from deep inside an entity's Deserialize. Parsing
+            // is guarded above, but this was not, so the exception escaped Load
+            // and terminated the caller: one bad value took down an editor instead
+            // of failing a single file.
+            log::error("Failed to load layout '{}': {}", path.string(), e.what());
             return { nullptr, LoadResult::IncorrectFormat };
         }
 

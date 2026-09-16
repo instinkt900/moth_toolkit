@@ -51,13 +51,10 @@ jobs:
           #   os: ubuntu-latest
           #   name: core-ui
           #   flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ANIM=OFF -DMOTH_ENABLE_TOOLKIT=OFF -DMOTH_ENABLE_TILEMAP=OFF"
-          # windows-2025 rather than windows-latest: the latest label has rolled to
-          # Visual Studio 2026 (MSVC 195), and ConanCenter recipes still pull
-          # CMake 3.31 as a tool requirement, which predates the "Visual Studio
-          # 18 2026" generator -- vulkan-loader fails to configure with
-          # "Could not create named generator". Pinning also stops the toolchain
-          # changing under CI without a commit. Revisit when ConanCenter ships
-          # recipes that can drive VS 2026.
+          # Pinned rather than windows-latest so the toolchain cannot change under
+          # CI without a commit. Note this does not avoid Visual Studio 2026:
+          # the windows-2025 label now resolves to the windows-2025-vs2026 image
+          # as well. VS 2026 is handled by .github/conan/windows-tools.profile.
           - platform: windows
             os: windows-2025
             name: full
@@ -133,7 +130,13 @@ jobs:
             esac
           done
           echo "conan options: $CONAN_OPTS"
-          conan install . -of build --build=missing -s build_type=Release $CONAN_OPTS $CONAN_EXTRA_ARGS
+          # ConanCenter's CMake 3.31 cannot drive the VS 2026 generator; the
+          # profile replaces it for dependency builds. See the profile for why.
+          PROFILE_ARGS=""
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            PROFILE_ARGS="-pr:b default -pr:b .github/conan/windows-tools.profile"
+          fi
+          conan install . -of build --build=missing -s build_type=Release $PROFILE_ARGS $CONAN_OPTS $CONAN_EXTRA_ARGS
           # Listed so that a preset-name mismatch shows the available names in
           # the log instead of only "no such preset".
           cmake --list-presets || true

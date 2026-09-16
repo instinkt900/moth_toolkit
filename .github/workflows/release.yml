@@ -81,10 +81,10 @@ jobs:
         include:
           - platform: linux
             os: ubuntu-latest
-          # windows-2025 rather than windows-latest: the latest label has rolled
-          # to Visual Studio 2026 (MSVC 195) and ConanCenter recipes still pull
-          # CMake 3.31, which cannot drive that generator. Pinning also keeps the
-          # toolchain a package was built with from changing without a commit.
+          # Pinned rather than windows-latest so the toolchain a package was built
+          # with cannot change without a commit. It does not avoid Visual Studio
+          # 2026 -- the windows-2025 label resolves to the windows-2025-vs2026
+          # image -- which is handled by .github/conan/windows-tools.profile.
           - platform: windows
             os: windows-2025
     env:
@@ -97,6 +97,9 @@ jobs:
       # fastnoise2's CMake installs its PDB directory unconditionally under MSVC
       # and a static build never creates it, so it is built shared on Windows.
       CONAN_EXTRA_ARGS: ${{ matrix.os == 'windows-2025' && '-s compiler.cppstd=17 -o fastnoise2/*:shared=True' || '' }}
+      # ConanCenter's CMake 3.31 cannot drive the VS 2026 generator that MSVC 195
+      # selects; the profile replaces it for dependency builds. See the profile.
+      PROFILE_ARGS: ${{ matrix.os == 'windows-2025' && '-pr:b default -pr:b .github/conan/windows-tools.profile' || '' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -160,7 +163,7 @@ jobs:
             # VARIANTS). Each produces a distinct package_id under the same
             # reference, so a consumer that needs e.g. moth_core with
             # enable_platform=False gets a binary instead of building from source.
-            conan create "modules/$m" --build=missing -s build_type=Release $CONAN_EXTRA_ARGS
+            conan create "modules/$m" --build=missing -s build_type=Release $PROFILE_ARGS $CONAN_EXTRA_ARGS
             while read -r variant; do
               [ -n "$variant" ] || continue
               opts=()
@@ -168,7 +171,7 @@ jobs:
                 opts+=(-o "$option")
               done
               echo "-- variant: $variant"
-              conan create "modules/$m" --build=missing -s build_type=Release $CONAN_EXTRA_ARGS "${opts[@]}"
+              conan create "modules/$m" --build=missing -s build_type=Release $PROFILE_ARGS $CONAN_EXTRA_ARGS "${opts[@]}"
             done < <($PY tools/moth_create.py --list-variants "$m")
 
             # ':*' uploads every binary of this reference, so the default build

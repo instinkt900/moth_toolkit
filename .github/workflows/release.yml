@@ -120,7 +120,7 @@ jobs:
         shell: bash
         run: |
           conan remote add artifactory "${{ vars.ARTIFACTORY_URL }}" --force
-          conan remote login artifactory "${{ vars.ARTIFACTORY_USER }}" -p "${{ secrets.ARTIFACTS_TOKEN }}"
+          conan remote login artifactory "${{ vars.ARTIFACTORY_USER }}" -p "${{ secrets.ARTIFACTORY_TOKEN }}"
 
       - name: Build and upload the bumped modules
         shell: bash

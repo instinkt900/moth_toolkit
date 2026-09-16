@@ -107,8 +107,10 @@ namespace moth::core {
             float const tx = m[0][3];
             float const ty = m[1][3];
 
+            // Below this the linear part is treated as singular and has no inverse.
+            constexpr float kSingularDeterminant = 1e-8f;
             float const det = (a * d) - (b * c);
-            if (std::abs(det) < 1e-8f) {
+            if (std::abs(det) < kSingularDeterminant) {
                 return Identity();
             }
             float const invDet = 1.0f / det;

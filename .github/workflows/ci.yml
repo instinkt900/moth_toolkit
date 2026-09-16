@@ -45,17 +45,18 @@ jobs:
             os: ubuntu-latest
             name: core-ui
             flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ANIM=OFF -DMOTH_ENABLE_TOOLKIT=OFF -DMOTH_ENABLE_TILEMAP=OFF"
-          # Pinned rather than windows-latest so the toolchain cannot change under
-          # CI without a commit. Note this does not avoid Visual Studio 2026: the
-          # windows-2025 label now resolves to the windows-2025-vs2026 image as
-          # well. VS 2026 is handled in the Configure step, by pointing recipes
-          # at the runner's own CMake.
+          # windows-2022, not windows-latest or windows-2025: both of those now serve
+          # Visual Studio 2026 (MSVC 195), which ConanCenter cannot build for yet --
+          # its generator needs CMake 4.2 and many recipes cap CMake below 4, and
+          # there are no prebuilt 195 binaries. GitHub's guidance for VS 2022 is
+          # this image. Revisit when windows-2022 is retired or ConanCenter catches
+          # up; the VS 2026 workaround is in git history (tools.cmake:cmake_program).
           - platform: windows
-            os: windows-2025
+            os: windows-2022
             name: full
             flags: "-DMOTH_ENABLE_TOOLS=ON"
           - platform: windows
-            os: windows-2025
+            os: windows-2022
             name: core-only
             flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ECS=OFF -DMOTH_ENABLE_PHYSICS=OFF -DMOTH_ENABLE_TILEMAP=OFF -DMOTH_ENABLE_AUDIO=OFF -DMOTH_ENABLE_ASSETS=OFF -DMOTH_ENABLE_ANIM=OFF -DMOTH_ENABLE_NET=OFF -DMOTH_ENABLE_NOISE=OFF -DMOTH_ENABLE_PROFILE=OFF -DMOTH_ENABLE_PACKER=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
     steps:
@@ -124,27 +125,7 @@ jobs:
             esac
           done
           echo "conan options: $CONAN_OPTS"
-          # ConanCenter recipes tool_require CMake with ranges that exclude 4.x
-          # (vulkan-loader asks for [>=3.17.2 <4.0], resolving to 3.31.12), which
-          # predates the "Visual Studio 18 2026" generator Conan selects for MSVC
-          # 195 -- they fail with "Could not create named generator". The
-          # generator is fine: the runner's own CMake drives it, which is how the
-          # superbuild configures at all. Pointing recipes at that CMake is what
-          # fixes it. A profile replace_tool_requires does not: it leaves the
-          # recipe's own range resolving to 3.31.12 regardless of the pattern.
-          # An array, not a string: the path is C:/Program Files/CMake/bin/cmake.exe
-          # and unquoted word splitting broke it in two at the space.
-          CMAKE_ARG=()
-          if [ "$RUNNER_OS" = "Windows" ]; then
-            # cygpath -ms: the 8.3 short path (C:/PROGRA~1/...). Conan does not
-            # quote cmake_program when it runs it, so a path containing a space
-            # fails with "'C:/Program' is not recognized as an internal or
-            # external command".
-            CMAKE_PROG="$(cygpath -ms "$(command -v cmake)")"
-            CMAKE_ARG=(-c "tools.cmake:cmake_program=$CMAKE_PROG")
-            echo "forcing recipe cmake: $CMAKE_PROG ($(cmake --version | head -1))"
-          fi
-          conan install . -of build --build=missing -s build_type=Release "${CMAKE_ARG[@]}" $CONAN_OPTS $CONAN_EXTRA_ARGS
+          conan install . -of build --build=missing -s build_type=Release $CONAN_OPTS $CONAN_EXTRA_ARGS
           # Listed so that a preset-name mismatch shows the available names in
           # the log instead of only "no such preset".
           cmake --list-presets || true

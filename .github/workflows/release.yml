@@ -81,23 +81,24 @@ jobs:
         include:
           - platform: linux
             os: ubuntu-latest
-          # Pinned rather than windows-latest so the toolchain a package was built
-          # with cannot change without a commit. It does not avoid Visual Studio
-          # 2026 -- the windows-2025 label resolves to the windows-2025-vs2026
-          # image -- which is handled in the build step, by pointing recipes at
-          # the runner's own CMake.
+          # windows-2022, not windows-latest or windows-2025: both of those now serve
+          # Visual Studio 2026 (MSVC 195), which ConanCenter cannot build for yet --
+          # its generator needs CMake 4.2 and many recipes cap CMake below 4, and
+          # there are no prebuilt 195 binaries. GitHub's guidance for VS 2022 is
+          # this image. Revisit when windows-2022 is retired or ConanCenter catches
+          # up; the VS 2026 workaround is in git history (tools.cmake:cmake_program).
           - platform: windows
-            os: windows-2025
+            os: windows-2022
     env:
       # The Windows runners provide 'python'; ubuntu provides 'python3'.
-      PY: ${{ matrix.os == 'windows-2025' && 'python' || 'python3' }}
+      PY: ${{ matrix.os == 'windows-2022' && 'python' || 'python3' }}
       # Conan's autodetected MSVC profile defaults to cppstd=14, below the C++17
       # every module and five of the dependencies require. Linux is left as
       # detected (gnu17, matching CMAKE_CXX_EXTENSIONS) so that its package_id
       # stays the one a consumer's own detected profile resolves to.
       # The recipes check_min_cppstd(17), which rejects a lower standard with a
       # clear message but cannot raise the profile's, so it is still passed here.
-      CONAN_EXTRA_ARGS: ${{ matrix.os == 'windows-2025' && '-s compiler.cppstd=17' || '' }}
+      CONAN_EXTRA_ARGS: ${{ matrix.os == 'windows-2022' && '-s compiler.cppstd=17' || '' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -127,21 +128,6 @@ jobs:
           RELEASE_MODULES: ${{ needs.detect.outputs.release_modules }}
         run: |
           set -euo pipefail
-          # ConanCenter recipes tool_require CMake with ranges that exclude 4.x,
-          # predating the "Visual Studio 18 2026" generator Conan selects for MSVC
-          # 195, so they fail with "Could not create named generator". The runner's
-          # own CMake drives that generator, so recipes are pointed at it.
-          # An array, not a string: the path is C:/Program Files/CMake/bin/cmake.exe
-          # and unquoted word splitting broke it in two at the space.
-          CMAKE_ARG=()
-          if [ "$RUNNER_OS" = "Windows" ]; then
-            # cygpath -ms: the 8.3 short path (C:/PROGRA~1/...). Conan does not
-            # quote cmake_program when it runs it, so a path containing a space
-            # fails with "'C:/Program' is not recognized as an internal or
-            # external command".
-            CMAKE_PROG="$(cygpath -ms "$(command -v cmake)")"
-            CMAKE_ARG=(-c "tools.cmake:cmake_program=$CMAKE_PROG")
-          fi
           # Build order and package names come from tools/moth_create.py, which is
           # the single source of truth and fails if a module in modules/ is not
           # listed — that is how net, noise, profile and packer went unpublished.
@@ -176,7 +162,7 @@ jobs:
             # VARIANTS). Each produces a distinct package_id under the same
             # reference, so a consumer that needs e.g. moth_core with
             # enable_platform=False gets a binary instead of building from source.
-            conan create "modules/$m" --build=missing -s build_type=Release "${CMAKE_ARG[@]}" $CONAN_EXTRA_ARGS
+            conan create "modules/$m" --build=missing -s build_type=Release $CONAN_EXTRA_ARGS
             while read -r variant; do
               [ -n "$variant" ] || continue
               opts=()
@@ -184,7 +170,7 @@ jobs:
                 opts+=(-o "$option")
               done
               echo "-- variant: $variant"
-              conan create "modules/$m" --build=missing -s build_type=Release "${CMAKE_ARG[@]}" $CONAN_EXTRA_ARGS "${opts[@]}"
+              conan create "modules/$m" --build=missing -s build_type=Release $CONAN_EXTRA_ARGS "${opts[@]}"
             done < <($PY tools/moth_create.py --list-variants "$m")
 
             # ':*' uploads every binary of this reference, so the default build

@@ -57,7 +57,7 @@ jobs:
             fi
 
             release_modules="$(git diff --name-only "$BASE" "$HEAD" 2>/dev/null \
-              | grep -E '^modules/[^/]+/version\.txt$' \
+              | { grep -E '^modules/[^/]+/version\.txt$' || true; } \
               | sed -E 's#modules/([^/]+)/version\.txt#\1#' | sort -u | tr '\n' ' ')"
           fi
 

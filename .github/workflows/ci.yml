@@ -130,13 +130,20 @@ jobs:
             esac
           done
           echo "conan options: $CONAN_OPTS"
-          # ConanCenter's CMake 3.31 cannot drive the VS 2026 generator; the
-          # profile replaces it for dependency builds. See the profile for why.
-          PROFILE_ARGS=""
+          # ConanCenter recipes tool_require CMake with ranges that exclude 4.x
+          # (vulkan-loader asks for [>=3.17.2 <4.0], resolving to 3.31.12), which
+          # predates the "Visual Studio 18 2026" generator Conan selects for MSVC
+          # 195 -- they fail with "Could not create named generator". The
+          # generator is fine: the runner's own CMake drives it, which is how the
+          # superbuild configures at all. Pointing recipes at that CMake is what
+          # fixes it. A profile replace_tool_requires does not: it leaves the
+          # recipe's own range resolving to 3.31.12 regardless of the pattern.
+          CMAKE_ARG=""
           if [ "$RUNNER_OS" = "Windows" ]; then
-            PROFILE_ARGS="-pr:b default -pr:b .github/conan/windows-tools.profile"
+            CMAKE_ARG="-c tools.cmake:cmake_program=$(cygpath -m "$(command -v cmake)")"
+            echo "forcing recipe cmake: $(cmake --version | head -1)"
           fi
-          conan install . -of build --build=missing -s build_type=Release $PROFILE_ARGS $CONAN_OPTS $CONAN_EXTRA_ARGS
+          conan install . -of build --build=missing -s build_type=Release $CMAKE_ARG $CONAN_OPTS $CONAN_EXTRA_ARGS
           # Listed so that a preset-name mismatch shows the available names in
           # the log instead of only "no such preset".
           cmake --list-presets || true

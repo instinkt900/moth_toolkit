@@ -1,5 +1,6 @@
 from conan import ConanFile
 from conan.errors import ConanInvalidConfiguration
+from conan.tools.build import check_min_cppstd
 from conan.tools.files import copy
 
 import os
@@ -65,6 +66,11 @@ class MothToolkit(ConanFile):
             self.options["moth_packer/*"].with_ui = bool(self.options.enable_ui)
 
     def validate(self):
+        # This aggregate compiles nothing itself, but its umbrella header pulls in
+        # every enabled module's headers, which are C++17. Checked here so a
+        # profile below it -- MSVC's autodetected default is 14 -- fails with one
+        # clear message instead of a validation error from each dependency.
+        check_min_cppstd(self, 17)
         if self.options.enable_bridge and not (self.options.enable_core and self.options.enable_gfx and self.options.enable_ui):
             raise ConanInvalidConfiguration(
                 "moth::bridge requires core, gfx, and ui — enable those options or set enable_bridge=False"

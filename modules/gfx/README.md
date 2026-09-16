@@ -1,6 +1,6 @@
 # moth::gfx
 
-**Package** `moth_graphics` (2.0.0) · **Namespace** `moth::gfx` · **Umbrella** `<moth/graphics/moth_graphics.h>` · **CMake target** `moth_graphics::moth_graphics` (Conan) / `moth::gfx` (superbuild)
+**Package** `moth_graphics` · **Namespace** `moth::gfx` · **Umbrella** `<moth/graphics/moth_graphics.h>` · **CMake target** `moth_graphics::moth_graphics` (Conan) / `moth::gfx` (superbuild)
 
 The Vulkan-backed 2D renderer. `IGraphics` (immediate-mode draw calls, render
 targets, push/pop state, float coords, textured quads, nine-slice, custom
@@ -260,7 +260,7 @@ On Windows, Conan provides them.
 
 ```python
 def requirements(self):
-    self.requires("moth_graphics/2.0.0")
+    self.requires("moth_graphics/[~2.0]")
 ```
 
 ```cmake

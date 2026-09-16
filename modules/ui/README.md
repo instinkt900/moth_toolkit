@@ -1,6 +1,6 @@
 # moth::ui
 
-**Package** `moth_ui` (2.0.0) · **Namespace** `moth::ui` · **Umbrella** `<moth/ui/moth_ui.h>` (+ `<moth/ui/moth_ui_fwd.h>`) · **CMake target** `moth_ui::moth_ui` (Conan) / `moth::ui` (superbuild)
+**Package** `moth_ui` · **Namespace** `moth::ui` · **Umbrella** `<moth/ui/moth_ui.h>` (+ `<moth/ui/moth_ui_fwd.h>`) · **CMake target** `moth_ui::moth_ui` (Conan) / `moth::ui` (superbuild)
 
 A node-graph UI system: `Context`, `LayerStack`, `Node` hierarchy, keyframe
 animation, and screen flow. It defines renderer-agnostic abstractions
@@ -154,7 +154,7 @@ Individual headers under `moth/ui/animation/`, `nodes/`, `layout/`, `layers/`,
 
 ```python
 def requirements(self):
-    self.requires("moth_ui/2.0.0")
+    self.requires("moth_ui/[~2.0]")
 ```
 
 ```cmake

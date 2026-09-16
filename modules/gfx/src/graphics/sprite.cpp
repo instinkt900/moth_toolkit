@@ -170,8 +170,8 @@ namespace moth::gfx {
         int const h = frameRect.h();
         Transform2D transform;
         transform.position = FloatVec2{
-            static_cast<float>(destRect.x()) + static_cast<float>(destRect.w()) * 0.5f,
-            static_cast<float>(destRect.y()) + static_cast<float>(destRect.h()) * 0.5f,
+            static_cast<float>(destRect.x()) + (static_cast<float>(destRect.w()) * 0.5f),
+            static_cast<float>(destRect.y()) + (static_cast<float>(destRect.h()) * 0.5f),
         };
         if (w > 0 && h > 0) {
             transform.scale = FloatVec2{

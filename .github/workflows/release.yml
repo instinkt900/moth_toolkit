@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       modules:
-        description: 'Space-separated module dirs to force-release (empty = auto-detect from version.txt changes). e.g. "core gfx ui"'
+        description: 'Space-separated module dirs to force-release (empty = every module whose version lacks a Linux or Windows binary on the remote). e.g. "core gfx ui"'
         required: false
         default: ''
   push:
@@ -38,27 +38,16 @@ jobs:
         run: |
           set -euo pipefail
 
-          # A module is published when the version in its version.txt is not yet
-          # on the remote. A code-only fix to one module leaves its version alone
-          # and so never republishes it or its dependencies. The remote allows
-          # anonymous reads, so no login is needed here.
+          # A module is published when the version in its version.txt has no
+          # binary on the remote for Linux or Windows. A code-only fix to one
+          # module leaves its version alone and so never republishes it or its
+          # dependencies, and a release that uploaded one platform but failed on
+          # the other is retried. The remote allows anonymous reads, so no login
+          # is needed here. The script fails if the remote cannot be queried.
           if [ -n "$MANUAL_MODULES" ]; then
             release_modules="$MANUAL_MODULES"
           else
-            release_modules=""
-            while read -r m pkg; do
-              version="$(tr -d '[:space:]' < "modules/$m/version.txt")"
-              ref="${pkg}/${version}"
-              # Fail on any error rather than treating it as "not published":
-              # an outage must not cause every module to be rebuilt and uploaded.
-              results="$(curl -fsS --retry 3 "${ARTIFACTORY_URL%/}/v2/conans/search?q=${ref}")"
-              if echo "$results" | grep -qF "\"${ref}@_/_\""; then
-                echo "${ref}: published"
-              else
-                echo "${ref}: not published"
-                release_modules="${release_modules:+$release_modules }$m"
-              fi
-            done < <(python3 tools/moth_create.py --list --with-packages)
+            release_modules="$(python3 tools/moth_unpublished.py "$ARTIFACTORY_URL" --os Linux --os Windows)"
           fi
 
           echo "release_modules=$release_modules" >> "$GITHUB_OUTPUT"
@@ -100,6 +89,13 @@ jobs:
       # clear message but cannot raise the profile's, so it is still passed here.
       CONAN_EXTRA_ARGS: ${{ matrix.os == 'windows-2022' && '-s compiler.cppstd=17' || '' }}
     steps:
+      # The Windows image checks out with CRLF line endings. Conan hashes the
+      # exported sources into the recipe revision, so CRLF gives Windows a
+      # different revision from Linux and splits a version's binaries across
+      # two revisions. Check out with LF everywhere; this also covers submodules.
+      - name: Check out with LF line endings
+        run: git config --global core.autocrlf false
+
       - uses: actions/checkout@v4
         with:
           submodules: recursive
@@ -116,6 +112,15 @@ jobs:
         with:
           cache_packages: true
 
+      # A dependency built from source can need system packages the step above
+      # does not install (vulkan-loader pulls in xorg/system). Conan only checks
+      # for them by default and fails, so let it install them, as ci.yml does.
+      - name: Allow Conan to install missing system packages
+        if: runner.os == 'Linux'
+        run: |
+          echo 'tools.system.package_manager:mode=install' >> "$(conan config home)/global.conf"
+          echo 'tools.system.package_manager:sudo=True' >> "$(conan config home)/global.conf"
+
       - name: Add private artifactory remote
         shell: bash
         run: |
@@ -126,17 +131,29 @@ jobs:
         shell: bash
         env:
           RELEASE_MODULES: ${{ needs.detect.outputs.release_modules }}
+          MANUAL_MODULES: ${{ github.event.inputs.modules }}
+          ARTIFACTORY_URL: ${{ vars.ARTIFACTORY_URL }}
         run: |
           set -euo pipefail
           # Build order and package names come from tools/moth_create.py, which is
           # the single source of truth and fails if a module in modules/ is not
           # listed — that is how net, noise, profile and packer went unpublished.
+          # tr: Python on Windows ends lines with CRLF, which would leave a '\r'
+          # on every package name.
           declare -A PKG=()
           ORDER=()
           while read -r m pkg; do
             PKG[$m]="$pkg"
             ORDER+=("$m")
-          done < <($PY tools/moth_create.py --list --with-packages)
+          done < <($PY tools/moth_create.py --list --with-packages | tr -d '\r')
+
+          # A module detect picked because the other platform lacks it is skipped
+          # here when this platform already has its binary. Modules named by hand
+          # are always rebuilt.
+          if [ -z "$MANUAL_MODULES" ]; then
+            RELEASE_MODULES="$($PY tools/moth_unpublished.py "$ARTIFACTORY_URL" --os "$RUNNER_OS" | tr -d '\r')"
+          fi
+          echo "Publishing on $RUNNER_OS: [$RELEASE_MODULES]"
 
           # Export every recipe first. Modules pin their siblings to exact
           # versions (moth_packer requires moth_core/0.1.0), so a lone packer
@@ -171,7 +188,7 @@ jobs:
               done
               echo "-- variant: $variant"
               conan create "modules/$m" --build=missing -s build_type=Release $CONAN_EXTRA_ARGS "${opts[@]}"
-            done < <($PY tools/moth_create.py --list-variants "$m")
+            done < <($PY tools/moth_create.py --list-variants "$m" | tr -d '\r')
 
             # ':*' uploads every binary of this reference, so the default build
             # and all its variants ship together. A dependency built from source

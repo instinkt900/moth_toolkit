@@ -1,3 +1,4 @@
+#include "common.h"
 #include "moth/ui/graphics/texture_filter.h"
 #include "moth/ui/layout/layout_entity_flipbook.h"
 #include "moth/ui/animation/discrete_animation_track.h"

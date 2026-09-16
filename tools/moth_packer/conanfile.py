@@ -10,7 +10,7 @@ class MothPackerCli(ConanFile):
     def requirements(self):
         # with_ui: the CLI exposes --layout/--layouts-dir, which are the module's
         # moth::ui-backed collectors.
-        self.requires("moth_packer/[~1.0]", options={"with_ui": True})
+        self.requires("moth_packer/[~2.0]", options={"with_ui": True})
         self.requires("cli11/2.4.2")
         self.requires("fmt/[~10.2]")
         self.requires("spdlog/[~1.14]")

@@ -147,7 +147,7 @@ class MothToolkit(ConanFile):
         if self.options.enable_profile:
             self.requires("moth_profile/[~0.1]", transitive_headers=True, transitive_libs=True)
         if self.options.enable_packer:
-            self.requires("moth_packer/[~1.0]", transitive_headers=True, transitive_libs=True)
+            self.requires("moth_packer/[~2.0]", transitive_headers=True, transitive_libs=True)
 
     def package(self):
         copy(self, "*.h", src=os.path.join(self.source_folder, "include"),

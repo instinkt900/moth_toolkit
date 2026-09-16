@@ -93,8 +93,13 @@ jobs:
       # exported sources into the recipe revision, so CRLF gives Windows a
       # different revision from Linux and splits a version's binaries across
       # two revisions. Check out with LF everywhere; this also covers submodules.
+      # core.eol is needed as well as core.autocrlf: imgui's .gitattributes marks
+      # its sources 'text', which uses the native line ending unless core.eol
+      # says otherwise.
       - name: Check out with LF line endings
-        run: git config --global core.autocrlf false
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
 
       - uses: actions/checkout@v4
         with:

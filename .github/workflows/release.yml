@@ -130,9 +130,11 @@ jobs:
           # predating the "Visual Studio 18 2026" generator Conan selects for MSVC
           # 195, so they fail with "Could not create named generator". The runner's
           # own CMake drives that generator, so recipes are pointed at it.
-          CMAKE_ARG=""
+          # An array, not a string: the path is C:/Program Files/CMake/bin/cmake.exe
+          # and unquoted word splitting broke it in two at the space.
+          CMAKE_ARG=()
           if [ "$RUNNER_OS" = "Windows" ]; then
-            CMAKE_ARG="-c tools.cmake:cmake_program=$(cygpath -m "$(command -v cmake)")"
+            CMAKE_ARG=(-c "tools.cmake:cmake_program=$(cygpath -m "$(command -v cmake)")")
           fi
           # Build order and package names come from tools/moth_create.py, which is
           # the single source of truth and fails if a module in modules/ is not
@@ -168,7 +170,7 @@ jobs:
             # VARIANTS). Each produces a distinct package_id under the same
             # reference, so a consumer that needs e.g. moth_core with
             # enable_platform=False gets a binary instead of building from source.
-            conan create "modules/$m" --build=missing -s build_type=Release $CMAKE_ARG $CONAN_EXTRA_ARGS
+            conan create "modules/$m" --build=missing -s build_type=Release "${CMAKE_ARG[@]}" $CONAN_EXTRA_ARGS
             while read -r variant; do
               [ -n "$variant" ] || continue
               opts=()
@@ -176,7 +178,7 @@ jobs:
                 opts+=(-o "$option")
               done
               echo "-- variant: $variant"
-              conan create "modules/$m" --build=missing -s build_type=Release $CMAKE_ARG $CONAN_EXTRA_ARGS "${opts[@]}"
+              conan create "modules/$m" --build=missing -s build_type=Release "${CMAKE_ARG[@]}" $CONAN_EXTRA_ARGS "${opts[@]}"
             done < <($PY tools/moth_create.py --list-variants "$m")
 
             # ':*' uploads every binary of this reference, so the default build

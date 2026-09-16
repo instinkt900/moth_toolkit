@@ -1,0 +1,90 @@
+#pragma once
+
+#include <moth/packer/packer.h>
+
+#include "stb_image_write.h"
+
+#include <moth/ui/layout/layout.h>
+#include <moth/ui/layout/layout_entity_image.h>
+#include <moth/ui/layout/layout_rect.h>
+
+#ifdef _WIN32
+#include <process.h>
+#define MOTH_PACKER_TESTS_PID() _getpid()
+#else
+#include <unistd.h>
+#define MOTH_PACKER_TESTS_PID() getpid()
+#endif
+
+#include <atomic>
+#include <filesystem>
+#include <system_error>
+#include <stdexcept>
+
+// RAII temporary directory — created on construction, recursively deleted on destruction
+struct TempDir {
+    std::filesystem::path path;
+
+    TempDir() {
+        static std::atomic<int> s_counter{ 0 };
+        // Include PID so parallel CTest processes (each starting counter at 0) don't collide
+        auto const name = "moth_packer_tests_" + std::to_string(MOTH_PACKER_TESTS_PID()) + "_" + std::to_string(++s_counter);
+        path = std::filesystem::temp_directory_path() / name;
+        std::filesystem::create_directories(path);
+    }
+
+    ~TempDir() noexcept {
+        std::error_code ec;
+        std::filesystem::remove_all(path, ec);
+    }
+
+    TempDir(TempDir const&) = delete;
+    TempDir& operator=(TempDir const&) = delete;
+};
+
+// Write a solid-color RGBA PNG of the given dimensions and return an ImageDetails for it
+inline moth::packer::ImageDetails MakeTestImage(std::filesystem::path const& dir, std::string const& name, int width, int height) {
+    if (width <= 0 || height <= 0) {
+        throw std::invalid_argument("MakeTestImage: width and height must be positive");
+    }
+    auto const filePath = dir / name;
+    int const channels = 4;
+    std::vector<uint8_t> pixels(static_cast<size_t>(width) * height * channels, 255);
+    if (stbi_write_png(filePath.string().c_str(), width, height, channels, pixels.data(), width * channels) == 0) {
+        throw std::runtime_error("MakeTestImage: failed to write PNG: " + filePath.string());
+    }
+
+    moth::packer::ImageDetails details;
+    details.path = filePath;
+    details.dimensions = { width, height };
+    details.channels = channels;
+    return details;
+}
+
+// Build a PackOptions with outputPath and filename set; all other fields use struct defaults.
+inline moth::packer::PackOptions MakeTestPackOptions(std::filesystem::path const& outputPath,
+                                                    std::string const& filename = "test") {
+    moth::packer::PackOptions opts;
+    opts.outputPath = outputPath;
+    opts.filename = filename;
+    return opts;
+}
+
+// Create a layout file containing image entities pointing to the given image paths.
+//
+// The entity holds the absolute image path: moth::ui writes it relative to the
+// layout file on Save() and resolves it back to absolute on Load(), so that is
+// what CollectImages sees. Passing a relative path here instead would be
+// relativised a second time on save and point nowhere.
+inline std::filesystem::path MakeTestLayout(std::filesystem::path const& dir, std::string const& name, std::vector<std::filesystem::path> const& imagePaths) {
+    moth::ui::Layout layout;
+    auto const defaultRect = moth::ui::MakeDefaultLayoutRect();
+    for (auto const& imagePath : imagePaths) {
+        auto entity = std::make_shared<moth::ui::LayoutEntityImage>(
+            defaultRect, std::filesystem::absolute(imagePath));
+        layout.m_children.push_back(entity);
+    }
+    auto const layoutPath = dir / (name + moth::ui::Layout::FullExtension);
+    layout.Save(layoutPath);
+    return layoutPath;
+}

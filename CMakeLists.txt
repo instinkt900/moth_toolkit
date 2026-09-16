@@ -30,8 +30,9 @@ option(MOTH_ENABLE_ANIM    "Build the moth::anim module (character animation sta
 option(MOTH_ENABLE_NET     "Build the moth::net module (TCP framed-JSON messaging)"   ON)
 option(MOTH_ENABLE_NOISE   "Build the moth::noise module (FastNoise2 node graphs)"    ON)
 option(MOTH_ENABLE_PROFILE "Build the moth::profile module (frame profiler + ImGui panel)" ON)
+option(MOTH_ENABLE_PACKER  "Build the moth::packer module (texture atlas/flipbook packing)" ON)
 option(MOTH_ENABLE_TOOLKIT "Build the moth::toolkit aggregate target"                 ON)
-option(MOTH_ENABLE_TOOLS "Build the moth_pak CLI tool (requires moth::assets)"       OFF)
+option(MOTH_ENABLE_TOOLS "Build the CLI tools (moth_pak, moth_packer)"               OFF)
 option(MOTH_ENABLE_EXAMPLES "Build the example projects"                              OFF)
 
 # ---------------------------------------------------------------------------
@@ -70,8 +71,19 @@ endif()
 if(MOTH_ENABLE_NOISE AND NOT MOTH_ENABLE_CORE)
     message(FATAL_ERROR "moth::noise requires moth::core — enable MOTH_ENABLE_CORE or disable MOTH_ENABLE_NOISE.")
 endif()
+if(MOTH_ENABLE_PACKER AND NOT MOTH_ENABLE_CORE)
+    message(FATAL_ERROR "moth::packer requires moth::core — enable MOTH_ENABLE_CORE or disable MOTH_ENABLE_PACKER.")
+endif()
 if(MOTH_ENABLE_TOOLS AND NOT MOTH_ENABLE_ASSETS)
-    message(FATAL_ERROR "MOTH_ENABLE_TOOLS requires moth::assets — enable MOTH_ENABLE_ASSETS or disable MOTH_ENABLE_TOOLS.")
+    message(FATAL_ERROR "MOTH_ENABLE_TOOLS requires moth::assets (moth_pak) — enable MOTH_ENABLE_ASSETS or disable MOTH_ENABLE_TOOLS.")
+endif()
+if(MOTH_ENABLE_TOOLS AND NOT MOTH_ENABLE_PACKER)
+    message(FATAL_ERROR "MOTH_ENABLE_TOOLS requires moth::packer (moth_packer) — enable MOTH_ENABLE_PACKER or disable MOTH_ENABLE_TOOLS.")
+endif()
+if(MOTH_ENABLE_TOOLS AND NOT MOTH_ENABLE_UI)
+    # The moth_packer CLI exposes --layout/--layout-dir unconditionally, and those
+    # are moth::packer's moth::ui-backed collectors.
+    message(FATAL_ERROR "MOTH_ENABLE_TOOLS requires moth::ui (the moth_packer --layout options) — enable MOTH_ENABLE_UI or disable MOTH_ENABLE_TOOLS.")
 endif()
 
 # ---------------------------------------------------------------------------
@@ -169,12 +181,22 @@ if(MOTH_ENABLE_PROFILE)
     endif()
 endif()
 
+if(MOTH_ENABLE_PACKER)
+    # The layout collectors need moth::ui, so they are built only when ui is in
+    # the build; without it the module still packs images via moth::core alone.
+    set(MOTH_PACKER_ENABLE_UI ${MOTH_ENABLE_UI})
+    add_subdirectory(modules/packer)
+    add_library(moth::packer ALIAS moth_packer)
+    add_library(moth_packer::moth_packer ALIAS moth_packer)
+endif()
+
 if(MOTH_ENABLE_TOOLKIT)
     add_subdirectory(modules/toolkit)
 endif()
 
 if(MOTH_ENABLE_TOOLS)
     add_subdirectory(tools/moth_pak)
+    add_subdirectory(tools/moth_packer)
 endif()
 
 if(MOTH_ENABLE_EXAMPLES)

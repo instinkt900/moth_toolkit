@@ -69,4 +69,8 @@ if(MOTH_ENABLE_PROFILE)
     endif()
 endif()
 
+if(MOTH_ENABLE_PACKER)
+    target_link_libraries(moth_toolkit INTERFACE moth::packer)
+endif()
+
 install(DIRECTORY include/ DESTINATION include)

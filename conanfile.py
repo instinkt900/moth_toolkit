@@ -44,6 +44,11 @@ class MothToolkitSuperbuild(ConanFile):
         # Node-graph noise generation plus the metadata system moth::noise
         # serialises against.
         self.requires("fastnoise2/1.1.1", transitive_headers=True)
+        # moth::packer: image load/write + bin packing, and glob expansion for
+        # its path collectors. CLI11 is for the moth_packer/moth_pak front ends.
+        self.requires("stb/cci.20240531")
+        self.requires("p-ranav-glob/0.0.1")
+        self.requires("cli11/2.4.2")
         # Runtime GLSL compilation for custom shaders (opt-in; pairs with the
         # MOTH_GRAPHICS_ENABLE_GLSLANG CMake option).
         if self.options.enable_glslang:

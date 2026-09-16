@@ -24,10 +24,12 @@ turn on/off feature by feature.
   - [moth::net](#mothnet)
   - [moth::noise](#mothnoise)
   - [moth::profile](#mothprofile)
+  - [moth::packer](#mothpacker)
   - [moth::toolkit](#mothtoolkit)- [Using the toolkit as a whole](#using-the-toolkit-as-a-whole)
 - [Building](#building)
 - [Starting a new game](#starting-a-new-game)
 - [Packing assets](#packing-assets)
+- [Packing images](#packing-images)
 - [Custom shaders](#custom-shaders)
 - [Layout](#layout)
 
@@ -40,7 +42,8 @@ and Conan-packaged; `moth::ecs` (EnTT-backed entity-component system) replaced
 the interim `moth::gfx::scene::Scene`/`Entity` model, `moth::physics` wraps
 Box2D, `moth::tilemap` loads and renders Tiled `.tmj` maps, `moth::audio` wraps
 miniaudio, and `moth::assets` adds id/path asset addressing plus a `.pak` pack
-format (cooked by the `moth_pak` CLI).
+format (cooked by the `moth_pak` CLI). `moth::packer` builds texture atlases and
+flipbook sheets (cooked by the `moth_packer` CLI).
 
 ## Modules
 
@@ -463,6 +466,36 @@ void GameLayer::Draw() {
 }
 ```
 
+### moth::packer
+
+**Package** `moth_packer` · **Namespace** `moth::packer` · **Header** `<moth/packer/packer.h>`
+
+Bin-packs images into texture atlases or flipbook sheets, and extracts sprites
+back out of a sheet. Works in memory (`PackToMemory`) or against the filesystem
+(`Pack`/`Unpack`, which also write a JSON descriptor). Only the math types reach
+the public header, so `moth::core` is its sole public dependency; `stb`,
+`p-ranav-glob`, `nlohmann_json`, `range-v3` and `spdlog` are implementation
+details. The `moth_packer` CLI is a front end over this module.
+
+```cpp
+#include <moth/packer/packer.h>
+
+std::vector<moth::packer::ImageDetails> images;
+moth::packer::CollectImagesFromDir("sprites/", /*recursive=*/true, images);
+
+moth::packer::PackOptions options;
+options.outputPath = "out/";
+options.filename   = "sprites";
+options.padding    = 2;
+moth::packer::Pack(images, options);      // writes sprites.png + sprites.json
+```
+
+The two `moth::ui` layout collectors (`CollectImagesFromLayout`,
+`CollectImagesFromLayoutsDir`) are the only part that needs `moth::ui`, so they
+are opt-in via `MOTH_PACKER_ENABLE_UI` (Conan `with_ui`) and gated behind
+`MOTH_PACKER_HAS_UI`. The superbuild turns them on whenever `MOTH_ENABLE_UI` is
+on. See [`modules/packer/README.md`](modules/packer/README.md).
+
 ### moth::toolkit
 
 **Package** `moth_toolkit` · **Umbrella** `<moth/toolkit.h>`
@@ -543,8 +576,9 @@ configure preset):
 | `MOTH_ENABLE_NET` | ON | `moth::net` TCP messaging |
 | `MOTH_ENABLE_NOISE` | ON | `moth::noise` FastNoise2 node graphs |
 | `MOTH_ENABLE_PROFILE` | ON | `moth::profile` frame profiler (the ImGui panel is built only with gfx) |
+| `MOTH_ENABLE_PACKER` | ON | `moth::packer` atlas/flipbook packing |
 | `MOTH_ENABLE_TOOLKIT` | ON | `moth::toolkit` aggregate target |
-| `MOTH_ENABLE_TOOLS` | OFF | the `moth_pak` CLI |
+| `MOTH_ENABLE_TOOLS` | OFF | the `moth_pak` and `moth_packer` CLIs (needs assets, packer and ui) |
 | `MOTH_ENABLE_EXAMPLES` | OFF | the example projects |
 
 For example, a renderer-only build:
@@ -628,6 +662,28 @@ it can later be addressed by id or by path. Load the archive at runtime with
 loader (e.g. `AudioEngine::LoadSoundFromMemory`). See
 `examples/packed_audio_demo/` for a complete cook → load-by-id → play loop.
 
+## Packing images
+
+To cook loose images into texture atlases or a flipbook sheet, use `moth_packer`
+(build the superbuild with `-DMOTH_ENABLE_TOOLS=ON`):
+
+```bash
+# an atlas from a directory of sprites
+./build/Release/tools/moth_packer/moth_packer -d sprites/ -r -o out/ sprites
+
+# a flipbook from numbered frames
+./build/Release/tools/moth_packer/moth_packer --pack-type flipbook -d frames/ -o out/ run
+
+# pull individual sprites back out of a sheet
+./build/Release/tools/moth_packer/moth_packer --mode unpack sheet.png -o out/
+```
+
+Input can also come from a file list (`-i`), a glob (`-g`), or the images a
+`moth::ui` layout references (`-l` / `-x`). Each run writes the atlas image(s)
+plus a JSON descriptor. To do the same from code — which is what tools built on
+the toolkit should do — link `moth::packer` and call `Pack`/`PackToMemory`
+directly; see [`modules/packer/README.md`](modules/packer/README.md).
+
 ## Custom shaders
 
 `moth::gfx` can draw Shadertoy-style fragment shaders. Compile GLSL at runtime
@@ -673,9 +729,11 @@ modules/              the moth:: libraries (each Conan-packaged)
   net/                  moth::net     — TCP framed-JSON client/server
   noise/                moth::noise   — FastNoise2 node graphs + JSON format
   profile/              moth::profile — frame profiler + ImGui panel
+  packer/               moth::packer  — texture atlas/flipbook packing
   toolkit/              moth::toolkit — aggregate target + feature header
 cmake/features.h.in   generated MOTH_ENABLE_*/MOTH_HAS_* flags (superbuild)
 examples/             sample games / consumption tests
 tools/                moth new scaffold CLI + moth_pak asset cooker
+                      + moth_packer atlas packer
 ```
 

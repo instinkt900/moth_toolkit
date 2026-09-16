@@ -120,6 +120,10 @@
 #include <moth/noise/noise.h>
 #endif
 
+#if MOTH_ENABLE_PACKER
+#include <moth/packer/packer.h>
+#endif
+
 #if MOTH_ENABLE_PROFILE
 #include <moth/profile/profiler.h>
 #if MOTH_ENABLE_GFX

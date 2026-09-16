@@ -28,37 +28,37 @@ jobs:
       release_modules: ${{ steps.detect.outputs.release_modules }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Determine modules to publish
         id: detect
         shell: bash
+        env:
+          MANUAL_MODULES: ${{ github.event.inputs.modules }}
+          ARTIFACTORY_URL: ${{ vars.ARTIFACTORY_URL }}
         run: |
-          set -uo pipefail
+          set -euo pipefail
 
-          # A module is published only when its version.txt changes. A code-only
-          # fix to one module must never republish its dependencies, so the
-          # dependency graph deliberately plays no part in this decision.
-          manual="${{ github.event.inputs.modules }}"
-
-          if [ -n "$manual" ]; then
-            release_modules="$manual"
+          # A module is published when the version in its version.txt is not yet
+          # on the remote. A code-only fix to one module leaves its version alone
+          # and so never republishes it or its dependencies. The remote allows
+          # anonymous reads, so no login is needed here.
+          if [ -n "$MANUAL_MODULES" ]; then
+            release_modules="$MANUAL_MODULES"
           else
-            if [ "$GITHUB_EVENT_NAME" == "push" ]; then
-              BASE="${{ github.event.before }}"
-              HEAD="${{ github.sha }}"
-            else
-              BASE="HEAD~1"
-              HEAD="HEAD"
-            fi
-            if [ "$BASE" == "0000000000000000000000000000000000000000" ]; then
-              BASE="HEAD~1"
-            fi
-
-            release_modules="$(git diff --name-only "$BASE" "$HEAD" 2>/dev/null \
-              | { grep -E '^modules/[^/]+/version\.txt$' || true; } \
-              | sed -E 's#modules/([^/]+)/version\.txt#\1#' | sort -u | tr '\n' ' ')"
+            release_modules=""
+            while read -r m pkg; do
+              version="$(tr -d '[:space:]' < "modules/$m/version.txt")"
+              ref="${pkg}/${version}"
+              # Fail on any error rather than treating it as "not published":
+              # an outage must not cause every module to be rebuilt and uploaded.
+              results="$(curl -fsS --retry 3 "${ARTIFACTORY_URL%/}/v2/conans/search?q=${ref}")"
+              if echo "$results" | grep -qF "\"${ref}@_/_\""; then
+                echo "${ref}: published"
+              else
+                echo "${ref}: not published"
+                release_modules="${release_modules:+$release_modules }$m"
+              fi
+            done < <(python3 tools/moth_create.py --list --with-packages)
           fi
 
           echo "release_modules=$release_modules" >> "$GITHUB_OUTPUT"

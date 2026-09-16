@@ -84,7 +84,8 @@ jobs:
           # Pinned rather than windows-latest so the toolchain a package was built
           # with cannot change without a commit. It does not avoid Visual Studio
           # 2026 -- the windows-2025 label resolves to the windows-2025-vs2026
-          # image -- which is handled by .github/conan/windows-tools.profile.
+          # image -- which is handled in the build step, by pointing recipes at
+          # the runner's own CMake.
           - platform: windows
             os: windows-2025
     env:

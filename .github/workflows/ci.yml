@@ -137,25 +137,9 @@ jobs:
 
       - name: Create modules as packages (dependency order)
         run: |
-          set -e
-          ORDER="core gfx anim ui packer ecs physics tilemap audio assets net noise profile bridge toolkit"
-
-          # Guard: a module added without a place in ORDER above would silently
-          # skip packaged consumption, which is how net/noise/profile/packer went
-          # uncovered. Fail loudly instead.
-          for dir in modules/*/; do
-            m="$(basename "$dir")"
-            case " $ORDER " in
-              *" $m "*) ;;
-              *) echo "::error::module '$m' is missing from ORDER in .github/workflows/ci.yml"; exit 1 ;;
-            esac
-          done
-
-          for m in $ORDER; do
-            echo "::group::conan create moth $m"
-            (cd "modules/$m" && conan create . --build=missing -s build_type=Release)
-            echo "::endgroup::"
-          done
+          # tools/moth_create.py owns the dependency order and fails if a module
+          # in modules/ is missing from its list, so this cannot silently skip one.
+          python3 tools/moth_create.py -s build_type=Release
 
       - name: Build a packaged consumer (hello_game via find_package)
         working-directory: examples/hello_game

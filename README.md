@@ -27,6 +27,7 @@ turn on/off feature by feature.
   - [moth::packer](#mothpacker)
   - [moth::toolkit](#mothtoolkit)- [Using the toolkit as a whole](#using-the-toolkit-as-a-whole)
 - [Building](#building)
+- [Refreshing the local Conan cache](#refreshing-the-local-conan-cache)
 - [Starting a new game](#starting-a-new-game)
 - [Packing assets](#packing-assets)
 - [Packing images](#packing-images)
@@ -614,6 +615,30 @@ The `moth_graphics` package optionally enables runtime GLSL compilation with
 `-o enable_glslang=True` (and `-DMOTH_GRAPHICS_ENABLE_GLSLANG=ON` in the
 superbuild).
 
+## Refreshing the local Conan cache
+
+Other projects build against the `moth_*` packages in your local Conan cache, so
+the cache needs recreating whenever the toolkit sources change.
+`tools/moth_create.py` does the whole set in dependency order:
+
+```bash
+python3 tools/moth_create.py                      # all modules, Release
+python3 tools/moth_create.py core gfx ui          # just these (still ordered)
+python3 tools/moth_create.py -s build_type=Debug  # a debug cache
+python3 tools/moth_create.py -r conancenter       # restrict to one remote
+python3 tools/moth_create.py --list               # print the order and stop
+```
+
+It stops at the first failure, since every later module depends on the ones
+before it; pass `--keep-going` to build the rest anyway. The common `conan
+create` flags (`-s`, `-o`, `-pr`, `-r`, `-nr`, `--build`) are accepted directly
+and anything else goes after a `--` separator. If Conan lives in a virtualenv
+rather than on your `PATH`, point at it with `--conan /path/to/conan`.
+
+The module list in that script is the single source of truth for build order —
+the CI workflows read it rather than keeping their own copy, and it refuses to
+run if a module in `modules/` is missing from it.
+
 ## Starting a new game
 
 The scaffolded project consumes the packaged `moth_graphics` module (and, through
@@ -622,8 +647,7 @@ Create them once from the toolkit root, in dependency order (see
 [Conan packages](#conan-packages-per-module)):
 
 ```bash
-conan create modules/core --build=missing -s build_type=Release
-conan create modules/gfx  --build=missing -s build_type=Release
+python3 tools/moth_create.py core gfx
 ```
 
 Then scaffold a project from the bundled template:
@@ -733,7 +757,8 @@ modules/              the moth:: libraries (each Conan-packaged)
   toolkit/              moth::toolkit — aggregate target + feature header
 cmake/features.h.in   generated MOTH_ENABLE_*/MOTH_HAS_* flags (superbuild)
 examples/             sample games / consumption tests
-tools/                moth new scaffold CLI + moth_pak asset cooker
+tools/                moth new scaffold CLI + moth_create cache refresher
+                      + moth_pak asset cooker
                       + moth_packer atlas packer
 ```
 

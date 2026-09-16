@@ -106,24 +106,15 @@ jobs:
           TOUCHED_MODULES: ${{ needs.detect.outputs.touched_modules }}
         run: |
           set -euo pipefail
-          declare -A PKG=(
-            [core]=moth_core [gfx]=moth_graphics [anim]=moth_anim [ui]=moth_ui
-            [packer]=moth_packer [ecs]=moth_ecs [physics]=moth_physics
-            [tilemap]=moth_tilemap [audio]=moth_audio [assets]=moth_assets
-            [net]=moth_net [noise]=moth_noise [profile]=moth_profile
-            [bridge]=moth_bridge [toolkit]=moth_toolkit
-          )
-          ORDER=(core gfx anim ui packer ecs physics tilemap audio assets net noise profile bridge toolkit)
-
-          # Guard: a module missing from PKG/ORDER would never be published, which
-          # is how net, noise, profile and packer were silently skipped.
-          for dir in modules/*/; do
-            m="$(basename "$dir")"
-            if [ -z "${PKG[$m]:-}" ]; then
-              echo "::error::module '$m' is missing from PKG/ORDER in .github/workflows/release.yml"
-              exit 1
-            fi
-          done
+          # Build order and package names come from tools/moth_create.py, which is
+          # the single source of truth and fails if a module in modules/ is not
+          # listed — that is how net, noise, profile and packer went unpublished.
+          declare -A PKG=()
+          ORDER=()
+          while read -r m pkg; do
+            PKG[$m]="$pkg"
+            ORDER+=("$m")
+          done < <(python3 tools/moth_create.py --list --with-packages)
 
           for m in "${ORDER[@]}"; do
             pkg="${PKG[$m]}"
@@ -162,13 +153,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          declare -A PKG=(
-            [core]=moth_core [gfx]=moth_graphics [anim]=moth_anim [ui]=moth_ui
-            [packer]=moth_packer [ecs]=moth_ecs [physics]=moth_physics
-            [tilemap]=moth_tilemap [audio]=moth_audio [assets]=moth_assets
-            [net]=moth_net [noise]=moth_noise [profile]=moth_profile
-            [bridge]=moth_bridge [toolkit]=moth_toolkit
-          )
+          # Package names come from tools/moth_create.py, as in the publish job.
+          declare -A PKG=()
+          while read -r m pkg; do
+            PKG[$m]="$pkg"
+          done < <(python3 tools/moth_create.py --list --with-packages)
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

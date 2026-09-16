@@ -194,6 +194,7 @@ set_source_files_properties(
     external/imgui/backends/imgui_impl_glfw.cpp
     external/imgui/backends/imgui_impl_vulkan.cpp
     src/graphics/vulkan/shaders/vulkan_shaders.cpp
+    src/graphics/stb_image.cpp
     PROPERTIES SKIP_PRECOMPILE_HEADERS ON
 )
 

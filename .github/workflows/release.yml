@@ -86,6 +86,11 @@ jobs:
     env:
       # The Windows runners provide 'python'; ubuntu provides 'python3'.
       PY: ${{ matrix.os == 'windows-latest' && 'python' || 'python3' }}
+      # Conan's autodetected MSVC profile defaults to cppstd=14, below the C++17
+      # every module and five of the dependencies require. Linux is left as
+      # detected (gnu17, matching CMAKE_CXX_EXTENSIONS) so that its package_id
+      # stays the one a consumer's own detected profile resolves to.
+      EXTRA_SETTINGS: ${{ matrix.os == 'windows-latest' && '-s compiler.cppstd=17' || '' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -149,7 +154,7 @@ jobs:
             # VARIANTS). Each produces a distinct package_id under the same
             # reference, so a consumer that needs e.g. moth_core with
             # enable_platform=False gets a binary instead of building from source.
-            conan create "modules/$m" --build=missing -s build_type=Release
+            conan create "modules/$m" --build=missing -s build_type=Release $EXTRA_SETTINGS
             while read -r variant; do
               [ -n "$variant" ] || continue
               opts=()
@@ -157,7 +162,7 @@ jobs:
                 opts+=(-o "$option")
               done
               echo "-- variant: $variant"
-              conan create "modules/$m" --build=missing -s build_type=Release "${opts[@]}"
+              conan create "modules/$m" --build=missing -s build_type=Release $EXTRA_SETTINGS "${opts[@]}"
             done < <($PY tools/moth_create.py --list-variants "$m")
 
             # ':*' uploads every binary of this reference, so the default build

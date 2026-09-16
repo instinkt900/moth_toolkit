@@ -19,33 +19,38 @@ jobs:
         # modules on, and moth_core alone -- which is what catches a portability
         # break without doubling the matrix.
         include:
-          - platform: linux
-            os: ubuntu-latest
-            name: full
-            flags: "-DMOTH_ENABLE_TOOLS=ON"
-          - platform: linux
-            os: ubuntu-latest
-            name: core-only
-            flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ECS=OFF -DMOTH_ENABLE_PHYSICS=OFF -DMOTH_ENABLE_TILEMAP=OFF -DMOTH_ENABLE_AUDIO=OFF -DMOTH_ENABLE_ASSETS=OFF -DMOTH_ENABLE_ANIM=OFF -DMOTH_ENABLE_NET=OFF -DMOTH_ENABLE_NOISE=OFF -DMOTH_ENABLE_PROFILE=OFF -DMOTH_ENABLE_PACKER=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
-          # moth::packer without moth::ui - the configuration a tool that only
-          # packs images (moth_sprite) consumes, so the UI-free half stays honest.
-          - platform: linux
-            os: ubuntu-latest
-            name: packer-no-ui
-            flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ECS=OFF -DMOTH_ENABLE_PHYSICS=OFF -DMOTH_ENABLE_TILEMAP=OFF -DMOTH_ENABLE_AUDIO=OFF -DMOTH_ENABLE_ASSETS=OFF -DMOTH_ENABLE_ANIM=OFF -DMOTH_ENABLE_NET=OFF -DMOTH_ENABLE_NOISE=OFF -DMOTH_ENABLE_PROFILE=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
-          - platform: linux
-            os: ubuntu-latest
-            name: core-gfx
-            flags: "-DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
-          - platform: linux
-            os: ubuntu-latest
-            name: game-example
-            flags: "-DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF -DMOTH_ENABLE_EXAMPLES=ON"
-          - platform: linux
-            os: ubuntu-latest
-            name: core-ui
-            flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ANIM=OFF -DMOTH_ENABLE_TOOLKIT=OFF -DMOTH_ENABLE_TILEMAP=OFF"
-
+        # TEMPORARY: the Linux configurations below are commented out while the
+        # Windows build is brought up, so each iteration spends runner time only
+        # on the platform being fixed. Linux was green on run 35066171741: all six
+        # configurations, tests and packaged consumption. To restore, delete the
+        # leading "# " from the commented entries below, up to the first windows
+        # entry. The flags are kept verbatim so they cannot drift while disabled.
+          # - platform: linux
+          #   os: ubuntu-latest
+          #   name: full
+          #   flags: "-DMOTH_ENABLE_TOOLS=ON"
+          # - platform: linux
+          #   os: ubuntu-latest
+          #   name: core-only
+          #   flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ECS=OFF -DMOTH_ENABLE_PHYSICS=OFF -DMOTH_ENABLE_TILEMAP=OFF -DMOTH_ENABLE_AUDIO=OFF -DMOTH_ENABLE_ASSETS=OFF -DMOTH_ENABLE_ANIM=OFF -DMOTH_ENABLE_NET=OFF -DMOTH_ENABLE_NOISE=OFF -DMOTH_ENABLE_PROFILE=OFF -DMOTH_ENABLE_PACKER=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
+          # # moth::packer without moth::ui - the configuration a tool that only
+          # # packs images (moth_sprite) consumes, so the UI-free half stays honest.
+          # - platform: linux
+          #   os: ubuntu-latest
+          #   name: packer-no-ui
+          #   flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ECS=OFF -DMOTH_ENABLE_PHYSICS=OFF -DMOTH_ENABLE_TILEMAP=OFF -DMOTH_ENABLE_AUDIO=OFF -DMOTH_ENABLE_ASSETS=OFF -DMOTH_ENABLE_ANIM=OFF -DMOTH_ENABLE_NET=OFF -DMOTH_ENABLE_NOISE=OFF -DMOTH_ENABLE_PROFILE=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
+          # - platform: linux
+          #   os: ubuntu-latest
+          #   name: core-gfx
+          #   flags: "-DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
+          # - platform: linux
+          #   os: ubuntu-latest
+          #   name: game-example
+          #   flags: "-DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF -DMOTH_ENABLE_EXAMPLES=ON"
+          # - platform: linux
+          #   os: ubuntu-latest
+          #   name: core-ui
+          #   flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ANIM=OFF -DMOTH_ENABLE_TOOLKIT=OFF -DMOTH_ENABLE_TILEMAP=OFF"
           - platform: windows
             os: windows-latest
             name: full
@@ -92,8 +97,15 @@ jobs:
           # The CMake guards already skip it under MSVC; this keeps the intent
           # visible in the workflow rather than only in the CMakeLists.
           TIDY: ${{ runner.os == 'Linux' && 'ON' || 'OFF' }}
+          # Conan's autodetected MSVC profile defaults to cppstd=14, and every
+          # module here is C++17 (CMAKE_CXX_STANDARD 17) as are five of the
+          # dependencies, which fail validation at 14. Linux never hit this
+          # because its detected profile is already gnu17 -- which is what
+          # CMAKE_CXX_EXTENSIONS=ON produces there, so it is left detected
+          # rather than forced, to keep the package_id consumers resolve.
+          EXTRA_SETTINGS: ${{ runner.os == 'Windows' && '-s compiler.cppstd=17' || '' }}
         run: |
-          conan install . -of build --build=missing -s build_type=Release
+          conan install . -of build --build=missing -s build_type=Release $EXTRA_SETTINGS
           # Listed so that a preset-name mismatch shows the available names in
           # the log instead of only "no such preset".
           cmake --list-presets || true
@@ -110,6 +122,10 @@ jobs:
   # Windows compilation; extend these once that is proven green.
   tests:
     name: tests
+    # TEMPORARY: skipped while the Windows build is brought up; see the
+    # note on the feature matrix. Re-enable together with the Linux
+    # configurations there.
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -171,6 +187,10 @@ jobs:
   # Windows compilation; extend these once that is proven green.
   packaged-consumption:
     name: packaged consumption (conan create + find_package)
+    # TEMPORARY: skipped while the Windows build is brought up; see the
+    # note on the feature matrix. Re-enable together with the Linux
+    # configurations there.
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

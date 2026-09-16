@@ -51,12 +51,19 @@ jobs:
           #   os: ubuntu-latest
           #   name: core-ui
           #   flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ANIM=OFF -DMOTH_ENABLE_TOOLKIT=OFF -DMOTH_ENABLE_TILEMAP=OFF"
+          # windows-2025 rather than windows-latest: the latest label has rolled to
+          # Visual Studio 2026 (MSVC 195), and ConanCenter recipes still pull
+          # CMake 3.31 as a tool requirement, which predates the "Visual Studio
+          # 18 2026" generator -- vulkan-loader fails to configure with
+          # "Could not create named generator". Pinning also stops the toolchain
+          # changing under CI without a commit. Revisit when ConanCenter ships
+          # recipes that can drive VS 2026.
           - platform: windows
-            os: windows-latest
+            os: windows-2025
             name: full
             flags: "-DMOTH_ENABLE_TOOLS=ON"
           - platform: windows
-            os: windows-latest
+            os: windows-2025
             name: core-only
             flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ECS=OFF -DMOTH_ENABLE_PHYSICS=OFF -DMOTH_ENABLE_TILEMAP=OFF -DMOTH_ENABLE_AUDIO=OFF -DMOTH_ENABLE_ASSETS=OFF -DMOTH_ENABLE_ANIM=OFF -DMOTH_ENABLE_NET=OFF -DMOTH_ENABLE_NOISE=OFF -DMOTH_ENABLE_PROFILE=OFF -DMOTH_ENABLE_PACKER=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
     steps:

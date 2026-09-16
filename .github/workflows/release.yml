@@ -81,18 +81,22 @@ jobs:
         include:
           - platform: linux
             os: ubuntu-latest
+          # windows-2025 rather than windows-latest: the latest label has rolled
+          # to Visual Studio 2026 (MSVC 195) and ConanCenter recipes still pull
+          # CMake 3.31, which cannot drive that generator. Pinning also keeps the
+          # toolchain a package was built with from changing without a commit.
           - platform: windows
-            os: windows-latest
+            os: windows-2025
     env:
       # The Windows runners provide 'python'; ubuntu provides 'python3'.
-      PY: ${{ matrix.os == 'windows-latest' && 'python' || 'python3' }}
+      PY: ${{ matrix.os == 'windows-2025' && 'python' || 'python3' }}
       # Conan's autodetected MSVC profile defaults to cppstd=14, below the C++17
       # every module and five of the dependencies require. Linux is left as
       # detected (gnu17, matching CMAKE_CXX_EXTENSIONS) so that its package_id
       # stays the one a consumer's own detected profile resolves to.
       # fastnoise2's CMake installs its PDB directory unconditionally under MSVC
       # and a static build never creates it, so it is built shared on Windows.
-      CONAN_EXTRA_ARGS: ${{ matrix.os == 'windows-latest' && '-s compiler.cppstd=17 -o fastnoise2/*:shared=True' || '' }}
+      CONAN_EXTRA_ARGS: ${{ matrix.os == 'windows-2025' && '-s compiler.cppstd=17 -o fastnoise2/*:shared=True' || '' }}
     steps:
       - uses: actions/checkout@v4
         with:

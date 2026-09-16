@@ -8,32 +8,61 @@ on:
 
 jobs:
   feature-matrix:
-    name: superbuild (${{ matrix.config.name }})
-    runs-on: ubuntu-latest
+    name: superbuild (${{ matrix.name }} / ${{ matrix.platform }})
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        config:
-          - name: full
+        # include-only: the platforms do not cover the same set of configurations,
+        # so the combinations are listed rather than crossed. Linux runs every
+        # feature combination; Windows runs the two ends of the range -- all
+        # modules on, and moth_core alone -- which is what catches a portability
+        # break without doubling the matrix.
+        include:
+          - platform: linux
+            os: ubuntu-latest
+            name: full
             flags: "-DMOTH_ENABLE_TOOLS=ON"
-          - name: core-only
+          - platform: linux
+            os: ubuntu-latest
+            name: core-only
             flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ECS=OFF -DMOTH_ENABLE_PHYSICS=OFF -DMOTH_ENABLE_TILEMAP=OFF -DMOTH_ENABLE_AUDIO=OFF -DMOTH_ENABLE_ASSETS=OFF -DMOTH_ENABLE_ANIM=OFF -DMOTH_ENABLE_NET=OFF -DMOTH_ENABLE_NOISE=OFF -DMOTH_ENABLE_PROFILE=OFF -DMOTH_ENABLE_PACKER=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
-          # moth::packer without moth::ui — the configuration a tool that only
+          # moth::packer without moth::ui - the configuration a tool that only
           # packs images (moth_sprite) consumes, so the UI-free half stays honest.
-          - name: packer-no-ui
+          - platform: linux
+            os: ubuntu-latest
+            name: packer-no-ui
             flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ECS=OFF -DMOTH_ENABLE_PHYSICS=OFF -DMOTH_ENABLE_TILEMAP=OFF -DMOTH_ENABLE_AUDIO=OFF -DMOTH_ENABLE_ASSETS=OFF -DMOTH_ENABLE_ANIM=OFF -DMOTH_ENABLE_NET=OFF -DMOTH_ENABLE_NOISE=OFF -DMOTH_ENABLE_PROFILE=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
-          - name: core-gfx
+          - platform: linux
+            os: ubuntu-latest
+            name: core-gfx
             flags: "-DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
-          - name: game-example
+          - platform: linux
+            os: ubuntu-latest
+            name: game-example
             flags: "-DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_TOOLKIT=OFF -DMOTH_ENABLE_EXAMPLES=ON"
-          - name: core-ui
+          - platform: linux
+            os: ubuntu-latest
+            name: core-ui
             flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ANIM=OFF -DMOTH_ENABLE_TOOLKIT=OFF -DMOTH_ENABLE_TILEMAP=OFF"
+
+          - platform: windows
+            os: windows-latest
+            name: full
+            flags: "-DMOTH_ENABLE_TOOLS=ON"
+          - platform: windows
+            os: windows-latest
+            name: core-only
+            flags: "-DMOTH_ENABLE_GFX=OFF -DMOTH_ENABLE_UI=OFF -DMOTH_ENABLE_BRIDGE=OFF -DMOTH_ENABLE_ECS=OFF -DMOTH_ENABLE_PHYSICS=OFF -DMOTH_ENABLE_TILEMAP=OFF -DMOTH_ENABLE_AUDIO=OFF -DMOTH_ENABLE_ASSETS=OFF -DMOTH_ENABLE_ANIM=OFF -DMOTH_ENABLE_NET=OFF -DMOTH_ENABLE_NOISE=OFF -DMOTH_ENABLE_PROFILE=OFF -DMOTH_ENABLE_PACKER=OFF -DMOTH_ENABLE_TOOLKIT=OFF"
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
 
+      # Linux resolves GLFW/FreeType/HarfBuzz/Vulkan from the system; on Windows
+      # the recipes pull them from Conan instead, so there is nothing to install.
       - name: Install system dependencies
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           # clang-tidy: this job configures with MOTH_ENABLE_CLANG_TIDY=ON, which
@@ -45,21 +74,40 @@ jobs:
           cache_packages: true
 
       - name: Allow Conan to install missing system packages
+        if: runner.os == 'Linux'
         run: |
           conan config home
           echo 'tools.system.package_manager:mode=install' >> "$(conan config home)/global.conf"
           echo 'tools.system.package_manager:sudo=True' >> "$(conan config home)/global.conf"
 
       - name: Configure
+        shell: bash
+        env:
+          # Conan emits a single-config generator on Linux, where the configure
+          # and build presets share the name conan-release. On Windows it emits
+          # the multi-config Visual Studio generator, whose single configure
+          # preset is conan-default and whose build presets are per configuration.
+          CONFIGURE_PRESET: ${{ runner.os == 'Windows' && 'conan-default' || 'conan-release' }}
+          # clang-tidy cannot lint an MSVC build, so linting is a Linux concern.
+          # The CMake guards already skip it under MSVC; this keeps the intent
+          # visible in the workflow rather than only in the CMakeLists.
+          TIDY: ${{ runner.os == 'Linux' && 'ON' || 'OFF' }}
         run: |
           conan install . -of build --build=missing -s build_type=Release
-          # -DMOTH_ENABLE_CLANG_TIDY=ON: linting is opt-in and is requested here
-          # explicitly, so the same command run locally reproduces this job exactly.
-          cmake --preset conan-release -DMOTH_ENABLE_CLANG_TIDY=ON ${{ matrix.config.flags }}
+          # Listed so that a preset-name mismatch shows the available names in
+          # the log instead of only "no such preset".
+          cmake --list-presets || true
+          cmake --preset "$CONFIGURE_PRESET" -DMOTH_ENABLE_CLANG_TIDY=$TIDY ${{ matrix.flags }}
 
       - name: Build
+        shell: bash
         run: cmake --build --preset conan-release
 
+  # Linux only for now. Both jobs drive Conan and CMake through shell scripts
+  # that assume POSIX paths (/tmp fixtures, ./build/Release/<exe>) and a
+  # single-config generator, so running them on Windows is a port of the scripts
+  # rather than a matrix entry. The superbuild matrix above is what covers
+  # Windows compilation; extend these once that is proven green.
   tests:
     name: tests
     runs-on: ubuntu-latest
@@ -116,6 +164,11 @@ jobs:
             echo "::endgroup::"
           done
 
+  # Linux only for now. Both jobs drive Conan and CMake through shell scripts
+  # that assume POSIX paths (/tmp fixtures, ./build/Release/<exe>) and a
+  # single-config generator, so running them on Windows is a port of the scripts
+  # rather than a matrix entry. The superbuild matrix above is what covers
+  # Windows compilation; extend these once that is proven green.
   packaged-consumption:
     name: packaged consumption (conan create + find_package)
     runs-on: ubuntu-latest

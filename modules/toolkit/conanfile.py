@@ -30,6 +30,7 @@ class MothToolkit(ConanFile):
         "enable_net": [True, False],
         "enable_noise": [True, False],
         "enable_profile": [True, False],
+        "enable_packer": [True, False],
     }
     default_options = {
         "enable_core": True,
@@ -45,6 +46,7 @@ class MothToolkit(ConanFile):
         "enable_net": True,
         "enable_noise": True,
         "enable_profile": True,
+        "enable_packer": True,
     }
 
     def set_version(self):
@@ -57,6 +59,10 @@ class MothToolkit(ConanFile):
         # build it when gfx is enabled.
         if self.options.enable_profile:
             self.options["moth_profile/*"].with_imgui = bool(self.options.enable_gfx)
+        # The packer's layout collectors need moth::ui, mirroring how the
+        # superbuild ties MOTH_PACKER_ENABLE_UI to MOTH_ENABLE_UI.
+        if self.options.enable_packer:
+            self.options["moth_packer/*"].with_ui = bool(self.options.enable_ui)
 
     def validate(self):
         if self.options.enable_bridge and not (self.options.enable_core and self.options.enable_gfx and self.options.enable_ui):
@@ -134,6 +140,8 @@ class MothToolkit(ConanFile):
             self.requires("moth_noise/0.1.0", transitive_headers=True, transitive_libs=True)
         if self.options.enable_profile:
             self.requires("moth_profile/0.1.0", transitive_headers=True, transitive_libs=True)
+        if self.options.enable_packer:
+            self.requires("moth_packer/1.0.0", transitive_headers=True, transitive_libs=True)
 
     def package(self):
         copy(self, "*.h", src=os.path.join(self.source_folder, "include"),
@@ -159,6 +167,7 @@ class MothToolkit(ConanFile):
             "MOTH_ENABLE_NET={}".format(1 if self.options.enable_net else 0),
             "MOTH_ENABLE_NOISE={}".format(1 if self.options.enable_noise else 0),
             "MOTH_ENABLE_PROFILE={}".format(1 if self.options.enable_profile else 0),
+            "MOTH_ENABLE_PACKER={}".format(1 if self.options.enable_packer else 0),
         ]
 
         # Expose each enabled module as a transitive dependency so a consumer that
@@ -192,3 +201,5 @@ class MothToolkit(ConanFile):
             self.cpp_info.requires.append("moth_profile::profile")
             if self.options.enable_gfx:
                 self.cpp_info.requires.append("moth_profile::profile_imgui")
+        if self.options.enable_packer:
+            self.cpp_info.requires.append("moth_packer::moth_packer")

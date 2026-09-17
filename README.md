@@ -1,5 +1,9 @@
 # Moth Toolkit
 
+[![CI](https://github.com/instinkt900/moth_toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/instinkt900/moth_toolkit/actions/workflows/ci.yml)
+[![Release](https://github.com/instinkt900/moth_toolkit/actions/workflows/release.yml/badge.svg)](https://github.com/instinkt900/moth_toolkit/actions/workflows/release.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A modular, code-first 2D game engine toolkit — a collection of C++ libraries
 under the `moth::` namespace that assemble into a complete engine with
 compile-time toggles for each feature, while remaining independently usable.
@@ -33,6 +37,7 @@ turn on/off feature by feature.
   - [moth_new](#moth_new)
   - [moth_pak](#moth_pak)
   - [moth_packer](#moth_packer)
+- [Related Projects](#related-projects)
 - [License](#license)
 
 ## Modules
@@ -233,6 +238,10 @@ cmake --preset conan-release
 cmake --build --preset conan-release
 ```
 
+C++17 is the minimum. On Linux, Conan's detected profile already uses `gnu17`. On
+Windows, MSVC's detected profile defaults to C++14, so pass `-s compiler.cppstd=17`
+or set it in your Conan profile.
+
 Enable or disable modules with `-DMOTH_ENABLE_*=ON/OFF` (pass them to the
 configure preset):
 
@@ -399,6 +408,16 @@ plus a JSON descriptor; `--help` lists every option. To do the same from code �
 which is what tools built on the toolkit should do — link `moth::packer` and call
 `Pack`/`PackToMemory` directly; see
 [`modules/packer/README.md`](modules/packer/README.md).
+
+## Related Projects
+
+Editors built on the toolkit, each in its own repository:
+
+| Project | Description |
+|---|---|
+| [moth_editor](https://github.com/instinkt900/moth_editor) | Visual layout and keyframe animation editor for `moth::ui` layouts |
+| [moth_sprite](https://github.com/instinkt900/moth_sprite) | Sprite sheet and animation clip editor whose projects `moth::gfx` loads as a `SpriteSheet` |
+| [moth_noised](https://github.com/instinkt900/moth_noised) | Node editor for `moth::noise` graphs, forked from FastNoise2's editor |
 
 ## License
 

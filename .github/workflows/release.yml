@@ -3,6 +3,10 @@ name: Release & Publish Conan Packages
 on:
   workflow_dispatch:
     inputs:
+      all_modules:
+        description: 'Force-release every module. Overrides the module list below.'
+        type: boolean
+        default: false
       modules:
         description: 'Space-separated module dirs to force-release (empty = every module whose version lacks a Linux or Windows binary on the remote). e.g. "core gfx ui"'
         required: false
@@ -33,6 +37,7 @@ jobs:
         id: detect
         shell: bash
         env:
+          ALL_MODULES: ${{ github.event.inputs.all_modules }}
           MANUAL_MODULES: ${{ github.event.inputs.modules }}
           ARTIFACTORY_URL: ${{ vars.ARTIFACTORY_URL }}
         run: |
@@ -44,7 +49,12 @@ jobs:
           # dependencies, and a release that uploaded one platform but failed on
           # the other is retried. The remote allows anonymous reads, so no login
           # is needed here. The script fails if the remote cannot be queried.
-          if [ -n "$MANUAL_MODULES" ]; then
+          #
+          # all_modules takes the full list from tools/moth_create.py, the same
+          # source the publish job orders by, so no module can be left out.
+          if [ "$ALL_MODULES" = "true" ]; then
+            release_modules="$(python3 tools/moth_create.py --list | tr '\n' ' ' | sed 's/ *$//')"
+          elif [ -n "$MANUAL_MODULES" ]; then
             release_modules="$MANUAL_MODULES"
           else
             release_modules="$(python3 tools/moth_unpublished.py "$ARTIFACTORY_URL" --os Linux --os Windows)"
@@ -136,7 +146,8 @@ jobs:
         shell: bash
         env:
           RELEASE_MODULES: ${{ needs.detect.outputs.release_modules }}
-          MANUAL_MODULES: ${{ github.event.inputs.modules }}
+          # Non-empty when the modules were forced by hand, by list or by all_modules.
+          FORCED: ${{ github.event.inputs.all_modules == 'true' && 'all' || github.event.inputs.modules }}
           ARTIFACTORY_URL: ${{ vars.ARTIFACTORY_URL }}
         run: |
           set -euo pipefail
@@ -153,9 +164,9 @@ jobs:
           done < <($PY tools/moth_create.py --list --with-packages | tr -d '\r')
 
           # A module detect picked because the other platform lacks it is skipped
-          # here when this platform already has its binary. Modules named by hand
+          # here when this platform already has its binary. Modules forced by hand
           # are always rebuilt.
-          if [ -z "$MANUAL_MODULES" ]; then
+          if [ -z "$FORCED" ]; then
             RELEASE_MODULES="$($PY tools/moth_unpublished.py "$ARTIFACTORY_URL" --os "$RUNNER_OS" | tr -d '\r')"
           fi
           echo "Publishing on $RUNNER_OS: [$RELEASE_MODULES]"

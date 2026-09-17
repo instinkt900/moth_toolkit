@@ -5,9 +5,6 @@ project(moth_audio
     DESCRIPTION "A lean miniaudio wrapper for sound and music playback in the Moth toolkit."
     LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 find_package(miniaudio CONFIG REQUIRED)
 
 # Sibling module: in the superbuild the target already exists, standalone it is
@@ -17,6 +14,7 @@ if(NOT TARGET moth::core)
 endif()
 
 add_library(moth_audio src/audio.cpp)
+target_compile_features(moth_audio PUBLIC cxx_std_17)
 set_target_properties(moth_audio PROPERTIES EXPORT_NAME audio)
 
 target_include_directories(moth_audio PUBLIC

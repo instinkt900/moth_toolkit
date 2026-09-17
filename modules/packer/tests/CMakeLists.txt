@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.27)
 
 project(moth_packer_tests VERSION 1.0 DESCRIPTION "Unit tests for moth_packer")
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(Catch2 3 REQUIRED)
@@ -24,6 +22,7 @@ set(SOURCES
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(${PROJECT_NAME} PRIVATE
     moth_packer

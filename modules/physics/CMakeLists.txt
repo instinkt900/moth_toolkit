@@ -5,9 +5,6 @@ project(moth_physics
     DESCRIPTION "A Box2D-backed 2D physics module for the Moth toolkit."
     LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 find_package(box2d CONFIG REQUIRED)
 
 # Sibling module: in the superbuild the target already exists, standalone it is
@@ -17,6 +14,7 @@ if(NOT TARGET moth::core)
 endif()
 
 add_library(moth_physics src/world.cpp)
+target_compile_features(moth_physics PUBLIC cxx_std_17)
 set_target_properties(moth_physics PROPERTIES EXPORT_NAME physics)
 
 target_include_directories(moth_physics PUBLIC

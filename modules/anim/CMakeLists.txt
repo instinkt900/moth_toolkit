@@ -5,9 +5,6 @@ project(moth_anim
     DESCRIPTION "Data-driven character animation state machine for the Moth toolkit."
     LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 find_package(nlohmann_json REQUIRED)
 
 # Sibling modules: in the superbuild the targets already exist, standalone they
@@ -33,6 +30,7 @@ add_library(moth_anim
     src/anim_set.cpp
     src/animator.cpp
     src/animator_factory.cpp)
+target_compile_features(moth_anim PUBLIC cxx_std_17)
 set_target_properties(moth_anim PROPERTIES EXPORT_NAME anim)
 
 target_include_directories(moth_anim PUBLIC

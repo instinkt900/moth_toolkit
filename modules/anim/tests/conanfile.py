@@ -1,11 +1,17 @@
 from conan import ConanFile
-from conan.tools.cmake import CMakeToolchain, CMakeDeps, cmake_layout
+from conan.tools.build import check_min_cppstd
+from conan.tools.cmake import cmake_layout
 from conan.tools.system.package_manager import Apt
 
 
 class MothAnimTests(ConanFile):
     name = "moth_anim_tests"
     settings = "os", "compiler", "build_type", "arch"
+    generators = "CMakeToolchain", "CMakeDeps"
+
+    def validate(self):
+        # C++17 is the floor for every moth project.
+        check_min_cppstd(self, 17)
 
     def requirements(self):
         self.requires("catch2/3.13.0")
@@ -34,12 +40,6 @@ class MothAnimTests(ConanFile):
 
     def build_requirements(self):
         self.tool_requires("cmake/[>=3.27.0]")
-
-    def generate(self):
-        deps = CMakeDeps(self)
-        deps.generate()
-        tc = CMakeToolchain(self)
-        tc.generate()
 
     def layout(self):
         cmake_layout(self)

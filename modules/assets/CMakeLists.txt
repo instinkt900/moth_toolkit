@@ -5,9 +5,6 @@ project(moth_assets
     DESCRIPTION "Asset addressing (id/path) and loading for the Moth toolkit."
     LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 find_package(nlohmann_json REQUIRED)
 
 # Sibling module: in the superbuild the target already exists, standalone it is
@@ -19,6 +16,7 @@ endif()
 add_library(moth_assets
     src/assets.cpp
     src/pak.cpp)
+target_compile_features(moth_assets PUBLIC cxx_std_17)
 set_target_properties(moth_assets PROPERTIES EXPORT_NAME assets)
 
 target_include_directories(moth_assets PUBLIC

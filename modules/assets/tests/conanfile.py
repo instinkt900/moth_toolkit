@@ -1,4 +1,5 @@
 from conan import ConanFile
+from conan.tools.build import check_min_cppstd
 from conan.tools.cmake import cmake_layout
 from conan.tools.system.package_manager import Apt
 
@@ -7,6 +8,10 @@ class MothAssetsTests(ConanFile):
     name = "moth_assets_tests"
     settings = "os", "compiler", "build_type", "arch"
     generators = "CMakeToolchain", "CMakeDeps"
+
+    def validate(self):
+        # C++17 is the floor for every moth project.
+        check_min_cppstd(self, 17)
 
     def requirements(self):
         self.requires("catch2/3.13.0")

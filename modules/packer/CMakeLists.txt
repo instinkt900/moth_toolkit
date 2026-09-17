@@ -5,9 +5,6 @@ project(moth_packer
     DESCRIPTION "Texture atlas/flipbook packing and sprite-sheet extraction for the Moth toolkit."
     LANGUAGES CXX C)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 # The layout collectors (CollectImagesFromLayout/CollectImagesFromLayoutsDir) are
 # the only part of this module that needs moth::ui. They are opt-in so that a
 # consumer which only packs images — moth_sprite, for instance — links nothing
@@ -38,6 +35,7 @@ endif()
 add_library(moth_packer
     src/packer.cpp
     src/stb_impl.c)
+target_compile_features(moth_packer PUBLIC cxx_std_17)
 set_target_properties(moth_packer PROPERTIES EXPORT_NAME packer)
 
 target_include_directories(moth_packer PUBLIC

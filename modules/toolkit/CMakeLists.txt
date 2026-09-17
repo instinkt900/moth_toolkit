@@ -5,6 +5,7 @@
 # ...) for leaner consumers.
 
 add_library(moth_toolkit INTERFACE)
+target_compile_features(moth_toolkit INTERFACE cxx_std_17)
 add_library(moth::toolkit ALIAS moth_toolkit)
 
 # Expose the generated feature header and the toolkit umbrella header to any

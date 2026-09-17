@@ -5,9 +5,6 @@ project(moth_net
     DESCRIPTION "TCP networking (length-prefixed JSON messaging) for the Moth toolkit."
     LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 find_package(nlohmann_json REQUIRED)
 find_package(asio REQUIRED)
 
@@ -20,6 +17,7 @@ endif()
 add_library(moth_net
     src/tcp_server.cpp
     src/tcp_client.cpp)
+target_compile_features(moth_net PUBLIC cxx_std_17)
 set_target_properties(moth_net PROPERTIES EXPORT_NAME net)
 
 target_include_directories(moth_net PUBLIC

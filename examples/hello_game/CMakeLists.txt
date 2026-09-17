@@ -1,9 +1,6 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.27)
 
 project(moth_hello_game VERSION 0.1.0 DESCRIPTION "The minimal moth game: a window, a scene, and a moving square." LANGUAGES CXX)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # In-tree (superbuild): the module target already exists.
 # Standalone: locate the packaged module via find_package.
@@ -15,4 +12,5 @@ else()
 endif()
 
 add_executable(hello_game main.cpp)
+target_compile_features(hello_game PRIVATE cxx_std_17)
 target_link_libraries(hello_game PRIVATE ${MOTH_GFX_TARGET})

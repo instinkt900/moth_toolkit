@@ -5,9 +5,6 @@ project(moth_packer_cli
     DESCRIPTION "Packs images into texture atlases/flipbooks and extracts sprites from sheets."
     LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 find_package(CLI11 REQUIRED)
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
@@ -19,6 +16,7 @@ if(NOT TARGET moth::packer)
 endif()
 
 add_executable(moth_packer_cli main.cpp)
+target_compile_features(moth_packer_cli PRIVATE cxx_std_17)
 # The library target is `moth_packer`; the binary takes that name too.
 set_target_properties(moth_packer_cli PROPERTIES OUTPUT_NAME moth_packer)
 target_compile_definitions(moth_packer_cli PRIVATE MOTH_PACKER_VERSION="${PROJECT_VERSION}")

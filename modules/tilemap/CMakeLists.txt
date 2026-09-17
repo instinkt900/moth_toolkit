@@ -5,9 +5,6 @@ project(moth_tilemap
     DESCRIPTION "Grid-based tilemaps and tilesets (Tiled .tmj import + rendering) for the Moth toolkit."
     LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 find_package(nlohmann_json REQUIRED)
 find_package(ZLIB REQUIRED)
 
@@ -34,6 +31,7 @@ add_library(moth_tilemap
     src/tile_map_loader.cpp
     src/tile_map_renderer.cpp
     src/tile_map_collision.cpp)
+target_compile_features(moth_tilemap PUBLIC cxx_std_17)
 set_target_properties(moth_tilemap PROPERTIES EXPORT_NAME tilemap)
 
 target_include_directories(moth_tilemap PUBLIC

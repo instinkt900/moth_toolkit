@@ -98,7 +98,7 @@ jobs:
           # visible in the workflow rather than only in the CMakeLists.
           TIDY: ${{ runner.os == 'Linux' && 'ON' || 'OFF' }}
           # Conan's autodetected MSVC profile defaults to cppstd=14, and every
-          # module here is C++17 (CMAKE_CXX_STANDARD 17) as are five of the
+          # module here is C++17 (cxx_std_17) as are five of the
           # dependencies, which fail validation at 14. Linux never hit this
           # because its detected profile is already gnu17 -- which is what
           # CMAKE_CXX_EXTENSIONS=ON produces there, so it is left detected

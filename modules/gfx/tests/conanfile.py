@@ -1,4 +1,5 @@
 from conan import ConanFile
+from conan.tools.build import check_min_cppstd
 from conan.tools.cmake import CMakeDeps, CMakeToolchain, cmake_layout
 from conan.tools.system.package_manager import Apt
 
@@ -9,6 +10,10 @@ class MothGraphicsTests(ConanFile):
 
     options = {"enable_glslang": [True, False]}
     default_options = {"enable_glslang": False}
+
+    def validate(self):
+        # C++17 is the floor for every moth project.
+        check_min_cppstd(self, 17)
 
     def requirements(self):
         self.requires("catch2/3.13.0")

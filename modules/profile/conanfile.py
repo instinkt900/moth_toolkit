@@ -29,7 +29,7 @@ class MothProfile(ConanFile):
             self.version = load(self, os.path.join(self.recipe_folder, "version.txt")).strip()
 
     def validate(self):
-        # Every module is C++17 (CMAKE_CXX_STANDARD 17). Checked here so a profile
+        # Every module is C++17 (cxx_std_17). Checked here so a profile
         # below it -- MSVC's autodetected default is 14 -- fails with one clear
         # message naming this package, instead of a validation error from each
         # dependency that also needs 17.

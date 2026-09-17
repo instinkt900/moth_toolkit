@@ -5,9 +5,6 @@ project(moth_bridge
     DESCRIPTION "Adapter wiring moth_ui and the graphics window together."
     LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 # Sibling modules: in the superbuild the targets already exist, standalone they
 # are located via find_package.
 if(NOT TARGET moth::core)
@@ -32,6 +29,7 @@ set(SOURCES
 )
 
 add_library(moth_bridge ${SOURCES})
+target_compile_features(moth_bridge PUBLIC cxx_std_17)
 add_library(moth::bridge ALIAS moth_bridge)
 set_target_properties(moth_bridge PROPERTIES EXPORT_NAME bridge)
 

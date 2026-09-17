@@ -5,9 +5,6 @@ project(moth_ecs
     DESCRIPTION "A lightweight EnTT-backed entity-component system for the Moth toolkit."
     LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 find_package(EnTT CONFIG REQUIRED)
 
 # Sibling module: in the superbuild the target already exists, standalone it is
@@ -17,6 +14,7 @@ if(NOT TARGET moth::core)
 endif()
 
 add_library(moth_ecs INTERFACE)
+target_compile_features(moth_ecs INTERFACE cxx_std_17)
 set_target_properties(moth_ecs PROPERTIES EXPORT_NAME ecs)
 
 target_include_directories(moth_ecs INTERFACE

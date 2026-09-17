@@ -5,9 +5,6 @@ project(moth_noise
     DESCRIPTION "Node-graph noise generation (FastNoise2) for the Moth toolkit."
     LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 find_package(nlohmann_json REQUIRED)
 find_package(FastNoise2 REQUIRED)
 
@@ -19,6 +16,7 @@ endif()
 
 add_library(moth_noise
     src/node_tree.cpp)
+target_compile_features(moth_noise PUBLIC cxx_std_17)
 set_target_properties(moth_noise PROPERTIES EXPORT_NAME noise)
 
 if(MSVC)

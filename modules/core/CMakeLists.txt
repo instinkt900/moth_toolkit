@@ -5,9 +5,6 @@ project(moth_core
     DESCRIPTION "Core math, platform, windowing, and event types for the Moth toolkit."
     LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 # The platform layer is the only part of this module that needs GLFW. Consumers
 # that want the math/event types without a windowing stack (headless tools, an
 # external editor that already owns its own window) can turn it off. The
@@ -47,6 +44,7 @@ if(MOTH_CORE_ENABLE_PLATFORM)
 endif()
 
 add_library(moth_core ${SOURCES})
+target_compile_features(moth_core PUBLIC cxx_std_17)
 add_library(moth::core ALIAS moth_core)
 set_target_properties(moth_core PROPERTIES EXPORT_NAME core)
 

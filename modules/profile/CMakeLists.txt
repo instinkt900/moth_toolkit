@@ -5,9 +5,6 @@ project(moth_profile
     DESCRIPTION "Frame profiling (scope timing and an ImGui profiler panel) for the Moth toolkit."
     LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 # The panel is the only part that needs ImGui, which moth_graphics compiles in.
 # Turn it off for a recorder-only build without the graphics stack.
 option(MOTH_PROFILE_ENABLE_IMGUI "Build the moth::profile_imgui profiler panel (requires moth_graphics)" ON)
@@ -16,6 +13,7 @@ option(MOTH_PROFILE_ENABLE_IMGUI "Build the moth::profile_imgui profiler panel (
 
 add_library(moth_profile
     src/profiler.cpp)
+target_compile_features(moth_profile PUBLIC cxx_std_17)
 set_target_properties(moth_profile PROPERTIES EXPORT_NAME profile)
 
 target_include_directories(moth_profile PUBLIC
@@ -46,6 +44,7 @@ if(MOTH_PROFILE_ENABLE_IMGUI)
 
     add_library(moth_profile_imgui
         src/imgui/profiler_panel.cpp)
+    target_compile_features(moth_profile_imgui PUBLIC cxx_std_17)
     set_target_properties(moth_profile_imgui PROPERTIES EXPORT_NAME profile_imgui)
     target_include_directories(moth_profile_imgui PRIVATE src)
 

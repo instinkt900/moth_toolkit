@@ -43,6 +43,7 @@ namespace {
             FloatVec2 position;
             IntRect sourceRect;
             FloatVec2 pivot;
+            FloatVec2 scale;
             float rotation = 0.0f;
             bool flipX;
             bool flipY;
@@ -72,6 +73,7 @@ namespace {
             call.position = transform.position;
             call.sourceRect = image.GetSourceRect();
             call.pivot = pivot;
+            call.scale = transform.scale;
             call.rotation = transform.rotation;
             call.flipX = flipX;
             call.flipY = flipY;
@@ -361,8 +363,34 @@ TEST_CASE("Renderer: draws tile objects from object layers, skipping shapes", "[
     REQUIRE(graphics.drawCalls.size() == 2);
     auto const& objectCall = graphics.drawCalls.back();
     REQUIRE(objectCall.position.x == Catch::Approx(8.0f));
-    REQUIRE(objectCall.position.y == Catch::Approx(8.0f));
+    // A tile object is anchored at its bottom-left corner, so a 16px tile placed
+    // at y = 8 draws from y = -8.
+    REQUIRE(objectCall.position.y == Catch::Approx(-8.0f));
     REQUIRE(objectCall.sourceRect == MakeRect(0, 0, 16, 16));
+}
+
+TEST_CASE("Renderer: a resized tile object is anchored at its scaled bottom-left", "[tilemap][renderer]") {
+    TileMap map = MakeMap(4, 4);
+
+    ObjectLayer objectLayer;
+    MapObject tileObject;
+    tileObject.tile = TileId::FromGid(1);
+    tileObject.position = { 8.0f, 48.0f };
+    tileObject.size = { 32.0f, 32.0f }; // a 16px tile drawn at double size
+    objectLayer.objects.push_back(tileObject);
+    map.objectLayers.push_back(objectLayer);
+
+    MockGraphics graphics;
+    std::vector<Image> tilesetImages{ Image(std::make_shared<MockTexture>()) };
+
+    DrawTileMap(graphics, map, tilesetImages, MakeRect(0.0f, 0.0f, 64.0f, 64.0f));
+
+    REQUIRE(graphics.drawCalls.size() == 1);
+    auto const& objectCall = graphics.drawCalls.back();
+    REQUIRE(objectCall.position.x == Catch::Approx(8.0f));
+    // The anchor shift follows the drawn height, not the tile's natural height.
+    REQUIRE(objectCall.position.y == Catch::Approx(16.0f));
+    REQUIRE(objectCall.scale.y == Catch::Approx(2.0f));
 }
 
 TEST_CASE("Renderer: applies layer parallax offset", "[tilemap][renderer]") {

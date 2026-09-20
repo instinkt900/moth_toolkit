@@ -168,7 +168,13 @@ namespace moth::tilemap {
                         scale.y = object.size.y / static_cast<float>(sourceRect.h());
                     }
 
-                    drawTileImage(*tileset, resolvedId, object.tile, object.position + offset, object.rotation, scale);
+                    // Tiled anchors a tile object at its bottom-left corner, where a plain
+                    // rectangle object is anchored top-left. Shift up by the drawn height so
+                    // the tile lands where the editor shows it.
+                    FloatVec2 topLeft = object.position + offset;
+                    topLeft.y -= static_cast<float>(sourceRect.h()) * scale.y;
+
+                    drawTileImage(*tileset, resolvedId, object.tile, topLeft, object.rotation, scale);
                 }
             };
 

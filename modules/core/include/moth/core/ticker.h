@@ -54,9 +54,13 @@ namespace moth::core {
                     deltaTicks = std::chrono::microseconds::zero();
                 }
                 Tick(static_cast<uint32_t>(std::chrono::duration_cast<std::chrono::milliseconds>(deltaTicks).count()));
-                auto const sleepFor = m_updateTicks - deltaTicks;
-                if (sleepFor > std::chrono::microseconds::zero()) {
-                    std::this_thread::sleep_for(sleepFor);
+                // Sleep until the next fixed tick is due, measured from now: the
+                // time Tick() just spent is part of the period, not on top of it.
+                // A frame that overruns the period falls through without sleeping.
+                auto const nextTick = m_lastUpdateTicks + m_updateTicks;
+                auto const afterTick = std::chrono::steady_clock::now();
+                if (afterTick < nextTick) {
+                    std::this_thread::sleep_for(nextTick - afterTick);
                 }
             }
         }
